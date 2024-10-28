@@ -187,7 +187,9 @@ defmodule Bonfire.UI.Boundaries.LiveHandler do
 
   def handle_event(action, %{"id" => selected} = _attrs, socket)
       when action in ["select", "select_circle"] and is_binary(selected) do
-    {:noreply, Bonfire.Boundaries.LiveHandler.set_circles_tuples(:to_circles, [selected], socket)}
+    {:noreply,
+     Bonfire.UI.Boundaries.LiveHandler.set_circles_tuples(:to_circles, [selected], socket)}
+
     #
     #  assign(socket,
     #    to_circles: set_circles([selected], e(assigns(socket), :to_circles, []), true)
@@ -201,19 +203,23 @@ defmodule Bonfire.UI.Boundaries.LiveHandler do
       ) do
     {:noreply,
      socket
-     |> Bonfire.Boundaries.LiveHandler.set_circles_tuples(:to_circles, to_circles, ...)
-     |> Bonfire.Boundaries.LiveHandler.set_circles_tuples(:exclude_circles, exclude_circles, ...)}
+     |> Bonfire.UI.Boundaries.LiveHandler.set_circles_tuples(:to_circles, to_circles, ...)
+     |> Bonfire.UI.Boundaries.LiveHandler.set_circles_tuples(
+       :exclude_circles,
+       exclude_circles,
+       ...
+     )}
   end
 
   def handle_event("select", %{"to_circles" => circles} = _params, socket) do
     {:noreply,
      socket
-     |> Bonfire.Boundaries.LiveHandler.set_circles_tuples(:to_circles, circles, ...)}
+     |> Bonfire.UI.Boundaries.LiveHandler.set_circles_tuples(:to_circles, circles, ...)}
   end
 
   def handle_event("select", %{"exclude_circles" => circles} = _params, socket) do
     {:noreply,
-     Bonfire.Boundaries.LiveHandler.set_circles_tuples(:exclude_circles, circles, socket)}
+     Bonfire.UI.Boundaries.LiveHandler.set_circles_tuples(:exclude_circles, circles, socket)}
   end
 
   def handle_event("select", _params, socket) do

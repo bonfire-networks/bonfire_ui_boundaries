@@ -2,7 +2,7 @@ defmodule Bonfire.UI.Boundaries.Web.BoundaryDetailsLive do
   use Bonfire.UI.Common.Web, :stateless_component
   # TODO: make stateful?
 
-  alias Bonfire.Boundaries.LiveHandler
+  alias Bonfire.UI.Boundaries.LiveHandler
   alias Bonfire.Boundaries.Acls
   alias Bonfire.Boundaries.Roles
 

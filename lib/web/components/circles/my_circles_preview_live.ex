@@ -1,7 +1,7 @@
 defmodule Bonfire.UI.Boundaries.Web.MyCirclesPreviewLive do
   use Bonfire.UI.Common.Web, :stateless_component
   # alias Bonfire.Boundaries.Integration
-  alias Bonfire.Boundaries.LiveHandler
+  alias Bonfire.UI.Boundaries.LiveHandler
 
   prop selected_tab, :any, default: "timeline"
   prop loading, :boolean, default: false

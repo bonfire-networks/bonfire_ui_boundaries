@@ -30,7 +30,7 @@ defmodule Bonfire.UI.Boundaries.Web.RolesLive do
             page_header_aside: [
               if(!assigns[:read_only],
                 do:
-                  {Bonfire.Boundaries.Web.NewRoleButtonLive,
+                  {Bonfire.UI.Boundaries.Web.NewRoleButtonLive,
                    [scope: scope, scope_type: scope_type]}
               )
             ]

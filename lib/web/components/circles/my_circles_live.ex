@@ -1,7 +1,7 @@
 defmodule Bonfire.UI.Boundaries.Web.MyCirclesLive do
   use Bonfire.UI.Common.Web, :stateful_component
   # alias Bonfire.Boundaries.Integration
-  alias Bonfire.Boundaries.LiveHandler
+  alias Bonfire.UI.Boundaries.LiveHandler
 
   prop setting_boundaries, :boolean, default: false
   prop section, :any, default: nil

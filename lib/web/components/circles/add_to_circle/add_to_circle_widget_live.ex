@@ -1,7 +1,7 @@
 defmodule Bonfire.UI.Boundaries.Web.AddToCircleWidgetLive do
   use Bonfire.UI.Common.Web, :stateful_component
   alias Bonfire.Boundaries.Circles
-  alias Bonfire.Boundaries.LiveHandler
+  alias Bonfire.UI.Boundaries.LiveHandler
 
   prop circles, :list, default: []
   prop user_id, :any, default: nil

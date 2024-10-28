@@ -3,7 +3,7 @@ defmodule Bonfire.UI.Boundaries.Web.MyAclsLive do
   alias Bonfire.Boundaries.Acls
   alias Bonfire.Boundaries.Grants
   # alias Bonfire.Boundaries.Web.AclLive
-  alias Bonfire.Boundaries.LiveHandler
+  alias Bonfire.UI.Boundaries.LiveHandler
 
   prop hide_breakdown, :boolean, default: false
   prop setting_boundaries, :boolean, default: false

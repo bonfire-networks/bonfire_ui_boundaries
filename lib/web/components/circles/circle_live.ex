@@ -119,7 +119,7 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
             back: true,
             circle: circle
             # page_header_aside: [
-            #   {Bonfire.Boundaries.Web.HeaderCircleLive,
+            #   {Bonfire.UI.Boundaries.Web.HeaderCircleLive,
             #    [
             #      circle: circle,
             #      stereotype_id: stereotype_id,

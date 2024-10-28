@@ -16,7 +16,7 @@ defmodule Bonfire.UI.Boundaries.Web.IfCan do
 
   def update_many(assigns_sockets),
     do:
-      Bonfire.Boundaries.LiveHandler.maybe_check_boundaries(assigns_sockets,
+      Bonfire.UI.Boundaries.LiveHandler.maybe_check_boundaries(assigns_sockets,
         caller_module: __MODULE__
       )
 end

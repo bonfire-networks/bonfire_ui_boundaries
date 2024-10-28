@@ -85,7 +85,7 @@
 
     <:open_btn>
       <button type="button" class="btn btn-neutral btn-sm">
-        {l("Edit boundary preset")}</button>
+        {l("Edit")}</button>
     </:open_btn>
   </Bonfire.UI.Common.OpenModalLive>
 </div>

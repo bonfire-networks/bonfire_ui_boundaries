@@ -2,7 +2,7 @@ defmodule Bonfire.UI.Boundaries.Web.AclLive do
   use Bonfire.UI.Common.Web, :stateful_component
   alias Bonfire.Boundaries.Acls
   alias Bonfire.Boundaries.Grants
-  alias Bonfire.Boundaries.LiveHandler
+  alias Bonfire.UI.Boundaries.LiveHandler
   # alias Bonfire.Boundaries.Integration
   require Integer
 
@@ -110,7 +110,7 @@ defmodule Bonfire.UI.Boundaries.Web.AclLive do
           page_title: e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil),
           acl: acl,
           page_header_aside: [
-            {Bonfire.Boundaries.Web.EditAclButtonLive,
+            {Bonfire.UI.Boundaries.Web.EditAclButtonLive,
              [
                acl: acl,
                read_only: read_only,

@@ -9,7 +9,7 @@
   {#else}
     <div>
       <div :if={!@setting_boundaries}>
-        <div class="p-4 pt-0 border-b border-base-content/10">
+        <div class="p-4 border-b border-base-content/10">
           <span class="text-sm text-base-content/70">
             {l(
               "Boundaries define and enforce rules that can be used to control access and permissions to content or functionality. A boundary preset can apply to one or more users and circles."

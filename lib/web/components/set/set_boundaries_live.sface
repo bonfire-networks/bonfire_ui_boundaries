@@ -133,7 +133,7 @@
             :if={!@read_only}
             implementation={:live_select}
             field={:exclude_circles}
-            form_input_name={Bonfire.Boundaries.Web.ExcludeBoundaries}
+            form_input_name={Bonfire.UI.Boundaries.Web.ExcludeBoundaries}
             preloaded_options={results_for_multiselect(@my_circles, :exclude_circles)}
             label={l("Select or search for circles or people to exclude")}
           />

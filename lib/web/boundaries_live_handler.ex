@@ -144,7 +144,7 @@ defmodule Bonfire.UI.Boundaries.LiveHandler do
      assign(
        socket,
        :to_boundaries,
-       Bonfire.Boundaries.Web.SetBoundariesLive.set_clean_boundaries(
+       Bonfire.UI.Boundaries.Web.SetBoundariesLive.set_clean_boundaries(
          e(assigns(socket), :to_boundaries, []),
          acl_id,
          e(params, "name", acl_id)
@@ -524,7 +524,7 @@ defmodule Bonfire.UI.Boundaries.LiveHandler do
     _current_user = current_user_required!(socket)
 
     if e(assigns(socket), :acl, nil) do
-      Bonfire.Boundaries.Web.AclLive.add_to_acl(subject, socket)
+      Bonfire.UI.Boundaries.Web.AclLive.add_to_acl(subject, socket)
     else
       {:noreply, socket}
     end
@@ -852,7 +852,7 @@ defmodule Bonfire.UI.Boundaries.LiveHandler do
     |> assign(
       to_boundaries: to_boundaries,
       boundary_preset:
-        Bonfire.Boundaries.Web.SetBoundariesLive.boundaries_to_preset(to_boundaries)
+        Bonfire.UI.Boundaries.Web.SetBoundariesLive.boundaries_to_preset(to_boundaries)
     )
   end
 

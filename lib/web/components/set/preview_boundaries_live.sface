@@ -4,21 +4,16 @@
     style="min-height: 320px; height: 360px"
     class="flex flex-col  flex-1 h-full flex-nowrap overflow-y-auto"
   >
-    <div class="flex m-1 flex-col">
-      <div class="alert text-xs alert-info" role="alert">
-        <#Icon solid="InformationCircle" class="w-5 h-5 shrink-0" />
-        <span class="">
-          {l("Here you can preview how boundaries will be applied for a specific user.")}</span>
-      </div>
-    </div>
+    <span class="text-sm text-base-content/70 p-3 border-b border-base-content/10">
+      {l("Here you can preview how boundaries will be applied for a specific user.")}</span>
 
-    <div class="my-2 mb-8">
+    <div class="mb-8 p-3">
       <div class="w-full">
         <Bonfire.UI.Common.MultiselectLive.UserSelectorLive
           selected_options={[]}
           class="focus:outline-0 border-0 border-b h-10 rounded-none border-base-content/10 text-sm select_recipients_input"
           label={l("Search for a user to preview")}
-          form_input_name={__MODULE__}
+          form_input_name={:preview_boundary_for_username}
           event_target={@myself}
           implementation={:live_select}
         />

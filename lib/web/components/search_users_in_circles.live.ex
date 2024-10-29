@@ -33,7 +33,7 @@ defmodule Bonfire.UI.Boundaries.Web.SearchUsersInCirclesLive do
       :search,
       [search]
     )
-    |> Bonfire.Boundaries.Web.SetBoundariesLive.results_for_multiselect()
+    |> Bonfire.UI.Boundaries.Web.SetBoundariesLive.results_for_multiselect()
   end
 
   def handle_event("multi_select", %{data: data, text: _text}, socket) do

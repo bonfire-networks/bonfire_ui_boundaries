@@ -5,7 +5,7 @@
     "dropdown-content z-[99999] mt-1 !gap-2 !menu-sm p-1.5 shadow bg-base-200 rounded-box w-[328px]":
       @is_dropdown
   }>
-    <div class="items-start text-left text-xs font-semibold uppercase text-base-content/70 px-2 pt-2">{l("General access")}</div>
+    <!-- <div class="items-start text-left text-xs font-semibold uppercase text-base-content/70 px-2 pt-2">{l("General access")}</div> -->
     {#if !@hide_presets}
       {!-- PUBLIC --}
       <div class={
@@ -13,7 +13,7 @@
         "bg-base-content/5": matches?(@boundary_preset, "public")
       }>
         <button
-          class="text-base-content w-full p-2"
+          class="text-base-content w-full p-2 pr-0"
           phx-click={@set_action ||
             JS.push("Bonfire.Boundaries:replace_boundary",
               value: %{id: "public", name: l("Public")},
@@ -49,7 +49,7 @@
         </button>
         <div
           :if={!@is_dropdown and !@hide_custom}
-          class="flex items-center gap-3 border-l border-base-content/30 pl-1"
+          class="flex items-center gap-3 border-l border-base-content/30 pl-1 pr-2"
         >
           <button
             type="button"
@@ -75,7 +75,7 @@
       }>
         <button
           data-scope="local_boundary"
-          class="text-base-content p-2 w-full"
+          class="text-base-content p-2 pr-0 w-full"
           phx-click={@set_action ||
             JS.push("Bonfire.Boundaries:replace_boundary",
               value: %{id: "local", name: l("Local")},
@@ -114,7 +114,7 @@
         </button>
         <div
           :if={!@is_dropdown and !@hide_custom}
-          class="flex items-center gap-3 border-l border-base-content/30 pl-1"
+          class="flex items-center gap-3 border-l border-base-content/30 pl-1 pr-2"
         >
           <button
             type="button"
@@ -175,7 +175,7 @@
         "bg-base-content/5": matches?(@to_boundaries, acl_id)
       }>
         <button
-          class="w-full p-2 text-base-content"
+          class="w-full p-2 pr-0 text-base-content"
           phx-click={@set_action ||
             JS.push("Bonfire.Boundaries:replace_boundary",
               value: %{id: acl_id, name: e(acl, :name, nil)},
@@ -218,7 +218,7 @@
 
         <div
           :if={!@is_dropdown and !@hide_custom}
-          class="flex items-center gap-3 border-l border-base-content/30 pl-1"
+          class="flex items-center gap-3 border-l border-base-content/30 pl-1 pr-2"
         >
           <button
             type="button"
@@ -238,7 +238,7 @@
       </div>
     {/for}
 
-    {!-- <div class="my-3 px-2 text-left items-start border-t border-base-content/10">
+    <!-- <div class="my-3 px-2 text-left items-start border-t border-base-content/10">
       <div class="items-start text-left text-xs font-semibold uppercase text-base-content/70 mb-2 pt-4">{l "Specific access"}</div>
       <StatefulComponent
         :if={Bonfire.UI.Boundaries.Web.SetBoundariesButtonLive.clone_context(@to_boundaries) == false}
@@ -252,7 +252,7 @@
         to_circles={@to_circles}
         exclude_circles={@exclude_circles}
       />
-    </div> --}
+    </div> -->
     {!-- CREATE A NEW ONE --}
     <div :if={!@hide_custom} class="mt-1 pt-1 border-t border-base-content/10">
       <div class={

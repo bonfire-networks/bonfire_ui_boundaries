@@ -230,7 +230,7 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
       :search,
       [search]
     )
-    |> Bonfire.Boundaries.Web.SetBoundariesLive.results_for_multiselect()
+    |> Bonfire.UI.Boundaries.Web.SetBoundariesLive.results_for_multiselect()
   end
 
   def add_member(subject, %{assigns: %{scope: scope, circle_type: circle_type}} = socket)

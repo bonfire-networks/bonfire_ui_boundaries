@@ -21,7 +21,7 @@
                 <Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive
                   to_boundaries={@to_boundaries}
                   boundary_preset={@boundary_preset}
-                  hide_custom={!module_enabled?(Bonfire.Boundaries.Web.SetBoundariesLive, @__context__)}
+                  hide_custom={!module_enabled?(Bonfire.UI.Boundaries.Web.SetBoundariesLive, @__context__)}
                 />
               </div>
             </div>
@@ -37,12 +37,12 @@
           </label>
           <ul
             tabindex="0"
-            class="tooltip z-[9999] menu shadow-sm bg-base-200 border border-base-content/10 rounded-lg p-0 w-full lg:w-[29rem] absolute top-0 left-0 hidden"
+            class="tooltip z-[9999] menu shadow bg-base-100 border border-base-content/10 rounded-xl p-0 w-full lg:w-[29rem] absolute top-0 left-0 hidden"
           >
             <Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive
               to_boundaries={@to_boundaries}
               boundary_preset={@boundary_preset}
-              hide_custom={!module_enabled?(Bonfire.Boundaries.Web.SetBoundariesLive, @__context__)}
+              hide_custom={!module_enabled?(Bonfire.UI.Boundaries.Web.SetBoundariesLive, @__context__)}
             />
           </ul>
         </div>

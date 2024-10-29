@@ -65,10 +65,10 @@ defmodule Bonfire.UI.Boundaries.Web.AclLive do
        #  suggestions: suggestions,
        global_circles: global_circles,
        my_circles:
-         Bonfire.Boundaries.Web.SetBoundariesLive.list_my_circles(
+         Bonfire.UI.Boundaries.Web.SetBoundariesLive.list_my_circles(
            if is_nil(scope), do: current_user, else: scope
          )
-         |> Bonfire.Boundaries.Web.SetBoundariesLive.results_for_multiselect(),
+         |> Bonfire.UI.Boundaries.Web.SetBoundariesLive.results_for_multiselect(),
        settings_section_title: "View boundary preset",
        settings_section_description: l("Create and manage your boundary preset."),
        selected_tab: "acls"
@@ -324,7 +324,7 @@ defmodule Bonfire.UI.Boundaries.Web.AclLive do
 
   defp results_for_multiselect(results, live_select_id, socket) do
     results
-    |> Bonfire.Boundaries.Web.SetBoundariesLive.results_for_multiselect()
+    |> Bonfire.UI.Boundaries.Web.SetBoundariesLive.results_for_multiselect()
     |> debug()
 
     # |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)

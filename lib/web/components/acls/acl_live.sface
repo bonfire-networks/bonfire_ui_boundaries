@@ -5,7 +5,7 @@
         <form id="edit_acl_members" class="" :on-change="select">
           <Bonfire.UI.Common.MultiselectLive
             implementation={:live_select}
-            form_input_name={__MODULE__}
+            form_input_name={:add_circles_to_acl_group}
             preloaded_options={@my_circles}
             label={l("Search for circles or users to add")}
           />

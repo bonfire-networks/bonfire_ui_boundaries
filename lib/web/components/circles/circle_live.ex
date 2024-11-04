@@ -32,9 +32,6 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
   def update(assigns, socket) do
     current_user = current_user(assigns) || current_user(assigns(socket))
 
-    # assigns
-    # |> debug("assigns")
-
     params =
       e(assigns, :__context__, :current_params, %{})
       |> debug("current_params")

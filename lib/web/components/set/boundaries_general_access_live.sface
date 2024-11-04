@@ -15,7 +15,7 @@
         <button
           class="text-base-content w-full p-2 pr-0"
           phx-click={@set_action ||
-            JS.push("Bonfire.Boundaries:replace_boundary",
+            JS.push("Bonfire.UI.Boundaries:replace_boundary",
               value: %{id: "public", name: l("Public")},
               target: "#smart_input"
             )}
@@ -55,7 +55,7 @@
             type="button"
             phx-click={JS.toggle(to: "#extra_boundaries")
             |> JS.toggle(to: "#composer_container")
-            |> JS.push("Bonfire.Boundaries:custom_from_preset_template",
+            |> JS.push("Bonfire.UI.Boundaries:custom_from_preset_template",
               value: %{boundary: "public", name: l("Public")},
               target: "#smart_input"
             )}
@@ -77,7 +77,7 @@
           data-scope="local_boundary"
           class="text-base-content p-2 pr-0 w-full"
           phx-click={@set_action ||
-            JS.push("Bonfire.Boundaries:replace_boundary",
+            JS.push("Bonfire.UI.Boundaries:replace_boundary",
               value: %{id: "local", name: l("Local")},
               target: "#smart_input"
             )}
@@ -120,7 +120,7 @@
             type="button"
             phx-click={JS.toggle(to: "#extra_boundaries")
             |> JS.toggle(to: "#composer_container")
-            |> JS.push("Bonfire.Boundaries:custom_from_preset_template",
+            |> JS.push("Bonfire.UI.Boundaries:custom_from_preset_template",
               value: %{boundary: "local", name: l("Local")},
               target: "#smart_input"
             )}
@@ -141,7 +141,7 @@
         <button
           class="text-base-content"
           phx-click={@set_action ||
-            JS.push("Bonfire.Boundaries:replace_boundary",
+            JS.push("Bonfire.UI.Boundaries:replace_boundary",
               value: %{id: "mentions", name: l("Mentions")},
               target: "#smart_input"
             )}
@@ -177,7 +177,7 @@
         <button
           class="w-full p-2 pr-0 text-base-content"
           phx-click={@set_action ||
-            JS.push("Bonfire.Boundaries:replace_boundary",
+            JS.push("Bonfire.UI.Boundaries:replace_boundary",
               value: %{id: acl_id, name: e(acl, :name, nil)},
               target: "#smart_input"
             )}
@@ -224,7 +224,7 @@
             type="button"
             phx-click={JS.toggle(to: "#extra_boundaries")
             |> JS.toggle(to: "#composer_container")
-            |> JS.push("Bonfire.Boundaries:custom_from_preset_template",
+            |> JS.push("Bonfire.UI.Boundaries:custom_from_preset_template",
               value: %{boundary: acl_id, name: e(acl, :name, nil)},
               target: "#smart_input"
             )}
@@ -263,7 +263,7 @@
           class="text-base-content"
           phx-click={JS.toggle(to: "#extra_boundaries")
           |> JS.toggle(to: "#composer_container")
-          |> JS.push("Bonfire.Boundaries:replace_boundary",
+          |> JS.push("Bonfire.UI.Boundaries:replace_boundary",
             value: %{id: "custom", name: l("Custom")},
             target: "#smart_input"
           )}

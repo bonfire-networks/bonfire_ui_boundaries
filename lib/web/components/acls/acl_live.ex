@@ -137,23 +137,24 @@ defmodule Bonfire.UI.Boundaries.Web.AclLive do
     end
   end
 
-  def handle_event("edit", attrs, socket) do
-    debug(attrs)
-    send_update(Bonfire.UI.Common.ReusableModalLive, id: "edit_boundary", action: :close)
+  # def handle_event("edit", attrs, socket) do
+  #   debug(attrs)
 
-    with {:ok, acl} <-
-           Acls.edit(e(assigns(socket), :acl, nil), current_user_required!(socket), attrs) do
-      {:noreply,
-       socket
-       |> assign_flash(:info, l("Edited!"))
-       |> assign(acl: acl)}
-    else
-      other ->
-        error(other)
+  #   with {:ok, acl} <-
+  #          Acls.edit(e(assigns(socket), :acl, nil), current_user_required!(socket), attrs) do
+  #     send_self(page_title: e(acl, :named, :name, nil))
+  #      {:noreply,
+  #      socket
+  #      |> assign_flash(:info, l("Edited!"))
+  #      |> assign(show: false)
+  #      |> assign(acl: acl)}
+  #   else
+  #     other ->
+  #       error(other)
 
-        {:noreply, assign_flash(socket, :error, l("Could not edit boundary"))}
-    end
-  end
+  #       {:noreply, assign_flash(socket, :error, l("Could not edit boundary"))}
+  #   end
+  # end
 
   def handle_event("add_to_acl", %{"id" => id} = _attrs, socket) do
     add_to_acl(id, socket)

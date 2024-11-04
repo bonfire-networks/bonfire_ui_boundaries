@@ -104,22 +104,23 @@ defmodule Bonfire.UI.Boundaries.Web.SetBoundariesLive do
         name = e(user, :profile, :name, nil)
         username = e(user, :character, :username, nil)
 
-        {"#{name} - #{username}",
-         %{
-           id: e(user, :id, nil),
-           field: circle_field,
-           icon: Media.avatar_url(user),
-           name: name,
-           username: username,
-           type: "user"
-         }}
+        if is_nil(name) and is_nil(username) do
+          nil
+        else
+          {"#{name || ""} - #{username || ""}",
+           %{
+             id: e(user, :id, nil),
+             field: circle_field,
+             icon: Media.avatar_url(user),
+             name: name,
+             username: username,
+             type: "user"
+           }}
+        end
     end)
-    # Filter to remove any nils
-    |> Enum.filter(fn {name, _} -> name != nil end)
+    |> Enum.reject(&is_nil/1)
     # Reduce the results to show in dropdown for clarity to 4 items
     |> Enum.take(4)
-
-    # |> debug()
   end
 
   # def list_my_boundaries(socket) do

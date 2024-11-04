@@ -305,18 +305,45 @@ defmodule Bonfire.UI.Boundaries.LiveHandler do
   #   end
   # end
 
-  def handle_event("edit", attrs, socket) do
-    debug(attrs, "edit circlee")
+  def handle_event("edit_acl", attrs, socket) do
+    debug(attrs)
 
-    with {:ok, circle} <-
-           Circles.edit(
-             e(attrs, :circle_id, nil),
-             current_user_required!(socket),
-             attrs
-           ) do
+    with {:ok, acl} <-
+           Acls.edit(e(assigns(socket), :acl, nil), current_user_required!(socket), attrs) do
+      send_self(page_title: e(acl, :named, :name, nil))
+
       {:noreply,
        socket
        |> assign_flash(:info, l("Edited!"))
+       |> assign(show: false)
+       |> assign(acl: acl)}
+    else
+      other ->
+        error(other)
+
+        {:noreply, assign_flash(socket, :error, l("Could not edit boundary"))}
+    end
+  end
+
+  def handle_event("edit", attrs, socket) do
+    debug(e(attrs, "circle_id", nil), "edit circlee")
+    id = uid!(e(attrs, "circle_id", nil))
+
+    with {:ok, circle} <-
+           Circles.edit(
+             id,
+             current_user_required!(socket),
+             attrs
+           ) do
+      send_self(page_title: e(circle, :named, :name, nil))
+      # maybe_send_update(Bonfire.UI.Boundaries.Web.CircleLive, "view_circle", circle: circle)
+      maybe_send_update(Bonfire.UI.Common.ReusableModalLive, "edit_boundary", show: false)
+
+      {:noreply,
+       socket
+       |> assign_flash(:info, l("Edited!"))
+       # Close the modal by setting show to false
+       |> assign(show: false)
        |> assign(circle: circle)}
     else
       other ->

@@ -122,7 +122,7 @@
           {#match "Mentions"}
             <span class="text-base">@</span>
           {#match "Follows"}
-            <#Icon iconify="fluent:people-list-16-filled" class={@icon_class} />
+            <#Icon iconify="pajamas:group" class={@icon_class} />
           {#match _}
             <#Icon iconify="fluent:door-tag-20-filled" class={@icon_class} />
         {/case}

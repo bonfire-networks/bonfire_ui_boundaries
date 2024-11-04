@@ -35,7 +35,7 @@
             title_text={l("Edit circle name")}
             no_actions
             open_btn_wrapper_class="flex flex-1 w-full"
-            form_opts={%{"phx-submit" => "Bonfire.Boundaries:edit"}}
+            form_opts={%{"phx-submit" => "Bonfire.UI.Boundaries:edit"}}
           >
             <div class="w-full mt-4 form-control">
               <input type="hidden" name="circle_id" value={e(@circle, :id, nil)}>
@@ -77,7 +77,7 @@
               <button
                 data-role="confirm_delete_circle"
                 type="button"
-                :on-click="Bonfire.Boundaries:circle_delete"
+                :on-click="Bonfire.UI.Boundaries:circle_delete"
                 phx-value-go="/boundaries/circles"
                 class="normal-case  btn btn-error btn-sm"
               >

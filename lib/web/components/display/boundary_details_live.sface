@@ -75,7 +75,7 @@
         </summary>
         <ul class="z-[1] menu shadow bg-base-200 rounded-lg p-0">
           <Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive
-            set_action="Bonfire.Boundaries:add_object_acl"
+            set_action="Bonfire.UI.Boundaries:add_object_acl"
             set_opts={%{"phx-value-object_id" => @object_id}}
             boundary_preset={@boundary_preset}
             my_acls={e(@__context__, :my_acls, nil) ||
@@ -92,8 +92,8 @@
         <ul class="flex flex-col divide-y divide-base-content/10 px-4 mt-2">
           <li :for={acl <- @preset_acls} class="flex items-center justify-between py-4">
             <div class="flex items-center gap-3">
-              <span class="flex items-center w-8 h-8 rounded-full place-content-center bg-info">
-                <#Icon iconify="ph:hand-fill" class="inline-block w-5 h-5 text-info-content" />
+              <span class="flex items-center w-10 h-10 rounded-full place-content-center bg-info/10">
+                <#Icon iconify="ph:hand-fill" class="inline-block w-5 h-5 text-base-content" />
               </span>
               <div class="text-sm truncate max-w-full font-medium text-base-content">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil)}</div>
             </div>
@@ -118,7 +118,7 @@
                       </div>
                       <button
                         data-role="remove_from_boundary_btn"
-                        phx-click={JS.push("Bonfire.Boundaries:remove_object_acl",
+                        phx-click={JS.push("Bonfire.UI.Boundaries:remove_object_acl",
                           value: %{
                             acl_id: id(acl),
                             object_id: @object_id

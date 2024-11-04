@@ -17,6 +17,42 @@
       </div>
     </div>
     <div class="m-4">
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <!-- head -->
+          <thead>
+            <tr>
+              <th />
+              <th>Request</th>
+              <th>See</th>
+              <th>Read</th>
+              <th>Like</th>
+              <th>Boost</th>
+              <th>Flag</th>
+              <th>Reply</th>
+              <th>Mention</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- row 1 -->
+            <tr :for={{name, role} <- @role_verbs || []}>
+              <th>{to_string(e(role, :name, nil) || name)}</th>
+              <td :for={verb <- e(role, :can_verbs, nil) || []}>
+                <Bonfire.UI.Boundaries.Web.TabledRolesLive
+                  value
+                  read_only={@read_only}
+                  verb={verb}
+                  all_verbs={@all_verbs}
+                  event_target={@myself}
+                  name={name}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <ul role="list" class="flex flex-col gap-2">
         <li
           class="rounded-box border border-base-content/10"

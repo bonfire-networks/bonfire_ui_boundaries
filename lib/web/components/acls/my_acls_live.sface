@@ -33,8 +33,8 @@
                   do:
                     JS.push(
                       if(not Enum.member?(@to_boundaries_ids, acl_id),
-                        do: "Bonfire.Boundaries:select_boundary",
-                        else: "Bonfire.Boundaries:remove_boundary"
+                        do: "Bonfire.UI.Boundaries:select_boundary",
+                        else: "Bonfire.UI.Boundaries:remove_boundary"
                       ),
                       value: %{
                         id: acl_id,
@@ -72,9 +72,9 @@
                             <span
                               title={e(subject, :named, :name, nil) || e(subject, :stereotyped, :named, :name, nil) ||
                                 e(subject, :name, nil) || id(subject)}
-                              class="flex items-center w-8 h-8 rounded-full place-content-center bg-info"
+                              class="flex items-center w-8 h-8 rounded-full place-content-center bg-info/10"
                             >
-                              <#Icon iconify="fluent:people-list-16-filled" class="inline-block w-5 h-5 text-info-content" />
+                              <#Icon iconify="pajamas:group" class="inline-block w-4 h-4 text-base-content" />
                             </span>
                           </div>
                         {/if}

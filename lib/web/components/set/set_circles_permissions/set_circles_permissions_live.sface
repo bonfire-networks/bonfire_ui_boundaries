@@ -18,8 +18,8 @@
           class="flex py-2 items-center w-full justify-between"
         >
           <div class="flex items-center gap-3 grow">
-            <span class="w-9 h-9 rounded-full bg-base-content/10 flex items-center place-content-center">
-              <#Icon iconify="fluent:people-list-16-filled" class="inline-block w-5 h-5 text-base-content/70" />
+            <span class="w-9 h-9 rounded-full bg-info/10 flex items-center place-content-center">
+              <#Icon iconify="pajamas:group" class="inline-block w-5 h-5 text-base-content/70" />
             </span>
             <div class="text-base font-medium text-base-content truncate max-w-[210px]">{name(data)}</div>
           </div>
@@ -40,7 +40,7 @@
 
             <div
               :if={!@read_only}
-              phx-click={JS.push("Bonfire.Boundaries:remove_circle",
+              phx-click={JS.push("Bonfire.UI.Boundaries:remove_circle",
                 value: %{
                   id: id(data),
                   field: :to_circles,

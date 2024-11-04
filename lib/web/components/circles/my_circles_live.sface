@@ -16,8 +16,8 @@
               else: ~p"/boundaries/scope/user/circle/#{id(circle)}"}
           >
             <div class="flex items-center gap-3 p-5">
-              <span class="w-12 h-12 rounded bg-info flex items-center place-content-center">
-                <#Icon iconify="fluent:people-list-16-filled" class="w-6 h-6 text-info-content" />
+              <span class="w-10 h-10 rounded-full bg-info/10 flex items-center place-content-center">
+                <#Icon iconify="pajamas:group" class="w-5 h-5 text-base-content" />
               </span>
               <div class="flex-1 min-w-0 sm:flex sm:items-center sm:justify-between">
                 <div class="truncate">

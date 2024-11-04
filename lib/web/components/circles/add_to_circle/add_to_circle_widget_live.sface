@@ -25,8 +25,8 @@
             >
               <div class="flex !px-2 items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <div class="w-12 h-12 flex place-content-center items-center rounded bg-info/80">
-                    <#Icon iconify="fluent:people-list-16-filled" class="w-5 h-5 text-info-content" />
+                  <div class="w-10 h-10 flex place-content-center items-center rounded bg-info/10">
+                    <#Icon iconify="pajamas:group" class="w-5 h-5 text-base-content" />
                   </div>
                   <div class="">
                     <div class="flex flex-col">
@@ -52,8 +52,8 @@
             >
               <div class="flex !px-2 items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <div class="w-12 h-12 flex place-content-center items-center rounded bg-info/80">
-                    <#Icon iconify="fluent:people-list-16-filled" class="w-5 h-5 text-info-content" />
+                  <div class="w-10 h-10 flex place-content-center items-center rounded bg-info/10">
+                    <#Icon iconify="pajamas:group" class="w-5 h-5 text-base-content" />
                   </div>
                   <div class="">
                     <div class="flex flex-col">

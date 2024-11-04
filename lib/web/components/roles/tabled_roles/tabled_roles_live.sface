@@ -1,0 +1,36 @@
+{#if !e(assigns, :mini, false)}
+  <li class="flex items-center justify-between gap-8 p-3">
+    <Bonfire.UI.Boundaries.Web.YesMaybeFalseLive
+      value={@value}
+      read_only={@read_only}
+      event_target={@event_target}
+      id={"role_#{@name}_#{Enums.maybe_elem(@verb, 0) || @verb}"}
+      field_name={"role[#{@name}][#{Enums.maybe_elem(@verb, 0) || @verb}]"}
+    />
+  </li>
+{#else}
+  {#case Bonfire.Boundaries.Verbs.get(@verb, @all_verbs)}
+    {#match nil}
+      <li
+        title={e(@verb, :summary, nil)}
+        class={
+          "badge",
+          "badge-success": @value,
+          "badge-error": !@value
+        }
+      >
+        {@verb}
+      </li>
+    {#match verb}
+      <li
+        title={e(verb, :summary, nil)}
+        class={
+          "badge",
+          "badge-success": @value,
+          "badge-error": !@value
+        }
+      >
+        {e(verb, :verb, nil) || verb}
+      </li>
+  {/case}
+{/if}

@@ -2,6 +2,7 @@
   :if={!@read_only && !Acls.is_object_custom?(@acl)}
   data-role="edit_boundary"
   class="edit_name"
+  id="edit_acl_button"
 >
   <Bonfire.UI.Common.OpenModalLive
     id="edit_boundary"
@@ -10,7 +11,7 @@
     open_btn_wrapper_class="flex flex-1 w-full"
   >
     <section role="tabpanel">
-      <form id="edit_acl" phx-submit="edit" class="mt-4">
+      <form id="edit_acl" phx-submit="Bonfire.UI.Boundaries:edit_acl" class="mt-4">
         <div class="w-full form-control">
           <label class="label">
             <span class="text-sm text-base-content/70">{l("Edit the boundary preset name")}</span>
@@ -70,7 +71,7 @@
                 <button
                   data-id="delete_boundary"
                   type="button"
-                  :on-click="Bonfire.Boundaries:acl_delete"
+                  :on-click="Bonfire.UI.Boundaries:acl_delete"
                   phx-value-go="/boundaries/acls"
                   class="normal-case btn btn-error btn-sm"
                 >

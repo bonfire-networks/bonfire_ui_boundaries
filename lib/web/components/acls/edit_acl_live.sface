@@ -17,7 +17,7 @@
       {#else}
         <div class="flex items-center gap-3">
           <span class="flex items-center w-10 h-10 rounded-full place-content-center bg-info">
-            <#Icon iconify="fluent:people-list-16-filled" class="inline-block w-5 h-5 text-info-content" />
+            <#Icon iconify="pajamas:group" class="inline-block w-5 h-5 text-info-content" />
           </span>
           <div class="text-sm truncate max-w-[160px] font-medium text-base-content">{LiveHandler.subject_name(subject)}</div>
         </div>

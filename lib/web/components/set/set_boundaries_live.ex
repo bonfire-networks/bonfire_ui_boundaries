@@ -9,7 +9,7 @@ defmodule Bonfire.UI.Boundaries.Web.SetBoundariesLive do
       )
   )
 
-  prop create_object_type, :any, default: nil
+  # prop create_object_type, :any, default: nil
   prop to_boundaries, :any, default: nil
   prop boundary_preset, :any, default: nil
   prop to_circles, :list, default: []
@@ -17,11 +17,11 @@ defmodule Bonfire.UI.Boundaries.Web.SetBoundariesLive do
 
   prop my_circles, :list, default: nil
 
-  prop showing_within, :atom, default: nil
+  # prop showing_within, :atom, default: nil
 
   prop open_boundaries, :boolean, default: false
-  prop hide_breakdown, :boolean, default: false
-  prop click_override, :boolean, default: false
+  # prop hide_breakdown, :boolean, default: false
+  # prop click_override, :boolean, default: false
   prop read_only, :boolean, default: false
   prop is_caretaker, :boolean, default: true
 

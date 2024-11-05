@@ -16,9 +16,11 @@
       <StatelessComponent
         module={maybe_component(Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive, @__context__)}
         hide_custom
+        parent_id="boundaries_in_settings"
         scope={@scope}
         set_action="Bonfire.UI.Boundaries:set_default_boundary"
         set_opts={%{"phx-value-scope" => @scope}}
+        parent_id="boundaries_in_settings"
         boundary_preset={Settings.get(
           [:ui, :boundary_preset],
           "public",

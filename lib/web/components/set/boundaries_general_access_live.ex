@@ -6,7 +6,7 @@ defmodule Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive do
   prop to_boundaries, :any, default: nil
   prop my_acls, :any, default: nil
   prop scope, :any, default: :user
-  prop is_dropdown, :boolean, default: false
+  # prop is_dropdown, :boolean, default: false
   prop include_stereotypes, :boolean, default: false
   prop hide_presets, :boolean, default: false
   prop hide_custom, :boolean, default: false
@@ -14,11 +14,8 @@ defmodule Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive do
   prop set_opts, :map, default: %{}
   prop to_circles, :any, default: nil
   prop exclude_circles, :any, default: nil
-
-  def matches?({preset, _}, preset), do: true
-  def matches?([{preset, _}], preset), do: true
-  def matches?(preset, preset), do: true
-  def matches?(_, _), do: false
+  prop parent_id, :string, default: nil
+  prop is_customizable, :boolean, default: false
 
   def render(%{my_acls: nil} = assigns) do
     # debug(assigns)

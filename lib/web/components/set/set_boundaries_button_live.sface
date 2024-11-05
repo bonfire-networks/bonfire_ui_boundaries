@@ -3,7 +3,7 @@
     <div class="flex items-center px-1 gap-2 border-l border-r border-base-content/10">
       <div class="flex relative z-50 items-center flex-1 gap-2">
         <!-- on mobile -->
-        <div class="lg:hidden">
+        <!-- <div class="lg:hidden">
           <button
             type="button"
             class="flex items-center justify-between gap-2 btn-ghost normal-case  btn-xs btn text-primary"
@@ -26,9 +26,9 @@
               </div>
             </div>
           </dialog>
-        </div>
+        </div> -->
         <!-- / desktop -->
-        <div phx-hook="Tooltip" id="popup_boundaries" class="hidden lg:block">
+        <div phx-hook="Tooltip" id="popup_boundaries">
           <label class="tooltip-button flex items-center justify-between gap-2 btn-ghost normal-case  btn-xs btn text-primary">
             <Bonfire.UI.Boundaries.Web.BoundariesPresetNameLive
               icon_class="w-5 h-5 text-primary"
@@ -41,6 +41,7 @@
           >
             <Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive
               to_boundaries={@to_boundaries}
+              is_customizable
               boundary_preset={@boundary_preset}
               hide_custom={!module_enabled?(Bonfire.UI.Boundaries.Web.SetBoundariesLive, @__context__)}
             />

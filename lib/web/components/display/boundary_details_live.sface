@@ -83,7 +83,7 @@
             include_stereotypes
             hide_presets
             hide_custom
-            is_dropdown
+            parent_id="boundaries_in_activity_preview"
           />
         </ul>
       </details>

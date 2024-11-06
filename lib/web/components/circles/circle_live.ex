@@ -199,7 +199,7 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
 
   def handle_event(
         "live_select_change",
-        %{"id" => live_select_id, "text" => search},
+        %{"field" => _field, "id" => live_select_id, "text" => search},
         %{assigns: %{circle_type: circle_type}} = socket
       )
       when circle_type in [:silence, :ghost] do
@@ -214,7 +214,7 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
     {:noreply, socket}
   end
 
-  def handle_event("live_select_change", %{"id" => live_select_id, "text" => search}, socket) do
+  def handle_event("live_select_change", %{"field" => _field, "id" => live_select_id, "text" => search}, socket) do
     do_results_for_multiselect(search)
     |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
 

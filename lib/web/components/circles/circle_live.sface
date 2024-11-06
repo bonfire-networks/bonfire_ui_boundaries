@@ -5,6 +5,7 @@
       class="menu menu-horizontal gap-3 bg-base-100 w-full border-base-content/10 border-b"
       :if={@show_add || (!@stereotype_id and !@read_only)}
     >
+      
       <form
         id="edit_circle_participant"
         phx-target={@myself}
@@ -20,7 +21,7 @@
           /> -->
         <Bonfire.UI.Common.MultiselectLive
           implementation={:live_select}
-          form_input_name={:add_users_to_circle}
+          form_input_name={__MODULE__}
           label={l("Search for users to add")}
           event_target="#edit_circle_participant"
         />

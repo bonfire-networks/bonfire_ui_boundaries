@@ -83,7 +83,7 @@
       set_opts={@set_opts}
       my_acls={@my_acls}
       to_boundaries={@to_boundaries}
-      hide_custom={@hide_custom}
+      hide_custom
     />
   </div>
   {!-- <Bonfire.UI.Boundaries.Web.BoundaryComposerActionsLive :if={!@is_dropdown} done_label={l("Back")} /> --}

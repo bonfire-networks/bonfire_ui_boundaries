@@ -237,9 +237,7 @@
     }>
       <button
         class="text-base-content flex items-center gap-2 justify-between w-full"
-        phx-click={JS.toggle(to: "#extra_boundaries")
-        |> JS.toggle(to: "#composer_container")
-        |> JS.push("Bonfire.UI.Boundaries:replace_boundary",
+        phx-click={JS.push("Bonfire.UI.Boundaries:replace_boundary",
           value: %{id: "custom", name: l("Custom")},
           target: "#smart_input"
         )}
@@ -254,14 +252,6 @@
             <p class="text-xs text-base-content/70">{l("Specify custom boundaries, starting with a blank slate.")}</p>
           </div>
         </div>
-
-        <!-- <input
-            :if={@is_customizable}
-            type="radio"
-            name="radio-1"
-            class="radio"
-            checked={matches?(@boundary_preset, "custom")}
-          /> -->
       </button>
     </div>
   {/if}

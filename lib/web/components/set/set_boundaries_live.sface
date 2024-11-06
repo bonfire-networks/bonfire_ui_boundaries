@@ -45,9 +45,9 @@
   <section
     :if={!@read_only or (is_list(@exclude_circles) and @exclude_circles != [])}
     <section
-    class="p-3 border border-dashed border-error/20 bg-base-100 rounded-lg"
+    class="p-3 border border-dashed border-error/20 bg-error/5 rounded-lg"
   >
-    <div class="text-sm text-center mb-2 text-error/90 font-medium">{l("Remove permissions")}</div>
+    <div class="text-sm text-center mb-2 text-error/90 font-medium">{l("Revoke permissions")}</div>
     <Bonfire.UI.Common.MultiselectLive
       :if={!@read_only}
       implementation={:live_select}

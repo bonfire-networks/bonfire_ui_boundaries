@@ -18,7 +18,7 @@ defmodule Bonfire.UI.Boundaries.Web.BoundaryIconLive do
   prop class, :css_class, default: nil
 
   def update_many(assigns_sockets) do
-    (Bonfire.UI.Boundaries.LiveHandler.update_many(assigns_sockets,
+    (Bonfire.Boundaries.LiveHandler.update_many(assigns_sockets,
        caller_module: __MODULE__
      ) || assigns_sockets)
     |> Enum.map(fn

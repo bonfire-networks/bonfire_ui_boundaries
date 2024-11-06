@@ -1,6 +1,6 @@
 defmodule Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive do
   use Bonfire.UI.Common.Web, :stateless_component
-  alias Bonfire.UI.Boundaries.LiveHandler
+  alias Bonfire.Boundaries.LiveHandler
 
   prop boundary_preset, :any, default: nil
   prop to_boundaries, :any, default: nil

@@ -2,7 +2,7 @@ defmodule Bonfire.UI.Boundaries.Web.AclLive do
   use Bonfire.UI.Common.Web, :stateful_component
   alias Bonfire.Boundaries.Acls
   alias Bonfire.Boundaries.Grants
-  alias Bonfire.UI.Boundaries.LiveHandler
+  alias Bonfire.Boundaries.LiveHandler
   # alias Bonfire.Boundaries.Integration
   require Integer
 

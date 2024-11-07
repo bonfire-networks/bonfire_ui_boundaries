@@ -18,7 +18,7 @@
         hide_custom
         parent_id="boundaries_in_settings"
         scope={@scope}
-        set_action="Bonfire.UI.Boundaries:set_default_boundary"
+        set_action="Bonfire.Boundaries:set_default_boundary"
         set_opts={%{"phx-value-scope" => @scope}}
         parent_id="boundaries_in_settings"
         boundary_preset={Settings.get(

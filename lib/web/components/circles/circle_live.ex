@@ -153,14 +153,41 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
     end
   end
 
-  def handle_event("multi_select", %{data: data, text: _text}, socket) do
-    add_member(input_to_atoms(data), socket)
-  end
-
-  def handle_event("select", %{"id" => id}, socket) do
-    debug(id)
+  def handle_event("multi_select", %{id: id, name: _name}, socket) do
     add_member(input_to_atoms(e(assigns(socket), :suggestions, %{})[id]) || id, socket)
   end
+
+  def handle_event(
+        "multi_select",
+        %{"_target" => ["multi_select", module_name], "multi_select" => multi_select_data} =
+          params,
+        socket
+      ) do
+    # Decode the JSON data for the selected item
+    case Jason.decode(multi_select_data[module_name]) do
+      {:ok, %{"id" => id, "name" => name, "type" => type}} ->
+        # Process the decoded data
+        IO.inspect({id, name, type}, label: "Selected Item")
+        add_member(input_to_atoms(e(assigns(socket), :suggestions, %{})[id]) || id, socket)
+
+      {:error, reason} ->
+        # Handle JSON decoding errors
+        IO.warn("Failed to decode multi_select data: #{reason}")
+        {:noreply, socket}
+    end
+  end
+
+  # def handle_event("live_select_change", %{"field" => _field, "id" => live_select_id, "text" => search}, socket) do
+  #   do_results_for_multiselect(search)
+  #   |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
+
+  #   {:noreply, socket}
+  # end
+
+  # def handle_event("select", %{"id" => id}, socket) do
+  #   debug(id)
+  #   add_member(input_to_atoms(e(assigns(socket), :suggestions, %{})[id]) || id, socket)
+  # end
 
   def handle_event(
         "remove",
@@ -214,7 +241,11 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
     {:noreply, socket}
   end
 
-  def handle_event("live_select_change", %{"field" => _field, "id" => live_select_id, "text" => search}, socket) do
+  def handle_event(
+        "live_select_change",
+        %{"field" => _field, "id" => live_select_id, "text" => search},
+        socket
+      ) do
     do_results_for_multiselect(search)
     |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
 
@@ -265,7 +296,6 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
              %{id => subject},
              e(assigns(socket), :members, %{})
            )
-           |> debug()
        )}
     else
       other ->

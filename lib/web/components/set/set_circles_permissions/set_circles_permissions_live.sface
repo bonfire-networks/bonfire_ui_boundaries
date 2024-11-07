@@ -40,7 +40,7 @@
 
             <div
               :if={!@read_only}
-              phx-click={JS.push("Bonfire.UI.Boundaries:remove_circle",
+              phx-click={JS.push("Bonfire.Boundaries:remove_circle",
                 value: %{
                   id: id(data),
                   field: :to_circles,

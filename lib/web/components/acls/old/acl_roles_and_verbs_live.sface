@@ -325,7 +325,7 @@
               <button 
                 data-id="archive_boundary"
                 type="button" 
-                :on-click="Bonfire.UI.Boundaries:acl_soft_delete" 
+                :on-click="Bonfire.Boundaries:acl_soft_delete" 
                 phx-value-go="/boundaries/acls"
                 class="normal-case btn btn-outline btn-warning btn-sm">
                 <span class="text-left truncate ellipsis">{l("Archive this boundary")}</span>
@@ -355,7 +355,7 @@
                 <button
                   data-id="delete_boundary"
                   type="button"
-                  :on-click="Bonfire.UI.Boundaries:acl_delete"
+                  :on-click="Bonfire.Boundaries:acl_delete"
                   phx-value-go="/boundaries/acls"
                   class="normal-case btn btn-error btn-sm"
                 >

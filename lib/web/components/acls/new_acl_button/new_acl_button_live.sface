@@ -2,7 +2,7 @@
   <Bonfire.UI.Common.OpenModalLive
     id="new_acl"
     title_text={l("New boundary preset")}
-    form_opts={%{"phx-submit" => "Bonfire.UI.Boundaries:acl_create"}}
+    form_opts={%{"phx-submit" => "Bonfire.Boundaries:acl_create"}}
     no_actions
   >
     <Bonfire.UI.Boundaries.Web.NewAclLive scope={@scope} setting_boundaries={@setting_boundaries} />

@@ -55,14 +55,16 @@
                 </div>
               </div>
               <div>
-                <Bonfire.UI.Boundaries.Web.SetBoundariesLive
-                  to_boundaries={@to_boundaries}
-                  boundary_preset={@boundary_preset}
-                  to_circles={[]}
-                  exclude_circles={[]}
-                  my_circles={[]}
-                  is_caretaker
-                />
+                <form phx-change="multi_select">
+                  <Bonfire.UI.Boundaries.Web.SetBoundariesLive
+                    to_boundaries={@to_boundaries}
+                    boundary_preset={@boundary_preset}
+                    to_circles={[]}
+                    exclude_circles={[]}
+                    my_circles={[]}
+                    is_caretaker
+                  />
+                </form>
               </div>
             </div>
           </div>

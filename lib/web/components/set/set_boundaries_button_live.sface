@@ -42,6 +42,7 @@
             <Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive
               to_boundaries={@to_boundaries}
               is_customizable
+              to_circles={@to_circles}
               boundary_preset={@boundary_preset}
               hide_custom={!module_enabled?(Bonfire.UI.Boundaries.Web.SetBoundariesLive, @__context__)}
             />

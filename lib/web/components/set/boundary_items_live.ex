@@ -17,10 +17,11 @@ defmodule Bonfire.UI.Boundaries.Web.BoundaryItemsLive do
   def name(data) when is_binary(data), do: data
   def name(data) when is_tuple(data), do: elem(data, 1)
 
-  def name(data) when is_map(data),
-    do:
-      e(data, :name, nil) || e(data, :profile, :name, nil) || e(data, :named, :name, nil) ||
-        e(data, :stereotyped, :named, :name, nil)
+  def name(data) when is_map(data) do
+    e(data, :name, nil) || e(data, "name", nil) || e(data, :profile, :name, nil) ||
+      e(data, :named, :name, nil) ||
+      e(data, :stereotyped, :named, :name, nil)
+  end
 
   def name(data) do
     warn(data, "Dunno how to display")

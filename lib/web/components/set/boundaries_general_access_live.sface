@@ -56,12 +56,10 @@
               </div>
               <div>
                 <Bonfire.UI.Boundaries.Web.SetBoundariesLive
-                  id="advanced_permissions"
                   to_boundaries={@to_boundaries}
                   boundary_preset={@boundary_preset}
-                  to_circles={[]}
+                  to_circles={@to_circles}
                   exclude_circles={[]}
-                  my_circles={[]}
                   is_caretaker
                 />
               </div>

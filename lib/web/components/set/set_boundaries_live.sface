@@ -6,13 +6,12 @@
     <!-- Panel -->
     <section class="p-3 border border-base-content/10 bg-base-100 rounded-lg">
       <div class="text-sm  mb-2 text-center text-base-content/90 font-medium">{l("Grant more permissions")}</div>
-      <form phx-change="multi_select" phx-target={@myself}>
+      <form phx-change="multi_select">
         <Bonfire.UI.Common.MultiselectLive
           :if={!@read_only}
           implementation={:live_select}
           field={:to_circles}
           form_input_name={__MODULE__}
-          event_target={@myself}
           preloaded_options={results_for_multiselect(@my_circles)}
           label={l("Add circles or people")}
         />
@@ -52,7 +51,7 @@
       class="p-3 border border-dashed border-error/20 bg-error/5 rounded-lg"
     >
       <div class="text-sm text-center mb-2 text-error/90 font-medium">{l("Revoke permissions")}</div>
-      <form phx-change="multi_select" phx-target={@myself}>
+      <form phx-change="multi_select">
         <Bonfire.UI.Common.MultiselectLive
           :if={!@read_only}
           implementation={:live_select}

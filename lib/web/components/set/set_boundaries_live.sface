@@ -1,37 +1,76 @@
-<div
-  :if={@is_caretaker}
-  class="w-full h-full multiselect_in_composer gap-4 mt-4 flex flex-col flex-1 grow"
->
-  <!-- Panel -->
-  <section class="p-3 border border-base-content/10 bg-base-100 rounded-lg">
-    <div class="text-sm  mb-2 text-center text-base-content/90 font-medium">{l("Grant more permissions")}</div>
-    <Bonfire.UI.Common.MultiselectLive
-      :if={!@read_only}
-      implementation={:live_select}
-      field={:to_circles}
-      form_input_name={__MODULE__}
-      preloaded_options={results_for_multiselect(@my_circles)}
-      label={l("Add circles or people")}
-    />
-    <div class="flex h-full flex-1 flex-col gap-2">
-      <div class="mt-4 flex justify-between items-center">
-        <StatelessComponent
-          module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
-          avatar_class="w-9 h-9 rounded-full"
-          wrapper_class="flex items-center justify-between"
-          profile={e(current_user(@__context__), :profile, nil)}
-          character={e(current_user(@__context__), :character, nil)}
-          show_controls={[]}
+<div>
+  <div
+    :if={@is_caretaker}
+    class="w-full h-full multiselect_in_composer gap-4 mt-4 flex flex-col flex-1 grow"
+  >
+    <!-- Panel -->
+    <section class="p-3 border border-base-content/10 bg-base-100 rounded-lg">
+      <div class="text-sm  mb-2 text-center text-base-content/90 font-medium">{l("Grant more permissions")}</div>
+      <form phx-change="multi_select" phx-target={@myself}>
+        <Bonfire.UI.Common.MultiselectLive
+          :if={!@read_only}
+          implementation={:live_select}
+          field={:to_circles}
+          form_input_name={__MODULE__}
+          event_target={@myself}
+          preloaded_options={results_for_multiselect(@my_circles)}
+          label={l("Add circles or people")}
         />
-        <div class="btn btn-sm btn-disabled  normal-case">{l("Caretaker")}</div>
+      </form>
+      <div class="flex h-full flex-1 flex-col gap-2">
+        <div class="mt-4 flex justify-between items-center">
+          <StatelessComponent
+            module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
+            avatar_class="w-9 h-9 rounded-full"
+            wrapper_class="flex items-center justify-between"
+            profile={e(current_user(@__context__), :profile, nil)}
+            character={e(current_user(@__context__), :character, nil)}
+            show_controls={[]}
+          />
+          <div class="btn btn-sm btn-disabled  normal-case">{l("Caretaker")}</div>
+        </div>
+        {#if @to_circles && @to_circles != []}
+          <Bonfire.UI.Boundaries.Web.BoundaryItemsLive
+            read_only={@read_only}
+            to_boundaries={[]}
+            circles={@to_circles}
+            roles_for_dropdown={@roles_for_dropdown
+            |> Enum.reject(fn
+              {"cannot_" <> _, _} -> true
+              {key, _} -> String.starts_with?(to_string(key), "cannot_")
+            end)}
+          />
+        {#else}
+          <div />
+        {/if}
       </div>
-      {#if @to_circles && @to_circles != []}
+    </section>
+
+    <section
+      :if={!@read_only or (is_list(@exclude_circles) and @exclude_circles != [])}
+      <section
+      class="p-3 border border-dashed border-error/20 bg-error/5 rounded-lg"
+    >
+      <div class="text-sm text-center mb-2 text-error/90 font-medium">{l("Revoke permissions")}</div>
+      <form phx-change="multi_select" phx-target={@myself}>
+        <Bonfire.UI.Common.MultiselectLive
+          :if={!@read_only}
+          implementation={:live_select}
+          field={:exclude_circles}
+          form_input_name={Bonfire.UI.Boundaries.Web.ExcludeBoundaries}
+          preloaded_options={results_for_multiselect(@my_circles, :exclude_circles)}
+          label={l("Select or search for circles or people to exclude")}
+        />
+      </form>
+
+      {#if @exclude_circles && @exclude_circles != []}
         <Bonfire.UI.Boundaries.Web.BoundaryItemsLive
           read_only={@read_only}
           to_boundaries={[]}
-          circles={@to_circles}
+          circles={@exclude_circles}
+          field={:exclude_circles}
           roles_for_dropdown={@roles_for_dropdown
-          |> Enum.reject(fn
+          |> Enum.filter(fn
             {"cannot_" <> _, _} -> true
             {key, _} -> String.starts_with?(to_string(key), "cannot_")
           end)}
@@ -39,38 +78,6 @@
       {#else}
         <div />
       {/if}
-    </div>
-  </section>
-
-  <section
-    :if={!@read_only or (is_list(@exclude_circles) and @exclude_circles != [])}
-    <section
-    class="p-3 border border-dashed border-error/20 bg-error/5 rounded-lg"
-  >
-    <div class="text-sm text-center mb-2 text-error/90 font-medium">{l("Revoke permissions")}</div>
-    <Bonfire.UI.Common.MultiselectLive
-      :if={!@read_only}
-      implementation={:live_select}
-      field={:exclude_circles}
-      form_input_name={Bonfire.UI.Boundaries.Web.ExcludeBoundaries}
-      preloaded_options={results_for_multiselect(@my_circles, :exclude_circles)}
-      label={l("Select or search for circles or people to exclude")}
-    />
-
-    {#if @exclude_circles && @exclude_circles != []}
-      <Bonfire.UI.Boundaries.Web.BoundaryItemsLive
-        read_only={@read_only}
-        to_boundaries={[]}
-        circles={@exclude_circles}
-        field={:exclude_circles}
-        roles_for_dropdown={@roles_for_dropdown
-        |> Enum.filter(fn
-          {"cannot_" <> _, _} -> true
-          {key, _} -> String.starts_with?(to_string(key), "cannot_")
-        end)}
-      />
-    {#else}
-      <div />
-    {/if}
-  </section>
+    </section>
+  </div>
 </div>

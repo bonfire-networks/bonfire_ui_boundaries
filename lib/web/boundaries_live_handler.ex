@@ -129,11 +129,11 @@ defmodule Bonfire.Boundaries.LiveHandler do
   def handle_event("replace_boundary", %{"id" => acl_id} = params, socket) do
     debug(acl_id, "replace_boundary")
 
-    maybe_send_update(
-      Bonfire.UI.Common.OpenModalLive,
-      "persistent_modal",
-      to_boundaries: [{acl_id, e(params, "name", acl_id)}]
-    )
+    # maybe_send_update(
+    #   Bonfire.UI.Common.OpenModalLive,
+    #   "persistent_modal",
+    #   to_boundaries: [{acl_id, e(params, "name", acl_id)}]
+    # )
 
     {:noreply,
      assign(

@@ -1,0 +1,55 @@
+<div>
+  <div class="flex -mt-[0.75rem] pb-4 items-center justify-between gap-4 pr-6">
+    <div class="text-lg font-semibold">{l("Define the activity boundary")}</div>
+    <button type="button" class="normal-case btn-sm btn-ghost btn btn-circle opacity-70">
+      <#Icon iconify="material-symbols:help-outline" class="w-5 h-5" />
+    </button>
+  </div>
+  <div class="flex items-center justify-between gap-6 items-start">
+    <div class="flex flex-col gap-1">
+      <div class="text-sm font-medium">{l("General permissions")}</div>
+      <div class="text-sm font-light text-base-content/70">{l("Select a preset to apply to your activity")}</div>
+    </div>
+    <div data-position="bottom-end" phx-hook="Tooltip" id="popup_boundaries_in_modal">
+      <label class="tooltip-button flex items-center justify-between gap-2 btn-outline normal-case btn">
+        <Bonfire.UI.Boundaries.Web.BoundariesPresetNameLive
+          icon_class="w-5 h-5"
+          to_boundaries={@to_boundaries}
+        />
+      </label>
+      <ul
+        tabindex="0"
+        class="tooltip z-[9999] menu shadow bg-base-100 border border-base-content/10 rounded-xl p-0 w-full lg:w-[29rem] absolute top-0 left-0 hidden"
+      >
+        <Bonfire.UI.Boundaries.Web.GeneralAccessListLive
+          hide_presets={@hide_presets}
+          boundary_preset={@boundary_preset}
+          set_action={@set_action}
+          set_opts={@set_opts}
+          my_acls={@my_acls}
+          is_customizable
+          to_boundaries={@to_boundaries}
+          hide_custom={@hide_custom}
+        />
+      </ul>
+    </div>
+  </div>
+  <div class="mt-4 pt-4 border-t border-base-content/10">
+    <div class="flex items-center justify-between gap-4 cursor-pointer">
+      <div class="flex flex-col gap-1">
+        <div class="text-sm font-medium">{l("Advanced permissions")}</div>
+        <div class="text-sm font-light text-base-content/70">{l("Further customize who can see and interact with your activity")}</div>
+      </div>
+    </div>
+    <div>
+      <Bonfire.UI.Boundaries.Web.SetBoundariesLive
+        to_boundaries={@to_boundaries}
+        to_circles={@to_circles || []}
+        exclude_circles={@exclude_circles || []}
+        boundary_preset={@boundary_preset}
+        is_caretaker
+        id="set_boundaries_live"
+      />
+    </div>
+  </div>
+</div>

@@ -1,18 +1,19 @@
 <div>
   <div
-    :if={@is_caretaker}
+    :if={e(assigns, :is_caretaker, true)}
     class="w-full h-full multiselect_in_composer gap-4 mt-4 flex flex-col flex-1 grow"
   >
     <!-- Panel -->
     <section class="p-3 border border-base-content/10 bg-base-100 rounded-lg">
       <div class="text-sm  mb-2 text-center text-base-content/90 font-medium">{l("Grant more permissions")}</div>
-      <form phx-change="multi_select">
+
+      <form phx-change="multi_select" phx-target="#smart_input_container">
         <Bonfire.UI.Common.MultiselectLive
-          :if={!@read_only}
+          :if={!e(assigns, :read_only, false)}
           implementation={:live_select}
           field={:to_circles}
           form_input_name={__MODULE__}
-          preloaded_options={results_for_multiselect(@my_circles)}
+          preloaded_options={results_for_multiselect(e(assigns, :my_circles, []))}
           label={l("Add circles or people")}
         />
       </form>
@@ -28,52 +29,56 @@
           />
           <div class="btn btn-sm btn-disabled  normal-case">{l("Caretaker")}</div>
         </div>
-        {#if @to_circles && @to_circles != []}
-          <Bonfire.UI.Boundaries.Web.BoundaryItemsLive
-            read_only={@read_only}
-            to_boundaries={[]}
-            circles={@to_circles}
-            roles_for_dropdown={@roles_for_dropdown
-            |> Enum.reject(fn
-              {"cannot_" <> _, _} -> true
-              {key, _} -> String.starts_with?(to_string(key), "cannot_")
-            end)}
-          />
-        {#else}
-          <div />
-        {/if}
+        <form phx-change="Bonfire.Boundaries:select" phx-target="#smart_input_live">
+          {#if e(assigns, :to_circles, []) && e(assigns, :to_circles, []) != []}
+            <Bonfire.UI.Boundaries.Web.BoundaryItemsLive
+              read_only={e(assigns, :read_only, false)}
+              to_boundaries={e(assigns, :to_boundaries, [])}
+              circles={e(assigns, :to_circles, [])}
+              roles_for_dropdown={e(assigns, :roles_for_dropdown, [])
+              |> Enum.reject(fn
+                {"cannot_" <> _, _} -> true
+                {key, _} -> String.starts_with?(to_string(key), "cannot_")
+              end)}
+            />
+          {#else}
+            <div />
+          {/if}
+        </form>
       </div>
     </section>
 
     <section
-      :if={!@read_only or (is_list(@exclude_circles) and @exclude_circles != [])}
+      :if={!e(assigns, :read_only, false) or
+        (is_list(e(assigns, :exclude_circles, [])) and e(assigns, :exclude_circles, []) != [])}
       <section
       class="p-3 border border-dashed border-error/20 bg-error/5 rounded-lg"
     >
       <div class="text-sm text-center mb-2 text-error/90 font-medium">{l("Revoke permissions")}</div>
-      <form phx-change="multi_select">
+      <form phx-change="multi_select" phx-target="#smart_input_container">
         <Bonfire.UI.Common.MultiselectLive
-          :if={!@read_only}
+          :if={!e(assigns, :read_only, false)}
           implementation={:live_select}
           field={:exclude_circles}
           form_input_name={Bonfire.UI.Boundaries.Web.ExcludeBoundaries}
-          preloaded_options={results_for_multiselect(@my_circles, :exclude_circles)}
+          preloaded_options={results_for_multiselect(e(assigns, :my_circles, []), :exclude_circles)}
           label={l("Select or search for circles or people to exclude")}
         />
       </form>
-
-      {#if @exclude_circles && @exclude_circles != []}
-        <Bonfire.UI.Boundaries.Web.BoundaryItemsLive
-          read_only={@read_only}
-          to_boundaries={[]}
-          circles={@exclude_circles}
-          field={:exclude_circles}
-          roles_for_dropdown={@roles_for_dropdown
-          |> Enum.filter(fn
-            {"cannot_" <> _, _} -> true
-            {key, _} -> String.starts_with?(to_string(key), "cannot_")
-          end)}
-        />
+      {#if e(assigns, :exclude_circles, []) && e(assigns, :exclude_circles, []) != []}
+        <form phx-change="Bonfire.Boundaries:select" phx-target="#smart_input_live">
+          <Bonfire.UI.Boundaries.Web.BoundaryItemsLive
+            read_only={e(assigns, :read_only, false)}
+            to_boundaries={[]}
+            circles={e(assigns, :exclude_circles, [])}
+            field={:exclude_circles}
+            roles_for_dropdown={e(assigns, :roles_for_dropdown, [])
+            |> Enum.filter(fn
+              {"cannot_" <> _, _} -> true
+              {key, _} -> String.starts_with?(to_string(key), "cannot_")
+            end)}
+          />
+        </form>
       {#else}
         <div />
       {/if}

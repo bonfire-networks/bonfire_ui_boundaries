@@ -129,11 +129,11 @@ defmodule Bonfire.Boundaries.LiveHandler do
   def handle_event("replace_boundary", %{"id" => acl_id} = params, socket) do
     debug(acl_id, "replace_boundary")
 
-    # maybe_send_update(
-    #   Bonfire.UI.Common.OpenModalLive,
-    #   "persistent_modal",
-    #   to_boundaries: [{acl_id, e(params, "name", acl_id)}]
-    # )
+    maybe_send_update(
+      Bonfire.UI.Boundaries.Web.CustomizeBoundaryLive,
+      "customize_boundary_live",
+      to_boundaries: [{acl_id, e(params, "name", acl_id)}]
+    )
 
     {:noreply,
      assign(
@@ -202,6 +202,59 @@ defmodule Bonfire.Boundaries.LiveHandler do
   end
 
   def handle_event(
+        "multi_select",
+        %{data: data, text: _text},
+        socket
+      ) do
+    # debug(data, text)
+
+    field =
+      maybe_to_atom(e(data, "field", :to_boundaries))
+      |> debug("field")
+
+    appended_data =
+      case field do
+        :to_boundaries ->
+          # [{"public", l("Public")}]
+          []
+          |> (e(assigns(socket), field, ...) ++
+                [{id(data), data}])
+
+        :to_circles ->
+          e(assigns(socket), field, []) ++
+            [{data, nil}]
+
+        :exclude_circles ->
+          e(assigns(socket), field, []) ++
+            [{data, nil}]
+
+        _ ->
+          e(assigns(socket), field, []) ++
+            [{data, id(data)}]
+      end
+      |> debug("list")
+      |> Enum.uniq()
+      |> debug("uniq")
+
+    maybe_send_update(
+      Bonfire.UI.Boundaries.Web.CustomizeBoundaryLive,
+      "customize_boundary_live",
+      %{field => appended_data}
+    )
+
+    {:noreply,
+     socket
+     |> assign(
+       field,
+       appended_data
+     )
+     |> assign_global(
+       _already_live_selected_:
+         Enum.uniq(e(assigns(socket), :__context, :_already_live_selected_, []) ++ [field])
+     )}
+  end
+
+  def handle_event(
         "select",
         %{"to_circles" => to_circles, "exclude_circles" => exclude_circles} = _params,
         socket
@@ -214,6 +267,10 @@ defmodule Bonfire.Boundaries.LiveHandler do
        exclude_circles,
        ...
      )}
+  end
+
+  def handle_event("multi_select", _params, socket) do
+    {:noreply, socket}
   end
 
   def handle_event("select", %{"to_circles" => circles} = _params, socket) do
@@ -234,6 +291,12 @@ defmodule Bonfire.Boundaries.LiveHandler do
   def handle_event(action, %{"id" => deselected} = attrs, socket)
       when action in ["deselect", "remove_circle"] and is_binary(deselected) do
     field = e(attrs, "field", nil) |> Types.maybe_to_atom() || :to_circles
+
+    maybe_send_update(
+      Bonfire.UI.Boundaries.Web.CustomizeBoundaryLive,
+      "customize_boundary_live",
+      %{field => remove_from_circle_tuples([deselected], e(assigns(socket), field, []))}
+    )
 
     {:noreply,
      assign(
@@ -645,16 +708,19 @@ defmodule Bonfire.Boundaries.LiveHandler do
       |> debug("computed")
 
     if previous_value != circles do
+      maybe_send_update(
+        Bonfire.UI.Boundaries.Web.CustomizeBoundaryLive,
+        "customize_boundary_live",
+        %{field => circles}
+      )
+
       socket
       |> assign(field, circles)
-      |> assign(
-        reset_smart_input: false
-        #  ^to avoid un-reset the input
-      )
-      |> assign_global(
-        _already_live_selected_:
-          Enum.uniq(e(assigns(socket), :__context, :_already_live_selected_, []) ++ [field])
-      )
+
+      # |> assign_global(
+      #   _already_live_selected_:
+      #     Enum.uniq(e(assigns(socket), :__context, :_already_live_selected_, []) ++ [field])
+      # )
     else
       socket
     end

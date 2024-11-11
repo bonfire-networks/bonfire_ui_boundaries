@@ -11,7 +11,6 @@ defmodule Bonfire.UI.Boundaries.Web.SetBoundariesLive do
 
   # prop create_object_type, :any, default: nil
   prop to_boundaries, :any, default: nil
-  prop boundary_preset, :any, default: nil
   prop to_circles, :list, default: []
   prop exclude_circles, :list, default: []
 
@@ -270,6 +269,12 @@ defmodule Bonfire.UI.Boundaries.Web.SetBoundariesLive do
       |> debug("list")
       |> Enum.uniq()
       |> debug("uniq")
+
+    maybe_send_update(
+      Bonfire.UI.Boundaries.Web.CustomizeBoundaryLive,
+      "customize_boundary_live",
+      %{field => appended_data}
+    )
 
     {:noreply,
      socket

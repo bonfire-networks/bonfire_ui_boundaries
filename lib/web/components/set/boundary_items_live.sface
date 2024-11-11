@@ -34,7 +34,7 @@
         </div>
     {/case}
     <div class="items-center flex gap-2">
-      <div class="flex items-center gap-2" phx-update="ignore">
+      <div class="flex items-center gap-2">
         {#if @read_only}
           {role}
         {#else}

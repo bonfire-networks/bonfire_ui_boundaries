@@ -1,7 +1,5 @@
 <div>
   {#if !@hide_presets}
-    <!-- <code>{inspect(@boundary_preset, pretty: true)}</code> -->
-
     <!-- PUBLIC -->
     <div class={
       "flex items-center gap-3 rounded-lg justify-between hover:bg-base-content/5",
@@ -12,7 +10,7 @@
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
             value: %{id: "public", name: l("Public")},
-            target: "#smart_input"
+            target: "#smart_input_live"
           )}
         phx-value-id="public"
         phx-value-name={l("Public")}
@@ -53,7 +51,7 @@
       |> JS.toggle(to: "#composer_container")
       |> JS.push("Bonfire.Boundaries:custom_from_preset_template",
         value: %{boundary: "public", name: l("Public")},
-        target: "#smart_input"
+        target: "#smart_input_live"
       )}
       class="btn btn-xs btn-ghost normal-case btn-circle"
       title={l("Customise or add extra boundaries")}
@@ -75,7 +73,7 @@
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
             value: %{id: "local", name: l("Local")},
-            target: "#smart_input"
+            target: "#smart_input_live"
           )}
         phx-value-id="local"
         phx-value-name={l("Local")}
@@ -115,7 +113,7 @@
             |> JS.toggle(to: "#composer_container")
             |> JS.push("Bonfire.Boundaries:custom_from_preset_template",
               value: %{boundary: "local", name: l("Local")},
-              target: "#smart_input"
+              target: "#smart_input_live"
             )}
             class="btn btn-xs btn-ghost normal-case btn-circle"
             title={l("Customise or add extra boundaries")}
@@ -136,7 +134,7 @@
           phx-click={@set_action ||
             JS.push("Bonfire.Boundaries:replace_boundary",
               value: %{id: "mentions", name: l("Mentions")},
-              target: "#smart_input"
+              target: "#smart_input_live"
             )}
           phx-value-id="mentions"
           phx-value-name={l("Mentions")}
@@ -171,7 +169,7 @@
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
             value: %{id: acl_id, name: e(acl, :name, nil)},
-            target: "#smart_input"
+            target: "#smart_input_live"
           )}
         phx-value-id={acl_id}
         phx-value-name={e(acl, :name, nil)}
@@ -216,7 +214,7 @@
             |> JS.toggle(to: "#composer_container")
             |> JS.push("Bonfire.Boundaries:custom_from_preset_template",
               value: %{boundary: acl_id, name: e(acl, :name, nil)},
-              target: "#smart_input"
+              target: "#smart_input_live"
             )}
             class="btn btn-xs btn-ghost normal-case btn-circle"
             title={l("Customise or add extra boundaries")}
@@ -239,7 +237,7 @@
         class="text-base-content flex items-center gap-2 justify-between w-full"
         phx-click={JS.push("Bonfire.Boundaries:replace_boundary",
           value: %{id: "custom", name: l("Custom")},
-          target: "#smart_input"
+          target: "#smart_input_live"
         )}
         type="button"
       >

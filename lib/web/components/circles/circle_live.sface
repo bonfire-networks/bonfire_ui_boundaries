@@ -99,21 +99,29 @@
             value={e(@circle, :id, @circle_id)}
           />
           <input type="hidden" name={"circle[encircle][#{id}][subject_id]"} value={id}>
-
-          {#case e(member, :subject, :profile, nil)}
-            {#match nil}
-              <LinkLive class="text-base font-bold text-base-content">
-                {e(member, :subject, :named, :name, "Unknown")}
-              </LinkLive>
-            {#match profile}
+          {#case member}
+            {#match %{subject: %{profile: profile}} = member}
               <StatelessComponent
                 module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
                 profile={profile}
-                avatar_class="w-10 h-10  rounded-full"
+                avatar_class="w-10 h-10 rounded-full"
                 character={e(member, :subject, :character, nil)}
                 show_summary
                 show_controls={[]}
               />
+            {#match %{name: name, icon: icon, username: username}}
+              <StatelessComponent
+                module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
+                profile={%{name: name, icon: icon}}
+                avatar_class="w-10 h-10 rounded-full"
+                character={%{username: username}}
+                show_summary
+                show_controls={[]}
+              />
+            {#match member}
+              <LinkLive class="text-base font-bold text-base-content">
+                {e(member, :subject, :named, :name) || e(member, :name, "Unknown")}
+              </LinkLive>
           {/case}
 
           <div class="flex items-center justify-end">

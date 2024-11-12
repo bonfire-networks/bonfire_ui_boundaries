@@ -14,7 +14,13 @@ defmodule Bonfire.UI.Boundaries.Web.BoundaryItemsLive do
     permissions
   end
 
-  def name(data) when is_binary(data), do: data
+  def name(data) when is_binary(data) do
+    # Bonfire.Boundaries.Circles.query_my_by_id(data, @current_user)
+    # |> Bonfire.Repo.one()
+    # |> name()
+    data
+  end
+
   def name(data) when is_tuple(data), do: elem(data, 1)
 
   def name(data) when is_map(data) do

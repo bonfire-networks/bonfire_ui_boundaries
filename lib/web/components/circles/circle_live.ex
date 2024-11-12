@@ -153,9 +153,9 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
     end
   end
 
-  def handle_event("multi_select", %{"data" => data, "text" => text}, socket) do
+  def handle_event("multi_select", %{data: data, text: text}, socket) do
     debug(data, "multi_select_circle_live")
-    add_member(input_to_atoms(data["id"]), socket)
+    add_member(input_to_atoms(data), socket)
   end
 
   def handle_event("multi_select", %{id: id, name: _name}, socket) do
@@ -168,26 +168,19 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
           params,
         socket
       ) do
-    # Decode the JSON data for the selected item
-    case Jason.decode(multi_select_data[module_name]) do
-      {:ok, %{"id" => id, "name" => name, "type" => type}} ->
-        # Process the decoded data
-        IO.inspect({id, name, type}, label: "Selected Item")
-        add_member(input_to_atoms(e(assigns(socket), :suggestions, %{})[id]) || id, socket)
-
-      {:error, reason} ->
-        # Handle JSON decoding errors
-        IO.warn("Failed to decode multi_select data: #{reason}")
-        {:noreply, socket}
-    end
+    {:noreply, socket}
   end
 
-  # def handle_event("live_select_change", %{"field" => _field, "id" => live_select_id, "text" => search}, socket) do
-  #   do_results_for_multiselect(search)
-  #   |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
+  def handle_event(
+        "live_select_change",
+        %{"field" => _field, "id" => live_select_id, "text" => search},
+        socket
+      ) do
+    do_results_for_multiselect(search)
+    |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
 
-  #   {:noreply, socket}
-  # end
+    {:noreply, socket}
+  end
 
   # def handle_event("select", %{"id" => id}, socket) do
   #   debug(id)
@@ -264,6 +257,7 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
       [search]
     )
     |> Bonfire.UI.Boundaries.Web.SetBoundariesLive.results_for_multiselect()
+    |> debug("results_for_multiselect")
   end
 
   def add_member(subject, %{assigns: %{scope: scope, circle_type: circle_type}} = socket)

@@ -708,6 +708,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
       |> debug("computed")
 
     if previous_value != circles do
+      # WIP: Here on or boundary_items_live.ex we need to fetch the user or circle id to return a map containing the name and optional image to render on the boundary_items_live.sface
       maybe_send_update(
         Bonfire.UI.Boundaries.Web.CustomizeBoundaryLive,
         "customize_boundary_live",

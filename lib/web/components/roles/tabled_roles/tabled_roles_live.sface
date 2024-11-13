@@ -1,3 +1,79 @@
+<div class="relative overflow-x-auto">
+  <table class="table table-zebra">
+    <thead class="text-xs uppercase sticky top-0 z-10 bg-base-100">
+      <tr>
+        <th class="sticky left-0 z-20 bg-base-100/70 backdrop-blur-sm">Role</th>
+        <th class="font-medium" :for={verb <- @verb_order}>{verb}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr :for={{role, verbs} <- @roles_with_verbs}>
+        <td class="sticky left-0 z-10 bg-base-100/70 backdrop-blur-sm min-w-[160px]">
+          <div class="flex items-center justify-between gap-2">
+            {Recase.to_title(to_string(role))}
+            <div
+              :if={e(assigns, :scope, nil) != :instance && e(assigns, :read_only, nil) != true}
+              data-position="top"
+              phx-hook="Tooltip"
+              id={"#{role}_more_menu"}
+              class="relative"
+            >
+              <label
+                class="tooltip-button btn btn-xs btn-circle btn-ghost opacity-70"
+                tabindex="0"
+                role="button"
+                aria-haspopup="true"
+                aria-expanded="true"
+              >
+                <#Icon solid="DotsHorizontal" class="w-4 h-4 opacity/70" />
+              </label>
+              <ul
+                tabindex="0"
+                class="tooltip z-20 menu shadow-lg bg-base-100 shadow-xl border border-base-content/10 rounded-xl w-40 absolute top-0 left-0 hidden"
+                role="menu"
+                aria-orientation="vertical"
+              >
+                <li><button phx-click="edit_role" phx-value-role={role}>{l("Edit Role")}</button></li>
+                <li><button phx-click="delete_role" phx-value-role={role}>{l("Delete Role")}</button></li>
+              </ul>
+            </div>
+          </div>
+        </td>
+        {#if e(assigns, :read_only, true)}
+          <td :for={{verb, status} <- verbs}>
+            {#case status}
+              {#match :can}
+                <#Icon iconify="carbon:checkmark-filled" class="text-success text-center mx-auto w-5 h-5" />
+              {#match :cannot}
+                <#Icon iconify="bx:block" class="text-error text-center mx-auto w-5 h-5" />
+              {#match _}
+                <#Icon iconify="heroicons-solid:minus" class="text-base-content/30 w-5 h-5 text-center mx-auto" />
+            {/case}
+          </td>
+        {#else}
+          <td :for={{verb, status} <- verbs}>
+            <form :on-change="edit_verb_value" phx-target={@myself}>
+              <select class="select select-bordered select-xs" name={"role[#{role}][#{verb}]"}>
+                <option selected={status == :can} value="1">Can</option>
+                <option selected={status == :cannot} value="0">Cannot</option>
+                <option selected={status == nil} value="">Undefined</option>
+              </select>
+            </form>
+          </td>
+          <!-- <Bonfire.UI.Boundaries.Web.YesMaybeFalseLive
+            value={@value}
+            read_only={@read_only}
+            event_target={@event_target}
+            id={"role_#{@name}_#{Enums.maybe_elem(@verb, 0) || @verb}"}
+            field_name={"role[#{@name}][#{Enums.maybe_elem(@verb, 0) || @verb}]"}
+          /> -->
+        {/if}
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 
+
 {#if !e(assigns, :mini, false)}
   <li class="flex items-center justify-between gap-8 p-3">
     <Bonfire.UI.Boundaries.Web.YesMaybeFalseLive
@@ -33,4 +109,5 @@
         {e(verb, :verb, nil) || verb}
       </li>
   {/case}
-{/if}
+{/if} -->
+</div>

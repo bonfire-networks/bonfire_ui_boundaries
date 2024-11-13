@@ -679,6 +679,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
   def set_circles_tuples(field, circles, socket) do
     debug(circles, "set roles for #{field}")
+    debug(e(socket, :assigns, nil), "set roles for #{field}")
 
     previous_value =
       e(assigns(socket), field, [])

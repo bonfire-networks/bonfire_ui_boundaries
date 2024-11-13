@@ -9,7 +9,7 @@
 
     <div class="mb-8 p-3">
       <div class="w-full">
-        <!-- <form phx-change="multi_select" phx-target={@myself}>
+        <form phx-change="multi_select" phx-target={@myself}>
           <Bonfire.UI.Common.MultiselectLive.UserSelectorLive
             selected_options={[]}
             class="focus:outline-0 border-0 border-b h-10 rounded-none border-base-content/10 text-sm select_recipients_input"
@@ -18,7 +18,7 @@
             event_target={@myself}
             implementation={:live_select}
           />
-        </form> -->
+        </form>
         {!-- context_id={@context_id} --}
       </div>
 

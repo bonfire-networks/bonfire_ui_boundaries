@@ -65,6 +65,7 @@ defmodule Bonfire.UI.Boundaries.Web.RolesLive do
       |> assign(assigns)
       |> assign(
         scope_type: scope_type,
+        scope: scope,
         role_verbs:
           Bonfire.Boundaries.Roles.role_verbs(:all,
             one_scope_only: scope_type not in [:smart_input],

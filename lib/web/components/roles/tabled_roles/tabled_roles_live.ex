@@ -5,6 +5,7 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
   prop scope, :any, default: nil
   prop read_only, :boolean, default: false
 
+  #  FIXME: this should be in config where the verbs are defined
   @verb_order [
     :see,
     :read,
@@ -74,11 +75,18 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
       scope: scope,
       current_user: current_user
     )
-    |> Enum.map(fn {role_name, role_data} ->
-      can_verbs = Map.get(role_data, :can_verbs, [])
-      cannot_verbs = Map.get(role_data, :cannot_verbs, [])
-      sorted_verbs = sort_verbs(can_verbs, cannot_verbs)
-      {role_name, sorted_verbs}
+    |> Enum.map(fn
+      {role_name, role_data} when is_map(role_data) ->
+        can_verbs = Map.get(role_data, :can_verbs, [])
+        cannot_verbs = Map.get(role_data, :cannot_verbs, [])
+        sorted_verbs = sort_verbs(can_verbs, cannot_verbs)
+        {role_name, sorted_verbs}
+
+      {nil, _} ->
+        nil
+
+      {role_name, _} ->
+        {role_name, []}
     end)
   end
 

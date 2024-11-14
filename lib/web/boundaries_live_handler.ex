@@ -469,6 +469,56 @@ defmodule Bonfire.Boundaries.LiveHandler do
     end
   end
 
+  def handle_event("role_edit_details", attrs, socket) do
+    current_user = current_user_required!(socket)
+
+    scope =
+      case e(assigns(socket), :scope, nil) do
+        nil -> current_user
+        scope -> scope
+      end
+
+    with {:ok, _} <-
+           Roles.edit_details(
+             e(attrs, "old_name", nil),
+             e(attrs, "new_name", nil),
+             e(attrs, "usage", nil),
+             scope: scope,
+             current_user: current_user
+           ) do
+      Bonfire.UI.Common.OpenModalLive.close()
+
+      {:noreply,
+       socket
+       |> assign_flash(:info, "Role edited!")
+       |> redirect_to(current_url(socket))}
+    end
+  end
+
+  def handle_event("role_delete", attrs, socket) do
+    current_user = current_user_required!(socket)
+
+    scope =
+      case e(assigns(socket), :scope, nil) do
+        nil -> current_user
+        scope -> scope
+      end
+
+    with {:ok, _} <-
+           Roles.delete(
+             e(attrs, "name", nil),
+             scope: scope,
+             current_user: current_user
+           ) do
+      Bonfire.UI.Common.OpenModalLive.close()
+
+      {:noreply,
+       socket
+       |> assign_flash(:info, "Role deleted.")
+       |> redirect_to(current_url(socket))}
+    end
+  end
+
   def handle_event(
         "custom_from_preset_template",
         %{"boundary" => boundary, "name" => name} = _params,

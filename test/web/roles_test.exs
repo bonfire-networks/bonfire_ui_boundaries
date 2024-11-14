@@ -38,7 +38,7 @@ defmodule Bonfire.Boundaries.Web.RolesTest do
     #       assert view |> has_element?("h1[data-role=circle_title]")
   end
 
-    test "Create a role works" do
+  test "Create a role works" do
     me = fake_user!()
     conn = conn(user: me)
     next = "/boundaries/roles"
@@ -65,8 +65,6 @@ defmodule Bonfire.Boundaries.Web.RolesTest do
     assert has_element?(view, "p", name)
     #       assert view |> has_element?("h1[data-role=circle_title]")
   end
-
-
 
   test "can edit role permissions" do
     me = fake_user!()

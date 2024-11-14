@@ -33,8 +33,8 @@
                 role="menu"
                 aria-orientation="vertical"
               >
-                <li><button phx-click="edit_role" phx-value-role={role}>{l("Edit Role")}</button></li>
-                <li><button phx-click="delete_role" phx-value-role={role}>{l("Delete Role")}</button></li>
+                <li><button phx-click="Bonfire.Boundaries:role_edit_details" phx-value-old_name={role}>{l("Edit Role")} TODO: MODAL</button></li>
+                <li><button phx-click="Bonfire.Boundaries:role_delete" phx-value-name={role}>{l("Delete Role")}</button></li>
               </ul>
             </div>
           </div>

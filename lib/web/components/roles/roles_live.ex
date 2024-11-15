@@ -43,7 +43,7 @@ defmodule Bonfire.UI.Boundaries.Web.RolesLive do
       # )
     end
 
-    available_verbs = Bonfire.Boundaries.Verbs.list(:code, :id)
+    # available_verbs = Bonfire.Boundaries.Verbs.list(:code, :id)
     # |> debug("available_verbs")
 
     # available_verbs =
@@ -66,95 +66,96 @@ defmodule Bonfire.UI.Boundaries.Web.RolesLive do
       |> assign(
         scope_type: scope_type,
         scope: scope,
-        role_verbs:
-          Bonfire.Boundaries.Roles.role_verbs(:all,
-            one_scope_only: scope_type not in [:smart_input],
-            scope: scope,
-            current_user: current_user
-          )
-          |> debug("role_verbsssss"),
+        read_only: e(assigns, :read_only, false)
+        # role_verbs:
+        #   Bonfire.Boundaries.Roles.role_verbs(:all,
+        #     one_scope_only: scope_type not in [:smart_input],
+        #     scope: scope,
+        #     current_user: current_user
+        #   )
+        #   |> debug("role_verbsssss"),
         #  cannot_role_verbs: Bonfire.Boundaries.Roles.cannot_role_verbs(),
-        all_verbs: Bonfire.Boundaries.Verbs.verbs(),
-        available_verbs: available_verbs
+        # all_verbs: Bonfire.Boundaries.Verbs.verbs(),
+        # available_verbs: available_verbs
       )
       #  |> debug()
     }
   end
 
-  def handle_event("edit_verb_value", %{"role" => roles} = attrs, socket) do
-    debug(attrs)
+  # def handle_event("edit_verb_value", %{"role" => roles} = attrs, socket) do
+  #   debug(attrs)
 
-    current_user = current_user_required!(socket)
-    scope = e(assigns(socket), :scope, nil)
-    # verb_value = List.first(Map.values(roles))
+  #   current_user = current_user_required!(socket)
+  #   scope = e(assigns(socket), :scope, nil)
+  #   # verb_value = List.first(Map.values(roles))
 
-    with [ok: edited] <-
-           Enum.flat_map(roles, fn {role_name, verb_value} ->
-             Enum.flat_map(verb_value, fn {verb, value} ->
-               case Types.maybe_to_atom!(verb) do
-                 nil ->
-                   [{:error, "Invalid verb"}]
+  #   with [ok: edited] <-
+  #          Enum.flat_map(roles, fn {role_name, verb_value} ->
+  #            Enum.flat_map(verb_value, fn {verb, value} ->
+  #              case Types.maybe_to_atom!(verb) do
+  #                nil ->
+  #                  [{:error, "Invalid verb"}]
 
-                 verb ->
-                   debug(scope, "edit #{role_name} -- #{verb} = #{value} - scope:")
+  #                verb ->
+  #                  debug(scope, "edit #{role_name} -- #{verb} = #{value} - scope:")
 
-                   [
-                     Roles.edit_verb_permission(role_name, verb, value,
-                       scope: scope,
-                       current_user: current_user
-                     )
-                   ]
-               end
-             end)
-           end) do
-      debug(edited, "settings with edited role")
+  #                  [
+  #                    Roles.edit_verb_permission(role_name, verb, value,
+  #                      scope: scope,
+  #                      current_user: current_user
+  #                    )
+  #                  ]
+  #              end
+  #            end)
+  #          end) do
+  #     debug(edited, "settings with edited role")
 
-      {
-        :noreply,
-        socket
-        |> assign_flash(:info, l("Permission edited!"))
-        |> maybe_assign_settings(edited)
-        |> assign(
-          :role_verbs,
-          Bonfire.Boundaries.Roles.role_verbs(:all,
-            one_scope_only: assigns(socket)[:scope_type] not in [:smart_input],
-            scope: scope,
-            current_user: current_user(edited)
-          )
-          |> debug("updated role_verbsssss")
-        )
-      }
-    else
-      other ->
-        error(other)
+  #     {
+  #       :noreply,
+  #       socket
+  #       |> assign_flash(:info, l("Permission edited!"))
+  #       |> maybe_assign_settings(edited)
+  #       |> assign(
+  #         :role_verbs,
+  #         Bonfire.Boundaries.Roles.role_verbs(:all,
+  #           one_scope_only: assigns(socket)[:scope_type] not in [:smart_input],
+  #           scope: scope,
+  #           current_user: current_user(edited)
+  #         )
+  #         |> debug("updated role_verbsssss")
+  #       )
+  #     }
+  #   else
+  #     other ->
+  #       error(other)
 
-        {:noreply, assign_error(socket, l("Could not edit permission"))}
-    end
-  end
-
-  defp maybe_assign_settings(socket, %{__context__: assigns}) do
-    debug(assigns, "assign updated data with settings")
-
-    socket
-    |> assign_global(assigns)
-  end
-
-  # defp maybe_assign_settings(socket, %{id: "3SERSFR0MY0VR10CA11NSTANCE", data: settings}) do
-  #   debug(settings, "assign updated instance settings")
-
-  #   socket
-  #   |> assign_global(instance_settings: settings)
+  #       {:noreply, assign_error(socket, l("Could not edit permission"))}
+  #   end
   # end
 
-  defp maybe_assign_settings(socket, %{id: _, data: data} = _scope) do
-    debug(data, "assign updated role_verbs")
+  # defp maybe_assign_settings(socket, %{__context__: assigns}) do
+  #   debug(assigns, "assign updated data with settings")
 
-    socket
-    |> assign(role_verbs: data[:bonfire][:role_verbs])
-  end
+  #   socket
+  #   |> assign_global(assigns)
+  # end
 
-  defp maybe_assign_settings(socket, ret) do
-    debug(ret, "cannot assign updated data with settings")
-    socket
-  end
+  # # defp maybe_assign_settings(socket, %{id: "3SERSFR0MY0VR10CA11NSTANCE", data: settings}) do
+  # #   debug(settings, "assign updated instance settings")
+
+  # #   socket
+  # #   |> assign_global(instance_settings: settings)
+  # # end
+
+  # defp maybe_assign_settings(socket, %{id: _, data: data} = _scope) do
+  #   debug(data, "assign updated role_verbs")
+
+  #   socket
+  #   |> assign(role_verbs: data[:bonfire][:role_verbs])
+  # end
+
+  # defp maybe_assign_settings(socket, ret) do
+  #   debug(ret, "cannot assign updated data with settings")
+  #   socket
+  # end
 end

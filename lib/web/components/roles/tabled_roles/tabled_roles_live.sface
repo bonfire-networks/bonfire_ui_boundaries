@@ -1,68 +1,95 @@
 <div class="relative overflow-y-visible overflow-x-auto">
-      {#if Enum.count(@roles_with_verbs) > 0}
-  <table class="table table-zebra">
-    <thead class="text-xs uppercase sticky top-0 z-10 bg-base-100">
-      <tr>
-        <th class="sticky left-0 z-20 bg-base-100/70 backdrop-blur-sm">Role</th>
-        <th class="font-medium" :for={verb <- @verb_order}>{verb}</th>
-        <th class="sticky right-0 z-20 bg-base-100/70 backdrop-blur-sm"></th>
-      </tr>
-    </thead>
-    <tbody>
+  {#if Enum.count(@roles_with_verbs) > 0}
+    <table class="table table-zebra">
+      <thead class="text-xs uppercase sticky top-0 z-10 bg-base-100">
+        <tr>
+          <th class="sticky left-0 z-20 bg-base-100/70 backdrop-blur-sm">Role</th>
+          <th class="font-medium" :for={verb <- @verb_order}>{verb}</th>
+          <th class="sticky right-0 z-20 bg-base-100/70 backdrop-blur-sm" />
+        </tr>
+      </thead>
+      <tbody>
         <tr :for={{role, verbs} <- @roles_with_verbs}>
           <td class="sticky left-0 z-10 bg-base-100/70 backdrop-blur-sm min-w-[160px] max-w-[180px] truncate ellipsis">
             {Recase.to_title(to_string(role))}
           </td>
-        {#if e(assigns, :read_only, true)}
-          <td :for={{verb, status} <- verbs}>
-            {#case status}
-              {#match :can}
-                <#Icon iconify="carbon:checkmark-filled" class="text-success text-center mx-auto w-5 h-5" />
-              {#match :cannot}
-                <#Icon iconify="bx:block" class="text-error text-center mx-auto w-5 h-5" />
-              {#match _}
-                <#Icon iconify="heroicons-solid:minus" class="text-base-content/30 w-5 h-5 text-center mx-auto" />
-            {/case}
-          </td>
-        {#else}
-          <td :for={{verb, status} <- verbs}>
-            <form :on-change="edit_verb_value" phx-target={@myself}>
-              <select class="select select-bordered select-xs" name={"role[#{role}][#{verb}]"}>
-                <option selected={status == :can} value="1">Can</option>
-                <option selected={status == :cannot} value="0">Cannot</option>
-                <option selected={status == nil} value="">Undefined</option>
-              </select>
-            </form>
-          </td>
-        {/if}
-        <td class="sticky right-0 z-10 bg-base-100/70 backdrop-blur-sm flex items-center gap-2 justify-end pr-0">
-          <Bonfire.UI.Common.OpenModalLive id={"edit_role_#{role}"} title_text={l("Edit Role")}>
-            <div>
-            {l(
-              "The topic will be permanently archived, so that new things can no longer be published in it. People who already follow this topic will still be able to access it."
-            )}
-              <button class="btn btn-sm btn-circle btn-outline" phx-click="Bonfire.Boundaries:role_edit_details" phx-value-old_name={role}>
-                <#Icon iconify="ph:gear-fill" class="w-4 h-4 opacity-80" />
-                <span class="sr-only">{l("Edit Role")}</span>
-              </button>
+          {#if e(assigns, :read_only, nil) != true}
+            <td :for={{verb, status} <- verbs}>
+              <form :on-change="edit_verb_value" phx-target={@myself}>
+                <select class="select select-bordered select-xs" name={"role[#{role}][#{verb}]"}>
+                  <option selected={status == :can} value="1">Can</option>
+                  <option selected={status == :cannot} value="0">Cannot</option>
+                  <option selected={status == nil} value="">Undefined</option>
+                </select>
+              </form>
+            </td>
+          {#else}
+            <td :for={{verb, status} <- verbs}>
+              {#case status}
+                {#match :can}
+                  <#Icon iconify="carbon:checkmark-filled" class="text-success text-center mx-auto w-5 h-5" />
+                {#match :cannot}
+                  <#Icon iconify="bx:block" class="text-error text-center mx-auto w-5 h-5" />
+                {#match _}
+                  <#Icon iconify="heroicons-solid:minus" class="text-base-content/30 w-5 h-5 text-center mx-auto" />
+              {/case}
+            </td>
+          {/if}
+          <td
+            :if={e(assigns, :read_only, nil) != true}
+            class="sticky right-0 z-10 bg-base-100/70 backdrop-blur-sm flex items-center gap-2 justify-end pr-0"
+          >
+            <Bonfire.UI.Common.OpenModalLive
+              id={"edit_role_#{role}"}
+              title_text={l("Role Details")}
+              no_actions
+            >
+              <form phx-submit="Bonfire.Boundaries:role_edit_details">
+                <div class="w-full mt-4 form-control">
+                  <label class="label">
+                    <span class="label-text">{l("Edit the role name")}</span>
+                  </label>
+                  <input type="hidden" name="old_name" value={role}>
+                  <input type="text" name="new_name" value={role} class="w-full input input-bordered">
+                </div>
+                <button type="submit" class="btn w-full btn-primary mt-4">
+                  {l("Save")}
+                </button>
+              </form>
+
+              <div class="w-full mt-4 border border-error rounded-lg p-4 bg-error/10">
+                <div class="flex items-center gap-2">
+                  <#Icon iconify="heroicons-solid:exclamation-circle" class="text-error w-6 h-6" />
+                  <h4 class="text-error text-lg font-medium">{l("Delete the '%{role}' role", role: role)}</h4>
+                </div>
+                <p class="text-error mt-2 text-sm">
+                  {l("Warning:This action cannot be undone.")}
+                </p>
+                <form phx-submit="Bonfire.Boundaries:role_delete">
+                  <input type="hidden" name="name" value={role}>
+                  <button type="submit" class="btn w-full btn-error mt-4">
+                    {l("Delete")}
+                  </button>
+                </form>
               </div>
-            <:open_btn>
-              <button class="btn btn-sm btn-circle btn-outline">
-                <#Icon iconify="ph:gear-fill" class="w-4 h-4 opacity-80" />
-                <span class="sr-only">{l("Edit Role")}</span>
-              </button>
-            </:open_btn>
-          </Bonfire.UI.Common.OpenModalLive>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-      {#else}
-      <Bonfire.UI.Common.EmptyFeed
-        feedback_title={l("There are not roles yet")}
-        feedback_message={l("Add some roles to get started!")}
-        />
-      {/if}
+
+              <:open_btn>
+                <button class="btn btn-sm btn-circle btn-outline">
+                  <#Icon iconify="ph:gear-fill" class="w-4 h-4 opacity-80" />
+                  <span class="sr-only">{l("Edit Role")}</span>
+                </button>
+              </:open_btn>
+            </Bonfire.UI.Common.OpenModalLive>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  {#else}
+    <Bonfire.UI.Common.EmptyFeed
+      feedback_title={l("There are not roles yet")}
+      feedback_message={l("Add some roles to get started!")}
+    />
+  {/if}
 
   <!-- 
 

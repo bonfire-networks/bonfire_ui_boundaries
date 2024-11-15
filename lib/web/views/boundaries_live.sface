@@ -110,7 +110,7 @@
         id="roles"
         scope={@scope}
       />
-    {#match "instance_roles"}
+    {#match "default_roles"}
       <StatefulComponent
         :if={current_user(@__context__)}
         module={maybe_component(Bonfire.UI.Boundaries.Web.RolesLive, @__context__)}

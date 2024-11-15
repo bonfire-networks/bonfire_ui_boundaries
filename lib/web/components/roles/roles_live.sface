@@ -10,7 +10,7 @@
       <Bonfire.UI.Boundaries.Web.TabledRolesLive
         id="test_tabled_roles"
         scope={@scope}
-        read_only={@read_only}
+        read_only={e(assigns, :read_only, nil)}
       />
     </div>
   </div>

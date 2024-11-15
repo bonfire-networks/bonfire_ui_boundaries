@@ -41,10 +41,13 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
       |> debug("role_scope")
 
     {:ok,
-     assign(socket,
+     socket
+     |> assign(assigns)
+     |> assign(
        scope: scope,
        verb_order: verb_order(),
-       roles_with_verbs: get_roles_with_verbs(scope, current_user(socket))
+       roles_with_verbs:
+         get_roles_with_verbs(scope, current_user(socket)) |> debug("roles_with_verbs")
      )}
   end
 
@@ -75,11 +78,12 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
       scope: scope,
       current_user: current_user
     )
+    |> debug("cazz")
     |> Enum.map(fn
       {role_name, role_data} when is_map(role_data) ->
         can_verbs = Map.get(role_data, :can_verbs, [])
         cannot_verbs = Map.get(role_data, :cannot_verbs, [])
-        sorted_verbs = sort_verbs(can_verbs, cannot_verbs)
+        sorted_verbs = sort_verbs(can_verbs, cannot_verbs) |> debug("sorted_verbs")
         {role_name, sorted_verbs}
 
       {nil, _} ->

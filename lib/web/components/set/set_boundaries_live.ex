@@ -145,15 +145,25 @@ defmodule Bonfire.UI.Boundaries.Web.SetBoundariesLive do
   def live_select_change(live_select_id, search, circle_field, socket) do
     current_user = current_user(assigns(socket))
     # Bonfire.Boundaries.Acls.list_my(current_user, search: search) ++
-    (Bonfire.Boundaries.Circles.list_my_with_global(
-       [current_user, Bonfire.Boundaries.Scaffold.Instance.activity_pub_circle()],
-       search: search
-     ) ++
-       Bonfire.Common.Utils.maybe_apply(
-         Bonfire.Me.Users,
-         :search,
-         [search]
-       ))
+
+    # Get the list of circles
+    circle_results =
+      Bonfire.Boundaries.Circles.list_my_with_global(
+        [current_user, Bonfire.Boundaries.Scaffold.Instance.activity_pub_circle()],
+        search: search
+      )
+
+    # Get the list of users and exclude the current user
+    user_results =
+      Bonfire.Common.Utils.maybe_apply(
+        Bonfire.Me.Users,
+        :search,
+        [search]
+      )
+      |> Enum.reject(fn user -> user.id == current_user.id end)
+
+    # Combine the results
+    (circle_results ++ user_results)
     |> results_for_multiselect(circle_field)
     |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
 

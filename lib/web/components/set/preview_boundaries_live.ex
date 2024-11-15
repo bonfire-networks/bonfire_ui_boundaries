@@ -17,61 +17,41 @@ defmodule Bonfire.UI.Boundaries.Web.PreviewBoundariesLive do
   prop boundary_preset, :any, default: nil
   prop to_circles, :list, default: []
 
-  def update(
-        %{preview_boundary_for_id: preview_boundary_for_id} = assigns,
-        %{assigns: %{preview_boundary_for_id: preview_boundary_for_id}} = socket
-      ) do
-    {
-      :ok,
-      socket
-      |> assign(assigns)
-    }
-  end
+  # def update(
+  #       %{preview_boundary_for_id: preview_boundary_for_id} = assigns,
+  #       %{assigns: %{preview_boundary_for_id: preview_boundary_for_id}} = socket
+  #     ) do
+  #   {
+  #     :ok,
+  #     socket
+  #     |> assign(assigns)
+  #   }
+  # end
 
-  def update(%{preview_boundary_for_id: preview_boundary_for_id} = assigns, socket)
-      when not is_nil(preview_boundary_for_id) do
-    {
-      :ok,
-      socket
-      |> assign(assigns)
-      |> preview(preview_boundary_for_id, assigns[:preview_boundary_for_username])
-      #  |> debug()
-    }
-  end
+  # def update(%{preview_boundary_for_id: preview_boundary_for_id} = assigns, socket)
+  #     when not is_nil(preview_boundary_for_id) do
+  #   {
+  #     :ok,
+  #     socket
+  #     |> assign(assigns)
+  #     |> preview(preview_boundary_for_id, assigns[:preview_boundary_for_username])
+  #     #  |> debug()
+  #   }
+  # end
 
   def update(assigns, socket) do
-    # current_user =(current_user(assigns) || current_user(assigns(socket)))
-
-    # params = e(assigns, :__context__, :current_params, %{})
-
-    # available_verbs = Bonfire.Boundaries.Verbs.list(:code, :id)
-    # |> debug("available_verbs")
-
-    # available_verbs =
-    #   if scope != :instance do
-    #     instance_verbs =
-    #       Bonfire.Boundaries.Verbs.list(:instance, :id)
-    #       |> debug()
-
-    #     available_verbs
-    #     |> Enum.reject(&(elem(&1, 0) in instance_verbs))
-    #   else
-    #     available_verbs
-    #   end
-    #   |> debug()
-
-    {
-      :ok,
+    socket =
       socket
       |> assign(assigns)
-      |> assign(
-        #  cannot_role_verbs: Bonfire.Boundaries.Roles.cannot_role_verbs(),
-        all_verbs: Bonfire.Boundaries.Verbs.verbs()
-        # available_verbs: available_verbs
-      )
-      # |> preview(nil, l("guests"))
-      #  |> debug()
-    }
+      |> assign_new(:boundary_preset, fn ->
+        assigns[:boundary_preset] || socket.assigns[:boundary_preset]
+      end)
+      |> assign_new(:to_boundaries, fn ->
+        assigns[:to_boundaries] || socket.assigns[:to_boundaries]
+      end)
+      |> assign(all_verbs: Bonfire.Boundaries.Verbs.verbs())
+
+    {:ok, socket}
   end
 
   def handle_event("live_select_change", %{"id" => live_select_id, "text" => search}, socket) do
@@ -88,7 +68,31 @@ defmodule Bonfire.UI.Boundaries.Web.PreviewBoundariesLive do
 
   def handle_event(
         "multi_select",
-        %{data: %{"id" => id, "username" => username}},
+        %{
+          "multi_select" => %{
+            "Elixir.Bonfire.UI.Boundaries.Web.PreviewBoundariesLive" => data_json
+            # other params...
+          }
+        } = params,
+        socket
+      ) do
+    # Decode JSON strings
+    data = Jason.decode!(data_json)
+
+    # Extract necessary values
+    id = data["id"]
+    username = data["username"]
+
+    # Assign the decoded `to_boundaries` to the socket
+    # socket = assign(socket, :to_boundaries, to_boundaries)
+
+    # Proceed with preview
+    {:noreply, preview(socket, id, username)}
+  end
+
+  def handle_event(
+        "multi_select",
+        %{data: %{"id" => id, "username" => username}} = params,
         socket
       ) do
     {:noreply, preview(socket, id, username)}
@@ -99,15 +103,12 @@ defmodule Bonfire.UI.Boundaries.Web.PreviewBoundariesLive do
 
     boundaries =
       Enum.map(
-        List.wrap(
-          e(assigns(socket), :boundary_preset, nil) || e(assigns(socket), :to_boundaries, [])
-        ),
+        List.wrap(socket.assigns[:boundary_preset] || socket.assigns[:to_boundaries] || []),
         fn
           {slug, _} -> slug
           slug -> slug
         end
       )
-      |> debug("bbb")
 
     opts = [
       preview_for_id: id,

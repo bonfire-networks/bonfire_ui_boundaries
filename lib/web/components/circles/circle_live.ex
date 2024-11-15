@@ -263,6 +263,8 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
   def add_member(subject, %{assigns: %{scope: scope, circle_type: circle_type}} = socket)
       when circle_type in [:silence, :ghost] do
     with id when is_binary(id) <- uid(subject),
+         current_user_id when not is_nil(current_user_id) <- current_user_id(socket),
+         false <- id == current_user_id,
          {:ok, _} <- Blocks.block(id, circle_type, scope || current_user(assigns(socket))) do
       {:noreply,
        socket
@@ -276,6 +278,9 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
            |> debug()
        )}
     else
+      true ->
+        {:noreply, assign_flash(socket, :error, l("Cannot block yourself."))}
+
       other ->
         error(other)
 
@@ -285,6 +290,8 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
 
   def add_member(subject, socket) do
     with id when is_binary(id) <- uid(subject),
+         current_user_id when not is_nil(current_user_id) <- current_user_id(socket),
+         false <- id == current_user_id,
          {:ok, _} <- Circles.add_to_circles(id, e(assigns(socket), :circle, nil)) do
       {:noreply,
        socket
@@ -297,6 +304,9 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
            )
        )}
     else
+      true ->
+        {:noreply, assign_flash(socket, :error, l("Cannot add yourself to the circle."))}
+
       other ->
         error(other)
 

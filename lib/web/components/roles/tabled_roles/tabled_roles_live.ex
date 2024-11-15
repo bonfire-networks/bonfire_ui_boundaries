@@ -78,12 +78,11 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
       scope: scope,
       current_user: current_user
     )
-    |> debug("cazz")
     |> Enum.map(fn
       {role_name, role_data} when is_map(role_data) ->
         can_verbs = Map.get(role_data, :can_verbs, [])
         cannot_verbs = Map.get(role_data, :cannot_verbs, [])
-        sorted_verbs = sort_verbs(can_verbs, cannot_verbs) |> debug("sorted_verbs")
+        sorted_verbs = sort_verbs(can_verbs, cannot_verbs)
         {role_name, sorted_verbs}
 
       {nil, _} ->
@@ -120,8 +119,6 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
                end
              end)
            end) do
-      debug(edited, "settings with edited role")
-
       {
         :noreply,
         socket
@@ -134,7 +131,6 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
             scope: scope,
             current_user: current_user(edited)
           )
-          |> debug("updated role_verbsssss")
         )
       }
     else
@@ -146,8 +142,6 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
   end
 
   defp maybe_assign_settings(socket, %{__context__: assigns}) do
-    debug(assigns, "assign updated data with settings")
-
     socket
     |> assign_global(assigns)
   end
@@ -160,8 +154,6 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
   # end
 
   defp maybe_assign_settings(socket, %{id: _, data: data} = _scope) do
-    debug(data, "assign updated role_verbs")
-
     socket
     |> assign(role_verbs: data[:bonfire][:role_verbs])
   end

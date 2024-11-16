@@ -450,7 +450,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
     scope =
       case e(assigns(socket), :scope, nil) do
-        nil -> current_user
+        nil -> nil
         scope -> scope
       end
 
@@ -474,7 +474,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
     scope =
       case e(assigns(socket), :scope, nil) do
-        nil -> current_user
+        nil -> nil
         scope -> scope
       end
 
@@ -500,7 +500,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
     scope =
       case e(assigns(socket), :scope, nil) do
-        nil -> current_user
+        nil -> nil
         scope -> scope
       end
 

@@ -57,13 +57,20 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
   Sorts a list of verbs according to the predefined @verb_order.
   """
   def sort_verbs(can_verbs, cannot_verbs) do
-    @verb_order
+    verb_order()
     |> Enum.map(fn verb ->
       cond do
         verb in can_verbs -> {verb, :can}
         verb in cannot_verbs -> {verb, :cannot}
         true -> {verb, nil}
       end
+    end)
+  end
+
+  def default_sorted_verbs() do
+    verb_order()
+    |> Enum.map(fn verb ->
+      {verb, nil}
     end)
   end
 
@@ -78,18 +85,20 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
       scope: scope,
       current_user: current_user
     )
+    |> debug("got")
+    # |> List.wrap()
     |> Enum.map(fn
       {role_name, role_data} when is_map(role_data) ->
         can_verbs = Map.get(role_data, :can_verbs, [])
         cannot_verbs = Map.get(role_data, :cannot_verbs, [])
-        sorted_verbs = sort_verbs(can_verbs, cannot_verbs)
-        {role_name, sorted_verbs}
-
-      {nil, _} ->
-        nil
+        {role_name, sort_verbs(can_verbs, cannot_verbs)}
 
       {role_name, _} ->
-        {role_name, []}
+        {role_name, nil}
+
+      other ->
+        warn(other, "unexpected data")
+        nil
     end)
   end
 

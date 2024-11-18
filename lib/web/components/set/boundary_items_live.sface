@@ -81,7 +81,7 @@
           },
           target: "#smart_input"
         )}
-        class="btn btn-sm btn-circle btn-ghost"
+        class="btn btn-xs btn-circle btn-ghost"
       >
         <#Icon iconify="ic:baseline-minus" class="w-4 h-4" />
       </div>

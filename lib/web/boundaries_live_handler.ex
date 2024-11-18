@@ -753,7 +753,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
       (circles || [])
       |> Enum.map(fn
         {circle, roles} ->
-          Enum.map(roles, &{e(known_circles, id(circle), nil) || circle, &1})
+          Enum.map(roles, &{ed(known_circles, id(circle), nil) || circle, &1})
       end)
       |> List.flatten()
       |> debug("computed")

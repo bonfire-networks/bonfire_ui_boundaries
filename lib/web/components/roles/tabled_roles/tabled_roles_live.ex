@@ -4,6 +4,12 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
 
   prop scope, :any, default: nil
   prop read_only, :boolean, default: false
+  prop selectable, :boolean, default: false
+  prop role, :any, default: nil
+  prop field, :atom, default: :to_circles
+  prop circle_id, :string, default: nil
+  prop roles, :map, default: nil
+  prop event_target, :any, default: nil
 
   #  FIXME: this should be in config where the verbs are defined
   @verb_order [
@@ -40,14 +46,26 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
       (e(assigns, :scope, nil) || e(assigns(socket), :scope, nil))
       |> debug("role_scope")
 
+    roles_with_verbs =
+      e(
+        assigns,
+        :roles,
+        Bonfire.Boundaries.Roles.role_verbs(:all,
+          one_scope_only: true,
+          scope: scope,
+          current_user: current_user(socket)
+        )
+      )
+      |> get_roles_with_verbs(scope)
+      |> debug("roles_with_verbs")
+
     {:ok,
      socket
      |> assign(assigns)
      |> assign(
        scope: scope,
        verb_order: verb_order(),
-       roles_with_verbs:
-         get_roles_with_verbs(scope, current_user(socket)) |> debug("roles_with_verbs")
+       roles_with_verbs: roles_with_verbs
      )}
   end
 
@@ -79,14 +97,8 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
   sorted according to @verb_order.
   Returns a list of tuples: [{role, verbs_with_statuses}].
   """
-  def get_roles_with_verbs(scope, current_user) do
-    Bonfire.Boundaries.Roles.role_verbs(:all,
-      one_scope_only: true,
-      scope: scope,
-      current_user: current_user
-    )
-    |> debug("got")
-    # |> List.wrap()
+  def get_roles_with_verbs(roles, scope) do
+    roles
     |> Enum.map(fn
       {role_name, role_data} when is_map(role_data) ->
         can_verbs = Map.get(role_data, :can_verbs, [])
@@ -102,50 +114,45 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
     end)
   end
 
-  def handle_event("edit_verb_value", %{"role" => roles} = attrs, socket) do
+  def handle_event(
+        "edit_verb_value",
+        %{"role" => role, "verb" => verb, "status" => value} = attrs,
+        socket
+      ) do
     debug(attrs)
 
     current_user = current_user_required!(socket)
     scope = e(assigns(socket), :scope, nil)
-    # verb_value = List.first(Map.values(roles))
 
-    with [ok: edited] <-
-           Enum.flat_map(roles, fn {role_name, verb_value} ->
-             Enum.flat_map(verb_value, fn {verb, value} ->
-               case Types.maybe_to_atom!(verb) do
-                 nil ->
-                   [{:error, "Invalid verb"}]
+    role = Bonfire.Common.Types.maybe_to_atom(role)
+    verb = Bonfire.Common.Types.maybe_to_atom(verb)
+    debug(scope, "edit #{role} -- #{verb} = #{value} - scope:")
 
-                 verb ->
-                   debug(scope, "edit #{role_name} -- #{verb} = #{value} - scope:")
+    case Roles.edit_verb_permission(role, verb, value,
+           scope: scope,
+           current_user: current_user
+         ) do
+      {:ok, edited} ->
+        debug(edited, "edited")
 
-                   [
-                     Roles.edit_verb_permission(role_name, verb, value,
-                       scope: scope,
-                       current_user: current_user
-                     )
-                   ]
-               end
-             end)
-           end) do
-      {
-        :noreply,
-        socket
-        |> assign_flash(:info, l("Permission edited!"))
-        |> maybe_assign_settings(edited)
-        |> assign(
-          :role_verbs,
-          Bonfire.Boundaries.Roles.role_verbs(:all,
-            one_scope_only: assigns(socket)[:scope_type] not in [:smart_input],
-            scope: scope,
-            current_user: current_user(edited)
+        {
+          :noreply,
+          socket
+          |> assign_flash(:info, l("Permission edited!"))
+          |> maybe_assign_settings(edited)
+          |> assign(
+            :roles_with_verbs,
+            Bonfire.Boundaries.Roles.role_verbs(:all,
+              one_scope_only: assigns(socket)[:scope_type] not in [:smart_input],
+              scope: scope,
+              current_user: current_user(edited)
+            )
+            |> get_roles_with_verbs(scope)
           )
-        )
-      }
-    else
-      other ->
-        error(other)
+        }
 
+      error ->
+        error(error)
         {:noreply, assign_error(socket, l("Could not edit permission"))}
     end
   end
@@ -160,11 +167,11 @@ defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
 
   #   socket
   #   |> assign_global(instance_settings: settings)
-  # end
+  #  end
 
   defp maybe_assign_settings(socket, %{id: _, data: data} = _scope) do
     socket
-    |> assign(role_verbs: data[:bonfire][:role_verbs])
+    |> assign(roles: data[:bonfire][:role_verbs])
   end
 
   defp maybe_assign_settings(socket, ret) do

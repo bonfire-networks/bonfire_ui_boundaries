@@ -218,8 +218,7 @@ defmodule Bonfire.UI.Boundaries.Web.AclLive do
     end
   end
 
-  def handle_event("edit_grant_role", %{"to_circles" => subjects} = _attrs, socket) do
-    # debug(attrs)
+  def handle_event("edit_grant_role", %{"to_circles" => subjects} = attrs, socket) do
     current_user = current_user_required!(socket)
     acl = e(assigns(socket), :acl, nil)
     scope = e(assigns(socket), :scope, nil)

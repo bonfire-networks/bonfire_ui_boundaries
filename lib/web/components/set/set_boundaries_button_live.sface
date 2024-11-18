@@ -51,11 +51,11 @@
       </div>
     </div>
   {#match boundary_name}
-    <div class="btn-active items-center rounded flex btn-ghost btn-sm !justify-start max-w-[120px] truncate cursor-default">
+    <div class="btn-active btn btn-ghost btn-sm max-w-[120px] cursor-default btn-wide">
       <span>{boundary_name}</span>
     </div>
 {/case}
-
+<!-- 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const dialog = document.getElementById('my_modal_5');
@@ -72,4 +72,4 @@
       }
     });
   });
-</script>
+</script> -->

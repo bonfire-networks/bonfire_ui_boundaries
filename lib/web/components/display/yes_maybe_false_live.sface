@@ -14,55 +14,54 @@
       <#Icon solid="Minus" class="w-4 h-4 text-gray-400" />
   {/case}
 {#else}
-  <div class="flex items-center gap-3 boundaries-switches">
-    <form
+  <div class="flex items-center boundaries-switches">
+    <div class="border p-1 flex items-center gap-1 border-base-content/10 rounded-xl">
+      <button
+        class={
+          "text-base-content/70 p-1 rounded-lg hover:bg-base-content/10 transition-colors duration-100",
+          "bg-success hover:bg-success text-success-content": @value == :can
+        }
+        phx-click="edit_verb_value"
+        phx-value-role={@role}
+        phx-value-verb={@verb}
+        phx-value-status={1}
+        phx-target={@event_target}
+      >
+        <#Icon solid="Check" class="w-4 h-4" />
+      </button>
+      <button
+        class={
+          "text-base-content/70 p-1 rounded-lg hover:bg-base-content/10 transition-colors duration-100",
+          "bg-neutral hover:bg-neutral text-neutral-content": @value == nil
+        }
+        phx-click="edit_verb_value"
+        phx-value-role={@role}
+        phx-value-verb={@verb}
+        phx-value-status=""
+        phx-target={@event_target}
+      >
+        <#Icon solid="Minus" class="w-4 h-4" />
+      </button>
+      <button
+        class={
+          "text-base-content/70 p-1 rounded-lg hover:bg-base-content/10 transition-colors duration-100",
+          "bg-error hover:bg-error text-error-content": @value == :cannot
+        }
+        phx-click="edit_verb_value"
+        phx-value-role={@role}
+        phx-value-verb={@verb}
+        phx-value-status={0}
+        phx-target={@event_target}
+      >
+        <#Icon solid="X" class="w-4 h-4" />
+      </button>
+    </div>
+    <!-- <form
       data-id={@id}
       :on-change="edit_verb_value"
       phx-target={@event_target}
       class="flex items-center gap-3"
     >
-      {!-- <input
-        :if={@value != nil}
-        value={if @value == true, do: "1", else: "0"}
-        type="checkbox"
-        name={@field_name}
-        class={
-          "toggle toggle-md",
-          "!toggle-success": @value == true,
-          "!border-error !bg-error !text-error": @value == false
-        }
-        checked={@value}
-      />
-      <label :if={@value != nil && !@read_only}>
-        <input
-          class="absolute opacity-0"
-          name={@field_name}
-          type="radio"
-          value=""
-          checked={is_nil(@value)}
-        />
-        <div class="btn btn-circle btn-xs">
-          <#Icon solid="X" class="w-4 h-4" />
-        </div>
-      </label>
-      <button
-        :if={@value == nil && !@read_only}
-        class={
-          "normal-case rounded btn btn-xs",
-          "btn-disabled": @read_only
-        }
-      >
-        {l("Edit")}
-      </button>
-      <button
-        :if={@value == nil && @read_only}
-        class={
-          "normal-case rounded btn btn-xs",
-          "btn-disabled": @read_only
-        }
-      >
-        {l("Not specified")}
-      </button> --}
       <label class="tooltip tooltip-top" data-tip={if @value == true, do: l("Can")}>
         <input
           class="absolute opacity-0"
@@ -111,6 +110,6 @@
           <#Icon solid="X" class="w-4 h-4" />
         </div>
       </label>
-    </form>
+    </form> -->
   </div>
 {/if}

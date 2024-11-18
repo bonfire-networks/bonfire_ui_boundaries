@@ -4,24 +4,40 @@
       <thead class="text-xs uppercase sticky top-0 z-10 bg-base-100">
         <tr>
           <th class="sticky left-0 z-20 bg-base-100/70 backdrop-blur-sm">Role</th>
-          <th class="font-medium" :for={verb <- @verb_order}>{verb}</th>
+          <th class="text-center font-medium" :for={verb <- @verb_order}>{verb}</th>
           <th class="sticky right-0 z-20 bg-base-100/70 backdrop-blur-sm" />
         </tr>
       </thead>
       <tbody>
         <tr :for={{role, verbs} <- @roles_with_verbs}>
-          <td class="sticky left-0 z-10 bg-base-100/70 backdrop-blur-sm min-w-[160px] max-w-[180px] truncate ellipsis">
+          <td class="sticky left-0 z-10 bg-base-100/70 backdrop-blur-sm min-w-[180px] flex items-center gap-2 max-w-[180px] truncate ellipsis">
+            <input
+              :if={@selectable}
+              class="radio radio-xs"
+              type="radio"
+              checked={@role == role}
+              value={to_string(role)}
+              name={"#{@field}[#{@circle_id}]"}
+              phx-target={@event_target}
+            />
             {Recase.to_title(to_string(role))}
           </td>
           {#if e(assigns, :read_only, nil) != true}
             <td :for={{verb, status} <- verbs || default_sorted_verbs()}>
-              <form :on-change="edit_verb_value" phx-target={@myself}>
+              <Bonfire.UI.Boundaries.Web.YesMaybeFalseLive
+                value={status}
+                read_only={@read_only}
+                event_target={@myself}
+                role={role}
+                verb={verb}
+              />
+              <!-- <form :on-change="edit_verb_value" phx-target={@myself}>
                 <select class="select select-bordered select-xs" name={"role[#{role}][#{verb}]"}>
                   <option selected={status == :can} value="1">Can</option>
                   <option selected={status == :cannot} value="0">Cannot</option>
                   <option selected={status == nil} value="">Undefined</option>
                 </select>
-              </form>
+              </form> -->
             </td>
           {#else}
             <td :for={{verb, status} <- verbs}>

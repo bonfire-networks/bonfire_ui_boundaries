@@ -1,4 +1,8 @@
-<select name={"#{@field}[#{@circle_id}][]"} class="select select-bordered" disabled={@read_only}>
+<select
+  name={"#{@field}[#{@circle_id}][]"}
+  class="select select-xs select-bordered"
+  disabled={@read_only}
+>
   <option value="">{l("Select role")}</option>
   <option
     :for={{id, name} <-
@@ -7,5 +11,5 @@
           (@extra_roles || [])}
     value={id}
     selected={if to_string(@role) == to_string(id), do: true}
-  >{name}</option>
+  >{Recase.to_title(to_string(id))}</option>
 </select>

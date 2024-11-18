@@ -66,7 +66,7 @@
         />
       </form>
       {#if e(assigns, :exclude_circles, []) && e(assigns, :exclude_circles, []) != []}
-        <form phx-change="Bonfire.Boundaries:select" phx-target="#smart_input_live">
+        <form phx-change="Bonfire.Boundaries:select" class="mt-2" phx-target="#smart_input_live">
           <Bonfire.UI.Boundaries.Web.BoundaryItemsLive
             read_only={e(assigns, :read_only, false)}
             to_boundaries={[]}

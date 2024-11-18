@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Blocks.LiveHandler do
+defmodule Bonfire.Boundaries.Blocks.LiveHandler do
   use Bonfire.UI.Common.Web, :live_handler
   # import Untangle
   # import Bonfire.UI.Common

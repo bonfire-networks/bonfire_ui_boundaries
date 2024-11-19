@@ -18,14 +18,14 @@
         />
       </div>
       <:open_btn>
-        <button type="button" class={@class}>
+        <div class={@class}>
           <Bonfire.UI.Boundaries.Web.BoundariesPresetNameLive
             boundary_preset={@boundary_preset}
             with_icon={@with_icon}
             with_label={@with_label}
             icon_class={@icon_class}
           />
-        </button>
+        </div>
       </:open_btn>
     </Bonfire.UI.Common.OpenModalLive>
   </div>

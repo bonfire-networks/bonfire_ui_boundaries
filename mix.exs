@@ -1,6 +1,6 @@
 Code.eval_file("mess.exs", (if File.exists?("../../lib/mix/mess.exs"), do: "../../lib/mix/"))
 
-defmodule Bonfire.UiBoundaries.MixProject do
+defmodule Bonfire.UI.Boundaries.MixProject do
   use Mix.Project
 
   def project do

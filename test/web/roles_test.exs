@@ -1,5 +1,5 @@
 defmodule Bonfire.Boundaries.Web.RolesTest do
-  use Bonfire.Boundaries.ConnCase, async: true
+  use Bonfire.UI.Boundaries.ConnCase, async: true
 
   @moduletag :ui
 

@@ -1,3 +1,3 @@
 import Config
 
-Bonfire.UiBoundaries.RuntimeConfig.config()
+Bonfire.UI.Boundaries.RuntimeConfig.config()

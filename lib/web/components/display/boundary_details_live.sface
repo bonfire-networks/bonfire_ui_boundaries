@@ -131,7 +131,7 @@
                         {l("Remove")}
                       </button>
                       <:open_btn>
-                        <button type="button" data-role="remove_from_boundary_modal" class="text-base-content">{l("Remove")}</button>
+                        <div data-role="remove_from_boundary_modal" class="text-base-content">{l("Remove")}</div>
                       </:open_btn>
                     </Bonfire.UI.Common.OpenModalLive>
                   </li>

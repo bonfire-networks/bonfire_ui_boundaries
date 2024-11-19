@@ -1,4 +1,4 @@
-defmodule Bonfire.UiBoundaries.DataHelpers do
+defmodule Bonfire.UI.Boundaries.DataHelpers do
   # import ExUnit.Assertions
-  # alias Bonfire.UiBoundaries.Fake
+  # alias Bonfire.UI.Boundaries.Fake
 end

@@ -145,13 +145,9 @@
                                     {l("Remove")}
                                   </button>
                                   <:open_btn>
-                                    <button
-                                      type="button"
-                                      data-role="remove_from_boundary_modal"
-                                      class="btn-outline btn-xs btn btn-circle"
-                                    >
+                                    <div data-role="remove_from_boundary_modal" class="btn-outline btn-xs btn btn-circle">
                                       <#Icon iconify="ic:baseline-minus" class="w-4 h-4" />
-                                    </button>
+                                    </div>
                                   </:open_btn>
                                 </Bonfire.UI.Common.OpenModalLive>
                               </span>

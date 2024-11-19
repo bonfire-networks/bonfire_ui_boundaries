@@ -1,4 +1,4 @@
-# Bonfire.UiBoundaries
+# Bonfire.UI.Boundaries
 
 A template for creating custom extensions for [Bonfire](https://bonfire.cafe/)
 
@@ -10,7 +10,7 @@ git clone https://github.com/bonfire-networks/bonfire_ui_boundaries.git {your-ex
 cd {your-extension-name-here} 
 ```
 - Rename all the modules names to match your extension name:
-    - Find & replace Bonfire.UiBoundaries -> Bonfire.YourExtensionName 
+    - Find & replace Bonfire.UI.Boundaries -> Bonfire.YourExtensionName 
     - Find & replace bonfire_ui_boundaries -> bonfire_your_extension_name
 - Rename the `bonfire_ui_boundaries.exs` config file to match your extension name `bonfire_your_extension_name.exs`
 - Add paths to the router if you need it. If you add paths you will need to include the route module on [bonfire-app router module](https://github.com/bonfire-networks/bonfire-app/blob/main/lib/web/router.ex#L51) 
@@ -32,7 +32,7 @@ cd {your-extension-name-here}
       git push -u origin main
     ```
 - Add the extension on your bonfire deps.path to include it in your local development
-- Add `use_if_enabled(Bonfire.UiBoundaries.Web.Routes)` in your app's `Router` module
+- Add `use_if_enabled(Bonfire.UI.Boundaries.Web.Routes)` in your app's `Router` module
 - Add the extension on deps.git also (specifying the branch name) to allow others that do not have it in their fork to use it
 - Write a meaningful readme
 - TADA 🔥!
@@ -52,8 +52,8 @@ declare_extension(
       "ExtensionTemplate",
       icon: "bi:app",
       default_nav: [
-        Bonfire.UiBoundaries.Web.HomeLive,
-        Bonfire.UiBoundaries.Web.AboutLive
+        Bonfire.UI.Boundaries.Web.HomeLive,
+        Bonfire.UI.Boundaries.Web.AboutLive
       ])
 ```
 

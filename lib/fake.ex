@@ -1,2 +1,2 @@
-defmodule Bonfire.UiBoundaries.Fake do
+defmodule Bonfire.UI.Boundaries.Fake do
 end

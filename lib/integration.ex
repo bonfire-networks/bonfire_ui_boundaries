@@ -1,4 +1,4 @@
-defmodule Bonfire.UiBoundaries do
+defmodule Bonfire.UI.Boundaries do
   @moduledoc "./README.md" |> File.stream!() |> Enum.drop(1) |> Enum.join()
 
   alias Bonfire.Common.Config

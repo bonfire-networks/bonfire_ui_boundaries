@@ -1,12 +1,12 @@
-defmodule Bonfire.UiBoundaries.Test.FakeHelpers do
+defmodule Bonfire.UI.Boundaries.Test.FakeHelpers do
   alias Bonfire.Data.Identity.Account
-  alias Bonfire.UiBoundaries.Fake
-  alias Bonfire.UiBoundaries.Accounts
-  alias Bonfire.UiBoundaries.Users
+  alias Bonfire.UI.Boundaries.Fake
+  alias Bonfire.UI.Boundaries.Accounts
+  alias Bonfire.UI.Boundaries.Users
 
   import ExUnit.Assertions
 
-  import Bonfire.UiBoundaries
+  import Bonfire.UI.Boundaries
 
-  import Bonfire.UiBoundaries.Fake
+  import Bonfire.UI.Boundaries.Fake
 end

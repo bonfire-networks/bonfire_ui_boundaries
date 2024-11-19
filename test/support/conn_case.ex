@@ -1,4 +1,4 @@
-defmodule Bonfire.UiBoundaries.ConnCase do
+defmodule Bonfire.UI.Boundaries.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -26,14 +26,15 @@ defmodule Bonfire.UiBoundaries.ConnCase do
       import Bonfire.UI.Common.Testing.Helpers
 
       import Phoenix.LiveViewTest
-      # import Bonfire.UiBoundaries.ConnCase, async: true
+      # import Bonfire.UI.Boundaries.ConnCase, async: true
+      import PhoenixTest
 
-      import Bonfire.UiBoundaries.Test.ConnHelpers
-      import Bonfire.UiBoundaries.Test.FakeHelpers
+      import Bonfire.UI.Boundaries.Test.ConnHelpers
+      import Bonfire.UI.Boundaries.Test.FakeHelpers
 
-      alias Bonfire.UiBoundaries.Fake
-      import Bonfire.UiBoundaries.Fake
-      # alias Bonfire.UiBoundaries.Web.Router.Helpers, as: Routes
+      alias Bonfire.UI.Boundaries.Fake
+      import Bonfire.UI.Boundaries.Fake
+      # alias Bonfire.UI.Boundaries.Web.Router.Helpers, as: Routes
 
       # The default endpoint for testing
       @endpoint Application.compile_env!(:bonfire, :endpoint_module)
@@ -41,7 +42,7 @@ defmodule Bonfire.UiBoundaries.ConnCase do
   end
 
   setup tags do
-    import Bonfire.UiBoundaries
+    import Bonfire.UI.Boundaries
 
     Bonfire.Common.Test.Interactive.setup_test_repo(tags)
 

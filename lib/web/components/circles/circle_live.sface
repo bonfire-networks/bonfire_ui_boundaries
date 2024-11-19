@@ -52,8 +52,8 @@
 
             <button type="submit" class="w-full mt-3 normal-case btn btn-primary">{l("Save")}</button>
             <:open_btn>
-              <button type="button" class="btn btn-neutral h-10 min-h-10">
-                {l("Edit circle")}</button>
+              <div class="btn btn-neutral h-10 min-h-10">
+                {l("Edit circle")}</div>
             </:open_btn>
           </Bonfire.UI.Common.OpenModalLive>
         </div>
@@ -70,8 +70,8 @@
                 )}</p>
             </div>
             <:open_btn>
-              <button type="button" class="btn btn-error btn-circle h-10 min-h-10 max-w-10"><#Icon iconify="ph:trash-fill" class="w-4 h-4" />
-                <span class="sr-only">{l("Delete circle")}</span></button>
+              <div class="btn btn-error btn-circle h-10 min-h-10 max-w-10"><#Icon iconify="ph:trash-fill" class="w-4 h-4" />
+                <span class="sr-only">{l("Delete circle")}</span></div>
             </:open_btn>
             <:action_btns>
               <button

@@ -1,6 +1,6 @@
 import Config
 
-#### General configuration useful for tests, everything else should be in `bonfire_ui_boundaries.exs` or `Bonfire.UiBoundaries.RuntimeConfig`
+#### General configuration useful for tests, everything else should be in `bonfire_ui_boundaries.exs` or `Bonfire.UI.Boundaries.RuntimeConfig`
 
 # You probably won't want to touch these. You might override some in
 # other config files.

@@ -1,4 +1,4 @@
-defmodule Bonfire.UiBoundaries.RuntimeConfig do
+defmodule Bonfire.UI.Boundaries.RuntimeConfig do
   use Bonfire.Common.Localise
 
   @behaviour Bonfire.Common.ConfigModule

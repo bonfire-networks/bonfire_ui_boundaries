@@ -1,4 +1,4 @@
-defmodule Bonfire.UiBoundaries.DataCase do
+defmodule Bonfire.UI.Boundaries.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -10,19 +10,19 @@ defmodule Bonfire.UiBoundaries.DataCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use Bonfire.UiBoundaries.DataCase, async: true`, although
+  by setting `use Bonfire.UI.Boundaries.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
 
   use ExUnit.CaseTemplate
-  import Bonfire.UiBoundaries
+  import Bonfire.UI.Boundaries
 
   using do
     quote do
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      # import Bonfire.UiBoundaries.DataCase
+      # import Bonfire.UI.Boundaries.DataCase
     end
   end
 

@@ -25,10 +25,10 @@
             hide_custom={@hide_custom}
           />
           <:open_btn>
-            <button type="button" class="btn btn-neutral btn-xs">
+            <div class="btn btn-neutral btn-xs">
               {l("Advanced")}
               <#Icon iconify="codicon:settings" class="w-4 h-4" />
-            </button>
+            </div>
           </:open_btn>
         </Bonfire.UI.Common.OpenModalLive>
       </div>

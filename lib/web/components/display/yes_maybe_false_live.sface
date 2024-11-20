@@ -17,6 +17,8 @@
   <div class="flex items-center boundaries-switches">
     <div class="border p-1 flex items-center gap-1 border-base-content/10 rounded-xl">
       <button
+        data-id={"#{@role}_#{@verb}_can"}
+        data-value={"#{@role}_#{@verb}_#{@value}"}
         class={
           "text-base-content/70 p-1 rounded-lg hover:bg-base-content/10 transition-colors duration-100",
           "bg-success hover:bg-success text-success-content": @value == :can
@@ -28,8 +30,10 @@
         phx-target={@event_target}
       >
         <#Icon solid="Check" class="w-4 h-4" />
+        <span class="sr-only">{l("Can")}</span>
       </button>
       <button
+        data-id={"#{@role}_#{@verb}_undefined"}
         class={
           "text-base-content/70 p-1 rounded-lg hover:bg-base-content/10 transition-colors duration-100",
           "bg-neutral hover:bg-neutral text-neutral-content": @value == nil
@@ -41,8 +45,10 @@
         phx-target={@event_target}
       >
         <#Icon solid="Minus" class="w-4 h-4" />
+        <span class="sr-only">{l("Undefined")}</span>
       </button>
       <button
+        data-id={"#{@role}_#{@verb}_cannot"}
         class={
           "text-base-content/70 p-1 rounded-lg hover:bg-base-content/10 transition-colors duration-100",
           "bg-error hover:bg-error text-error-content": @value == :cannot
@@ -54,6 +60,7 @@
         phx-target={@event_target}
       >
         <#Icon solid="X" class="w-4 h-4" />
+        <span class="sr-only">{l("Cannot")}</span>
       </button>
     </div>
     <!-- <form

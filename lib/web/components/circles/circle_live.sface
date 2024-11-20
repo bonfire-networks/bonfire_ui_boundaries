@@ -11,13 +11,7 @@
         phx-change="multi_select"
         class="max-w-[300px] w-full flex-1"
       >
-        <!-- WIP: Not working when using live_select on a stateful component -->
-        <!-- <Bonfire.UI.Common.MultiselectLive
-          implementation={:live_select}
-          event_target="#edit_circle_participant"
-          form_input_name={__MODULE__}
-          label={l("Search for users to add")}
-          /> -->
+        <label for={"multi_select_#{__MODULE__}_text_input"} class="sr-only">{l("Search for users to add")}</label>
         <Bonfire.UI.Common.MultiselectLive
           implementation={:live_select}
           form_input_name={__MODULE__}
@@ -38,9 +32,11 @@
             form_opts={%{"phx-submit" => "Bonfire.Boundaries:edit"}}
           >
             <div class="w-full mt-4 form-control">
+              <label for="name" class="label">{l("Edit the circle name")}</label>
               <input type="hidden" name="circle_id" value={e(@circle, :id, nil)}>
               <div class="flex items-center">
                 <input
+                  id="name"
                   name="named[name]"
                   value={e(@circle, :named, :name, nil)}
                   type="text"
@@ -50,7 +46,11 @@
               </div>
             </div>
 
-            <button type="submit" class="w-full mt-3 normal-case btn btn-primary">{l("Save")}</button>
+            <button
+              data-role="edit_name_submit"
+              type="submit"
+              class="w-full mt-3 normal-case btn btn-primary"
+            >{l("Save")}</button>
             <:open_btn>
               <div class="btn btn-neutral h-10 min-h-10">
                 {l("Edit circle")}</div>

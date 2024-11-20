@@ -4,11 +4,7 @@ defmodule Bonfire.Boundaries.BlockTest do
 
   alias Bonfire.Social.Fake
   alias Bonfire.Posts
-  alias Bonfire.Social.Graph.Follows
-  alias Bonfire.Me.Users
   alias Bonfire.Files.Test
-  import Bonfire.Common.Enums
-  import Bonfire.UI.Me
 
   setup do
     account = fake_account!()
@@ -408,7 +404,7 @@ defmodule Bonfire.Boundaries.BlockTest do
       bob: bob,
       carl: carl
     } do
-      {:ok, me} = Users.make_admin(me)
+      {:ok, me} = Bonfire.Me.Users.make_admin(me)
       assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(alice, :ghost, :instance_wide)
 
       conn
@@ -427,7 +423,7 @@ defmodule Bonfire.Boundaries.BlockTest do
       carl: carl
     } do
       assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(alice, :silence, :instance_wide)
-      {:ok, me} = Users.make_admin(me)
+      {:ok, me} = Bonfire.Me.Users.make_admin(me)
 
       conn
       |> visit("/boundaries/instance_silenced")

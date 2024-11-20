@@ -25,7 +25,7 @@ defmodule Bonfire.UI.Boundaries.ConnCase do
 
       import Bonfire.UI.Common.Testing.Helpers
 
-      import Phoenix.LiveViewTest
+      # import Phoenix.LiveViewTest
       # import Bonfire.UI.Boundaries.ConnCase, async: true
       import PhoenixTest
 

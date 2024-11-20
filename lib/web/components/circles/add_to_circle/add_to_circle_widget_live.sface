@@ -16,14 +16,15 @@
       {#else}
         {#for circle <- e(@circles, [])}
           {#if Enum.any?(e(circle, :encircles, []), fn c -> Map.get(c, :subject_id) == @user_id end)}
-            <li
-              data-role="remove_from_circle"
-              phx-value-id={@user_id}
-              phx-value-circle={id(circle)}
-              :on-click="remove"
-              class="bg-base-content/5 rounded-md"
-            >
-              <div class="flex !px-2 items-center justify-between">
+            <li class="bg-base-content/5 rounded-md">
+              <button
+                class="flex !px-2 items-center justify-between"
+                data-role="remove_from_circle"
+                phx-value-id={@user_id}
+                phx-value-circle={id(circle)}
+                :on-click="remove"
+                type="button"
+              >
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 flex place-content-center items-center rounded bg-info/10">
                     <#Icon iconify="pajamas:group" class="w-5 h-5 text-base-content" />
@@ -40,17 +41,18 @@
                   </div>
                 </div>
                 <#Icon iconify="fluent:checkmark-16-filled" class="w-4 h-4 text-success mr-2" />
-              </div>
+              </button>
             </li>
           {#else}
-            <li
-              data-role="add_to_circle"
-              phx-value-id={@user_id}
-              phx-value-circle={id(circle)}
-              :on-click="add"
-              class=""
-            >
-              <div class="flex !px-2 items-center justify-between">
+            <li class="">
+              <button
+                data-role="add_to_circle"
+                phx-value-id={@user_id}
+                phx-value-circle={id(circle)}
+                :on-click="add"
+                type="button"
+                class="flex !px-2 items-center justify-between"
+              >
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 flex place-content-center items-center rounded bg-info/10">
                     <#Icon iconify="pajamas:group" class="w-5 h-5 text-base-content" />
@@ -66,7 +68,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </button>
             </li>
           {/if}
         {/for}

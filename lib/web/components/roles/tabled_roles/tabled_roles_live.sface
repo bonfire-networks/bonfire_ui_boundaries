@@ -43,11 +43,20 @@
             <td :for={{verb, status} <- verbs}>
               {#case status}
                 {#match :can}
-                  <#Icon iconify="carbon:checkmark-filled" class="text-success text-center mx-auto w-5 h-5" />
+                  <div data-value={"#{role}_#{verb}_can"}>
+                    <#Icon iconify="carbon:checkmark-filled" class="text-success text-center mx-auto w-5 h-5" />
+                    <span class="sr-only">{l("Can")}</span>
+                  </div>
                 {#match :cannot}
-                  <#Icon iconify="bx:block" class="text-error text-center mx-auto w-5 h-5" />
+                  <div data-value={"#{role}_#{verb}_cannot"}>
+                    <#Icon iconify="bx:block" class="text-error text-center mx-auto w-5 h-5" />
+                    <span class="sr-only">{l("Cannot")}</span>
+                  </div>
                 {#match _}
-                  <#Icon iconify="heroicons-solid:minus" class="text-base-content/30 w-5 h-5 text-center mx-auto" />
+                  <div data-value={"#{role}_#{verb}_undefined"}>
+                    <#Icon iconify="heroicons-solid:minus" class="text-base-content/30 w-5 h-5 text-center mx-auto" />
+                    <span class="sr-only">{l("Undefined")}</span>
+                  </div>
               {/case}
             </td>
           {/if}
@@ -60,13 +69,19 @@
               title_text={l("Role Details")}
               no_actions
             >
-              <form phx-submit="Bonfire.Boundaries:role_edit_details">
+              <form id={"edit_role_form_#{role}"} phx-submit="Bonfire.Boundaries:role_edit_details">
                 <div class="w-full mt-4 form-control">
-                  <label class="label">
+                  <label for="new_name" class="label">
                     <span class="label-text">{l("Edit the role name")}</span>
                   </label>
                   <input type="hidden" name="old_name" value={role}>
-                  <input type="text" name="new_name" value={role} class="w-full input input-bordered">
+                  <input
+                    type="text"
+                    id="new_name"
+                    name="new_name"
+                    value={role}
+                    class="w-full input input-bordered"
+                  />
                 </div>
                 <button type="submit" class="btn w-full btn-primary mt-4">
                   {l("Save")}
@@ -81,7 +96,7 @@
                 <p class="text-error mt-2 text-sm">
                   {l("Warning:This action cannot be undone.")}
                 </p>
-                <form phx-submit="Bonfire.Boundaries:role_delete">
+                <form id={"delete_role_form_#{role}"} phx-submit="Bonfire.Boundaries:role_delete">
                   <input type="hidden" name="name" value={role}>
                   <button type="submit" class="btn w-full btn-error mt-4">
                     {l("Delete")}
@@ -90,10 +105,10 @@
               </div>
 
               <:open_btn>
-                <button class="btn btn-sm btn-circle btn-outline">
+                <div class="btn btn-sm btn-circle btn-outline">
                   <#Icon iconify="ph:gear-fill" class="w-4 h-4 opacity-80" />
-                  <span class="sr-only">{l("Edit Role")}</span>
-                </button>
+                  <span class="sr-only">{l("Edit role")}</span>
+                </div>
               </:open_btn>
             </Bonfire.UI.Common.OpenModalLive>
           </td>

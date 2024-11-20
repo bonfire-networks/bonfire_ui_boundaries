@@ -11,17 +11,17 @@
     </div>
     <div class="w-full mt-4">
       <div class="w-full form-control">
-        {!-- <label class="label">
-          <span class="font-medium label-text">{l("Enter a name for the role")}</span>
-        </label> --}
-        <div class="flex items-center">
-          <input
-            name="name"
-            type="text"
-            placeholder={l("Type the role name")}
-            class="w-full input input-bordered"
-          />
-        </div>
+        <label for="new_role_name" class="label">
+          <span class="label-text">{l("Enter a name for the role")}</span>
+        </label>
+        <input
+          id="new_role_name"
+          data-role="role_name"
+          name="name"
+          type="text"
+          placeholder={l("The role name...")}
+          class="w-full input input-bordered"
+        />
       </div>
 
       {!-- <div class="form-control mt-4">

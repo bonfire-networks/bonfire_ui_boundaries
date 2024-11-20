@@ -37,12 +37,30 @@ defmodule Bonfire.Boundaries.BoundaryPresetsTest do
     |> assert_has("[role=banner]", text: "friends")
     |> click_button("[data-role=add-circle-to-acl]", "bestie")
     |> assert_has("#edit_grants", text: "bestie")
+
+    # WIP Specify role
   end
 
-  test "I can edit a preset I've previously created" do
+  test "I can edit a preset I've previously created", %{conn: conn, me: me} do
+    {:ok, acl} = Bonfire.Boundaries.Acls.create(%{named: %{name: "New ACL"}}, current_user: me)
+
+    conn
+    |> visit("/boundaries/acl/#{acl.id}")
+    |> click_button("[data-role=open_modal]", "Edit")
+    |> fill_in("Edit the boundary preset name", with: "besties")
+    |> click_button("[data-id=edit_boundary_submit]", "Save")
+    |> assert_has("[role=alert]", text: "Edited!")
+    |> refute_has("[role=banner]", text: "New ACL")
+    |> assert_has("[role=banner]", text: "besties")
   end
 
   test "I can delete a preset I've previously created" do
+  end
+
+  test "I can delete a circle from a preset" do
+  end
+
+  test "I can edit a role of a circle in a preset" do
   end
 
   test "I can pick the preset previously created from the list of presets on composer" do

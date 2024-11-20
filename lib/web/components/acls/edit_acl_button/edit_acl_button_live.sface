@@ -13,11 +13,12 @@
     <section role="tabpanel">
       <form id="edit_acl" phx-submit="Bonfire.Boundaries:edit_acl" class="mt-4">
         <div class="w-full form-control">
-          <label class="label">
+          <label for="name" class="label">
             <span class="text-sm text-base-content/70">{l("Edit the boundary preset name")}</span>
           </label>
           <div class="flex items-center">
             <input
+              id="name"
               name="named[name]"
               value={e(@acl, :named, :name, nil) || e(@acl, :stereotyped, :named, :name, nil)}
               type="text"
@@ -42,6 +43,7 @@
         </div>
         <button
           type="submit"
+          data-id="edit_boundary_submit"
           class="w-full mt-3 normal-case btn-outline  !border-primary/30 btn btn-primary"
         >{l("Save")}</button>
       </form>

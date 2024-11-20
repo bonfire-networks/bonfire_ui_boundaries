@@ -54,7 +54,6 @@ defmodule Bonfire.Boundaries.CircleTest do
     |> assert_has("[role=banner]", text: "friends")
   end
 
-  # FAILING: [Elixir.UndefinedFunctionError](/settings/extensions/code/Elixir.UndefinedFunctionError): function Bonfire.Common.Repo.Preload.schema_mixins/1 is undefined or private
   test "I can delete a circle I've previously created", %{conn: conn, me: me} do
     {:ok, circle} = Bonfire.Boundaries.Circles.create(me, %{named: %{name: "family"}})
 

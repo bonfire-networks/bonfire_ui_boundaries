@@ -17,13 +17,26 @@ defmodule Bonfire.Boundaries.BoundaryPresetsTest do
     {:ok, conn: conn, account: account, me: me, alice: alice, bob: bob, carl: carl}
   end
 
-  test "I can create a new preset" do
+  test "I can create a new preset", %{conn: conn} do
+    conn
+    |> visit("/boundaries/acls")
+    |> click_button("[data-role=open_modal]", "New preset")
+    |> fill_in("Enter a name for the boundary preset", with: "friends")
+    |> click_button("[data-role=new_acl_submit]", "Create")
+    |> assert_has("[role=banner]", text: "friends")
   end
 
-  test "I can add a circle to a preset and specify the role" do
-  end
+  test "I can add a circle to a preset and specify the role", %{conn: conn, me: me} do
+    {:ok, circle} = Bonfire.Boundaries.Circles.create(me, %{named: %{name: "bestie"}})
 
-  test "I can add a user to a preset and specify the role" do
+    conn
+    |> visit("/boundaries/acls")
+    |> click_button("[data-role=open_modal]", "New preset")
+    |> fill_in("Enter a name for the boundary preset", with: "friends")
+    |> click_button("[data-role=new_acl_submit]", "Create")
+    |> assert_has("[role=banner]", text: "friends")
+    |> click_button("[data-role=add-circle-to-acl]", "bestie")
+    |> assert_has("#edit_grants", text: "bestie")
   end
 
   test "I can edit a preset I've previously created" do

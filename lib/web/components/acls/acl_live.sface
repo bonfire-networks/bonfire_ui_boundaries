@@ -51,20 +51,16 @@
                 class="flex items-center gap-2 w-full flex-1 flex-wrap"
                 phx-change="multi_select"
               >
-                <!-- <Bonfire.UI.Common.MultiselectLive
-                  implementation={:live_select}
-                  form_input_name={:add_circles_to_acl}
-                  preloaded_options={@my_circles}
-                  label={l("Search for circles or users to add")}
-                /> -->
                 <button
                   disabled={Enum.any?(@feed_by_subject, fn {id, _} -> id == elem(circle, 1)[:id] end)}
                   class="btn btn-outline rounded-full"
                   :for={circle <- @my_circles}
                   type="button"
+                  data-role="add-circle-to-acl"
                   phx-target={@myself}
                   phx-click="add_to_acl"
                   phx-value-id={elem(circle, 1)[:id]}
+                  phx-value-name={elem(circle, 1)[:name]}
                 >
                   {elem(circle, 1)[:name]}
                 </button>

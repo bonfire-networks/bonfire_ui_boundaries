@@ -156,6 +156,15 @@ defmodule Bonfire.UI.Boundaries.Web.AclLive do
   #   end
   # end
 
+  def handle_event("add_to_acl", %{"id" => id, "name" => name} = _attrs, socket) do
+    subject = %{
+      id: id,
+      name: name
+    }
+
+    add_to_acl(subject, socket)
+  end
+
   def handle_event("add_to_acl", %{"id" => id} = _attrs, socket) do
     add_to_acl(id, socket)
   end
@@ -337,8 +346,7 @@ defmodule Bonfire.UI.Boundaries.Web.AclLive do
     {:noreply,
      do_add_to_acl(
        %{
-         id: id,
-         name: e(assigns(socket), :suggestions, id, nil)
+         id: id
        },
        socket
      )}

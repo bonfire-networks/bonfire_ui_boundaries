@@ -80,7 +80,11 @@
           />
         </form>
       {#else}
-        <div />
+        <div class="border-error text-sm mt-3 rounded-lg flex items-center place-content-center p-6 bg-error/10 text-error/90">
+          <span>{l(
+              "You can select one or more users and revoke them specific permissions for limiting their interactions with your activity."
+            )}</span>
+        </div>
       {/if}
     </section>
   </div>

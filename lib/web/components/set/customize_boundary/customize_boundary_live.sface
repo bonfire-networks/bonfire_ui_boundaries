@@ -1,5 +1,5 @@
 <div>
-  <div class="flex -mt-[0.75rem] pb-4 items-center justify-between gap-4 pr-6">
+  <div class="flex -mt-[0.25rem] pb-4 items-center justify-between gap-4 pr-6">
     <div class="text-lg font-semibold">{l("Define the activity boundary")}</div>
     <button type="button" class="normal-case btn-sm btn-ghost btn btn-circle opacity-70">
       <#Icon iconify="material-symbols:help-outline" class="w-5 h-5" />

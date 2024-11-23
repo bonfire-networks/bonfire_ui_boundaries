@@ -346,13 +346,13 @@ defmodule Bonfire.Boundaries.BlockTest do
 
       {:ok, post} =
         Posts.publish(
-          current_user: alice,
+          current_user: bob,
           post_attrs: attrs,
           boundary: "local"
         )
 
       # login as bob
-      conn = conn(user: bob, account: account)
+      conn = conn(user: alice, account: account)
 
       conn
       |> visit("/feed/local")

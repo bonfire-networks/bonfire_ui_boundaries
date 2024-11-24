@@ -825,7 +825,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
           do:
             Bonfire.Boundaries.load_pointers(list_of_ids,
               current_user: current_user,
-              verbs: e(opts, :verbs, [:read])
+              verbs: e(opts, :verbs, [:read]),
+              ids_only: true
             )
             |> Enums.ids(),
           else: []

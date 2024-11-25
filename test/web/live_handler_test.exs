@@ -228,13 +228,14 @@ defmodule Bonfire.Boundaries.LiveHandlerTest do
              |> form("#edit_acl_members")
              |> render_change(%{id: circle.id})
 
-      assert render(view) =~ "finish adding it to the boundary"
+      open_browser(view)
+
+      assert view
+             |> has_element?("[date-role=edit-acl]", "meme")
 
       assert view
              |> form("#edit_grants")
              |> render_change(%{to_circles: %{circle.id => "administer"}})
-
-      # open_browser(view)
 
       assert render(view) =~ "Role assigned"
     end

@@ -103,7 +103,13 @@
                           {/if}
 
                           <div class="flex items-center gap-2">
-                            <button x-on:click="open = !open" type="button" x-cloak class="btn btn-neutral btn-sm">
+                            <button
+                              x-on:click="open = !open"
+                              data-role="toggle_role"
+                              type="button"
+                              x-cloak
+                              class="btn btn-neutral btn-sm"
+                            >
                               {Recase.to_title(
                                 to_string(
                                   Bonfire.Boundaries.Roles.role_from_grants(Map.values(grants || %{}),
@@ -142,6 +148,7 @@
                                   </button>
                                   <:open_btn>
                                     <div data-role="remove_from_boundary_modal" class="btn-outline btn-xs btn btn-circle">
+                                      <span class="sr-only">{l("Delete")}</span>
                                       <#Icon iconify="ic:baseline-minus" class="w-4 h-4" />
                                     </div>
                                   </:open_btn>

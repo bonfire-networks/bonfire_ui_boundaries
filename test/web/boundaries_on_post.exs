@@ -103,7 +103,4 @@ defmodule Bonfire.Boundaries.OnPostTest do
     refute has_element?(view, "article button[data-role=boost_enabled]")
     refute has_element?(view, "article button[data-role=reply_enabled]")
   end
-
-  test "creating a post with a custom boundary, and verify that only users within the boundary can access the post according to their assigned roles." do
-  end
 end

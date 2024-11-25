@@ -160,10 +160,13 @@
   {/if}
   <!-- CUSTOM -->
   {#for {acl_id, acl} <- @my_acls}
-    <div class={
-      "flex items-center gap-3 justify-between rounded-lg hover:bg-base-content/5",
-      "bg-base-content/5": matches?(@to_boundaries, acl_id)
-    }>
+    <div
+      data-role="custom_boundary"
+      class={
+        "flex items-center gap-3 justify-between rounded-lg hover:bg-base-content/5",
+        "bg-base-content/5": matches?(@to_boundaries, acl_id)
+      }
+    >
       <button
         class="text-base-content w-full flex items-center p-2 gap-2 justify-between"
         phx-click={@set_action ||

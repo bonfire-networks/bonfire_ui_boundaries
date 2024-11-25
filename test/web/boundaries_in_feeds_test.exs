@@ -146,7 +146,7 @@ defmodule Bonfire.Boundaries.InFeedsTest do
     # login as alice and verify that she can see the post
     conn =
       conn(user: alice, account: account)
-      |> visit("/post/#{post.id}")
+      |> visit("/feed/local")
       |> assert_has("article")
       |> open_browser()
       |> refute_has("article button[data-role=like_enabled]")

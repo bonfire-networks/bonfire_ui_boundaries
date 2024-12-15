@@ -1,4 +1,4 @@
-defmodule Bonfire.Boundaries.RoleTest do
+defmodule Bonfire.UI.Boundaries.RoleTest do
   use Bonfire.UI.Boundaries.ConnCase, async: true
   @moduletag :ui
 

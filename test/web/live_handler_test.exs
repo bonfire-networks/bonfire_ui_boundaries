@@ -1,4 +1,4 @@
-defmodule Bonfire.Boundaries.LiveHandlerTest do
+defmodule Bonfire.UI.Boundaries.LiveHandlerTest do
   use Bonfire.UI.Boundaries.ConnCase, async: true
 
   @moduletag :ui
@@ -228,7 +228,7 @@ defmodule Bonfire.Boundaries.LiveHandlerTest do
              |> form("#edit_acl_members")
              |> render_change(%{id: circle.id})
 
-      open_browser(view)
+      #       open_browser(view)
 
       assert view
              |> has_element?("[date-role=edit-acl]", "meme")

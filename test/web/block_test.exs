@@ -1,4 +1,4 @@
-defmodule Bonfire.Boundaries.BlockTest do
+defmodule Bonfire.UI.Boundaries.BlockTest do
   use Bonfire.UI.Boundaries.ConnCase, async: true
   @moduletag :ui
 

@@ -1,4 +1,4 @@
-defmodule Bonfire.Boundaries.NegativeBoundariesTest do
+defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
   use Bonfire.UI.Boundaries.ConnCase, async: true
   @moduletag :ui
 

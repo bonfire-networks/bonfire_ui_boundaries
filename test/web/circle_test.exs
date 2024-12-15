@@ -1,4 +1,4 @@
-defmodule Bonfire.Boundaries.CircleTest do
+defmodule Bonfire.UI.Boundaries.CircleTest do
   use Bonfire.UI.Boundaries.ConnCase, async: true
   @moduletag :ui
 

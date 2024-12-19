@@ -228,10 +228,10 @@
       </div>
     {/if}
   {#else}
-    {#if !@only_admin and
-        Bonfire.Boundaries.Blocks.is_blocked?(@object, :silence,
-          current_user: current_user(@__context__)
-        ) &&
+    {#if (!@only_admin and
+         Bonfire.Boundaries.Blocks.is_blocked?(@object, :silence,
+           current_user: current_user(@__context__)
+         )) &&
         Bonfire.Boundaries.Blocks.is_blocked?(@object, :ghost, current_user: current_user(@__context__))}
       <div class="text-sm mt-3">{l("By unblocking %{user_or_instance_name}, you will be able to interact together with them.",
           user_or_instance_name: @label

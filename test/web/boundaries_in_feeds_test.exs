@@ -130,7 +130,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
     me = fake_user!(account)
     alice = fake_user!(account)
     bob = fake_user!(account)
-    Bonfire.Common.Config.put(:feed_live_update_many_preloads, :inline)
+    Bonfire.Common.Config.put(:feed_live_update_many_preload_mode, :inline)
 
     html_body = "epic html message"
     attrs = %{post_content: %{html_body: html_body}}

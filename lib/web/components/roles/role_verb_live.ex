@@ -6,7 +6,7 @@ defmodule Bonfire.UI.Boundaries.Web.RoleVerbLive do
   prop read_only, :boolean, default: false
   prop mini, :boolean, default: false
   prop all_verbs, :list
-  # prop exclude_verbs, :list, default: []
+  # prop exclude_activity_types, :list, default: []
 
   prop event_target, :any, default: nil
   prop name, :any, default: nil

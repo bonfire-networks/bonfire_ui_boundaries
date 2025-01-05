@@ -46,7 +46,7 @@
         selected_tab={@selected_tab}
         id="view_circle"
         scope={@scope}
-        show_add={maybe_apply(Bonfire.Me.Accounts, :is_admin?, @__context__) == true}
+        show_add={maybe_apply(Bonfire.Me.Accounts, :is_admin?, [@__context__], fallback_return: nil) == true}
         read_only
         circle_id={Bonfire.Boundaries.Scaffold.Instance.mod_circle()}
       /> -->

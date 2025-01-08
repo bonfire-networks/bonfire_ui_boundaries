@@ -88,72 +88,152 @@ jobs:
           
           call_api() {
             local url="$1"
-            local data="$2"
-            local retries=5
-            local wait=5
-            local timeout=60
-            
-            for i in $(seq 1 $retries); do
-              echo "API call attempt $i of $retries"
-              response=$(curl -X POST "$url" \
-                -H "Content-Type: application/json" \
-                -H "Accept: application/json" \
-                --fail \
-                --silent \
-                --show-error \
-                --max-time $timeout \
-                --retry 3 \
-                --retry-delay 2 \
-                --data-raw "$data")
+              local data="$2"
+              local retries=5
+              local wait=5
+              local timeout=60
               
-              if [ $? -eq 0 ]; then
-                echo "$response"
-                return 0
-              fi
+              for i in $(seq 1 $retries); do
+                echo "API call attempt $i of $retries"
+                response=$(curl -X POST "$url" \
+                  -H "Content-Type: application/json" \
+                  -H "Accept: application/json" \
+                  --fail \
+                  --silent \
+                  --show-error \
+                  --max-time $timeout \
+                  --retry 3 \
+                  --retry-delay 2 \
+                  --data-raw "$data")
+                
+                if [ $? -eq 0 ]; then
+                  echo "$response"
+                  return 0
+                fi
+                
+                echo "API call failed, waiting ${wait}s before retry..."
+                sleep $wait
+                wait=$((wait * 2))
+              done
               
-              echo "API call failed, waiting ${wait}s before retry..."
-              sleep $wait
-              wait=$((wait * 2))
-            done
+              echo "::error::API call failed after $retries attempts"
+              return 1
+            }
+            EOF
             
-            echo "::error::API call failed after $retries attempts"
-            return 1
-          }
-          EOF
-          
-          chmod +x api_helper.sh
+            chmod +x api_helper.sh
 
       - name: Full Repository Ingestion
         if: >-
-          steps.config.outputs.config_exists == 'true' && 
-          github.event_name == 'workflow_dispatch' && 
-          github.event.inputs.full_ingest == 'true'
+              steps.config.outputs.config_exists == 'true' && 
+              github.event_name == 'workflow_dispatch' && 
+              github.event.inputs.full_ingest == 'true'
         run: |
-          source ./api_helper.sh
-          
-          echo "Starting full repository ingestion..."
-          
-          # Initialize ingestion
-          response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/ingest-repo" "{
-            \"repo\": \"${{ github.repository }}\",
-            \"branch\": \"${{ github.ref_name }}\",
-            \"metadata\": {
-              \"repository\": \"${{ github.repository }}\",
-              \"branch\": \"${{ github.ref_name }}\",
-              \"event_type\": \"${{ github.event_name }}\",
-              \"commit_sha\": \"${{ github.sha }}\",
-              \"process_timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",
-              \"config\": $CONFIG
-            }
-          }")
-          
-          # Process each batch
-          echo "$response" | jq -r '.batchUrls[]' | while read -r batch_url; do
-            echo "Processing batch: $batch_url"
-            curl -s "$batch_url"
-            # Add small delay between batches
-            sleep 2
-          done
+              source ./api_helper.sh
+              
+              echo "Starting full repository ingestion..."
+              
+              # Validate required variables
+              if [ -z "$CONFIG" ]; then
+                echo "::error::CONFIG variable is empty"
+                exit 1
+              fi
+              
+              if [ -z "${{ steps.config.outputs.osiris_url }}" ]; then
+                echo "::error::osiris_url is not set"
+                exit 1
+              fi
+              
+              # Debug output to help with troubleshooting
+              echo "Repository: ${{ github.repository }}"
+              echo "Branch: ${{ github.ref_name }}"
+              echo "Event: ${{ github.event_name }}"
+              
+              # Convert CONFIG from YAML to JSON and validate it's valid JSON
+              CONFIG_JSON=$(echo "$CONFIG" | yq -o=json '.' | jq -c '.')
+              if [ $? -ne 0 ]; then
+                echo "::error::Failed to convert config to JSON"
+                exit 1
+              fi
+              
+              echo "Using configuration:"
+              echo "$CONFIG_JSON" | jq '.'
+              
+              # Prepare timestamp
+              TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+              
+              # Initialize ingestion with error handling
+              echo "Initializing repository ingestion..."
+              response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/ingest-repo" "{
+                \"repo\": \"${{ github.repository }}\",
+                \"branch\": \"${{ github.ref_name }}\",
+                \"metadata\": {
+                  \"repository\": \"${{ github.repository }}\",
+                  \"branch\": \"${{ github.ref_name }}\",
+                  \"event_type\": \"${{ github.event_name }}\",
+                  \"commit_sha\": \"${{ github.sha }}\",
+                  \"process_timestamp\": \"$TIMESTAMP\",
+                  \"config\": $CONFIG_JSON
+                }
+              }")
+              
+              # Check if response is valid JSON
+              if ! echo "$response" | jq '.' >/dev/null 2>&1; then
+                echo "::error::Invalid JSON response from ingest-repo:"
+                echo "$response"
+                exit 1
+              fi
+              
+              # Extract and validate batch URLs
+              batch_urls=$(echo "$response" | jq -r '.batchUrls[]' 2>/dev/null)
+              if [ $? -ne 0 ] || [ -z "$batch_urls" ]; then
+                echo "::error::No batch URLs found in response"
+                echo "Response was:"
+                echo "$response" | jq '.'
+                exit 1
+              fi
+              
+              # Process batches
+              echo "Processing batches..."
+              total_batches=$(echo "$response" | jq '.totalBatches')
+              current_batch=0
+              
+              echo "$batch_urls" | while read -r batch_url; do
+                ((current_batch++))
+                echo "Processing batch $current_batch of $total_batches"
+                echo "Batch URL: $batch_url"
+                
+                batch_response=$(curl -s -f "$batch_url")
+                if [ $? -ne 0 ]; then
+                  echo "::warning::Failed to process batch $current_batch"
+                  continue
+                fi
+                
+                # Validate batch response
+                if echo "$batch_response" | jq -e '.error' >/dev/null; then
+                  echo "::warning::Batch $current_batch returned error:"
+                  echo "$batch_response" | jq '.error'
+                  continue
+                fi
+                
+                echo "Batch $current_batch processed successfully"
+                echo "$batch_response" | jq '.results'
+                
+                # Add small delay between batches to prevent rate limiting
+                if [ $current_batch -lt $total_batches ]; then
+                  echo "Waiting 2 seconds before next batch..."
+                  sleep 2
+                fi
+              done
+              
+              echo "Repository ingestion completed"
+              
+              # Final status check
+              if [ $current_batch -eq $total_batches ]; then
+                echo "::notice::Successfully processed all $total_batches batches"
+              else
+                echo "::warning::Processed $current_batch out of $total_batches batches"
+              fi
 
       - name: Process Incremental Changes
         if: >-

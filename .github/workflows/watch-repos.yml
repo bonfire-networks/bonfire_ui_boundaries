@@ -1,76 +1,92 @@
 name: Process Repository Changes
-
-on:
-  # Run on new commits to configured branches
+'on':
   push:
     branches:
       - main
       - master
-  # Run when PRs are merged
   pull_request:
-    types: 
+    types:
       - closed
-  # Manual trigger for full repository ingestion
   workflow_dispatch:
     inputs:
       full_ingest:
-        description: 'Perform full repository ingestion'
+        description: Perform full repository ingestion
         required: true
         type: boolean
         default: false
-
 jobs:
   process-changes:
     if: >-
-      github.event_name == 'push' ||
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
-      github.event_name == 'workflow_dispatch'
+      github.event_name == 'push' || (github.event_name == 'pull_request' &&
+      github.event.pull_request.merged == true) || github.event_name ==
+      'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Changed to fetch complete history for better diff
-
+          fetch-depth: 0
       - name: Install yq
-        run: |
-          sudo wget https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64 -O /usr/local/bin/yq
-          sudo chmod +x /usr/local/bin/yq
-          yq --version
+        run: >
+          sudo wget
+          https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64
+          -O /usr/local/bin/yq
 
+          sudo chmod +x /usr/local/bin/yq
+
+          yq --version
       - name: Load Configuration
         id: config
         env:
-          OSIRIS_URL: "https://osiris-server.vercel.app"
-        run: |
+          OSIRIS_URL: 'https://osiris-server.vercel.app'
+        run: >
           # Install yq if not present
-          # sudo wget https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64 -O /usr/local/bin/yq
+
+          # sudo wget
+          https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64
+          -O /usr/local/bin/yq
+
           # sudo chmod +x /usr/local/bin/yq
-      
+
+
           # Get config from API endpoint
+
           CONFIG=$(curl -s "$OSIRIS_URL/api/config")
-          
+
+
           if [ -z "$CONFIG" ]; then
             echo "::error::Failed to fetch configuration from osiris-server"
             exit 1
           fi
-          
+
+
           # Parse the YAML into JSON for the repository
-          REPO_CONFIG=$(echo "$CONFIG" | yq -o=json ".repositories[\"${{ github.repository }}\"]")
-          
+
+          REPO_CONFIG=$(echo "$CONFIG" | yq -o=json ".repositories[\"${{
+          github.repository }}\"]")
+
+
           if [ "$REPO_CONFIG" == "null" ]; then
             echo "Repository ${{ github.repository }} not configured for watching"
             exit 0
           fi
-          
+
+
           # Log for debugging
+
           echo "Repository config:"
+
           echo "$REPO_CONFIG" | jq '.'
-          
+
+
           # Export config
+
           echo 'CONFIG<<EOF' >> $GITHUB_ENV
+
           echo "$REPO_CONFIG" >> $GITHUB_ENV
+
           echo 'EOF' >> $GITHUB_ENV
-          
+
+
           {
             echo "config<<EOF"
             echo "$REPO_CONFIG"
@@ -78,226 +94,275 @@ jobs:
             echo "osiris_url=$OSIRIS_URL"
             echo "config_exists=true"
           } >> $GITHUB_OUTPUT
-
       - name: Setup API Helper
         if: steps.config.outputs.config_exists == 'true'
         run: |
-            cat << \EOF > api_helper.sh
-            #!/bin/bash
-        
-            call_api() {
-              local url="$1"
-              local data="$2"
-              local retries=5
-              local wait=5
-              local timeout=60
-              
-              for i in $(seq 1 $retries); do
-                echo "API call attempt $i of $retries"
-                response=$(curl -X POST "$url" \
-                  -H "Content-Type: application/json" \
-                  -H "Accept: application/json" \
-                  --fail \
-                  --silent \
-                  --show-error \
-                  --max-time $timeout \
-                  --retry 3 \
-                  --retry-delay 2 \
-                  --data-raw "$data")
-                
-                if [ $? -eq 0 ]; then
-                  echo "$response"
-                  return 0
-                fi
-                
-                echo "API call failed, waiting ${wait}s before retry..."
-                sleep $wait
-                wait=$((wait * 2))
-              done
-              
-              echo "::error::API call failed after $retries attempts"
-              return 1
+          cat << \EOF > api_helper.sh
+          #!/bin/bash
 
-            }
-            EOF
-        
-            chmod +x api_helper.sh
+          call_api() {
+            local url="$1"
+            local data="$2"
+            local retries=5
+            local wait=5
+            local timeout=60
+            
+            for i in $(seq 1 $retries); do
+              echo "API call attempt $i of $retries"
+              response=$(curl -X POST "$url" \
+                -H "Content-Type: application/json" \
+                -H "Accept: application/json" \
+                --fail \
+                --silent \
+                --show-error \
+                --max-time $timeout \
+                --retry 3 \
+                --retry-delay 2 \
+                --data-raw "$data")
+              
+              if [ $? -eq 0 ]; then
+                echo "$response"
+                return 0
+              fi
+              
+              echo "API call failed, waiting ${wait}s before retry..."
+              sleep $wait
+              wait=$((wait * 2))
+            done
+            
+            echo "::error::API call failed after $retries attempts"
+            return 1
 
+          }
+          EOF
+
+          chmod +x api_helper.sh
       - name: Full Repository Ingestion
         if: >-
-              steps.config.outputs.config_exists == 'true' && 
-              github.event_name == 'workflow_dispatch' && 
-              github.event.inputs.full_ingest == 'true'
-        run: |
-              source ./api_helper.sh
-              
-              echo "Starting full repository ingestion..."
-              
-              # Validate required variables
-              if [ -z "$CONFIG" ]; then
-                echo "::error::CONFIG variable is empty"
-                exit 1
-              fi
-              
-              if [ -z "${{ steps.config.outputs.osiris_url }}" ]; then
-                echo "::error::osiris_url is not set"
-                exit 1
-              fi
-              
-              # Debug output
-              echo "Repository: ${{ github.repository }}"
-              echo "Branch: ${{ github.ref_name }}"
-              echo "Event: ${{ github.event_name }}"
-              
-              # Convert CONFIG from YAML to JSON
-              CONFIG_JSON=$(echo "$CONFIG" | yq -o=json '.' | jq -c '.')
-              if [ $? -ne 0 ]; then
-                echo "::error::Failed to convert config to JSON"
-                exit 1
-              fi
-              
-              echo "Using configuration:"
-              echo "$CONFIG_JSON" | jq '.'
-              
-              # Initialize ingestion
-              echo "Initializing repository ingestion..."
-              TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-              
-              response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/ingest-repo" "{
+          steps.config.outputs.config_exists == 'true' &&  github.event_name ==
+          'workflow_dispatch' &&  github.event.inputs.full_ingest == 'true'
+        run: >
+          source ./api_helper.sh
+
+
+          echo "Starting full repository ingestion..."
+
+
+          # Validate required variables
+
+          if [ -z "$CONFIG" ]; then
+            echo "::error::CONFIG variable is empty"
+            exit 1
+          fi
+
+
+          if [ -z "${{ steps.config.outputs.osiris_url }}" ]; then
+            echo "::error::osiris_url is not set"
+            exit 1
+          fi
+
+
+          # Debug output
+
+          echo "Repository: ${{ github.repository }}"
+
+          echo "Branch: ${{ github.ref_name }}"
+
+          echo "Event: ${{ github.event_name }}"
+
+
+          # Convert CONFIG from YAML to JSON
+
+          CONFIG_JSON=$(echo "$CONFIG" | yq -o=json '.' | jq -c '.')
+
+          if [ $? -ne 0 ]; then
+            echo "::error::Failed to convert config to JSON"
+            exit 1
+          fi
+
+
+          echo "Using configuration:"
+
+          echo "$CONFIG_JSON" | jq '.'
+
+
+          # Initialize ingestion
+
+          echo "Initializing repository ingestion..."
+
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+
+          response=$(call_api "${{ steps.config.outputs.osiris_url
+          }}/api/ingest-repo" "{
+            \"repo\": \"${{ github.repository }}\",
+            \"branch\": \"${{ github.ref_name }}\",
+            \"metadata\": {
+              \"repository\": \"${{ github.repository }}\",
+              \"branch\": \"${{ github.ref_name }}\",
+              \"event_type\": \"${{ github.event_name }}\",
+              \"commit_sha\": \"${{ github.sha }}\",
+              \"process_timestamp\": \"$TIMESTAMP\",
+              \"config\": $CONFIG_JSON
+            }
+          }")
+
+
+          # Store and validate response
+
+          echo "$response" > response.json
+
+          echo "Processing response..."
+
+
+          if ! jq -e '.' response.json > /dev/null 2>&1; then
+            echo "::error::Invalid JSON response received:"
+            cat response.json
+            exit 1
+          fi
+
+
+          # Extract and validate required fields
+
+          total_files=$(jq -r '.totalFiles // empty' response.json)
+
+          total_batches=$(jq -r '.totalBatches // empty' response.json)
+
+
+          if [ -z "$total_files" ] || [ -z "$total_batches" ]; then
+            echo "::error::Response missing required fields"
+            cat response.json
+            exit 1
+          fi
+
+
+          echo "Found $total_files files to process in $total_batches batches"
+
+
+          # Process batch URLs
+
+          mapfile -t batch_urls < <(jq -r '.batchUrls[]' response.json)
+
+
+          if [ ${#batch_urls[@]} -eq 0 ]; then
+            echo "::error::No batch URLs found in response"
+            cat response.json
+            exit 1
+          fi
+
+
+          # Validate URL formats
+
+          for url in "${batch_urls[@]}"; do
+            if [[ ! "$url" =~ ^https?:// ]]; then
+              echo "::error::Invalid URL format (missing protocol): $url"
+              exit 1
+            fi
+          done
+
+
+          # Process batches
+
+          echo "Starting batch processing..."
+
+          successful_batches=0
+
+          failed_batches=0
+
+
+          # Get total batches from response
+
+          total_batches=$(jq -r '.totalBatches' response.json)
+
+
+          for batch in $(seq 0 $((total_batches - 1))); do
+            echo "Processing batch $((batch + 1)) of $total_batches"
+            
+            # Call process-batch endpoint with POST
+            if response=$(curl -X POST \
+              -H "Content-Type: application/json" \
+              -d "{
                 \"repo\": \"${{ github.repository }}\",
                 \"branch\": \"${{ github.ref_name }}\",
-                \"metadata\": {
-                  \"repository\": \"${{ github.repository }}\",
-                  \"branch\": \"${{ github.ref_name }}\",
-                  \"event_type\": \"${{ github.event_name }}\",
-                  \"commit_sha\": \"${{ github.sha }}\",
-                  \"process_timestamp\": \"$TIMESTAMP\",
-                  \"config\": $CONFIG_JSON
-                }
-              }")
+                \"batchStart\": $((batch * 10)),
+                \"batchSize\": 10
+                }" \
+              "${{ steps.config.outputs.osiris_url }}/api/process-batch"); then
               
-              # Store and validate response
-              echo "$response" > response.json
-              echo "Processing response..."
-              
-              if ! jq -e '.' response.json > /dev/null 2>&1; then
-                echo "::error::Invalid JSON response received:"
-                cat response.json
-                exit 1
-              fi
-              
-              # Extract and validate required fields
-              total_files=$(jq -r '.totalFiles // empty' response.json)
-              total_batches=$(jq -r '.totalBatches // empty' response.json)
-              
-              if [ -z "$total_files" ] || [ -z "$total_batches" ]; then
-                echo "::error::Response missing required fields"
-                cat response.json
-                exit 1
-              fi
-              
-              echo "Found $total_files files to process in $total_batches batches"
-              
-              # Process batch URLs
-              mapfile -t batch_urls < <(jq -r '.batchUrls[]' response.json)
-              
-              if [ ${#batch_urls[@]} -eq 0 ]; then
-                echo "::error::No batch URLs found in response"
-                cat response.json
-                exit 1
-              fi
-              
-              # Validate URL formats
-              for url in "${batch_urls[@]}"; do
-                if [[ ! "$url" =~ ^https?:// ]]; then
-                  echo "::error::Invalid URL format (missing protocol): $url"
-                  exit 1
+              if echo "$response" | jq -e '.' >/dev/null 2>&1; then
+                if echo "$response" | jq -e '.error' >/dev/null 2>&1; then
+                  echo "::warning::Batch $((batch + 1)) returned error:"
+                  echo "$response" | jq '.error'
+                  failed_batches=$((failed_batches + 1))
+                else
+                  echo "Batch $((batch + 1)) processed successfully"
+                  successful_batches=$((successful_batches + 1))
                 fi
-              done
-              
-              # Process batches
-              echo "Starting batch processing..."
-              successful_batches=0
-              failed_batches=0
-              
-              for ((i=0; i<${#batch_urls[@]}; i++)); do
-                batch_url="${batch_urls[$i]}"
-                current_batch=$((i + 1))
-                
-                echo "Processing batch $current_batch of ${#batch_urls[@]}"
-                echo "URL: $batch_url"
-                
-                # Process batch with retries
-                max_retries=3
-                retry_count=0
-                
-                while [ $retry_count -lt $max_retries ]; do
-                  if curl -sf "$batch_url" > "batch_response_$current_batch.json"; then
-                    if jq -e '.' "batch_response_$current_batch.json" > /dev/null 2>&1; then
-                      if jq -e '.error' "batch_response_$current_batch.json" > /dev/null 2>&1; then
-                        echo "::warning::Batch $current_batch returned error:"
-                        jq '.error' "batch_response_$current_batch.json"
-                      else
-                        echo "Batch $current_batch processed successfully"
-                        successful_batches=$((successful_batches + 1))
-                        break
-                      fi
-                    else
-                      echo "::warning::Invalid JSON response from batch $current_batch"
-                    fi
-                  fi
-                  
-                  retry_count=$((retry_count + 1))
-                  if [ $retry_count -lt $max_retries ]; then
-                    echo "Retrying batch $current_batch (attempt $((retry_count + 1))/$max_retries)..."
-                    sleep 2
-                  else
-                    echo "::warning::Failed to process batch $current_batch after $max_retries attempts"
-                    failed_batches=$((failed_batches + 1))
-                  fi
-                done
-                
-                # Add delay between batches
-                if [ $current_batch -lt ${#batch_urls[@]} ]; then
-                  sleep 2
-                fi
-              done
-              
-              # Final status report
-              echo "Repository ingestion completed"
-              echo "Summary:"
-              echo "- Total batches: ${#batch_urls[@]}"
-              echo "- Successful: $successful_batches"
-              echo "- Failed: $failed_batches"
-              
-              if [ $successful_batches -eq ${#batch_urls[@]} ]; then
-                echo "::notice::Successfully processed all batches"
               else
-                echo "::warning::Completed with $failed_batches failed batches"
-                # Only exit with error if all batches failed
-                if [ $successful_batches -eq 0 ]; then
-                  exit 1
-                fi
+                echo "::warning::Invalid JSON response from batch $((batch + 1))"
+                failed_batches=$((failed_batches + 1))
               fi
-              
+            else
+              echo "::warning::Failed to process batch $((batch + 1))"
+              failed_batches=$((failed_batches + 1))
+            fi
+            
+            # Add delay between batches
+            if [ $((batch + 1)) -lt $total_batches ]; then
+              sleep 2
+            fi
+          done
+
+
+          # Final status report
+
+          echo "Repository ingestion completed"
+
+          echo "Summary:"
+
+          echo "- Total batches: $total_batches"
+
+          echo "- Successful: $successful_batches"
+
+          echo "- Failed: $failed_batches"
+
+
+          if [ $successful_batches -eq $total_batches ]; then
+            echo "::notice::Successfully processed all batches"
+          else
+            echo "::warning::Completed with $failed_batches failed batches"
+            if [ $successful_batches -eq 0 ]; then
+              exit 1
+            fi
+          fi
       - name: Process Incremental Changes
         if: >-
-          steps.config.outputs.config_exists == 'true' && 
-          !(github.event_name == 'workflow_dispatch' && github.event.inputs.full_ingest == 'true')
-        run: |
+          steps.config.outputs.config_exists == 'true' &&  !(github.event_name
+          == 'workflow_dispatch' && github.event.inputs.full_ingest == 'true')
+        run: >
           source ./api_helper.sh
-          
+
+
           # Debug: Print full config at start
+
           echo "Full Configuration from env:"
+
           echo "$CONFIG" | jq '.'
-          
+
+
           # Create extensions file
-          echo "$CONFIG" | jq -r '.included_extensions[]' | tr -d '\r' > included_extensions.txt
-          
+
+          echo "$CONFIG" | jq -r '.included_extensions[]' | tr -d '\r' >
+          included_extensions.txt
+
+
           echo "Available extensions:"
+
           cat included_extensions.txt
-          
+
+
           # Get commit range
+
           if [ "${{ github.event_name }}" == "push" ]; then
             BASE_SHA="${{ github.event.before }}"
             HEAD_SHA="${{ github.event.after }}"
@@ -308,19 +373,29 @@ jobs:
             BASE_SHA=$(git rev-parse HEAD^)
             HEAD_SHA=$(git rev-parse HEAD)
           fi
-          
+
+
           echo "Base SHA: $BASE_SHA"
+
           echo "Head SHA: $HEAD_SHA"
-          
+
+
           # Process changes with improved debug output
+
           echo "Starting to process changed files..."
-          
+
+
           # Create temporary directory for processing
+
           TEMP_DIR=$(mktemp -d)
+
           trap 'rm -rf "$TEMP_DIR"' EXIT
-          
+
+
           # Process each changed file
-          git diff --name-status --no-renames $BASE_SHA $HEAD_SHA | while read -r status filepath; do
+
+          git diff --name-status --no-renames $BASE_SHA $HEAD_SHA | while read
+          -r status filepath; do
             echo "Processing: $filepath (Status: $status)"
             
             [ -z "$filepath" ] && continue
@@ -340,8 +415,10 @@ jobs:
               echo "Extension '$ext' is NOT included"
             fi
           done
-          
+
+
           # Process collected changes
+
           if [ -f "$TEMP_DIR/changes.txt" ]; then
             echo "Found changes to process"
             
@@ -400,7 +477,6 @@ jobs:
           else
             echo "No relevant file changes detected"
           fi
-
       - name: Report Status
         if: always()
         run: |

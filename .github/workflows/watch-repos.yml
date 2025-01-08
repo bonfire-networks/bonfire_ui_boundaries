@@ -239,43 +239,21 @@ jobs:
           echo "Found $total_files files to process in $total_batches batches"
 
 
-          # Process batch URLs
+          total_batches=$(jq -r '.totalBatches' response.json)
 
-          mapfile -t batch_urls < <(jq -r '.batchUrls[]' response.json)
-
-
-          if [ ${#batch_urls[@]} -eq 0 ]; then
-            echo "::error::No batch URLs found in response"
+          if [ -z "$total_batches" ] || [ "$total_batches" -eq 0 ]; then
+            echo "::error::No batches found in response"
             cat response.json
             exit 1
           fi
 
-
-          # Validate URL formats
-
-          for url in "${batch_urls[@]}"; do
-            if [[ ! "$url" =~ ^https?:// ]]; then
-              echo "::error::Invalid URL format (missing protocol): $url"
-              exit 1
-            fi
-          done
-
-
-          # Process batches
-
+          # Then directly use the total_batches value for processing
           echo "Starting batch processing..."
-
           successful_batches=0
-
           failed_batches=0
 
-
-          # Get total batches from response
-
-          total_batches=$(jq -r '.totalBatches' response.json)
-
-
           for batch in $(seq 0 $((total_batches - 1))); do
+
             echo "Processing batch $((batch + 1)) of $total_batches"
             
             # Call process-batch endpoint with POST

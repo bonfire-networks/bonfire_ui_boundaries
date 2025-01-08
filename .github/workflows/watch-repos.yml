@@ -142,14 +142,43 @@ jobs:
           chmod +x api_helper.sh
       - name: Full Repository Ingestion
         if: >-
-            steps.config.outputs.config_exists == 'true' &&  github.event_name == 'workflow_dispatch' &&  github.event.inputs.full_ingest == 'true'
+            steps.config.outputs.config_exists == 'true' &&  github.event_name ==
+            'workflow_dispatch' &&  github.event.inputs.full_ingest == 'true'
         run: |
             source ./api_helper.sh
         
             echo "Starting full repository ingestion..."
             echo "DEBUG: Making initial API call..."
             
-            # Make the API call - response is already validated by call_api
+            # First construct the REQUEST_BODY using jq
+            REQUEST_BODY=$(jq -n \
+              --arg repo "${{ github.repository }}" \
+              --arg branch "${{ github.ref_name }}" \
+              --arg event_type "${{ github.event_name }}" \
+              --arg commit_sha "${{ github.sha }}" \
+              --argjson config "$CONFIG" \
+              '{
+                "repo": $repo,
+                "branch": $branch,
+                "metadata": {
+                  "repository": $repo,
+                  "branch": $branch,
+                  "event_type": $event_type,
+                  "commit_sha": $commit_sha,
+                  "process_timestamp": (now | strftime("%Y-%m-%dT%H:%M:%SZ")),
+                  "config": $config
+                },
+                "maxFileSize": ($config.max_file_size // 100000),
+                "maxTokens": ($config.max_tokens // 50000),
+                "forceReplace": true
+              }'
+            )
+        
+            echo "DEBUG: Request body:"
+            echo "$REQUEST_BODY" | jq '.'
+            
+            # Make the API call
+            echo "Making API call to ingest-repo..."
             response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/ingest-repo" "$REQUEST_BODY")
             api_status=$?
             

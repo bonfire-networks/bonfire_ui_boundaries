@@ -179,6 +179,9 @@ jobs:
             
             # Make the API call
             echo "Making API call to ingest-repo..."
+            echo "DEBUG: Final JSON to ingest-repo"
+            echo "$REQUEST_BODY" | xxd 
+            echo "$REQUEST_BODY" | jq '.'
             response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/ingest-repo" "$REQUEST_BODY")
             api_status=$?
             

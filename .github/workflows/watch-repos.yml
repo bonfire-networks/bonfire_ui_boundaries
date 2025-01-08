@@ -139,79 +139,103 @@ jobs:
           chmod +x api_helper.sh
       - name: Full Repository Ingestion
         if: >-
-            steps.config.outputs.config_exists == 'true' &&  github.event_name ==
-            'workflow_dispatch' &&  github.event.inputs.full_ingest == 'true'
-        run: |
-            source ./api_helper.sh
-            
-            echo "Starting full repository ingestion..."
-            
-            TEMP_DIR=$(mktemp -d)
-            trap 'rm -rf "$TEMP_DIR"' EXIT
-            
-            # Prepare simple request without complex config handling
-            REQUEST_BODY="{
-              \"repo\": \"${{ github.repository }}\",
+          steps.config.outputs.config_exists == 'true' &&  github.event_name ==
+          'workflow_dispatch' &&  github.event.inputs.full_ingest == 'true'
+        run: >
+          source ./api_helper.sh
+
+
+          echo "Starting full repository ingestion..."
+
+
+          TEMP_DIR=$(mktemp -d)
+
+          trap 'rm -rf "$TEMP_DIR"' EXIT
+
+
+          # Prepare simple request without complex config handling
+
+          REQUEST_BODY="{
+            \"repo\": \"${{ github.repository }}\",
+            \"branch\": \"${{ github.ref_name }}\",
+            \"metadata\": {
+              \"repository\": \"${{ github.repository }}\",
               \"branch\": \"${{ github.ref_name }}\",
-              \"metadata\": {
-                \"repository\": \"${{ github.repository }}\",
-                \"branch\": \"${{ github.ref_name }}\",
-                \"event_type\": \"${{ github.event_name }}\",
-                \"commit_sha\": \"${{ github.sha }}\",
-                \"process_timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"
-              }
+              \"event_type\": \"${{ github.event_name }}\",
+              \"commit_sha\": \"${{ github.sha }}\",
+              \"process_timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",
+              \"config\": $(echo "$CONFIG" | jq '.')
+            },
+            \"maxFileSize\": $(echo "$CONFIG" | jq '.max_file_size // 100000'),
+            \"maxTokens\": $(echo "$CONFIG" | jq '.max_tokens // 50000'),
+            \"forceReplace\": true
             }"
             
-            echo "Initializing repository ingestion..."
+          echo "Initializing repository ingestion..."
+
+
+          # Make the API call
+
+          response=$(call_api "${{ steps.config.outputs.osiris_url
+          }}/api/ingest-repo" "$REQUEST_BODY")
+
+
+          # Process response directly
+
+          if ! echo "$response" | jq -e '.totalBatches' > /dev/null; then
+            echo "::error::Invalid response from API"
+            echo "$response"
+            exit 1
+          fi
+
+
+          total_batches=$(echo "$response" | jq -r '.totalBatches')
+
+          echo "Processing $total_batches batches..."
+
+
+          successful_batches=0
+
+          failed_batches=0
+
+
+          for ((batch=0; batch<total_batches; batch++)); do
+            echo "Processing batch $((batch + 1)) of $total_batches"
             
-            # Make the API call
-            response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/ingest-repo" "$REQUEST_BODY")
+            batch_request="{
+              \"repo\": \"${{ github.repository }}\",
+              \"branch\": \"${{ github.ref_name }}\",
+              \"batchStart\": $((batch * 10)),
+              \"batchSize\": 10
+            }"
             
-            # Process response directly
-            if ! echo "$response" | jq -e '.totalBatches' > /dev/null; then
-              echo "::error::Invalid response from API"
-              echo "$response"
-              exit 1
-            fi
-            
-            total_batches=$(echo "$response" | jq -r '.totalBatches')
-            echo "Processing $total_batches batches..."
-            
-            successful_batches=0
-            failed_batches=0
-            
-            for ((batch=0; batch<total_batches; batch++)); do
-              echo "Processing batch $((batch + 1)) of $total_batches"
-              
-              batch_request="{
-                \"repo\": \"${{ github.repository }}\",
-                \"branch\": \"${{ github.ref_name }}\",
-                \"batchStart\": $((batch * 10)),
-                \"batchSize\": 10
-              }"
-              
-              if batch_response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/process-batch" "$batch_request"); then
-                echo "Batch $((batch + 1)) processed successfully"
-                successful_batches=$((successful_batches + 1))
-              else
-                echo "::warning::Failed to process batch $((batch + 1))"
-                failed_batches=$((failed_batches + 1))
-              fi
-              
-              [ $((batch + 1)) -lt "$total_batches" ] && sleep 2
-            done
-            
-            echo "Repository ingestion completed:"
-            echo "- Total batches: $total_batches"
-            echo "- Successful: $successful_batches"
-            echo "- Failed: $failed_batches"
-            
-            if [ "$successful_batches" -eq "$total_batches" ]; then
-              echo "::notice::Successfully processed all batches"
+            if batch_response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/process-batch" "$batch_request"); then
+              echo "Batch $((batch + 1)) processed successfully"
+              successful_batches=$((successful_batches + 1))
             else
-              echo "::warning::Completed with $failed_batches failed batches"
-              [ "$successful_batches" -eq 0 ] && exit 1
+              echo "::warning::Failed to process batch $((batch + 1))"
+              failed_batches=$((failed_batches + 1))
             fi
+            
+            [ $((batch + 1)) -lt "$total_batches" ] && sleep 2
+          done
+
+
+          echo "Repository ingestion completed:"
+
+          echo "- Total batches: $total_batches"
+
+          echo "- Successful: $successful_batches"
+
+          echo "- Failed: $failed_batches"
+
+
+          if [ "$successful_batches" -eq "$total_batches" ]; then
+            echo "::notice::Successfully processed all batches"
+          else
+            echo "::warning::Completed with $failed_batches failed batches"
+            [ "$successful_batches" -eq 0 ] && exit 1
+          fi
       - name: Process Incremental Changes
         if: >-
           steps.config.outputs.config_exists == 'true' &&  !(github.event_name

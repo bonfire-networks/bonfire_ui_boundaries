@@ -144,12 +144,12 @@ jobs:
                 exit 1
               fi
               
-              # Debug output to help with troubleshooting
+              # Debug output
               echo "Repository: ${{ github.repository }}"
               echo "Branch: ${{ github.ref_name }}"
               echo "Event: ${{ github.event_name }}"
               
-              # Convert CONFIG from YAML to JSON and validate it's valid JSON
+              # Convert CONFIG from YAML to JSON
               CONFIG_JSON=$(echo "$CONFIG" | yq -o=json '.' | jq -c '.')
               if [ $? -ne 0 ]; then
                 echo "::error::Failed to convert config to JSON"
@@ -159,11 +159,10 @@ jobs:
               echo "Using configuration:"
               echo "$CONFIG_JSON" | jq '.'
               
-              # Prepare timestamp
+              # Initialize ingestion
+              echo "Initializing repository ingestion..."
               TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
               
-              # Initialize ingestion with error handling
-              echo "Initializing repository ingestion..."
               response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/ingest-repo" "{
                 \"repo\": \"${{ github.repository }}\",
                 \"branch\": \"${{ github.ref_name }}\",
@@ -177,52 +176,51 @@ jobs:
                 }
               }")
               
-              # Store response in a file for better handling
+              # Store and validate response
               echo "$response" > response.json
+              echo "Processing response..."
               
-              # Log raw response for debugging
-              echo "Raw response:"
-              cat response.json
-              
-              # Validate JSON structure
-              if ! jq -e '.' response.json >/dev/null 2>&1; then
-                echo "::error::Response is not valid JSON"
+              if ! jq -e '.' response.json > /dev/null 2>&1; then
+                echo "::error::Invalid JSON response received:"
+                cat response.json
                 exit 1
               fi
               
-              # Extract required fields with error checking
+              # Extract and validate required fields
               total_files=$(jq -r '.totalFiles // empty' response.json)
               total_batches=$(jq -r '.totalBatches // empty' response.json)
               
               if [ -z "$total_files" ] || [ -z "$total_batches" ]; then
                 echo "::error::Response missing required fields"
-                echo "Response was:"
                 cat response.json
                 exit 1
               fi
               
               echo "Found $total_files files to process in $total_batches batches"
               
-              # Extract and validate batch URLs
+              # Process batch URLs
               mapfile -t batch_urls < <(jq -r '.batchUrls[]' response.json)
               
               if [ ${#batch_urls[@]} -eq 0 ]; then
                 echo "::error::No batch URLs found in response"
-                echo "Response was:"
                 cat response.json
                 exit 1
               fi
               
-              if [ ${#batch_urls[@]} -ne $total_batches ]; then
-                echo "::warning::Batch URL count (${#batch_urls[@]}) doesn't match total batches ($total_batches)"
-              fi
+              # Validate URL formats
+              for url in "${batch_urls[@]}"; do
+                if [[ ! "$url" =~ ^https?:// ]]; then
+                  echo "::error::Invalid URL format (missing protocol): $url"
+                  exit 1
+                fi
+              done
               
               # Process batches
               echo "Starting batch processing..."
               successful_batches=0
               failed_batches=0
               
-              for i in "${!batch_urls[@]}"; do
+              for ((i=0; i<${#batch_urls[@]}; i++)); do
                 batch_url="${batch_urls[$i]}"
                 current_batch=$((i + 1))
                 
@@ -234,12 +232,11 @@ jobs:
                 retry_count=0
                 
                 while [ $retry_count -lt $max_retries ]; do
-                  if batch_response=$(curl -s -f "$batch_url"); then
-                    # Validate batch response
-                    if echo "$batch_response" | jq -e '.' >/dev/null 2>&1; then
-                      if echo "$batch_response" | jq -e '.error' >/dev/null 2>&1; then
+                  if curl -sf "$batch_url" > "batch_response_$current_batch.json"; then
+                    if jq -e '.' "batch_response_$current_batch.json" > /dev/null 2>&1; then
+                      if jq -e '.error' "batch_response_$current_batch.json" > /dev/null 2>&1; then
                         echo "::warning::Batch $current_batch returned error:"
-                        echo "$batch_response" | jq '.error'
+                        jq '.error' "batch_response_$current_batch.json"
                       else
                         echo "Batch $current_batch processed successfully"
                         successful_batches=$((successful_batches + 1))
@@ -262,7 +259,6 @@ jobs:
                 
                 # Add delay between batches
                 if [ $current_batch -lt ${#batch_urls[@]} ]; then
-                  echo "Waiting 2 seconds before next batch..."
                   sleep 2
                 fi
               done
@@ -274,7 +270,6 @@ jobs:
               echo "- Successful: $successful_batches"
               echo "- Failed: $failed_batches"
               
-              # Set exit status based on results
               if [ $successful_batches -eq ${#batch_urls[@]} ]; then
                 echo "::notice::Successfully processed all batches"
               else
@@ -284,7 +279,7 @@ jobs:
                   exit 1
                 fi
               fi
-
+              
       - name: Process Incremental Changes
         if: >-
           steps.config.outputs.config_exists == 'true' && 

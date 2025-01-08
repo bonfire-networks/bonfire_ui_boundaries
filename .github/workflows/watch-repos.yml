@@ -119,7 +119,7 @@ jobs:
               echo "::error::API call failed after $retries attempts"
               return 1
             }
-            EOF
+            ENDOFSCRIPT
             
             chmod +x api_helper.sh
 

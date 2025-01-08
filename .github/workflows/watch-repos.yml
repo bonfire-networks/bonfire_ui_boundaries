@@ -152,27 +152,37 @@ jobs:
             
             # First construct the REQUEST_BODY using jq
             REQUEST_BODY=$(jq -n \
-              --arg repo "${{ github.repository }}" \
-              --arg branch "${{ github.ref_name }}" \
-              --arg event_type "${{ github.event_name }}" \
-              --arg commit_sha "${{ github.sha }}" \
-              --argjson config "$CONFIG" \
-              '{
-                "repo": $repo,
+            --arg repo "${{ github.repository }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg event_type "${{ github.event_name }}" \
+            --arg commit_sha "${{ github.sha }}" \
+            --argjson config "$CONFIG" \
+            --arg max_file_size "100000" \
+            --arg max_tokens "50000" \
+            '{
+              "repo": $repo,
+              "branch": $branch,
+              "metadata": {
+                "repository": $repo,
                 "branch": $branch,
-                "metadata": {
-                  "repository": $repo,
-                  "branch": $branch,
-                  "event_type": $event_type,
-                  "commit_sha": $commit_sha,
-                  "process_timestamp": (now | strftime("%Y-%m-%dT%H:%M:%SZ")),
-                  "config": $config
-                },
-                "maxFileSize": ($config.max_file_size // 100000),
-                "maxTokens": ($config.max_tokens // 50000),
-                "forceReplace": true
-              }'
+                "event_type": $event_type,
+                "commit_sha": $commit_sha,
+                "process_timestamp": (now | strftime("%Y-%m-%dT%H:%M:%SZ")),
+                "config": $config
+              },
+              "maxFileSize": ($max_file_size | tonumber),
+              "maxTokens": ($max_tokens | tonumber),
+              "forceReplace": true
+            }'
             )
+
+            echo "DEBUG: Constructed request body:"
+            echo "$REQUEST_BODY" | jq '.'
+
+            # Make the API call
+            echo "Making API call to ingest-repo..."
+            response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/ingest-repo" "$REQUEST_BODY")
+            api_status=$?
         
             echo "DEBUG: Request body:"
             echo "$REQUEST_BODY" | jq '.'

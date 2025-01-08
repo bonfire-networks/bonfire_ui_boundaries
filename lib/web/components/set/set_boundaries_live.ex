@@ -74,6 +74,17 @@ defmodule Bonfire.UI.Boundaries.Web.SetBoundariesLive do
     to_boundaries ++ [{acl_id, name}]
   end
 
+  def circles_for_multiselect(current_user, circle_field \\ :to_circles)
+
+  def circles_for_multiselect(current_user, circle_field) when not is_nil(current_user) do
+    list_my_circles(current_user)
+    |> results_for_multiselect(circle_field)
+  end
+
+  def circles_for_multiselect(_current_user, _circle_field) do
+    []
+  end
+
   def results_for_multiselect(results, circle_field \\ :to_circles) do
     results
     |> Enum.map(fn

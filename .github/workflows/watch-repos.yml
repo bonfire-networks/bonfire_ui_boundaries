@@ -139,180 +139,100 @@ jobs:
           chmod +x api_helper.sh
       - name: Full Repository Ingestion
         if: >-
-          steps.config.outputs.config_exists == 'true' &&  github.event_name ==
-          'workflow_dispatch' &&  github.event.inputs.full_ingest == 'true'
-        run: >
-          source ./api_helper.sh
-
-
-          echo "Starting full repository ingestion..."
-
-
-          # Validate required variables
-
-          if [ -z "$CONFIG" ]; then
-            echo "::error::CONFIG variable is empty"
-            exit 1
-          fi
-
-
-          if [ -z "${{ steps.config.outputs.osiris_url }}" ]; then
-            echo "::error::osiris_url is not set"
-            exit 1
-          fi
-
-
-          # Debug output
-
-          echo "Repository: ${{ github.repository }}"
-
-          echo "Branch: ${{ github.ref_name }}"
-
-          echo "Event: ${{ github.event_name }}"
-
-
-          # Convert CONFIG from YAML to JSON
-
-          CONFIG_JSON=$(echo "$CONFIG" | yq -o=json '.' | jq -c '.')
-
-          if [ $? -ne 0 ]; then
-            echo "::error::Failed to convert config to JSON"
-            exit 1
-          fi
-
-
-          echo "Using configuration:"
-
-          echo "$CONFIG_JSON" | jq '.'
-
-
-          # Initialize ingestion
-
-          echo "Initializing repository ingestion..."
-
-          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-
-          response=$(call_api "${{ steps.config.outputs.osiris_url
-          }}/api/ingest-repo" "{
-            \"repo\": \"${{ github.repository }}\",
-            \"branch\": \"${{ github.ref_name }}\",
-            \"metadata\": {
-              \"repository\": \"${{ github.repository }}\",
-              \"branch\": \"${{ github.ref_name }}\",
-              \"event_type\": \"${{ github.event_name }}\",
-              \"commit_sha\": \"${{ github.sha }}\",
-              \"process_timestamp\": \"$TIMESTAMP\",
-              \"config\": $CONFIG_JSON
-            }
-          }")
-
-
-          # Store and validate response
-
-          echo "$response" > response.json
-
-          echo "Processing response..."
-
-
-          if ! jq -e '.' response.json > /dev/null 2>&1; then
-            echo "::error::Invalid JSON response received:"
-            cat response.json
-            exit 1
-          fi
-
-
-          # Extract and validate required fields
-
-          total_files=$(jq -r '.totalFiles // empty' response.json)
-
-          total_batches=$(jq -r '.totalBatches // empty' response.json)
-
-
-          if [ -z "$total_files" ] || [ -z "$total_batches" ]; then
-            echo "::error::Response missing required fields"
-            cat response.json
-            exit 1
-          fi
-
-
-          echo "Found $total_files files to process in $total_batches batches"
-
-
-          total_batches=$(jq -r '.totalBatches' response.json)
-
-          if [ -z "$total_batches" ] || [ "$total_batches" -eq 0 ]; then
-            echo "::error::No batches found in response"
-            cat response.json
-            exit 1
-          fi
-
-          # Then directly use the total_batches value for processing
-          echo "Starting batch processing..."
-          successful_batches=0
-          failed_batches=0
-
-          for batch in $(seq 0 $((total_batches - 1))); do
-
-            echo "Processing batch $((batch + 1)) of $total_batches"
+            steps.config.outputs.config_exists == 'true' &&  github.event_name ==
+            'workflow_dispatch' &&  github.event.inputs.full_ingest == 'true'
+        run: |
+            source ./api_helper.sh
             
-            # Call process-batch endpoint with POST
-            if response=$(curl -X POST \
-              -H "Content-Type: application/json" \
-              -d "{
+            echo "Starting full repository ingestion..."
+            
+            # Validate required variables
+            if [ -z "$CONFIG" ]; then
+              echo "::error::CONFIG variable is empty"
+              exit 1
+            fi
+            
+            if [ -z "${{ steps.config.outputs.osiris_url }}" ]; then
+              echo "::error::osiris_url is not set"
+              exit 1
+            fi
+            
+            # Convert CONFIG from YAML to JSON and prepare request
+            CONFIG_JSON=$(echo "$CONFIG" | yq -o=json '.' | jq -c '.')
+            TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+            
+            # Initialize ingestion
+            response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/ingest-repo" "{
+              \"repo\": \"${{ github.repository }}\",
+              \"branch\": \"${{ github.ref_name }}\",
+              \"metadata\": {
+                \"repository\": \"${{ github.repository }}\",
+                \"branch\": \"${{ github.ref_name }}\",
+                \"event_type\": \"${{ github.event_name }}\",
+                \"commit_sha\": \"${{ github.sha }}\",
+                \"process_timestamp\": \"$TIMESTAMP\",
+                \"config\": $CONFIG_JSON
+              }
+            }")
+            
+            # Parse response directly without intermediate file
+            if ! total_batches=$(echo "$response" | jq -r '.totalBatches'); then
+              echo "::error::Failed to parse response"
+              echo "$response"
+              exit 1
+            fi
+            
+            if [ -z "$total_batches" ] || [ "$total_batches" = "null" ]; then
+              echo "::error::No batches found in response"
+              echo "$response"
+              exit 1
+            fi
+            
+            echo "Processing $total_batches batches..."
+            
+            successful_batches=0
+            failed_batches=0
+            
+            # Process each batch
+            for ((batch=0; batch<total_batches; batch++)); do
+              echo "Processing batch $((batch + 1)) of $total_batches"
+              
+              if batch_response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/process-batch" "{
                 \"repo\": \"${{ github.repository }}\",
                 \"branch\": \"${{ github.ref_name }}\",
                 \"batchStart\": $((batch * 10)),
                 \"batchSize\": 10
-                }" \
-              "${{ steps.config.outputs.osiris_url }}/api/process-batch"); then
-              
-              if echo "$response" | jq -e '.' >/dev/null 2>&1; then
-                if echo "$response" | jq -e '.error' >/dev/null 2>&1; then
+              }"); then
+                if echo "$batch_response" | jq -e '.error' >/dev/null 2>&1; then
                   echo "::warning::Batch $((batch + 1)) returned error:"
-                  echo "$response" | jq '.error'
+                  echo "$batch_response" | jq '.error'
                   failed_batches=$((failed_batches + 1))
                 else
                   echo "Batch $((batch + 1)) processed successfully"
                   successful_batches=$((successful_batches + 1))
                 fi
               else
-                echo "::warning::Invalid JSON response from batch $((batch + 1))"
+                echo "::warning::Failed to process batch $((batch + 1))"
                 failed_batches=$((failed_batches + 1))
               fi
-            else
-              echo "::warning::Failed to process batch $((batch + 1))"
-              failed_batches=$((failed_batches + 1))
-            fi
+              
+              # Add delay between batches
+              [ $((batch + 1)) -lt "$total_batches" ] && sleep 2
+            done
             
-            # Add delay between batches
-            if [ $((batch + 1)) -lt $total_batches ]; then
-              sleep 2
+            # Final status report
+            echo "Repository ingestion completed"
+            echo "Summary:"
+            echo "- Total batches: $total_batches"
+            echo "- Successful: $successful_batches"
+            echo "- Failed: $failed_batches"
+            
+            if [ "$successful_batches" -eq "$total_batches" ]; then
+              echo "::notice::Successfully processed all batches"
+            else
+              echo "::warning::Completed with $failed_batches failed batches"
+              [ "$successful_batches" -eq 0 ] && exit 1
             fi
-          done
-
-
-          # Final status report
-
-          echo "Repository ingestion completed"
-
-          echo "Summary:"
-
-          echo "- Total batches: $total_batches"
-
-          echo "- Successful: $successful_batches"
-
-          echo "- Failed: $failed_batches"
-
-
-          if [ $successful_batches -eq $total_batches ]; then
-            echo "::notice::Successfully processed all batches"
-          else
-            echo "::warning::Completed with $failed_batches failed batches"
-            if [ $successful_batches -eq 0 ]; then
-              exit 1
-            fi
-          fi
       - name: Process Incremental Changes
         if: >-
           steps.config.outputs.config_exists == 'true' &&  !(github.event_name

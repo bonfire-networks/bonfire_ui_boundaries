@@ -152,6 +152,8 @@ jobs:
 
           trap 'rm -rf "$TEMP_DIR"' EXIT
 
+          echo "DEBUG: Current CONFIG content:"
+          echo "$CONFIG" | jq '.'
 
           # Prepare simple request without complex config handling
 
@@ -172,7 +174,8 @@ jobs:
             }"
             
           echo "Initializing repository ingestion..."
-
+          echo "DEBUG: Request body before sending:"
+          echo "$REQUEST_BODY" | jq '.'
 
           # Make the API call
 

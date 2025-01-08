@@ -108,148 +108,196 @@ jobs:
             local timeout=60
             
             for i in $(seq 1 $retries); do
-              echo "API call attempt $i of $retries"
-              response=$(curl -X POST "$url" \
-                -H "Content-Type: application/json" \
-                -H "Accept: application/json" \
-                --fail \
-                --silent \
-                --show-error \
-                --max-time $timeout \
-                --retry 3 \
-                --retry-delay 2 \
-                --data-raw "$data")
-              
-              if [ $? -eq 0 ]; then
-                echo "$response"
-                return 0
-              fi
-              
-              echo "API call failed, waiting ${wait}s before retry..."
-              sleep $wait
-              wait=$((wait * 2))
+                echo "API call attempt $i of $retries"
+                
+                # Use a temp file for the response
+                local tmp_response=$(mktemp)
+                
+                # Make the API call and capture the response
+                local status_code=$(curl -X POST "$url" \
+                    -H "Content-Type: application/json" \
+                    -H "Accept: application/json" \
+                    --write-out "%{http_code}" \
+                    --silent \
+                    --output "$tmp_response" \
+                    --max-time $timeout \
+                    --retry 3 \
+                    --retry-delay 2 \
+                    --data-raw "$data")
+                    
+                if [ "$status_code" = "200" ]; then
+                    # Check if response is valid JSON
+                    if jq empty < "$tmp_response" 2>/dev/null; then
+                        # Success - output the response and clean up
+                        cat "$tmp_response"
+                        rm "$tmp_response"
+                        return 0
+                    fi
+                fi
+                
+                echo "Failed attempt $i. Status code: $status_code"
+                if [ -s "$tmp_response" ]; then
+                    echo "Response content:"
+                    cat "$tmp_response"
+                fi
+                rm "$tmp_response"
+                
+                # Wait before retry
+                [ $i -lt $retries ] && sleep $wait
+                wait=$((wait * 2))
             done
             
-            echo "::error::API call failed after $retries attempts"
             return 1
-
           }
           EOF
 
           chmod +x api_helper.sh
       - name: Full Repository Ingestion
         if: >-
-            steps.config.outputs.config_exists == 'true' &&  github.event_name == 'workflow_dispatch' &&  github.event.inputs.full_ingest == 'true'
-        run: |
-            source ./api_helper.sh
-        
-            echo "Starting full repository ingestion..."
-        
-            TEMP_DIR=$(mktemp -d)
-            trap 'rm -rf "$TEMP_DIR"' EXIT
-        
-            echo "DEBUG: Current CONFIG content:"
-            echo "$CONFIG" | jq '.'
-        
-            # Build request body using jq for safe JSON construction
-            REQUEST_BODY=$(jq -n \
+          steps.config.outputs.config_exists == 'true' &&  github.event_name ==
+          'workflow_dispatch' &&  github.event.inputs.full_ingest == 'true'
+        run: >
+          source ./api_helper.sh
+
+
+          echo "Starting full repository ingestion..."
+
+
+          TEMP_DIR=$(mktemp -d)
+
+          trap 'rm -rf "$TEMP_DIR"' EXIT
+
+
+          echo "DEBUG: Current CONFIG content:"
+
+          echo "$CONFIG" | jq '.'
+
+
+          # Build request body using jq for safe JSON construction
+
+          REQUEST_BODY=$(jq -n \
+            --arg repo "${{ github.repository }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg event_type "${{ github.event_name }}" \
+            --arg commit_sha "${{ github.sha }}" \
+            --arg timestamp "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+            --argjson config "$CONFIG" \
+          '{
+            "repo": $repo,
+            "branch": $branch,
+            "metadata": {
+              "repository": $repo,
+              "branch": $branch,
+              "event_type": $event_type,
+              "commit_sha": $commit_sha,
+              "process_timestamp": $timestamp,
+              "config": $config
+            },
+            "maxFileSize": ($config.max_file_size // 100000),
+            "maxTokens": ($config.max_tokens // 50000),
+            "forceReplace": true
+          }')
+
+
+          echo "DEBUG: Request body before sending:"
+
+          echo "$REQUEST_BODY" | jq '.'
+
+
+          # Make the API call and capture response
+
+          echo "Making API call to ingest-repo..."
+
+          response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/ingest-repo" "$REQUEST_BODY")
+          api_status=$?
+
+          if [ $api_status -ne 0 ]; then
+              echo "::error::API call failed"
+              exit 1
+          fi
+
+
+          echo "DEBUG: Raw API Response:"
+
+          echo "$response"
+
+
+          # Validate response is valid JSON
+
+          if ! echo "$response" | jq '.' > /dev/null 2>&1; then
+            echo "::error::Invalid JSON response from API"
+            echo "$response"
+            exit 1
+          fi
+
+          # Parse response for totalBatches
+          total_batches=$(echo "$response" | jq -r '.totalBatches')
+          if [ -z "$total_batches" ] || [ "$total_batches" = "null" ]; then
+              echo "::error::Could not extract totalBatches from response"
+              echo "Response was: $response"
+              exit 1
+          fi
+
+
+          echo "Processing $total_batches batches..."
+
+          successful_batches=0
+
+          failed_batches=0
+
+
+          # Process batches
+
+          for ((batch=0; batch<total_batches; batch++)); do
+            echo "Processing batch $((batch + 1)) of $total_batches"
+            
+            batch_request=$(jq -n \
               --arg repo "${{ github.repository }}" \
               --arg branch "${{ github.ref_name }}" \
-              --arg event_type "${{ github.event_name }}" \
-              --arg commit_sha "${{ github.sha }}" \
-              --arg timestamp "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
-              --argjson config "$CONFIG" \
+              --argjson start "$((batch * 10))" \
+              --argjson size "10" \
             '{
               "repo": $repo,
               "branch": $branch,
-              "metadata": {
-                "repository": $repo,
-                "branch": $branch,
-                "event_type": $event_type,
-                "commit_sha": $commit_sha,
-                "process_timestamp": $timestamp,
-                "config": $config
-              },
-              "maxFileSize": ($config.max_file_size // 100000),
-              "maxTokens": ($config.max_tokens // 50000),
-              "forceReplace": true
+              "batchStart": $start,
+              "batchSize": $size
             }')
-        
-            echo "DEBUG: Request body before sending:"
-            echo "$REQUEST_BODY" | jq '.'
-        
-            # Make the API call and capture response
-            echo "Making API call to ingest-repo..."
-            response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/ingest-repo" "$REQUEST_BODY")
             
-            echo "DEBUG: Raw API Response:"
-            echo "$response"
-        
-            # Validate response is valid JSON
-            if ! echo "$response" | jq '.' > /dev/null 2>&1; then
-              echo "::error::Invalid JSON response from API"
-              echo "$response"
-              exit 1
-            fi
-        
-            # Extract and validate totalBatches
-            total_batches=$(echo "$response" | jq -r '.totalBatches')
-            if [ -z "$total_batches" ] || [ "$total_batches" = "null" ]; then
-              echo "::error::Invalid or missing totalBatches in response"
-              echo "$response"
-              exit 1
-            fi
-        
-            echo "Processing $total_batches batches..."
-            successful_batches=0
-            failed_batches=0
-        
-            # Process batches
-            for ((batch=0; batch<total_batches; batch++)); do
-              echo "Processing batch $((batch + 1)) of $total_batches"
-              
-              batch_request=$(jq -n \
-                --arg repo "${{ github.repository }}" \
-                --arg branch "${{ github.ref_name }}" \
-                --argjson start "$((batch * 10))" \
-                --argjson size "10" \
-              '{
-                "repo": $repo,
-                "branch": $branch,
-                "batchStart": $start,
-                "batchSize": $size
-              }')
-              
-              echo "DEBUG: Batch request body:"
-              echo "$batch_request" | jq '.'
-              
-              if batch_response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/process-batch" "$batch_request"); then
-                echo "DEBUG: Batch response:"
-                echo "$batch_response" | jq '.'
-                echo "Batch $((batch + 1)) processed successfully"
-                successful_batches=$((successful_batches + 1))
-              else
-                echo "::warning::Failed to process batch $((batch + 1))"
-                echo "DEBUG: Failed batch response:"
-                echo "$batch_response"
-                failed_batches=$((failed_batches + 1))
-              fi
-              
-              # Add small delay between batches
-              [ $((batch + 1)) -lt "$total_batches" ] && sleep 2
-            done
-        
-            echo "Repository ingestion completed:"
-            echo "- Total batches: $total_batches"
-            echo "- Successful: $successful_batches"
-            echo "- Failed: $failed_batches"
-        
-            if [ "$successful_batches" -eq "$total_batches" ]; then
-              echo "::notice::Successfully processed all batches"
+            echo "DEBUG: Batch request body:"
+            echo "$batch_request" | jq '.'
+            
+            if batch_response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/process-batch" "$batch_request"); then
+              echo "DEBUG: Batch response:"
+              echo "$batch_response" | jq '.'
+              echo "Batch $((batch + 1)) processed successfully"
+              successful_batches=$((successful_batches + 1))
             else
-              echo "::warning::Completed with $failed_batches failed batches"
-              [ "$successful_batches" -eq 0 ] && exit 1
+              echo "::warning::Failed to process batch $((batch + 1))"
+              echo "DEBUG: Failed batch response:"
+              echo "$batch_response"
+              failed_batches=$((failed_batches + 1))
             fi
+            
+            # Add small delay between batches
+            [ $((batch + 1)) -lt "$total_batches" ] && sleep 2
+          done
+
+
+          echo "Repository ingestion completed:"
+
+          echo "- Total batches: $total_batches"
+
+          echo "- Successful: $successful_batches"
+
+          echo "- Failed: $failed_batches"
+
+
+          if [ "$successful_batches" -eq "$total_batches" ]; then
+            echo "::notice::Successfully processed all batches"
+          else
+            echo "::warning::Completed with $failed_batches failed batches"
+            [ "$successful_batches" -eq 0 ] && exit 1
+          fi
       - name: Process Incremental Changes
         if: >-
           steps.config.outputs.config_exists == 'true' &&  !(github.event_name

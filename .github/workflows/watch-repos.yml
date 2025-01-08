@@ -108,42 +108,30 @@ jobs:
             local timeout=60
             
             for i in $(seq 1 $retries); do
-                echo "API call attempt $i of $retries"
+                echo "DEBUG: API call attempt $i of $retries"
                 
-                # Use a temp file for the response
-                local tmp_response=$(mktemp)
-                
-                # Make the API call and capture the response
-                local status_code=$(curl -X POST "$url" \
+                # Make the API call
+                local response=$(curl -X POST "$url" \
                     -H "Content-Type: application/json" \
                     -H "Accept: application/json" \
-                    --write-out "%{http_code}" \
                     --silent \
-                    --output "$tmp_response" \
                     --max-time $timeout \
                     --retry 3 \
                     --retry-delay 2 \
                     --data-raw "$data")
-                    
-                if [ "$status_code" = "200" ]; then
-                    # Check if response is valid JSON
-                    if jq empty < "$tmp_response" 2>/dev/null; then
-                        # Success - output the response and clean up
-                        cat "$tmp_response"
-                        rm "$tmp_response"
-                        return 0
-                    fi
+                
+                echo "DEBUG: Testing if response is valid JSON"
+                if echo "$response" | jq '.' >/dev/null 2>&1; then
+                    echo "DEBUG: Response is valid JSON"
+                    echo "$response"
+                    return 0
+                else
+                    echo "DEBUG: Response is not valid JSON or empty"
+                    echo "Raw response: $response"
                 fi
                 
-                echo "Failed attempt $i. Status code: $status_code"
-                if [ -s "$tmp_response" ]; then
-                    echo "Response content:"
-                    cat "$tmp_response"
-                fi
-                rm "$tmp_response"
-                
-                # Wait before retry
-                [ $i -lt $retries ] && sleep $wait
+                echo "Waiting ${wait}s before retry..."
+                sleep $wait
                 wait=$((wait * 2))
             done
             

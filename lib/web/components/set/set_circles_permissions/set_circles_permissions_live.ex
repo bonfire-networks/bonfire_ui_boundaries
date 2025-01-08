@@ -30,7 +30,11 @@ defmodule Bonfire.UI.Boundaries.Web.SetCirclesPermissionsLive do
   def render(%{read_only: false, my_circles: nil} = assigns) do
     # TODO: only load this once per persistent session, or when we open the composer
     assigns
-    |> assign(:my_circles, list_my_circles(current_user(assigns[:__context__])))
+    |> assign(
+      :my_circles,
+      e(assigns[:__context__], :my_circles, nil) ||
+        list_my_circles(current_user(assigns[:__context__]))
+    )
     |> assign_new(:roles_for_dropdown, fn ->
       Bonfire.Boundaries.Roles.roles_for_dropdown(nil, scope: nil, context: assigns[:__context__])
     end)

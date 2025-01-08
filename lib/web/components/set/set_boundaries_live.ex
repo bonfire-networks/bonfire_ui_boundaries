@@ -30,7 +30,11 @@ defmodule Bonfire.UI.Boundaries.Web.SetBoundariesLive do
   def render(%{read_only: false, my_circles: nil} = assigns) do
     # TODO: only load this once per persistent session, or when we open the composer
     assigns
-    |> assign(:my_circles, list_my_circles(current_user(assigns[:__context__])))
+    |> assign(
+      :my_circles,
+      e(assigns[:__context__], :my_circles, nil) ||
+        list_my_circles(current_user(assigns[:__context__]))
+    )
     |> assign_new(:roles_for_dropdown, fn ->
       Bonfire.Boundaries.Roles.roles_for_dropdown(nil, scope: nil, context: assigns[:__context__])
     end)
@@ -76,13 +80,15 @@ defmodule Bonfire.UI.Boundaries.Web.SetBoundariesLive do
 
   def circles_for_multiselect(current_user, circle_field \\ :to_circles)
 
-  def circles_for_multiselect(current_user, circle_field) when not is_nil(current_user) do
-    list_my_circles(current_user)
-    |> results_for_multiselect(circle_field)
-  end
+  def circles_for_multiselect(context, circle_field) do
+    case current_user(context) do
+      nil ->
+        []
 
-  def circles_for_multiselect(_current_user, _circle_field) do
-    []
+      current_user ->
+        (e(context, :my_circles, nil) || list_my_circles(current_user))
+        |> results_for_multiselect(circle_field)
+    end
   end
 
   def results_for_multiselect(results, circle_field \\ :to_circles) do

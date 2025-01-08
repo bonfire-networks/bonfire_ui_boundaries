@@ -141,9 +141,8 @@ jobs:
         if: >-
           steps.config.outputs.config_exists == 'true' &&  github.event_name ==
           'workflow_dispatch' &&  github.event.inputs.full_ingest == 'true'
-        run: >
+        run: |
           source ./api_helper.sh
-
 
           echo "Starting full repository ingestion..."
 
@@ -156,22 +155,48 @@ jobs:
           echo "$CONFIG" | jq '.'
 
           # Prepare simple request without complex config handling
+          echo "DEBUG: Building request body..."
 
-          REQUEST_BODY="{
-            \"repo\": \"${{ github.repository }}\",
-            \"branch\": \"${{ github.ref_name }}\",
-            \"metadata\": {
-              \"repository\": \"${{ github.repository }}\",
-              \"branch\": \"${{ github.ref_name }}\",
-              \"event_type\": \"${{ github.event_name }}\",
-              \"commit_sha\": \"${{ github.sha }}\",
-              \"process_timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",
-              \"config\": $(echo "$CONFIG" | jq '.')
+          # Build the metadata object first and validate it
+          METADATA_JSON=$(cat <<EOF
+          {
+            "repository": "${{ github.repository }}",
+            "branch": "${{ github.ref_name }}",
+            "event_type": "${{ github.event_name }}",
+            "commit_sha": "${{ github.sha }}",
+            "process_timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "config": $CONFIG
+          }
+          EOF
+          )
+
+          echo "DEBUG: Metadata JSON:"
+          echo "$METADATA_JSON" | jq '.'
+
+          echo "DEBUG: Full request body:"
+          echo "$REQUEST_BODY" | jq '.'
+          REQUEST_BODY=$(jq -n \
+            --arg repo "${{ github.repository }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg event_type "${{ github.event_name }}" \
+            --arg commit_sha "${{ github.sha }}" \
+            --arg timestamp "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+            --argjson config "$CONFIG" \
+          '{
+            "repo": $repo,
+            "branch": $branch,
+            "metadata": {
+              "repository": $repo,
+              "branch": $branch,
+              "event_type": $event_type,
+              "commit_sha": $commit_sha,
+              "process_timestamp": $timestamp,
+              "config": $config
             },
-            \"maxFileSize\": $(echo "$CONFIG" | jq '.max_file_size // 100000'),
-            \"maxTokens\": $(echo "$CONFIG" | jq '.max_tokens // 50000'),
-            \"forceReplace\": true
-            }"
+            "maxFileSize": ($config.max_file_size // 100000),
+            "maxTokens": ($config.max_tokens // 50000),
+            "forceReplace": true
+          }')
             
           echo "Initializing repository ingestion..."
           echo "DEBUG: Request body before sending:"
@@ -179,10 +204,7 @@ jobs:
 
           # Make the API call
 
-          response=$(call_api "${{ steps.config.outputs.osiris_url
-          }}/api/ingest-repo" "$REQUEST_BODY")
-
-
+          response=$(call_api "${{ steps.config.outputs.osiris_url }}/api/ingest-repo" "$REQUEST_BODY")
           # Process response directly
 
           if ! echo "$response" | jq -e '.totalBatches' > /dev/null; then

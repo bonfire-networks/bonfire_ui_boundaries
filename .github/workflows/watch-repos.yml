@@ -82,46 +82,46 @@ jobs:
       - name: Setup API Helper
         if: steps.config.outputs.config_exists == 'true'
         run: |
-              # Create an api helper script with improved error handling and retries
-              cat > api_helper.sh << 'EOF'
-              #!/bin/bash
+            cat << \EOF > api_helper.sh
+            #!/bin/bash
+        
+            call_api() {
+              local url="$1"
+              local data="$2"
+              local retries=5
+              local wait=5
+              local timeout=60
               
-              call_api() {
-                local url="$1"
-                local data="$2"
-                local retries=5
-                local wait=5
-                local timeout=60
+              for i in $(seq 1 $retries); do
+                echo "API call attempt $i of $retries"
+                response=$(curl -X POST "$url" \
+                  -H "Content-Type: application/json" \
+                  -H "Accept: application/json" \
+                  --fail \
+                  --silent \
+                  --show-error \
+                  --max-time $timeout \
+                  --retry 3 \
+                  --retry-delay 2 \
+                  --data-raw "$data")
                 
-                for i in $(seq 1 $retries); do
-                  echo "API call attempt $i of $retries"
-                  response=$(curl -X POST "$url" \
-                    -H "Content-Type: application/json" \
-                    -H "Accept: application/json" \
-                    --fail \
-                    --silent \
-                    --show-error \
-                    --max-time $timeout \
-                    --retry 3 \
-                    --retry-delay 2 \
-                    --data-raw "$data")
-                  
-                  if [ $? -eq 0 ]; then
-                    echo "$response"
-                    return 0
-                  fi
-                  
-                  echo "API call failed, waiting ${wait}s before retry..."
-                  sleep $wait
-                  wait=$((wait * 2))
-                done
+                if [ $? -eq 0 ]; then
+                  echo "$response"
+                  return 0
+                fi
                 
-                echo "::error::API call failed after $retries attempts"
-                return 1
-              }
-                EOF
-            
-              chmod +x api_helper.sh
+                echo "API call failed, waiting ${wait}s before retry..."
+                sleep $wait
+                wait=$((wait * 2))
+              done
+              
+              echo "::error::API call failed after $retries attempts"
+              return 1
+
+            }
+            EOF
+        
+            chmod +x api_helper.sh
 
       - name: Full Repository Ingestion
         if: >-

@@ -195,22 +195,13 @@ jobs:
             
             echo "API Response:"
             echo "$response" | jq '.'
-            
-            # Check response format
-            if ! echo "$response" | jq -e '.totalFiles' > /dev/null 2>&1; then
-              echo "::error::Invalid response format - missing totalFiles"
-              exit 1
-            fi
-            
             # Parse and display results
-            total_files=$(echo "$response" | jq -r '.totalFiles')
             processed=$(echo "$response" | jq -r '.processed')
             errors=$(echo "$response" | jq -r '.errors')
             skipped=$(echo "$response" | jq -r '.skipped')
             total_chunks=$(echo "$response" | jq -r '.totalChunks')
-            
+
             echo "Repository ingestion summary:"
-            echo "- Total files: $total_files"
             echo "- Processed: $processed"
             echo "- Errors: $errors"
             echo "- Skipped: $skipped"

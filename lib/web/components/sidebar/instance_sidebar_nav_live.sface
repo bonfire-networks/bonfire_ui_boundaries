@@ -3,7 +3,7 @@
     <LinkLive
       to={~p"/boundaries/scope/instance/circles"}
       class={
-        "!px-4 !py-2",
+        " ",
         "bg-base-content/10": @selected_tab == "circles"
       }
     >
@@ -15,7 +15,7 @@
     <LinkLive
       to={~p"/boundaries/scope/instance/roles"}
       class={
-        "!px-4 !py-2",
+        " ",
         "bg-base-content/10 ": @selected_tab == "roles"
       }
     >
@@ -28,7 +28,7 @@
       <LinkLive
         to={~p"/boundaries/scope/instance/acls"}
         class={
-          "!px-4 !py-2",
+          " ",
           "bg-base-content/10": @selected_tab == "acls"
         }
       >
@@ -40,7 +40,7 @@
       <LinkLive
         to={~p"/boundaries/scope/instance/instance_acl"}
         class={
-          "!px-4 !py-2",
+          " ",
           "bg-base-content/10": @selected_tab == "instance_acl"
         }
       >
@@ -52,7 +52,7 @@
       <LinkLive
         to={~p"/boundaries/scope/instance/admin_circle"}
         class={
-          "!px-4 !py-2",
+          " ",
           "bg-base-content/10": @selected_tab == "admin_circle"
         }
       >
@@ -64,7 +64,7 @@
       <LinkLive
         to={~p"/boundaries/scope/instance/mod_circle"}
         class={
-          "!px-4 !py-2",
+          " ",
           "bg-base-content/10": @selected_tab == "mod_circle"
         }
       >

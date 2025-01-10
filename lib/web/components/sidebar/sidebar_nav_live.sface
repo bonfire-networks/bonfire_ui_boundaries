@@ -3,7 +3,7 @@
     <LinkLive
       to={~p"/boundaries/circles"}
       class={
-        "!px-4 !py-2",
+        " ",
         "bg-base-content/10 ": @selected_tab == "circles"
       }
     >
@@ -15,7 +15,7 @@
     <LinkLive
       to={~p"/boundaries/roles"}
       class={
-        "!px-4 !py-2",
+        " ",
         "bg-base-content/10 ": @selected_tab == "roles"
       }
     >
@@ -27,7 +27,7 @@
     <LinkLive
       to={~p"/boundaries/instance_roles"}
       class={
-        "!px-4 !py-2",
+        " ",
         "bg-base-content/10 ": @selected_tab == "instance_roles"
       }
     >
@@ -52,7 +52,7 @@
     <LinkLive
       to={~p"/boundaries/acls"}
       class={
-        "!px-4 !py-2",
+        " ",
         "bg-base-content/10 ": @selected_tab == "acls"
       }
     >

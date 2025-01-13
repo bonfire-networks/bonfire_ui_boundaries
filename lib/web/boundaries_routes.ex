@@ -1,5 +1,5 @@
 defmodule Bonfire.UI.Boundaries.Web.Routes do
-  def declare_routes, do: "boundaries"
+  @behaviour Bonfire.UI.Common.RoutesModule
 
   defmacro __using__(_) do
     quote do

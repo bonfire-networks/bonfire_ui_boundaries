@@ -9,7 +9,7 @@
             class="flex items-center justify-between gap-2 btn-ghost normal-case  btn-xs btn text-primary"
             onclick="my_modal_5.showModal()"
           >
-            <Bonfire.UI.Boundaries.Web.BoundariesPresetNameLive
+            <Bonfire.UI.Boundaries.BoundariesPresetNameLive
               icon_class="w-5 h-5 text-primary"
               to_boundaries={@to_boundaries}
             />
@@ -18,10 +18,10 @@
             <div class="modal-box">
               <h3 class="text-lg font-bold">{l("Select the audience")}</h3>
               <div class="-mx-4 mt-2">
-                <Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive
+                <Bonfire.UI.Boundaries.BoundariesGeneralAccessLive
                   to_boundaries={@to_boundaries}
                   boundary_preset={@boundary_preset}
-                  hide_custom={!module_enabled?(Bonfire.UI.Boundaries.Web.SetBoundariesLive, @__context__)}
+                  hide_custom={!module_enabled?(Bonfire.UI.Boundaries.SetBoundariesLive, @__context__)}
                 />
               </div>
             </div>
@@ -30,7 +30,7 @@
         <!-- / desktop -->
         <div phx-hook="Tooltip" id="popup_boundaries">
           <label class="tooltip-button flex items-center justify-between gap-2 btn-ghost normal-case  btn-xs btn text-primary">
-            <Bonfire.UI.Boundaries.Web.BoundariesPresetNameLive
+            <Bonfire.UI.Boundaries.BoundariesPresetNameLive
               icon_class="w-5 h-5 text-primary"
               to_boundaries={@to_boundaries}
             />
@@ -39,12 +39,12 @@
             tabindex="0"
             class="tooltip z-[9999] menu shadow bg-base-100 border border-base-content/10 rounded-xl p-0 w-full lg:w-[29rem] absolute top-0 left-0 hidden"
           >
-            <Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive
+            <Bonfire.UI.Boundaries.BoundariesGeneralAccessLive
               to_boundaries={@to_boundaries}
               is_customizable
               to_circles={@to_circles}
               boundary_preset={@boundary_preset}
-              hide_custom={!module_enabled?(Bonfire.UI.Boundaries.Web.SetBoundariesLive, @__context__)}
+              hide_custom={!module_enabled?(Bonfire.UI.Boundaries.SetBoundariesLive, @__context__)}
             />
           </ul>
         </div>

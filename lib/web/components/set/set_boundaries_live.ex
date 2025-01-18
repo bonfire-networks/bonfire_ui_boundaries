@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.SetBoundariesLive do
+defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
   use Bonfire.UI.Common.Web, :stateless_component
   use Bonfire.Common.Utils
 
@@ -298,7 +298,7 @@ defmodule Bonfire.UI.Boundaries.Web.SetBoundariesLive do
       |> debug("uniq")
 
     maybe_send_update(
-      Bonfire.UI.Boundaries.Web.CustomizeBoundaryLive,
+      Bonfire.UI.Boundaries.CustomizeBoundaryLive,
       "customize_boundary_live",
       %{field => appended_data}
     )

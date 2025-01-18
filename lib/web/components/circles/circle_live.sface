@@ -19,7 +19,7 @@
           event_target={@myself}
         />
 
-        <!-- <Bonfire.UI.Boundaries.Web.SearchUsersInCirclesLive /> -->
+        <!-- <Bonfire.UI.Boundaries.SearchUsersInCirclesLive /> -->
       </form>
 
       {#if !@stereotype_id and !@read_only}

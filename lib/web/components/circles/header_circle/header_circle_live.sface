@@ -8,7 +8,7 @@
       <div class="flex items-center rounded-lg">
         <Bonfire.UI.Common.MultiselectLive
           implementation={:live_select}
-          form_input_name={Bonfire.UI.Boundaries.Web.CircleLive}
+          form_input_name={Bonfire.UI.Boundaries.CircleLive}
           label={l("Search for users to add")}
         />
       </div>

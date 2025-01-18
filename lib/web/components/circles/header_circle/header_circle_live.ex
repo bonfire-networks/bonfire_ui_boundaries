@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.HeaderCircleLive do
+defmodule Bonfire.UI.Boundaries.HeaderCircleLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop circle, :map, required: true

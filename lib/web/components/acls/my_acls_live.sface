@@ -1,6 +1,6 @@
 <div class="">
   {#if @edit_acl_id}
-    <Bonfire.UI.Boundaries.Web.AclLive
+    <Bonfire.UI.Boundaries.AclLive
       id={@edit_acl_id}
       acl_id={@edit_acl_id}
       parent_back={@myself}

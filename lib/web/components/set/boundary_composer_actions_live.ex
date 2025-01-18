@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.BoundaryComposerActionsLive do
+defmodule Bonfire.UI.Boundaries.BoundaryComposerActionsLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop done_label, :string, default: nil

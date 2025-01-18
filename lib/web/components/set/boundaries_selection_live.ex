@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.BoundariesSelectionLive do
+defmodule Bonfire.UI.Boundaries.BoundariesSelectionLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   # prop showing_within, :atom

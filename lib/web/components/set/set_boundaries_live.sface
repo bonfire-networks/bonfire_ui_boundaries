@@ -31,7 +31,7 @@
         </div>
         <form phx-change="Bonfire.Boundaries:select" phx-target="#smart_input_live">
           {#if is_list(@to_circles) and @to_circles != []}
-            <Bonfire.UI.Boundaries.Web.BoundaryItemsLive
+            <Bonfire.UI.Boundaries.BoundaryItemsLive
               read_only={@read_only}
               to_boundaries={@to_boundaries}
               circles={@to_circles}
@@ -60,14 +60,14 @@
           :if={!@read_only}
           implementation={:live_select}
           field={:exclude_circles}
-          form_input_name={Bonfire.UI.Boundaries.Web.ExcludeBoundaries}
+          form_input_name={Bonfire.UI.Boundaries.ExcludeBoundaries}
           preloaded_options={results_for_multiselect(@my_circles, :exclude_circles)}
           label={l("Select or search for circles or people to exclude")}
         />
       </form>
       {#if is_list(@exclude_circles) && @exclude_circles != []}
         <form phx-change="Bonfire.Boundaries:select" class="mt-2" phx-target="#smart_input_live">
-          <Bonfire.UI.Boundaries.Web.BoundaryItemsLive
+          <Bonfire.UI.Boundaries.BoundaryItemsLive
             read_only={@read_only}
             to_boundaries={[]}
             circles={@exclude_circles}

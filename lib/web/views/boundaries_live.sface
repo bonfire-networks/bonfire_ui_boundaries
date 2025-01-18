@@ -5,7 +5,7 @@
     {#match "acl"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.Web.AclLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.AclLive, @__context__)}
         setting_boundaries={false}
         selected_tab="acls"
         id="acl"
@@ -15,14 +15,14 @@
     {#match "circles"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.Web.MyCirclesLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.MyCirclesLive, @__context__)}
         id="circles"
         scope={@scope}
       />
     {#match "circle"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.Web.CircleLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.CircleLive, @__context__)}
         selected_tab={@selected_tab}
         id="view_circle"
         scope={@scope}
@@ -31,7 +31,7 @@
       <!-- {#match "admin_circle"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.Web.CircleLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.CircleLive, @__context__)}
         selected_tab={@selected_tab}
         id="view_circle"
         scope={@scope}
@@ -42,7 +42,7 @@
     {#match "mod_circle"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.Web.CircleLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.CircleLive, @__context__)}
         selected_tab={@selected_tab}
         id="view_circle"
         scope={@scope}
@@ -53,25 +53,25 @@
     {#match "acls"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.Web.MyAclsLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.MyAclsLive, @__context__)}
         selected_tab="acls"
         section={@current_params["section"]}
         id="acls"
         scope={@scope}
       />
     {#match "silenced"}
-      <Bonfire.UI.Boundaries.Web.BlocksLive id="blocks" selected_tab="silenced" />
+      <Bonfire.UI.Boundaries.BlocksLive id="blocks" selected_tab="silenced" />
     {#match "ghosted"}
-      <Bonfire.UI.Boundaries.Web.BlocksLive id="blocks" selected_tab="ghosted" />
+      <Bonfire.UI.Boundaries.BlocksLive id="blocks" selected_tab="ghosted" />
     {#match "instance_silenced"}
-      <Bonfire.UI.Boundaries.Web.BlocksLive
+      <Bonfire.UI.Boundaries.BlocksLive
         scope={:instance_wide}
         id="blocks"
         selected_tab="silenced"
         name={l("Silenced instance-wide")}
       />
     {#match "instance_ghosted"}
-      <Bonfire.UI.Boundaries.Web.BlocksLive
+      <Bonfire.UI.Boundaries.BlocksLive
         scope={:instance_wide}
         id="blocks"
         selected_tab="ghosted"
@@ -80,14 +80,14 @@
       {!-- {#match "instance_circles"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.Web.MyCirclesLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.MyCirclesLive, @__context__)}
         id="circles"
         scope={:instance}
       />
     {#match "instance_acls"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.Web.MyAclsLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.MyAclsLive, @__context__)}
         selected_tab="acls"
         id="my_acls"
         scope={:instance}
@@ -95,7 +95,7 @@
     {#match "instance_acl"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.Web.AclLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.AclLive, @__context__)}
         setting_boundaries={false}
         selected_tab="acls"
         id="acl"
@@ -106,14 +106,14 @@
     {#match "roles"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.Web.RolesLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.RolesLive, @__context__)}
         id="roles"
         scope={@scope}
       />
     {#match "default_roles"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.Web.RolesLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.RolesLive, @__context__)}
         id="roles"
         scope={:instance}
         read_only
@@ -121,7 +121,7 @@
     {#match "role"}
       <StatelessComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.Web.RoleLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.RoleLive, @__context__)}
         id="roles"
         scope={@scope}
       />
@@ -129,7 +129,7 @@
       <div class="flex flex-col gap-8 divide-y divide-base-content/10">
         <StatefulComponent
           :if={current_user(@__context__)}
-          module={maybe_component(Bonfire.UI.Boundaries.Web.MyAclsLive, @__context__)}
+          module={maybe_component(Bonfire.UI.Boundaries.MyAclsLive, @__context__)}
           selected_tab="acls"
           id="acls"
           scope={@scope}
@@ -137,7 +137,7 @@
         <div class="pt-4">
           <StatefulComponent
             :if={current_user(@__context__)}
-            module={maybe_component(Bonfire.UI.Boundaries.Web.MyCirclesLive, @__context__)}
+            module={maybe_component(Bonfire.UI.Boundaries.MyCirclesLive, @__context__)}
             id="circles"
             scope={@scope}
           />
@@ -145,7 +145,7 @@
         <div class="pt-4">
           <StatefulComponent
             :if={current_user(@__context__)}
-            module={maybe_component(Bonfire.UI.Boundaries.Web.RolesLive, @__context__)}
+            module={maybe_component(Bonfire.UI.Boundaries.RolesLive, @__context__)}
             id="roles"
             scope={@scope}
           />

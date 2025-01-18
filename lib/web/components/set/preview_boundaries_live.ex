@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.PreviewBoundariesLive do
+defmodule Bonfire.UI.Boundaries.PreviewBoundariesLive do
   use Bonfire.UI.Common.Web, :stateful_component
   # alias Bonfire.Boundaries.Roles
 
@@ -70,7 +70,7 @@ defmodule Bonfire.UI.Boundaries.Web.PreviewBoundariesLive do
         "multi_select",
         %{
           "multi_select" => %{
-            "Elixir.Bonfire.UI.Boundaries.Web.PreviewBoundariesLive" => data_json
+            "Elixir.Bonfire.UI.Boundaries.PreviewBoundariesLive" => data_json
             # other params...
           }
         } = params,

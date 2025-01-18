@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.RoleDetailsLive do
+defmodule Bonfire.UI.Boundaries.RoleDetailsLive do
   use Bonfire.UI.Common.Web, :stateless_component
   # alias Bonfire.Boundaries.Verbs
 

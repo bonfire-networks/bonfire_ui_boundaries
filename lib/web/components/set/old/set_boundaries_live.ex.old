@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.SetBoundariesLive do
+defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
   use Bonfire.UI.Common.Web, {:stateless_component, [module: __MODULE__]}
   use Bonfire.Common.Utils
 

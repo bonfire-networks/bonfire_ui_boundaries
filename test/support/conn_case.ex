@@ -34,7 +34,7 @@ defmodule Bonfire.UI.Boundaries.ConnCase do
 
       alias Bonfire.UI.Boundaries.Fake
       import Bonfire.UI.Boundaries.Fake
-      # alias Bonfire.UI.Boundaries.Web.Router.Helpers, as: Routes
+      # alias Bonfire.UI.Boundaries.Router.Helpers, as: Routes
 
       # The default endpoint for testing
       @endpoint Application.compile_env!(:bonfire, :endpoint_module)

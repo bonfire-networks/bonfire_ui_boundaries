@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.NewCircleLive do
+defmodule Bonfire.UI.Boundaries.NewCircleLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop setting_boundaries, :boolean, default: false

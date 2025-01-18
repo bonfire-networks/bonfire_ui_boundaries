@@ -25,7 +25,7 @@
                       <p class="text-sm font-bold capitalize truncate">{LiveHandler.subject_name(circle)}</p>
                     </div>
                   </div>
-                  <Bonfire.UI.Boundaries.Web.CirclePreviewLive
+                  <Bonfire.UI.Boundaries.CirclePreviewLive
                     parent_id={id(circle)}
                     members={e(circle, :encircles, [])}
                     count={e(circle, :encircles_count, 0)}

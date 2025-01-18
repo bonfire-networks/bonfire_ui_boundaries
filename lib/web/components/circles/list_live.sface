@@ -1,0 +1,18 @@
+<div>
+  <div class="mb-2">
+    <StatelessComponent
+      module={maybe_component(Bonfire.UI.Me.WidgetUsersLive, @__context__)}
+      users={@members}
+      widget_title={e(@circle, :named, :name, nil)}
+    />
+  </div>
+
+  {!-- TODO
+  <Bonfire.UI.Common.LoadMoreLive
+    :if={@page_info}
+    live_handler={__MODULE__}
+    target={@myself}
+    page_info={@page_info}
+    hide_guest_fallback
+  /> --}
+</div>

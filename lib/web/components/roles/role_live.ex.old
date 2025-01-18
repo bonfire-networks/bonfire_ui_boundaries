@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.RoleLive do
+defmodule Bonfire.UI.Boundaries.RoleLive do
   use Bonfire.UI.Common.Web, :stateful_component
 
   def update(assigns, socket) do

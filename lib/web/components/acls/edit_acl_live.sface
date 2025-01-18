@@ -25,7 +25,7 @@
 
       <div class="flex items-center gap-2">
         {#if !@read_only}
-          <Bonfire.UI.Boundaries.Web.RolesDropdownLive
+          <Bonfire.UI.Boundaries.RolesDropdownLive
             circle_id={subject_id}
             scope={@scope}
             usage={@usage}
@@ -44,7 +44,7 @@
             </label>
             <ul tabindex="0" class="w-48 p-1 rounded shadow dropdown-content menu bg-base-200">
               {!-- <li :if={!@setting_boundaries}>
-            <Bonfire.UI.Boundaries.Web.AclModalLive
+            <Bonfire.UI.Boundaries.AclModalLive
               subject_id={subject_id}
               role_title={Bonfire.Boundaries.Verbs.role_from_verb_ids(Map.keys(grants || %{}))}
               grants={grants}

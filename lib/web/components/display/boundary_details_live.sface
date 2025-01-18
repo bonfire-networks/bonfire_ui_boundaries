@@ -2,14 +2,14 @@
   <div x-show="!edit">
     <div class="border border-base-content/10 mb-3 rounded-box w-full">
       <div class="flex items-center w-full p-4 gap-3">
-        <Bonfire.UI.Boundaries.Web.BoundariesPresetNameLive
+        <Bonfire.UI.Boundaries.BoundariesPresetNameLive
           boundary_preset={@boundary_preset}
           with_description
         />
       </div>
     </div>
 
-    <Bonfire.UI.Boundaries.Web.YourRoleLive
+    <Bonfire.UI.Boundaries.YourRoleLive
       is_caretaker={@is_caretaker}
       role_name={@role_name}
       scope={@scope}
@@ -46,7 +46,7 @@
           WIP: https://github.com/bonfire-networks/bonfire-app/issues/630
           NOTE: we set read_only here because editing only happens in AclLive
            --}
-        <!-- <Bonfire.UI.Boundaries.Web.SetBoundariesLive
+        <!-- <Bonfire.UI.Boundaries.SetBoundariesLive
           read_only
           is_caretaker={@is_caretaker}
           to_boundaries={@to_boundaries}
@@ -59,7 +59,7 @@
     <div x-show="edit" :if={@object_id}>
       {#if is_list(@custom_acls) and @custom_acls != []}
         <div :for={acl <- @custom_acls}>
-          <Bonfire.UI.Boundaries.Web.AclLive
+          <Bonfire.UI.Boundaries.AclLive
             id={"set_acl_#{id(acl)}"}
             setting_boundaries
             acl_id={id(acl)}
@@ -74,7 +74,7 @@
           {l("Add a boundary preset")}
         </summary>
         <ul class="z-[1] menu shadow bg-base-200 rounded-lg p-0">
-          <Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive
+          <Bonfire.UI.Boundaries.BoundariesGeneralAccessLive
             set_action="Bonfire.Boundaries:add_object_acl"
             set_opts={%{"phx-value-object_id" => @object_id}}
             boundary_preset={@boundary_preset}

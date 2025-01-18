@@ -152,7 +152,7 @@
     </li>
   </ul>
 
-  <Bonfire.UI.Boundaries.Web.MyAclsLive
+  <Bonfire.UI.Boundaries.MyAclsLive
     :if={@open_boundaries}
     id="my_boundaries"
     to_boundaries={@to_boundaries}

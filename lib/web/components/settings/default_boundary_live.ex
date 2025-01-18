@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.DefaultBoundaryLive do
+defmodule Bonfire.UI.Boundaries.DefaultBoundaryLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop scope, :any, default: nil

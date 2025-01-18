@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.EditAclLive do
+defmodule Bonfire.UI.Boundaries.EditAclLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop feed_by_subject, :any, default: nil

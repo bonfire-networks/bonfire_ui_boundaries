@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.BoundaryDetailsLive do
+defmodule Bonfire.UI.Boundaries.BoundaryDetailsLive do
   use Bonfire.UI.Common.Web, :stateless_component
   # TODO: make stateful?
 

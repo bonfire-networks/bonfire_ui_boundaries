@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.RolesLive do
+defmodule Bonfire.UI.Boundaries.RolesLive do
   use Bonfire.UI.Common.Web, :stateful_component
   alias Bonfire.Boundaries.Roles
 
@@ -30,7 +30,7 @@ defmodule Bonfire.UI.Boundaries.Web.RolesLive do
             page_header_aside: [
               if(!assigns[:read_only],
                 do:
-                  {Bonfire.UI.Boundaries.Web.NewRoleButtonLive,
+                  {Bonfire.UI.Boundaries.NewRoleButtonLive,
                    [scope: scope, scope_type: scope_type]}
               )
             ]

@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.BlockButtonLive do
+defmodule Bonfire.UI.Boundaries.BlockButtonLive do
   use Bonfire.UI.Common.Web, :stateless_component
   import Bonfire.Boundaries.Integration
 

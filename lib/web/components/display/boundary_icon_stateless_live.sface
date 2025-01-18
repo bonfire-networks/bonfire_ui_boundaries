@@ -8,7 +8,7 @@
       title_text={l("Activity boundary")}
     >
       <div class="mt-4">
-        <Bonfire.UI.Boundaries.Web.BoundaryDetailsLive
+        <Bonfire.UI.Boundaries.BoundaryDetailsLive
           scope={@scope}
           object_id={@object_id}
           object_type={@object_type}
@@ -19,7 +19,7 @@
       </div>
       <:open_btn>
         <div class={@class}>
-          <Bonfire.UI.Boundaries.Web.BoundariesPresetNameLive
+          <Bonfire.UI.Boundaries.BoundariesPresetNameLive
             boundary_preset={@boundary_preset}
             with_icon={@with_icon}
             with_label={@with_label}
@@ -31,7 +31,7 @@
   </div>
 {#elseif @boundary_preset}
   <div class={@class}>
-    <Bonfire.UI.Boundaries.Web.BoundariesPresetNameLive
+    <Bonfire.UI.Boundaries.BoundariesPresetNameLive
       boundary_preset={@boundary_preset}
       with_icon={@with_icon}
       with_label={@with_label}

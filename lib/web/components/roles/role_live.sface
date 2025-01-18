@@ -5,7 +5,7 @@ role page
   {#match _}
     error
 {/case}
-<!-- <Bonfire.UI.Boundaries.Web.RoleDetailsLive
+<!-- <Bonfire.UI.Boundaries.RoleDetailsLive
   name={to_string(e(@role, :name, nil) || @name)}
   role={@role}
   read_only={e(@role, :read_only, false)}
@@ -14,7 +14,7 @@ role page
   event_target={@myself}
   scope={@scope}
 /> -->
-<!-- <Bonfire.UI.Boundaries.Web.RoleDetailsLive
+<!-- <Bonfire.UI.Boundaries.RoleDetailsLive
             name={to_string(e(role, :name, nil) || name)}
             role={role}
             read_only={e(role, :read_only, false)}

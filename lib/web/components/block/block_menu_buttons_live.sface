@@ -26,7 +26,7 @@
             {#if @silence_extra_object}
               <li data-role="hide_modal" class="hover:bg-neutral/20">
                 {!-- WIP - TODO: add the boundary to the extra object's custom object ACL --}
-                <Bonfire.UI.Boundaries.Web.BlockButtonLive
+                <Bonfire.UI.Boundaries.BlockButtonLive
                   object={@silence_extra_object}
                   is_local_user={nil}
                   scope={@scope}
@@ -43,7 +43,7 @@
             {#if @object}
               <li data-role="ghost_modal" class="hover:bg-neutral/20">
                 {!-- TODO: pass the silenced/ghosted/blocked booleans so it isn't re-queried by BlockButtonLive --}
-                <Bonfire.UI.Boundaries.Web.BlockButtonLive
+                <Bonfire.UI.Boundaries.BlockButtonLive
                   object={@object}
                   is_local_user={is_local_user}
                   scope={@scope}
@@ -57,7 +57,7 @@
               </li>
 
               <li data-role="silence_modal" class="hover:bg-neutral/20">
-                <Bonfire.UI.Boundaries.Web.BlockButtonLive
+                <Bonfire.UI.Boundaries.BlockButtonLive
                   object={@object}
                   is_local_user={is_local_user}
                   scope={@scope}
@@ -71,7 +71,7 @@
               </li>
 
               <li data-role="block_modal" class="hover:bg-neutral/20">
-                <Bonfire.UI.Boundaries.Web.BlockButtonLive
+                <Bonfire.UI.Boundaries.BlockButtonLive
                   object={@object}
                   is_local_user={is_local_user}
                   scope={@scope}
@@ -88,7 +88,7 @@
             {#if block_peer}
               <!-- Block user's instance -->
               <li class="">
-                <Bonfire.UI.Boundaries.Web.BlockButtonLive
+                <Bonfire.UI.Boundaries.BlockButtonLive
                   with_icon
                   type={:ghost}
                   object={block_peer}
@@ -100,7 +100,7 @@
                 />
               </li>
               <li class="">
-                <Bonfire.UI.Boundaries.Web.BlockButtonLive
+                <Bonfire.UI.Boundaries.BlockButtonLive
                   with_icon
                   type={:silence}
                   object={block_peer}
@@ -112,7 +112,7 @@
                 />
               </li>
               <li class="">
-                <Bonfire.UI.Boundaries.Web.BlockButtonLive
+                <Bonfire.UI.Boundaries.BlockButtonLive
                   with_icon
                   type={:block}
                   object={block_peer}

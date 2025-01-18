@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.NewRoleLive do
+defmodule Bonfire.UI.Boundaries.NewRoleLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop setting_boundaries, :boolean, default: false

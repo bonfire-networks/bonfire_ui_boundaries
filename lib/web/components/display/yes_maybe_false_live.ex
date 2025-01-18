@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.YesMaybeFalseLive do
+defmodule Bonfire.UI.Boundaries.YesMaybeFalseLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop id, :any, default: nil

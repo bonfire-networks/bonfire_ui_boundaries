@@ -25,7 +25,7 @@
           </div>
       {/case}
     </div>
-    <Bonfire.UI.Boundaries.Web.YesMaybeFalseLive
+    <Bonfire.UI.Boundaries.YesMaybeFalseLive
       value={@value}
       read_only={@read_only}
       event_target={@event_target}

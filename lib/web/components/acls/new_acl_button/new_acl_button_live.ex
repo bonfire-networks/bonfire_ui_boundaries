@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.NewAclButtonLive do
+defmodule Bonfire.UI.Boundaries.NewAclButtonLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop setting_boundaries, :boolean, default: false

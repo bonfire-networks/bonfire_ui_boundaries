@@ -130,7 +130,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
     debug(acl_id, "replace_boundary")
 
     maybe_send_update(
-      Bonfire.UI.Boundaries.Web.CustomizeBoundaryLive,
+      Bonfire.UI.Boundaries.CustomizeBoundaryLive,
       "customize_boundary_live",
       to_boundaries: [{acl_id, e(params, "name", acl_id)}]
     )
@@ -150,7 +150,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
      assign(
        socket,
        :to_boundaries,
-       Bonfire.UI.Boundaries.Web.SetBoundariesLive.set_clean_boundaries(
+       Bonfire.UI.Boundaries.SetBoundariesLive.set_clean_boundaries(
          e(assigns(socket), :to_boundaries, []),
          acl_id,
          e(params, "name", acl_id)
@@ -237,7 +237,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
       |> debug("uniq")
 
     maybe_send_update(
-      Bonfire.UI.Boundaries.Web.CustomizeBoundaryLive,
+      Bonfire.UI.Boundaries.CustomizeBoundaryLive,
       "customize_boundary_live",
       %{field => appended_data}
     )
@@ -293,7 +293,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
     field = e(attrs, "field", nil) |> Types.maybe_to_atom() || :to_circles
 
     maybe_send_update(
-      Bonfire.UI.Boundaries.Web.CustomizeBoundaryLive,
+      Bonfire.UI.Boundaries.CustomizeBoundaryLive,
       "customize_boundary_live",
       %{field => remove_from_circle_tuples([deselected], e(assigns(socket), field, []))}
     )
@@ -404,7 +404,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
              attrs
            ) do
       send_self(page_title: e(circle, :named, :name, nil))
-      # maybe_send_update(Bonfire.UI.Boundaries.Web.CircleLive, "view_circle", circle: circle)
+      # maybe_send_update(Bonfire.UI.Boundaries.CircleLive, "view_circle", circle: circle)
       maybe_send_update(Bonfire.UI.Common.ReusableModalLive, "edit_boundary", show: false)
 
       {:noreply,
@@ -669,7 +669,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
     _current_user = current_user_required!(socket)
 
     if e(assigns(socket), :acl, nil) do
-      Bonfire.UI.Boundaries.Web.AclLive.add_to_acl(subject, socket)
+      Bonfire.UI.Boundaries.AclLive.add_to_acl(subject, socket)
     else
       {:noreply, socket}
     end
@@ -761,7 +761,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
     if previous_value != circles do
       # WIP: Here on or boundary_items_live.ex we need to fetch the user or circle id to return a map containing the name and optional image to render on the boundary_items_live.sface
       maybe_send_update(
-        Bonfire.UI.Boundaries.Web.CustomizeBoundaryLive,
+        Bonfire.UI.Boundaries.CustomizeBoundaryLive,
         "customize_boundary_live",
         %{field => circles}
       )
@@ -1002,8 +1002,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
     )
     |> assign(
       to_boundaries: to_boundaries,
-      boundary_preset:
-        Bonfire.UI.Boundaries.Web.SetBoundariesLive.boundaries_to_preset(to_boundaries)
+      boundary_preset: Bonfire.UI.Boundaries.SetBoundariesLive.boundaries_to_preset(to_boundaries)
     )
   end
 

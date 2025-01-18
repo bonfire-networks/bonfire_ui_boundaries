@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.TabledRolesLive do
+defmodule Bonfire.UI.Boundaries.TabledRolesLive do
   use Bonfire.UI.Common.Web, :stateful_component
   alias Bonfire.Boundaries.Roles
 

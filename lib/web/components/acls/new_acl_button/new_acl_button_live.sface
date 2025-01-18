@@ -5,7 +5,7 @@
     form_opts={%{"phx-submit" => "Bonfire.Boundaries:acl_create"}}
     no_actions
   >
-    <Bonfire.UI.Boundaries.Web.NewAclLive scope={@scope} setting_boundaries={@setting_boundaries} />
+    <Bonfire.UI.Boundaries.NewAclLive scope={@scope} setting_boundaries={@setting_boundaries} />
     <:open_btn>
       <div class="btn btn-sm btn-neutral">
         {l("New preset")}

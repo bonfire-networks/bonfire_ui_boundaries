@@ -22,7 +22,7 @@
 
         <input type="hidden" name="preview_boundary_for_id" value={@preview_boundary_for_id}>
         <div class="">
-          <Bonfire.UI.Boundaries.Web.YourRoleLive
+          <Bonfire.UI.Boundaries.YourRoleLive
             is_caretaker={nil}
             role_name={@role_name}
             scope={:preview}

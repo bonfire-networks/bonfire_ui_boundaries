@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.RoleVerbLive do
+defmodule Bonfire.UI.Boundaries.RoleVerbLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop verb, :any, required: true

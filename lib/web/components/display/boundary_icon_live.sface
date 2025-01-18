@@ -1,5 +1,5 @@
 <span>
-  <Bonfire.UI.Boundaries.Web.BoundaryIconStatelessLive
+  <Bonfire.UI.Boundaries.BoundaryIconStatelessLive
     object_id={id(@object)}
     object_boundary={@object_boundary}
     scope={@scope}

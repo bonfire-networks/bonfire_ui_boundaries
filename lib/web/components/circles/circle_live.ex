@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.CircleLive do
+defmodule Bonfire.UI.Boundaries.CircleLive do
   use Bonfire.UI.Common.Web, :stateful_component
   alias Bonfire.Boundaries.Circles
   alias Bonfire.Boundaries.Blocks
@@ -116,7 +116,7 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
             back: true,
             circle: circle
             # page_header_aside: [
-            #   {Bonfire.UI.Boundaries.Web.HeaderCircleLive,
+            #   {Bonfire.UI.Boundaries.HeaderCircleLive,
             #    [
             #      circle: circle,
             #      stereotype_id: stereotype_id,
@@ -256,7 +256,7 @@ defmodule Bonfire.UI.Boundaries.Web.CircleLive do
       :search,
       [search]
     )
-    |> Bonfire.UI.Boundaries.Web.SetBoundariesLive.results_for_multiselect()
+    |> Bonfire.UI.Boundaries.SetBoundariesLive.results_for_multiselect()
     |> debug("results_for_multiselect")
   end
 

@@ -12,7 +12,7 @@
     </div>
     <div data-position="bottom-end" phx-hook="Tooltip" id="popup_boundaries_in_modal">
       <label class="tooltip-button flex items-center justify-between gap-2 btn-outline normal-case btn">
-        <Bonfire.UI.Boundaries.Web.BoundariesPresetNameLive
+        <Bonfire.UI.Boundaries.BoundariesPresetNameLive
           icon_class="w-5 h-5"
           to_boundaries={@to_boundaries}
         />
@@ -21,7 +21,7 @@
         tabindex="0"
         class="tooltip z-[9999] menu shadow bg-base-100 border border-base-content/10 rounded-xl p-0 w-full lg:w-[29rem] absolute top-0 left-0 hidden"
       >
-        <Bonfire.UI.Boundaries.Web.GeneralAccessListLive
+        <Bonfire.UI.Boundaries.GeneralAccessListLive
           hide_presets={@hide_presets}
           boundary_preset={@boundary_preset}
           set_action={@set_action}
@@ -42,7 +42,7 @@
       </div>
     </div>
     <div>
-      <Bonfire.UI.Boundaries.Web.SetBoundariesLive
+      <Bonfire.UI.Boundaries.SetBoundariesLive
         to_boundaries={@to_boundaries}
         to_circles={@to_circles || []}
         exclude_circles={@exclude_circles || []}

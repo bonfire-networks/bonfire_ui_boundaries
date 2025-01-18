@@ -94,7 +94,7 @@
       |> JS.toggle(to: "#circles_list")}
       class="px-3"
     >
-      <Bonfire.UI.Boundaries.Web.NewCircleLive setting_boundaries={false} />
+      <Bonfire.UI.Boundaries.NewCircleLive setting_boundaries={false} />
     </form>
   </div>
 </div>

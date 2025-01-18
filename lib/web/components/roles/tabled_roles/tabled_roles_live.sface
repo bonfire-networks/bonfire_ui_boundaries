@@ -32,7 +32,7 @@
           </td>
           {#if e(assigns, :read_only, nil) != true}
             <td :for={{verb, status} <- verbs || default_sorted_verbs() || []}>
-              <Bonfire.UI.Boundaries.Web.YesMaybeFalseLive
+              <Bonfire.UI.Boundaries.YesMaybeFalseLive
                 value={status}
                 read_only={@read_only}
                 event_target={@myself}
@@ -134,7 +134,7 @@
 
 {#if !e(assigns, :mini, false)}
   <li class="flex items-center justify-between gap-8 p-3">
-    <Bonfire.UI.Boundaries.Web.YesMaybeFalseLive
+    <Bonfire.UI.Boundaries.YesMaybeFalseLive
       value={@value}
       read_only={@read_only}
       event_target={@event_target}

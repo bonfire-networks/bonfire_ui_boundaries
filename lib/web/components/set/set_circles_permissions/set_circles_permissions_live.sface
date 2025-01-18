@@ -29,7 +29,7 @@
               {#if @read_only}
                 {role}
               {#else}
-                <Bonfire.UI.Boundaries.Web.RolesDropdownLive
+                <Bonfire.UI.Boundaries.RolesDropdownLive
                   setting_boundaries
                   circle_id={id(data)}
                   role={role}

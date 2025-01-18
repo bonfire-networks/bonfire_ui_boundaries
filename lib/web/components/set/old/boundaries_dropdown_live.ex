@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.BoundariesDropdownLive do
+defmodule Bonfire.UI.Boundaries.BoundariesDropdownLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop to_boundaries, :any, default: nil

@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.EditAclButtonLive do
+defmodule Bonfire.UI.Boundaries.EditAclButtonLive do
   use Bonfire.UI.Common.Web, :stateless_component
   alias Bonfire.Boundaries.Acls
 

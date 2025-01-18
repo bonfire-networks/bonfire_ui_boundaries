@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.YourRoleLive do
+defmodule Bonfire.UI.Boundaries.YourRoleLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop role_name, :string, required: true

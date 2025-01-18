@@ -23,7 +23,7 @@
   <div class="">
     <ul class="">
       {#for verb <- e(@role, :can_verbs, nil) || []}
-        <Bonfire.UI.Boundaries.Web.RoleVerbLive
+        <Bonfire.UI.Boundaries.RoleVerbLive
           value
           read_only={@read_only}
           verb={verb}
@@ -34,7 +34,7 @@
       {/for}
 
       {#for verb <- e(@role, :cannot_verbs, nil) || []}
-        <Bonfire.UI.Boundaries.Web.RoleVerbLive
+        <Bonfire.UI.Boundaries.RoleVerbLive
           value={false}
           read_only={@read_only}
           verb={verb}
@@ -48,7 +48,7 @@
         {#for verb <-
             (@available_verbs || [])
             |> Enum.reject(&(elem(&1, 0) in (e(@role, :can_verbs, []) ++ e(@role, :cannot_verbs, []))))}
-          <Bonfire.UI.Boundaries.Web.RoleVerbLive
+          <Bonfire.UI.Boundaries.RoleVerbLive
             read_only={@read_only}
             verb={verb}
             all_verbs={[]}

@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="m-4">
-      <Bonfire.UI.Boundaries.Web.TabledRolesLive
+      <Bonfire.UI.Boundaries.TabledRolesLive
         id="test_tabled_roles"
         scope={@scope}
         read_only={@read_only}

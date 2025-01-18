@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.NewRoleButtonLive do
+defmodule Bonfire.UI.Boundaries.NewRoleButtonLive do
   use Bonfire.UI.Common.Web, :stateless_component
   # alias Bonfire.Boundaries.Circles
 

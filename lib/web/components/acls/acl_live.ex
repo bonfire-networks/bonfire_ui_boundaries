@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.AclLive do
+defmodule Bonfire.UI.Boundaries.AclLive do
   use Bonfire.UI.Common.Web, :stateful_component
   alias Bonfire.Boundaries.Acls
   alias Bonfire.Boundaries.Grants
@@ -65,10 +65,10 @@ defmodule Bonfire.UI.Boundaries.Web.AclLive do
        #  suggestions: suggestions,
        global_circles: global_circles,
        my_circles:
-         Bonfire.UI.Boundaries.Web.SetBoundariesLive.list_my_circles(
+         Bonfire.UI.Boundaries.SetBoundariesLive.list_my_circles(
            if is_nil(scope), do: current_user, else: scope
          )
-         |> Bonfire.UI.Boundaries.Web.SetBoundariesLive.results_for_multiselect(),
+         |> Bonfire.UI.Boundaries.SetBoundariesLive.results_for_multiselect(),
        settings_section_title: "View boundary preset",
        settings_section_description: l("Create and manage your boundary preset."),
        selected_tab: "acls"
@@ -110,7 +110,7 @@ defmodule Bonfire.UI.Boundaries.Web.AclLive do
           page_title: e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil),
           acl: acl,
           page_header_aside: [
-            {Bonfire.UI.Boundaries.Web.EditAclButtonLive,
+            {Bonfire.UI.Boundaries.EditAclButtonLive,
              [
                acl: acl,
                read_only: read_only,
@@ -333,7 +333,7 @@ defmodule Bonfire.UI.Boundaries.Web.AclLive do
 
   defp results_for_multiselect(results, live_select_id, socket) do
     results
-    |> Bonfire.UI.Boundaries.Web.SetBoundariesLive.results_for_multiselect()
+    |> Bonfire.UI.Boundaries.SetBoundariesLive.results_for_multiselect()
     |> debug()
 
     # |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)

@@ -10,7 +10,7 @@
             label={l("Search for circles or users to add")}
           />
         </form>
-        <Bonfire.UI.Boundaries.Web.EditAclLive
+        <Bonfire.UI.Boundaries.EditAclLive
           feed_by_subject={@feed_by_subject}
           setting_boundaries={@setting_boundaries}
           scope={@scope}
@@ -31,13 +31,13 @@
         </div>
         <div class="">
           {#if @section == "new_circle"}
-            <Bonfire.UI.Boundaries.Web.NewCircleLive
+            <Bonfire.UI.Boundaries.NewCircleLive
               parent_back={@myself}
               event_target={@myself}
               setting_boundaries={@setting_boundaries}
             />
           {#elseif @edit_circle_id}
-            <Bonfire.UI.Boundaries.Web.CircleLive
+            <Bonfire.UI.Boundaries.CircleLive
               id={@edit_circle_id}
               circle_id={@edit_circle_id}
               parent_back={@myself}
@@ -159,7 +159,7 @@
                         </div>
                         <div x-show="open" x-cloak x-collapse class="mt-0 m-3 p-3 rounded-lg shadow bg-base-content/5">
                           <div class="font-semibold text-sm text-base-content/70 py-2 pb-4">{l("Assign a role to %{subject_name}", subject_name: LiveHandler.subject_name(subject))}</div>
-                          <Bonfire.UI.Boundaries.Web.TabledRolesLive
+                          <Bonfire.UI.Boundaries.TabledRolesLive
                             id={LiveHandler.subject_name(subject)}
                             scope={@scope}
                             read_only

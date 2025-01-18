@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.SetCirclesPermissionsLive do
+defmodule Bonfire.UI.Boundaries.SetCirclesPermissionsLive do
   use Bonfire.UI.Common.Web, :stateful_component
   use Bonfire.Common.Utils
 

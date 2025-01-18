@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.RolesDropdownLive do
+defmodule Bonfire.UI.Boundaries.RolesDropdownLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop circle_id, :string, default: nil

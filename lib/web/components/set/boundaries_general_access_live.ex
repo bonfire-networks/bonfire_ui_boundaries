@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.BoundariesGeneralAccessLive do
+defmodule Bonfire.UI.Boundaries.BoundariesGeneralAccessLive do
   use Bonfire.UI.Common.Web, :stateless_component
   alias Bonfire.Boundaries.LiveHandler
 

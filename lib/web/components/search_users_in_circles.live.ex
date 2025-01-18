@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.SearchUsersInCirclesLive do
+defmodule Bonfire.UI.Boundaries.SearchUsersInCirclesLive do
   use Bonfire.UI.Common.Web, :stateless_component
   alias Bonfire.Boundaries.Circles
   alias Bonfire.Boundaries.Blocks
@@ -33,7 +33,7 @@ defmodule Bonfire.UI.Boundaries.Web.SearchUsersInCirclesLive do
       :search,
       [search]
     )
-    |> Bonfire.UI.Boundaries.Web.SetBoundariesLive.results_for_multiselect()
+    |> Bonfire.UI.Boundaries.SetBoundariesLive.results_for_multiselect()
   end
 
   def handle_event("multi_select", %{data: data, text: _text}, socket) do

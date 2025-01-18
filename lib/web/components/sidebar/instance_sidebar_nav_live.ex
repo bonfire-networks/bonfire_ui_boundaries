@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.InstanceSidebarNavLive do
+defmodule Bonfire.UI.Boundaries.InstanceSidebarNavLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop selected_tab, :any

@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.BoundaryIconStatelessLive do
+defmodule Bonfire.UI.Boundaries.BoundaryIconStatelessLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   # alias Bonfire.Boundaries.Acls

@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.BoundariesLive do
+defmodule Bonfire.UI.Boundaries.BoundariesLive do
   use Bonfire.UI.Common.Web, :surface_live_view
   # import Untangle
 
@@ -90,7 +90,7 @@ defmodule Bonfire.UI.Boundaries.Web.BoundariesLive do
        page_header_icon: "material-symbols:group-work-outline",
        page_title: l("Circles"),
        page_header_aside: [
-         {Bonfire.UI.Boundaries.Web.NewCircleButtonLive,
+         {Bonfire.UI.Boundaries.NewCircleButtonLive,
           [
             scope: scope,
             setting_boundaries: false
@@ -111,7 +111,7 @@ defmodule Bonfire.UI.Boundaries.Web.BoundariesLive do
        section: params["id"],
        page_title: l("Boundary Presets"),
        page_header_aside: [
-         {Bonfire.UI.Boundaries.Web.NewAclButtonLive,
+         {Bonfire.UI.Boundaries.NewAclButtonLive,
           [
             setting_boundaries: false,
             scope: scope

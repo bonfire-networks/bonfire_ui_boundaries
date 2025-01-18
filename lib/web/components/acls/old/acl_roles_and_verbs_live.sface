@@ -1,12 +1,12 @@
 <div>
   {#if @section == "new_circle"}
-    <Bonfire.UI.Boundaries.Web.NewCircleLive
+    <Bonfire.UI.Boundaries.NewCircleLive
       parent_back={@myself}
       event_target={@myself}
       setting_boundaries={@setting_boundaries}
     />
   {#elseif @edit_circle_id}
-    <Bonfire.UI.Boundaries.Web.CircleLive
+    <Bonfire.UI.Boundaries.CircleLive
       id={@edit_circle_id}
       circle_id={@edit_circle_id}
       parent_back={@myself}
@@ -145,7 +145,7 @@
                 {/if}
 
                 <div class="flex items-center gap-2" :if={!@read_only}>
-                  <Bonfire.UI.Boundaries.Web.RolesDropdownLive
+                  <Bonfire.UI.Boundaries.RolesDropdownLive
                     circle_id={subject_id}
                     role={Bonfire.Boundaries.Verbs.role_from_verb_ids(Map.keys(e(l, :grants, %{})))
                     |> debug("role_from_verbs")}
@@ -218,7 +218,7 @@
                           {LiveHandler.subject_name(subject)}
                         {/if}
                       </div>
-                      <Bonfire.UI.Boundaries.Web.YesMaybeFalseLive
+                      <Bonfire.UI.Boundaries.YesMaybeFalseLive
                         value={Map.get(e(l, :subject_verb_grants, subject_id, %{}), :value, nil)}
                         id={"role_#{subject_id}_#{verb_id}"}
                         field_name={"subject[#{subject_id}][#{verb_id}]"}

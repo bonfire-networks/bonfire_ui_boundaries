@@ -12,7 +12,7 @@
           no_header
           open_btn_wrapper_class="flex flex-1 w-full"
         >
-          <Bonfire.UI.Boundaries.Web.CustomizeBoundaryLive
+          <Bonfire.UI.Boundaries.CustomizeBoundaryLive
             id="customize_boundary_live"
             hide_presets={@hide_presets}
             boundary_preset={@boundary_preset}
@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <Bonfire.UI.Boundaries.Web.GeneralAccessListLive
+    <Bonfire.UI.Boundaries.GeneralAccessListLive
       hide_presets={@hide_presets}
       boundary_preset={@boundary_preset}
       set_action={@set_action}
@@ -44,5 +44,5 @@
       hide_custom
     />
   </div>
-  {!-- <Bonfire.UI.Boundaries.Web.BoundaryComposerActionsLive :if={!@is_dropdown} done_label={l("Back")} /> --}
+  {!-- <Bonfire.UI.Boundaries.BoundaryComposerActionsLive :if={!@is_dropdown} done_label={l("Back")} /> --}
 </div>

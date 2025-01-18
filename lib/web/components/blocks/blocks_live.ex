@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.BlocksLive do
+defmodule Bonfire.UI.Boundaries.BlocksLive do
   use Bonfire.UI.Common.Web, :stateful_component
   # alias Bonfire.Boundaries.Integration
 

@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.GeneralAccessListLive do
+defmodule Bonfire.UI.Boundaries.GeneralAccessListLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop hide_presets, :boolean, default: false

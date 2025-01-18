@@ -1,8 +1,8 @@
-defmodule Bonfire.UI.Boundaries.Web.MyAclsLive do
+defmodule Bonfire.UI.Boundaries.MyAclsLive do
   use Bonfire.UI.Common.Web, :stateful_component
   alias Bonfire.Boundaries.Acls
   alias Bonfire.Boundaries.Grants
-  # alias Bonfire.UI.Boundaries.Web.AclLive
+  # alias Bonfire.UI.Boundaries.AclLive
   alias Bonfire.Boundaries.LiveHandler
 
   prop hide_breakdown, :boolean, default: false

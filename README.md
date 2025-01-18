@@ -32,7 +32,7 @@ cd {your-extension-name-here}
       git push -u origin main
     ```
 - Add the extension on your bonfire deps.path to include it in your local development
-- Add `use_if_enabled(Bonfire.UI.Boundaries.Web.Routes)` in your app's `Router` module
+- Add `use_if_enabled(Bonfire.UI.Boundaries.Routes)` in your app's `Router` module
 - Add the extension on deps.git also (specifying the branch name) to allow others that do not have it in their fork to use it
 - Write a meaningful readme
 - TADA 🔥!
@@ -52,8 +52,8 @@ declare_extension(
       "ExtensionTemplate",
       icon: "bi:app",
       default_nav: [
-        Bonfire.UI.Boundaries.Web.HomeLive,
-        Bonfire.UI.Boundaries.Web.AboutLive
+        Bonfire.UI.Boundaries.HomeLive,
+        Bonfire.UI.Boundaries.AboutLive
       ])
 ```
 

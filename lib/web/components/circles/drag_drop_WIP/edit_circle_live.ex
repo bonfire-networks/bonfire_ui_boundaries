@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.EditCircleLive do
+defmodule Bonfire.UI.Boundaries.EditCircleLive do
   use Bonfire.UI.Common.Web, :stateful_component
   alias Bonfire.Boundaries.Circles
 

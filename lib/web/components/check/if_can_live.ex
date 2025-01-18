@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.Web.IfCan do
+defmodule Bonfire.UI.Boundaries.IfCan do
   use Bonfire.UI.Common.Web, :stateful_component
 
   # WIP - need to find a way to check different verbs for each instance of this component in an efficient way

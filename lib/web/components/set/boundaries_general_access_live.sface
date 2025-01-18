@@ -1,8 +1,8 @@
 {!-- style="min-height: 320px; height: 360px" --}
 <div class="h-full flex-1">
-  <div class="boundaries_general_access menu flex flex-col gap-1 flex-1 h-full flex-nowrap overflow-y-auto">
+  <div class="boundaries_general_access menu flex flex-col gap-1 flex-1 h-full flex-nowrap overflow-y-auto w-full">
     <div class="flex items-center justify-between mb-2 w-full gap-2">
-      <div class="items-start text-left flex-1 text-xs font-semibold uppercase text-base-content/70 px-2 pt-2">{l("Define the boundary")}</div>
+      <div class="items-start text-left flex-1 text-xs font-semibold uppercase text-base-content/50 px-2 pt-2">{l("Define the boundary")}</div>
 
       <div :if={@is_customizable}>
         <Bonfire.UI.Common.OpenModalLive
@@ -25,7 +25,7 @@
             hide_custom={@hide_custom}
           />
           <:open_btn>
-            <div class="btn btn-neutral btn-xs">
+            <div class="btn btn-soft btn-secondary btn-xs">
               {l("Advanced")}
               <#Icon iconify="codicon:settings" class="w-4 h-4" />
             </div>

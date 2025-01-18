@@ -7,7 +7,7 @@
         "bg-base-content/10 ": @selected_tab == "circles"
       }
     >
-      <span class="text-sm flex-1 h-auto p-2 py-1">{l("Circles")}</span>
+      <span class="">{l("Circles")}</span>
     </LinkLive>
   </li>
 
@@ -19,7 +19,7 @@
         "bg-base-content/10 ": @selected_tab == "roles"
       }
     >
-      <span class="text-sm flex-1 h-auto p-2 py-1">{l("Roles")}</span>
+      <span class="">{l("Roles")}</span>
     </LinkLive>
   </li>
 
@@ -56,7 +56,7 @@
         "bg-base-content/10 ": @selected_tab == "acls"
       }
     >
-      <span class="text-sm flex-1 h-auto p-2 py-1">{l("Boundary Presets")}</span>
+      <span class="">{l("Boundary Presets")}</span>
     </LinkLive>
   </li>
 </ul>

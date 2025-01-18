@@ -2,7 +2,7 @@
   <div class="">
     <#slot />
     <div
-      class="menu menu-horizontal gap-3 bg-base-100 w-full border-base-content/10 border-b"
+      class="menu menu-horizontal items-center justify-between gap-3 bg-base-100 w-full border-base-content/10 border-b"
       :if={@show_add || (!@stereotype_id and !@read_only)}
     >
       <form
@@ -23,88 +23,90 @@
       </form>
 
       {#if !@stereotype_id and !@read_only}
-        <div data-role="edit_circle_name" class="edit_name">
-          <Bonfire.UI.Common.OpenModalLive
-            id="edit_name"
-            title_text={l("Edit circle name")}
-            no_actions
-            open_btn_wrapper_class="flex flex-1 w-full"
-            form_opts={%{"phx-submit" => "Bonfire.Boundaries:edit"}}
-          >
-            <div class="w-full mt-4 form-control">
-              <label for="name" class="label">{l("Edit the circle name")}</label>
-              <input type="hidden" name="circle_id" value={e(@circle, :id, nil)}>
-              <div class="flex items-center">
-                <input
-                  id="name"
-                  name="named[name]"
-                  value={e(@circle, :named, :name, nil)}
-                  type="text"
-                  placeholder="Type here"
-                  class="w-full input input-bordered"
-                />
+        <div class="flex gap-3 items-center">
+          <div data-role="edit_circle_name" class="edit_name">
+            <Bonfire.UI.Common.OpenModalLive
+              id="edit_name"
+              title_text={l("Edit circle name")}
+              no_actions
+              open_btn_wrapper_class="flex flex-1 w-full"
+              form_opts={%{"phx-submit" => "Bonfire.Boundaries:edit"}}
+            >
+              <div class="w-full mt-4 form-control">
+                <input type="hidden" name="circle_id" value={e(@circle, :id, nil)}>
+                <div class="flex items-center">
+                  <input
+                    id="name"
+                    name="named[name]"
+                    value={e(@circle, :named, :name, nil)}
+                    type="text"
+                    placeholder="Type here"
+                    class="w-full input input-bordered"
+                  />
+                </div>
               </div>
-            </div>
 
-            <button
-              data-role="edit_name_submit"
-              type="submit"
-              class="w-full mt-3 normal-case btn btn-primary"
-            >{l("Save")}</button>
-            <:open_btn>
-              <div class="btn btn-neutral h-10 min-h-10">
-                {l("Edit circle")}</div>
-            </:open_btn>
-          </Bonfire.UI.Common.OpenModalLive>
-        </div>
-
-        <div data-role="delete_circle" class="delete_circle">
-          <Bonfire.UI.Common.OpenModalLive
-            id="delete_circle"
-            title_text={l("Delete this circle")}
-            open_btn_wrapper_class="flex flex-1 w-full"
-          >
-            <div class="mt-4 prose-sm prose">
-              <p>{l(
-                  "The circle will be permanently deleted. This action may affect all the activities that included this circle."
-                )}</p>
-            </div>
-            <:open_btn>
-              <div class="btn btn-error btn-circle h-10 min-h-10 max-w-10"><#Icon iconify="ph:trash-fill" class="w-4 h-4" />
-                <span class="sr-only">{l("Delete circle")}</span></div>
-            </:open_btn>
-            <:action_btns>
               <button
-                data-role="confirm_delete_circle"
-                type="button"
-                :on-click="Bonfire.Boundaries:circle_delete"
-                phx-value-go="/boundaries/circles"
-                class="normal-case  btn btn-error btn-sm"
-              >
-                {l("Delete this circle")}</button>
-            </:action_btns>
-          </Bonfire.UI.Common.OpenModalLive>
+                data-role="edit_name_submit"
+                type="submit"
+                class="w-full mt-3 normal-case btn btn-primary"
+              >{l("Save")}</button>
+              <:open_btn>
+                <div class="btn btn-primary btn-soft">
+                  {l("Edit circle")}</div>
+              </:open_btn>
+            </Bonfire.UI.Common.OpenModalLive>
+          </div>
+
+          <div data-role="delete_circle" class="delete_circle">
+            <Bonfire.UI.Common.OpenModalLive
+              id="delete_circle"
+              title_text={l("Delete this circle")}
+              open_btn_wrapper_class="flex flex-1 w-full"
+            >
+              <div class="mt-4 prose-sm prose">
+                <p>{l(
+                    "The circle will be permanently deleted. This action may affect all the activities that included this circle."
+                  )}</p>
+              </div>
+              <:open_btn>
+                <div class="btn btn-error btn-circle"><#Icon iconify="ph:trash-fill" class="w-4 h-4" />
+                  <span class="sr-only">{l("Delete circle")}</span></div>
+              </:open_btn>
+              <:action_btns>
+                <button
+                  data-role="confirm_delete_circle"
+                  type="button"
+                  :on-click="Bonfire.Boundaries:circle_delete"
+                  phx-value-go="/boundaries/circles"
+                  class="normal-case  btn btn-error btn-sm"
+                >
+                  {l("Delete this circle")}</button>
+              </:action_btns>
+            </Bonfire.UI.Common.OpenModalLive>
+          </div>
         </div>
       {/if}
     </div>
   </div>
   {#if Enum.count(@members) > 0}
-    <div class="divide-y divide-base-content/10 gap-4 px-0 gap-4">
-      <!-- row 1 -->
+    <ul role="list" class="list">
+      <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{l("Members")}</li>
       {#for {id, member} <- @members}
-        <div class="flex items-center w-full justify-between p-4">
+        <li class="list-row">
           <input
             type="hidden"
             name={"circle[encircle][#{id}][circle_id]"}
             value={e(@circle, :id, @circle_id)}
           />
           <input type="hidden" name={"circle[encircle][#{id}][subject_id]"} value={id}>
-          {#case debug(member, "dsffdf")}
+
+          {#case member}
             {#match %{subject: %{profile: %{id: _} = profile}} = member}
               <StatelessComponent
                 module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
                 profile={profile}
-                avatar_class="w-10 h-10 rounded-full"
+                avatar_class="w-10 h-10 rounded-box"
                 character={e(member, :subject, :character, nil)}
                 show_summary
                 show_controls={[]}
@@ -113,7 +115,7 @@
               <StatelessComponent
                 module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
                 profile={%{name: name, icon: icon}}
-                avatar_class="w-10 h-10 rounded-full"
+                avatar_class="w-10 h-10 rounded-box"
                 character={%{username: username}}
                 show_summary
                 show_controls={[]}
@@ -124,21 +126,22 @@
                   e(member, :name, "Unknown")}
               </LinkLive>
           {/case}
-
-          <div class="flex items-center justify-end">
-            <button
-              data-role="remove_user"
-              :if={@show_remove || !@read_only}
-              phx-value-subject={id}
-              :on-click="remove"
-              class="btn btn-outline btn-sm"
-            >
-              {l("Remove")}
-            </button>
+          <div>
+            <!-- <div>{LiveHandler.subject_name(circle)}</div>
+            <div class="text-xs uppercase font-semibold opacity-60">{e(circle, :encircles_count, 0)} {l " Members"}</div> -->
           </div>
-        </div>
+          <button
+            data-role="remove_user"
+            :if={@show_remove || !@read_only}
+            phx-value-subject={id}
+            :on-click="remove"
+            class="btn btn-error btn-soft btn-sm"
+          >
+            {l("Remove")}
+          </button>
+        </li>
       {/for}
-    </div>
+    </ul>
   {#else}
     <li id="no-members" class="flex items-center place-content-center">
       <Bonfire.UI.Common.EmptyFeed

@@ -21,7 +21,7 @@
           <span>{l("Add to circles")}</span>
         </div>
       {#else}
-        <div class="btn btn-sm w-full flex-1 btn-outline">
+        <div class="btn w-full flex-1 btn-secondary btn-soft">
           <#Icon iconify="pajamas:group" class="w-4 h-4 shrink-0" />
           <span class="font-semibold">{l("Add to circles")}</span>
         </div>

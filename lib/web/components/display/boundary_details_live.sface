@@ -103,7 +103,7 @@
                 <label tabindex="0" class="rounded btn btn-square btn-ghost btn-sm">
                   <#Icon solid="DotsVertical" class="w-4 h-4" />
                 </label>
-                <ul tabindex="0" class="w-48 p-1 rounded shadow dropdown-content menu menu-sm bg-base-200">
+                <ul tabindex="0" class="w-48 p-1 rounded shadow dropdown-content menu bg-base-200">
                   <li data-role="remove_from_boundary">
                     <Bonfire.UI.Common.OpenModalLive
                       id={"remove_acl_#{id(acl)}"}

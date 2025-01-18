@@ -3,7 +3,7 @@
 
 {!-- TODO: consolidate this view and the boundary editing one (so you can directly add people/circles here as well) --}
 
-    <div class="shadow-lg alert alert-info">
+    <div class="shadow-lg alert alert-info alert-soft">
       <div class="flex items-start">
         <#Icon iconify="typcn:info-large" class="w-4 h-4 shrink-0" />
         <div class="flex flex-col">
@@ -114,7 +114,7 @@
   </div>
 {#else}
   <div class="p-3">
-    <div class="shadow-lg alert alert-info">
+    <div class="shadow-lg alert alert-info alert-soft">
       <div class="flex items-start">
         <#Icon iconify="typcn:info-large" class="w-4 h-4 shrink-0" />
         <div class="flex flex-col">

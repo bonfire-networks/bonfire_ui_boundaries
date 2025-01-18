@@ -6,37 +6,28 @@
       )}</span>
   </div>
   <div class="">
-    <ul role="list" class="flex flex-col divide-y divide-base-content/10">
+    <ul role="list" class="list">
+      <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{l("Your circles")}</li>
       {#for circle <- e(@circles, [])}
-        <li class="">
+        <li class="list-row">
+          <div class="w-10 h-10 flex place-content-center items-center bg-secondary/10 rounded-box">
+            <#Icon iconify="pajamas:group" class="w-5 h-5 text-secondary" />
+          </div>
+          <div>
+            <div>{LiveHandler.subject_name(circle)}</div>
+            <div class="text-xs uppercase font-semibold opacity-60">{e(circle, :encircles_count, 0)} {l(" Members")}</div>
+          </div>
           <LinkLive
-            class="block hover:bg-base-content/5"
+            class="btn btn-sm btn-secondary btn-soft"
             to={if @scope != nil,
               do: ~p"/boundaries/scope/instance/circle/#{id(circle)}",
               else: ~p"/boundaries/scope/user/circle/#{id(circle)}"}
           >
-            <div class="flex items-center gap-3 p-5">
-              <span class="w-10 h-10 rounded-full bg-info/10 flex items-center place-content-center">
-                <#Icon iconify="pajamas:group" class="w-5 h-5 text-base-content" />
-              </span>
-              <div class="flex-1 min-w-0 sm:flex sm:items-center sm:justify-between">
-                <div class="truncate">
-                  <div class="flex">
-                    <p class="font-bold capitalize truncate">{LiveHandler.subject_name(circle)}</p>
-                  </div>
-                </div>
-                <Bonfire.UI.Boundaries.Web.CirclePreviewLive
-                  parent_id={id(circle)}
-                  members={e(circle, :encircles, [])}
-                  count={e(circle, :encircles_count, 0)}
-                  size={8}
-                />
-              </div>
-              <div class="flex-shrink-0 ml-5">
-                <#Icon solid="ChevronRight" class="w-5 h-5 text-base-content/70" />
-              </div>
-            </div>
+            {l("View")}
           </LinkLive>
+          <!-- <button class="btn btn-square btn-ghost">
+            <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
+          </button> -->
         </li>
       {/for}
     </ul>

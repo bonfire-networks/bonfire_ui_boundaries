@@ -7,7 +7,11 @@ defmodule Bonfire.UI.Boundaries.Routes do
       scope "/" do
         pipe_through(:browser)
 
-        live("/list/:id", Bonfire.UI.Boundaries.ListPageLive,
+        # live("/list/:id", Bonfire.UI.Boundaries.ListPageLive,
+        #   as: Bonfire.Data.AccessControl.Circle
+        # )
+
+        live("/list/:id", Bonfire.UI.Common.StatefulComponentView, Bonfire.UI.Boundaries.ListLive,
           as: Bonfire.Data.AccessControl.Circle
         )
 

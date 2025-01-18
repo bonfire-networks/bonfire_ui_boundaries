@@ -1,4 +1,0 @@
-<StatefulComponent
-  id="list"
-  module={maybe_component(Bonfire.UI.Boundaries.ListLive, @__context__)}
-/>

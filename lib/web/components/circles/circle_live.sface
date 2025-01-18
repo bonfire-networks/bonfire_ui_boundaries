@@ -58,6 +58,36 @@
             </Bonfire.UI.Common.OpenModalLive>
           </div>
 
+            <div data-role="share_circle">
+          <Bonfire.UI.Common.OpenModalLive
+            id="share_circle"
+            title_text={l("Share this circle")}
+            open_btn_wrapper_class="flex flex-1 w-full"
+          >
+            <div class="mt-4 prose-sm prose">
+              <p>{l(
+                  "The circle will be turned into a list and shared publicly. Make sure that you're comfortable sharing this circle name and list of members (including any people you add in the future)."
+                )}</p>
+            </div>
+            <:open_btn>
+              <div class="btn btn-warning btn-circle h-10 min-h-10 max-w-10"><#Icon iconify="heroicons-outline:speakerphone" class="w-4 h-4" />
+                <span class="sr-only">{l("Share this circle")}</span></div>
+            </:open_btn>
+            <:action_btns>
+              <button
+                data-role="confirm_share_circle"
+                type="button"
+                :on-click="Bonfire.Social.Objects:share"
+                phx-value-object_assign="circle"
+                phx-value-boundary="public"
+                phx-value-go={"/list/#{id(@circle)}"}
+                class="normal-case  btn btn-warning btn-sm"
+              >
+                {l("Share this circle")}</button>
+            </:action_btns>
+          </Bonfire.UI.Common.OpenModalLive>
+        </div>
+
           <div data-role="delete_circle" class="delete_circle">
             <Bonfire.UI.Common.OpenModalLive
               id="delete_circle"

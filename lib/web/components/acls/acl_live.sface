@@ -44,8 +44,8 @@
               setting_boundaries={@setting_boundaries}
             />
           {#else}
-            <div class="p-3 bg-base-100 w-full border-base-content/10 border-b" :if={!@read_only}>
-              <div class="text-sm mb-2 text-base-content/80 font-medium">{l("Add one or more circles to this boundary")}</div>
+            <div class="p-6 bg-base-300 w-full border-base-content/10 border-b" :if={!@read_only}>
+              <div class="text-xs text-center uppercase mb-6 text-base-content/80 font-medium">{l("Add one or more circles to this boundary")}</div>
               <form
                 id="edit_acl_members"
                 class="flex items-center gap-2 w-full flex-1 flex-wrap"
@@ -53,7 +53,7 @@
               >
                 <button
                   disabled={Enum.any?(@feed_by_subject, fn {id, _} -> id == elem(circle, 1)[:id] end)}
-                  class="btn btn-outline rounded-full"
+                  class="btn btn-sm btn-soft btn-secondary rounded-full"
                   :for={circle <- @my_circles}
                   type="button"
                   data-role="add-circle-to-acl"
@@ -73,43 +73,28 @@
               <div class="">
                 {#if is_list(@feed_by_subject) or (is_map(@feed_by_subject) and not Enum.empty?(@feed_by_subject))}
                   <form id="edit_grants" :on-change="edit_grant_role">
-                    <ul class="flex flex-col divide-y divide-base-content/10">
+                    <ul class="list">
                       <li
-                        x-data="{open: false}"
                         :for={{{subject_id, %{subject: subject, grants: grants} = _subject_verb_grants}, _i} <-
                           Enum.with_index(@feed_by_subject || [])}
-                        class="flex flex-col"
+                        class="list-row"
                       >
-                        <div class="flex items-center justify-between p-4">
-                          {#if e(subject, :profile, :id, nil)}
-                            <StatelessComponent
-                              module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
-                              profile={e(subject, :profile, nil)}
-                              avatar_class="w-10 h-10 rounded-full"
-                              character={e(subject, :character, nil)}
-                              show_controls={[]}
-                              with_summary
-                            />
-                          {#else}
-                            <div class="flex items-center gap-3">
-                              <span class="flex items-center w-10 h-10 rounded-full place-content-center bg-info/10">
-                                <#Icon iconify="pajamas:group" class="inline-block w-5 h-5 text-base-content" />
-                              </span>
-                              <div class="flex flex-col">
-                                <div class="text-base truncate max-w-[160px] font-semibold text-base-content">{LiveHandler.subject_name(subject)}</div>
-                                <!-- <div class="text-sm truncate max-w-[160px] text-base-content/70">{LiveHandler.subject_summary(subject)}</div> -->
-                              </div>
-                            </div>
-                          {/if}
-
-                          <div class="flex items-center gap-2">
-                            <button
-                              x-on:click="open = !open"
-                              data-role="toggle_role"
-                              type="button"
-                              x-cloak
-                              class="btn btn-neutral btn-sm"
-                            >
+                        {#if e(subject, :profile, :id, nil)}
+                          <StatelessComponent
+                            module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
+                            profile={e(subject, :profile, nil)}
+                            avatar_class="w-10 h-10 rounded-full"
+                            character={e(subject, :character, nil)}
+                            show_controls={[]}
+                            with_summary
+                          />
+                        {#else}
+                          <div class="flex items-center w-10 h-10 rounded-full place-content-center bg-info/10">
+                            <#Icon iconify="pajamas:group" class="inline-block w-5 h-5 text-base-content" />
+                          </div>
+                          <div>
+                            <div>{LiveHandler.subject_name(subject)}</div>
+                            <div class="text-xs uppercase font-semibold text-primary">
                               {Recase.to_title(
                                 to_string(
                                   Bonfire.Boundaries.Roles.role_from_grants(Map.values(grants || %{}),
@@ -118,62 +103,77 @@
                                   )
                                 )
                               )}
-                            </button>
-                            {#if !@read_only}
-                              <span>
-                                <Bonfire.UI.Common.OpenModalLive
-                                  id={"remove_from_acl_#{uid(subject)}"}
-                                  title_text={l("Remove from boundary preset")}
-                                  no_actions
-                                  open_btn_wrapper_class="flex flex-1 w-full"
-                                >
-                                  <div class="prose prose-sm mt-2">
-                                    {l("Are you sure to remove %{subject_name} from '%{boundary_name}' boundary preset?",
-                                      subject_name: LiveHandler.subject_name(subject),
-                                      boundary_name: e(@acl, :named, :name, nil) || e(@acl, :stereotyped, :named, :name, nil)
-                                    )}
-                                  </div>
-                                  <button
-                                    data-role="remove_from_boundary_btn"
-                                    phx-click={JS.push("remove_from_acl",
-                                      value: %{
-                                        subject_id: subject_id
-                                      },
-                                      target: @myself
-                                    )}
-                                    class="w-full mt-3 normal-case btn btn-error"
-                                    type="button"
-                                  >
-                                    {l("Remove")}
-                                  </button>
-                                  <:open_btn>
-                                    <div data-role="remove_from_boundary_modal" class="btn-outline btn-xs btn btn-circle">
-                                      <span class="sr-only">{l("Delete")}</span>
-                                      <#Icon iconify="ic:baseline-minus" class="w-4 h-4" />
-                                    </div>
-                                  </:open_btn>
-                                </Bonfire.UI.Common.OpenModalLive>
-                              </span>
-                            {/if}
+                            </div>
                           </div>
-                        </div>
-                        <div x-show="open" x-cloak x-collapse class="mt-0 m-3 p-3 rounded-lg shadow bg-base-content/5">
-                          <div class="font-semibold text-sm text-base-content/70 py-2 pb-4">{l("Assign a role to %{subject_name}", subject_name: LiveHandler.subject_name(subject))}</div>
-                          <Bonfire.UI.Boundaries.TabledRolesLive
-                            id={LiveHandler.subject_name(subject)}
-                            scope={@scope}
-                            read_only
-                            selectable
-                            circle_id={subject_id}
-                            event_target={@myself}
-                            role={Bonfire.Boundaries.Roles.role_from_grants(Map.values(grants || %{}),
-                              scope: @scope,
-                              current_user: current_user(@__context__)
-                            )
-                            |> debug("the role")}
-                            roles={Bonfire.Boundaries.Roles.roles_for_dropdown(@usage, scope: @scope, context: @__context__)}
-                          />
-                          <!-- roles={Bonfire.Boundaries.Roles.roles_for_dropdown(@usage, scope: @scope, context: @__context__)} -->
+                        {/if}
+                        <div class="flex items-center gap-2">
+                          <Bonfire.UI.Common.OpenModalLive
+                            id={"edit_role_for_#{uid(subject)}"}
+                            title_text={l("Edit role")}
+                            no_actions
+                            xl
+                            open_btn_wrapper_class="flex flex-1 w-full"
+                          >
+                            <div class="mt-3">
+                              <div class="font-semibold text-sm text-base-content/70 py-2 pb-4">{l("Assign a role to %{subject_name}", subject_name: LiveHandler.subject_name(subject))}</div>
+                              <Bonfire.UI.Boundaries.TabledRolesLive
+                                id={LiveHandler.subject_name(subject)}
+                                scope={@scope}
+                                read_only
+                                selectable
+                                circle_id={subject_id}
+                                event_target={@myself}
+                                role={Bonfire.Boundaries.Roles.role_from_grants(Map.values(grants || %{}),
+                                  scope: @scope,
+                                  current_user: current_user(@__context__)
+                                )
+                                |> debug("the role")}
+                                roles={Bonfire.Boundaries.Roles.roles_for_dropdown(@usage, scope: @scope, context: @__context__)}
+                              />
+                            </div>
+                            <:open_btn>
+                              <div data-role="toggle_role" class="btn btn-primary btn-soft">
+                                {l("Edit role")}
+                              </div>
+                            </:open_btn>
+                          </Bonfire.UI.Common.OpenModalLive>
+
+                          {#if !@read_only}
+                            <span>
+                              <Bonfire.UI.Common.OpenModalLive
+                                id={"remove_from_acl_#{uid(subject)}"}
+                                title_text={l("Remove from boundary preset")}
+                                no_actions
+                                open_btn_wrapper_class="flex flex-1 w-full"
+                              >
+                                <div class="prose prose-sm mt-2">
+                                  {l("Are you sure to remove %{subject_name} from '%{boundary_name}' boundary preset?",
+                                    subject_name: LiveHandler.subject_name(subject),
+                                    boundary_name: e(@acl, :named, :name, nil) || e(@acl, :stereotyped, :named, :name, nil)
+                                  )}
+                                </div>
+                                <button
+                                  data-role="remove_from_boundary_btn"
+                                  phx-click={JS.push("remove_from_acl",
+                                    value: %{
+                                      subject_id: subject_id
+                                    },
+                                    target: @myself
+                                  )}
+                                  class="w-full mt-3 normal-case btn btn-error"
+                                  type="button"
+                                >
+                                  {l("Remove")}
+                                </button>
+                                <:open_btn>
+                                  <div data-role="remove_from_boundary_modal" class="btn-soft btn btn-error btn-circle">
+                                    <span class="sr-only">{l("Delete")}</span>
+                                    <#Icon iconify="ic:baseline-minus" class="w-4 h-4" />
+                                  </div>
+                                </:open_btn>
+                              </Bonfire.UI.Common.OpenModalLive>
+                            </span>
+                          {/if}
                         </div>
                       </li>
                     </ul>

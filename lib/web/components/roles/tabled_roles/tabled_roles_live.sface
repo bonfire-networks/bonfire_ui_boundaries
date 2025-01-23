@@ -1,5 +1,7 @@
-<div class="relative overflow-y-visible overflow-x-auto">
+<div class="bg-base-content/5 relative overflow-y-visible overflow-x-auto">
   {#if Enum.count(@roles_with_verbs || []) > 0}
+    <code>{inspect(@roles_with_verbs, pretty: true)}</code>
+
     <table class="table table-zebra">
       <thead class="text-xs uppercase sticky top-0 z-10 bg-base-100">
         <tr>
@@ -10,6 +12,7 @@
       </thead>
       <tbody>
         <tr :for={{role, verbs} <- @roles_with_verbs || []}>
+          <!-- <code>{inspect(default_sorted_verbs(), pretty: true)}</code> -->
           <td class="sticky left-0 z-10 bg-base-100/70 backdrop-blur-sm min-w-[180px] flex items-center gap-2 max-w-[180px] truncate ellipsis">
             {#if @selectable}
               <div class="flex w-full items-center gap-2">

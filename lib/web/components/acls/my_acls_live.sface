@@ -18,99 +18,52 @@
         </div>
       </div>
 
-      <ul role="list" class="flex flex-col divide-y divide-base-content/10">
+      <ul role="list" class="list">
+        <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{l("Your Boundary presets")}</li>
         {#for %{id: acl_id} = acl <- e(@acls, []) ++ e(@built_ins, [])}
-          <li>
+          <li class="list-row">
+            <div class="w-10 h-10 flex place-content-center items-center bg-secondary/10 rounded-box">
+              <#Icon iconify="ph:hand-fill" class="w-5 h-5" />
+            </div>
+            <div>
+              <div>{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
+              <!-- <div class="text-xs uppercase font-semibold opacity-60">{e(circle, :encircles_count, 0)} {l(" Members")}</div> -->
+              {!-- {#if e(acl, :grants_count, 0) > 0} --}
+              <div class="flex gap-1 avatar-group">
+                {#for subject <-
+                    Grants.subjects(e(acl, :grants, []))}
+                  {#if e(subject, :profile, :id, nil)}
+                    <Bonfire.UI.Common.AvatarLive
+                      parent_id="acls"
+                      src={Media.avatar_url(e(subject, nil))}
+                      user_id={id(e(subject, nil))}
+                      title={e(subject, :profile, :name, nil) ||
+                        e(subject, :character, :username, nil) || id(subject)}
+                      class="w-5 h-5"
+                      bg_class="rounded-xl"
+                    />
+                  {#else}
+                    <div class="flex items-center gap-3">
+                      <span
+                        title={e(subject, :named, :name, nil) || e(subject, :stereotyped, :named, :name, nil) ||
+                          e(subject, :name, nil) || id(subject)}
+                        class="flex items-center w-5 h-5 rounded-full place-content-center bg-info"
+                      >
+                        <#Icon iconify="pajamas:group" class="inline-block w-4 h-4 text-info-content" />
+                      </span>
+                    </div>
+                  {/if}
+                {/for}
+              </div>
+              {!-- {/if} --}
+            </div>
             <LinkLive
-              class="block cursor-pointer hover:bg-base-content/5"
+              class="btn btn-sm btn-secondary btn-soft"
               to={if @scope != nil,
                 do: ~p"/boundaries/scope/instance/acl/#{id(acl)}",
                 else: ~p"/boundaries/acl/#{id(acl)}"}
             >
-              <label
-                class="flex items-center gap-3 p-5 cursor-pointer"
-                phx-click={if @setting_boundaries,
-                  do:
-                    JS.push(
-                      if(not Enum.member?(@to_boundaries_ids, acl_id),
-                        do: "Bonfire.Boundaries:select_boundary",
-                        else: "Bonfire.Boundaries:remove_boundary"
-                      ),
-                      value: %{
-                        id: acl_id,
-                        name:
-                          e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")
-                      },
-                      target: "#smart_input"
-                    )}
-              >
-                <#Icon iconify="ph:hand-fill" class="w-6 h-6 text-base-content/70" />
-                <div class="flex-1">
-                  <div class="flex items-center space-x-4">
-                    <div class="font-bold capitalize">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) ||
-                        l("Untitled")}</div>
-                  </div>
-                </div>
-                <div class="flex ml-4 space-x-2">
-                  {#if !@setting_boundaries}
-                    {!-- {#if e(acl, :grants_count, 0) > 0} --}
-                    <div class="flex gap-1 avatar-group">
-                      {#for subject <-
-                          Grants.subjects(e(acl, :grants, []))}
-                        {#if e(subject, :profile, :id, nil)}
-                          <Bonfire.UI.Common.AvatarLive
-                            parent_id="acls"
-                            src={Media.avatar_url(e(subject, nil))}
-                            user_id={id(e(subject, nil))}
-                            title={e(subject, :profile, :name, nil) ||
-                              e(subject, :character, :username, nil) || id(subject)}
-                            class="w-8 h-8"
-                            bg_class="rounded-xl"
-                          />
-                        {#else}
-                          <div class="flex items-center gap-3">
-                            <span
-                              title={e(subject, :named, :name, nil) || e(subject, :stereotyped, :named, :name, nil) ||
-                                e(subject, :name, nil) || id(subject)}
-                              class="flex items-center w-8 h-8 rounded-full place-content-center bg-info/10"
-                            >
-                              <#Icon iconify="pajamas:group" class="inline-block w-4 h-4 text-base-content" />
-                            </span>
-                          </div>
-                        {/if}
-                      {/for}
-                    </div>
-                    {!-- {/if} --}
-                    <div class="flex items-center gap-3">
-                      <#Icon solid="ChevronRight" class="w-5 h-5" />
-                    </div>
-                  {#else}
-                    <div
-                      class="btn btn-ghost btn-sm btn-circle"
-                      phx-click="boundary_edit"
-                      phx-target={@myself}
-                      phx-value-id={acl.id}
-                      x-on:click="show_boundary_list = false"
-                    >
-                      <#Icon solid="ChevronRight" class="w-5 h-5" />
-                    </div>
-
-                    <div
-                      :if={not Enum.member?(@to_boundaries_ids, acl_id)}
-                      class="btn btn-outline btn-sm btn-circle opacity-80"
-                    >
-                      <#Icon solid="Plus" class="w-5 h-5" />
-                    </div>
-
-                    <div
-                      :if={@to_boundaries_ids |> Enum.member?(acl_id)}
-                      class="btn btn-success btn-sm btn-circle opacity-80"
-                    >
-                      <#Icon solid="Minus" class="w-5 h-5" />
-                    </div>
-                  {/if}
-                </div>
-              </label>
+              {l("View")}
             </LinkLive>
           </li>
         {/for}

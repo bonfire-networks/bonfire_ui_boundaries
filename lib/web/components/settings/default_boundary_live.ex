@@ -3,5 +3,8 @@ defmodule Bonfire.UI.Boundaries.DefaultBoundaryLive do
 
   prop scope, :any, default: nil
 
-  declare_settings_component(l("Default boundary"), icon: "fluent:people-team-16-filled")
+  declare_settings_component(l("Default boundary"),
+    icon: "fluent:people-team-16-filled",
+    description: l("Specify your default boundary when publishing a new activity")
+  )
 end

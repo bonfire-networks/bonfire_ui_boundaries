@@ -57,7 +57,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
         )
       )
       |> get_roles_with_verbs(scope)
-      |> debug("roles_with_verbs")
+      |> debug("roles_with_verbsss")
 
     {:ok,
      socket
@@ -100,17 +100,29 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
   def get_roles_with_verbs(roles, scope) do
     roles
     |> Enum.map(fn
-      {role_name, role_data} when is_map(role_data) ->
-        can_verbs = Map.get(role_data, :can_verbs, [])
-        cannot_verbs = Map.get(role_data, :cannot_verbs, [])
-        {role_name, sort_verbs(can_verbs, cannot_verbs)}
+      {role_name, _display_name} when is_atom(role_name) or is_binary(role_name) ->
+        case Bonfire.Boundaries.Roles.verbs_for_role(role_name, scope: scope) do
+          {:ok, can_verbs, cannot_verbs} ->
+            # Transform verbs into {verb, status} pairs for the template
+            verb_statuses =
+              @verb_order
+              |> Enum.map(fn verb ->
+                cond do
+                  verb in can_verbs -> {verb, :can}
+                  verb in cannot_verbs -> {verb, :cannot}
+                  # undefined status
+                  true -> {verb, nil}
+                end
+              end)
 
-      {role_name, _} ->
-        {role_name, nil}
+            {role_name, verb_statuses}
+
+          _ ->
+            {role_name, []}
+        end
 
       other ->
-        warn(other, "unexpected data")
-        nil
+        other
     end)
   end
 

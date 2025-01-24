@@ -1,7 +1,7 @@
 {!-- style="min-height: 320px; height: 360px" --}
 <div class="h-full flex-1">
   <div class="boundaries_general_access menu flex flex-col gap-1 flex-1 h-full flex-nowrap overflow-y-auto w-full">
-    <div class="flex items-center justify-between mb-2 w-full gap-2">
+    <div class="lg:flex hidden items-center justify-between mb-2 w-full gap-2">
       <div class="items-start text-left flex-1 text-xs font-semibold uppercase text-base-content/50 px-2 pt-2">{l("Define the boundary")}</div>
 
       <div :if={@is_customizable}>

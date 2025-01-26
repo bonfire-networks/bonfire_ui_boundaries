@@ -6,28 +6,30 @@
     <!-- Panel -->
     <section class="p-3 border border-base-content/10 bg-base-100 rounded-lg">
       <div class="text-sm  mb-2 text-center text-base-content/90 font-medium">{l("Grant more permissions")}</div>
-
-      <form phx-change="multi_select" phx-target="#smart_input_container">
-        <!-- <Bonfire.UI.Common.MultiselectLive
+      <div class="gap-2 flex items-center">
+        <button
+          :for={circle <- @my_circles}
+          phx-click="add_circle_to_acl"
+          phx-target="#customize-boundary-live"
+          phx-value-circle_id={circle.id}
+          phx-value-circle_name={Bonfire.Boundaries.LiveHandler.subject_name(circle)}
+          class="btn btn-sm btn-soft btn-accent rounded-full"
+          type="button"
+          data-role="add-circle-to-acl"
+        >
+          {Bonfire.Boundaries.LiveHandler.subject_name(circle)}
+        </button>
+      </div>
+      <!-- <form class="gap-2 flex items-center" phx-change="multi_select" phx-target="#smart_input_container">
+         <Bonfire.UI.Common.MultiselectLive
           :if={!@read_only}
           implementation={:live_select}
           field={:to_circles}
           form_input_name={__MODULE__}
           preloaded_options={results_for_multiselect(@my_circles || [])}
           label={l("Add circles or people")}
-        /> -->
-        <!-- disabled={Enum.any?(@feed_by_subject, fn {id, _} -> id == elem(circle, 1)[:id] end)} -->
-        <!-- phx-t
-          alue-name={elem(circle, 1)[:name]} -->
-        <button
-          class="btn btn-sm btn-soft btn-secondary rounded-full"
-          :for={circle <- @my_circles}
-          type="button"
-          data-role="add-circle-to-acl"
-        >
-          {Bonfire.Boundaries.LiveHandler.subject_name(circle)}
-        </button>
-      </form>
+        />
+      </form> -->
       <div class="flex h-full flex-1 flex-col gap-2">
         <div class="mt-4 flex justify-between items-center">
           <StatelessComponent

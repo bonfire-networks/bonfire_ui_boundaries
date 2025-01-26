@@ -22,6 +22,32 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   end
 
   def handle_event(
+        "add_circle_to_acl",
+        %{"circle_id" => circle_id, "circle_name" => circle_name},
+        socket
+      ) do
+    field = :to_circles
+
+    appended_data =
+      (e(assigns(socket), field, []) ++
+         [{%{"id" => circle_id, "name" => circle_name}, nil}])
+      |> Enum.uniq()
+
+    maybe_send_update(
+      Bonfire.UI.Boundaries.CustomizeBoundaryLive,
+      "customize_boundary_live",
+      %{field => appended_data}
+    )
+
+    {:noreply,
+     socket
+     |> assign(
+       field,
+       appended_data
+     )}
+  end
+
+  def handle_event(
         "multi_select",
         %{data: data, text: _text},
         socket

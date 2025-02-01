@@ -1,9 +1,9 @@
 <div id="customize-boundary-live">
-  <div class="flex -mt-[0.25rem] pb-4 items-center justify-between gap-4 pr-6">
-    <div class="text-lg font-semibold">{l("Define the activity boundary")}</div>
-    <button type="button" class="normal-case btn-sm btn-ghost btn btn-circle opacity-70">
+  <div class="flex pb-4 items-center justify-between gap-4 pr-6">
+    <div class="text-base font-semibold">{l("Define the activity boundary")}</div>
+    <!-- <button type="button" class="normal-case btn-sm btn-ghost btn btn-circle opacity-70">
       <#Icon iconify="material-symbols:help-outline" class="w-5 h-5" />
-    </button>
+    </button> -->
   </div>
   <div class="flex items-center justify-between gap-6 items-start">
     <div class="flex flex-col gap-1">

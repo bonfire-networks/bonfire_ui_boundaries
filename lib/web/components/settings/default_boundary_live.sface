@@ -10,7 +10,7 @@
   </label>
   <ul
     tabindex="0"
-    class="tooltip z-[9999] menu shadow bg-base-100 border border-base-content/10 rounded-xl p-0 w-full lg:w-82 absolute top-0 left-0 hidden"
+    class="tooltip z-[9999] menu shadow bg-base-100 border border-base-content/10 rounded-xl p-0 w-82 absolute top-0 left-0 hidden"
   >
     <StatelessComponent
       module={maybe_component(Bonfire.UI.Boundaries.BoundariesGeneralAccessLive, @__context__)}

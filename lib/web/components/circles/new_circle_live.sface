@@ -1,8 +1,8 @@
 <div class="">
   <div x-data="{ name: '' }" class="w-full mt-3">
     <div class="w-full form-control">
-      <label for="name" class="label">
-        <span class="label-text">{l("Enter a name for the circle")}</span>
+      <label for="name" class="">
+        <span class="sr-only">{l("Enter a name for the circle")}</span>
       </label>
       <input
         x-model="name"

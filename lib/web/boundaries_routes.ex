@@ -11,9 +11,7 @@ defmodule Bonfire.UI.Boundaries.Routes do
         #   as: Bonfire.Data.AccessControl.Circle
         # )
 
-        live("/list/:id", Bonfire.UI.Common.StatefulComponentView, Bonfire.UI.Boundaries.ListLive,
-          as: Bonfire.Data.AccessControl.Circle
-        )
+        live("/list/:id", Bonfire.UI.Boundaries.ListLive, as: Bonfire.Data.AccessControl.Circle)
 
         # live("/list/:id", live_view_for_component(Bonfire.UI.Boundaries.ListLive), as: Bonfire.Data.AccessControl.Circle) #WIP
       end

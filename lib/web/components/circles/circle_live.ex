@@ -55,6 +55,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
               Circles.get_for_caretaker(id, current_user, scope: e(assigns(socket), :scope, nil)))
            |> repo().maybe_preload(encircles: [subject: [:profile, :character]])
            |> repo().maybe_preload(encircles: [subject: [:named]])
+           |> repo().maybe_preload(:extra_info)
            |> ok_unwrap() do
       debug(circle, "circle")
 

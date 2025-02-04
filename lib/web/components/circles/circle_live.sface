@@ -2,152 +2,110 @@
   <div class="">
     <#slot />
     <div
-      class="menu menu-horizontal items-center justify-between gap-3 bg-base-300 w-full p-4 rounded-t-xl"
       :if={@show_add || (!@stereotype_id and !@read_only)}
+      class="flex flex-col gap-3 bg-base-300 rounded-t-xl p-4"
     >
-      <form id="edit_circle_participant" :on-change="multi_select" class="w-full flex-1">
-        <label for={"multi_select_#{__MODULE__}_text_input"} class="sr-only">{l("Search for users to add")}</label>
-        <div class="relative">
-          <Bonfire.UI.Common.MultiselectLive
-            implementation={:live_select}
-            event_target="#circle_preview"
-            form_input_name={__MODULE__}
-            form={:add_to_circles}
-            label={l("Search for circles or users to add")}
-          />
-        </div>
-      </form>
+      {#if description = e(@circle, :extra_info, :summary, nil)}
+        <div class="text-base-content/70 p-2 pb-0">{description}</div>
+      {/if}
+      <div class="menu menu-horizontal items-center justify-between gap-3 w-full">
+        <form id="edit_circle_participant" :on-change="multi_select" class="w-full flex-1">
+          <label for={"multi_select_#{__MODULE__}_text_input"} class="sr-only">{l("Search for users to add")}</label>
+          <div class="relative">
+            <Bonfire.UI.Common.MultiselectLive
+              implementation={:live_select}
+              event_target="#circle_preview"
+              form_input_name={__MODULE__}
+              form={:add_to_circles}
+              label={l("Search for circles or users to add")}
+            />
+          </div>
+        </form>
 
-      {#if !@stereotype_id and !@read_only}
-        <div class="flex gap-3 items-center">
-          <div data-role="edit_circle_name" class="edit_name">
-            <Bonfire.UI.Common.OpenModalLive
-              id="edit_name"
-              title_text={l("Edit circle")}
-              no_actions
-              open_btn_wrapper_class="flex flex-1 w-full"
-            >
-              <form phx-submit="Bonfire.Boundaries:edit" class="w-full mt-4 form-control">
-                <input type="hidden" name="circle_id" value={e(@circle, :id, nil)}>
-                <div class="flex items-center">
-                  <input
-                    id="name"
-                    name="named[name]"
-                    value={e(@circle, :named, :name, nil)}
-                    type="text"
-                    placeholder="Type here"
-                    class="w-full input input-bordered"
-                  />
+        {#if !@stereotype_id and !@read_only}
+          <div class="flex gap-3 items-center">
+            <div data-role="edit_circle_name" class="edit_name">
+              <Bonfire.UI.Common.OpenModalLive
+                id="edit_name"
+                title_text={l("Edit circle")}
+                no_actions
+                open_btn_wrapper_class="flex flex-1 w-full"
+              >
+                <form phx-submit="Bonfire.Boundaries:edit" class="w-full mt-4 form-control">
+                  <input type="hidden" name="circle_id" value={e(@circle, :id, nil)}>
+                  <div class="">
+                    <input
+                      id="name"
+                      name="named[name]"
+                      value={e(@circle, :named, :name, nil)}
+                      type="text"
+                      placeholder="Type here"
+                      class="w-full input input-bordered"
+                    />
+                  </div>
+                  <div class="w-full form-control mt-3">
+                    <label for="description" class="">
+                      <span class="sr-only">{l("Enter a description for the circle")}</span>
+                    </label>
+                    <textarea
+                      id="description"
+                      name="extra_info[summary]"
+                      placeholder={l("Describe what this circle is for...")}
+                      class="w-full textarea textarea-bordered"
+                      rows="3"
+                    >{e(@circle, :extra_info, :summary, "")}</textarea>
+                  </div>
+                  <button
+                    data-role="edit_name_submit"
+                    type="submit"
+                    class="w-full mt-3 normal-case btn btn-primary"
+                  >{l("Save")}</button>
+                </form>
+
+                <div class="mt-4 alert items-start flex flex-col alert-info alert-soft">
+                  <div class="font-bold text-lg">{l("Share this circle")}</div>
+                  <p>{l(
+                      "Turn the circle into a list and share it publicly. Make sure that you're comfortable sharing this circle name and list of members (including any people you add in the future)."
+                    )}</p>
+
+                  <button
+                    data-role="confirm_share_circle"
+                    type="button"
+                    :on-click="Bonfire.Social.Objects:share"
+                    phx-value-object_assign="circle"
+                    phx-value-boundary="public"
+                    phx-value-go={"/list/#{id(@circle)}"}
+                    class="btn btn-info w-full"
+                  >
+                    {l("Share")}</button>
                 </div>
 
-                <button
-                  data-role="edit_name_submit"
-                  type="submit"
-                  class="w-full mt-3 normal-case btn btn-primary"
-                >{l("Save")}</button>
-              </form>
+                <div class="mt-4 flex items-start flex-col alert alert-error alert-soft">
+                  <div class="font-bold text-lg">{l("Delete this circle")}</div>
+                  <p>{l(
+                      "The circle will be permanently deleted. This action may affect all the activities that included this circle."
+                    )}</p>
 
-              <div class="mt-4 alert items-start flex flex-col alert-info alert-soft">
-                <div class="font-bold text-lg">{l("Share this circle")}</div>
-                <p>{l(
-                    "Turn the circle into a list and share it publicly. Make sure that you're comfortable sharing this circle name and list of members (including any people you add in the future)."
-                  )}</p>
+                  <button
+                    data-role="confirm_delete_circle"
+                    type="button"
+                    :on-click="Bonfire.Boundaries:circle_delete"
+                    phx-value-go="/boundaries/circles"
+                    class="btn btn-error w-full"
+                  >
+                    {l("Delete")}</button>
+                </div>
 
-                <button
-                  data-role="confirm_share_circle"
-                  type="button"
-                  :on-click="Bonfire.Social.Objects:share"
-                  phx-value-object_assign="circle"
-                  phx-value-boundary="public"
-                  phx-value-go={"/list/#{id(@circle)}"}
-                  class="btn btn-info w-full"
-                >
-                  {l("Share")}</button>
-              </div>
-
-              <div class="mt-4 flex items-start flex-col alert alert-error alert-soft">
-                <div class="font-bold text-lg">{l("Delete this circle")}</div>
-                <p>{l(
-                    "The circle will be permanently deleted. This action may affect all the activities that included this circle."
-                  )}</p>
-
-                <button
-                  data-role="confirm_delete_circle"
-                  type="button"
-                  :on-click="Bonfire.Boundaries:circle_delete"
-                  phx-value-go="/boundaries/circles"
-                  class="btn btn-error w-full"
-                >
-                  {l("Delete")}</button>
-              </div>
-
-              <:open_btn>
-                <div class="btn btn-primary btn-soft">
-                  <#Icon iconify="codicon:settings" class="w-5 h-5 mr-2" />
-                  {l("Edit circle")}</div>
-              </:open_btn>
-            </Bonfire.UI.Common.OpenModalLive>
+                <:open_btn>
+                  <div class="btn btn-primary btn-soft">
+                    <#Icon iconify="codicon:settings" class="w-5 h-5 mr-2" />
+                    {l("Edit circle")}</div>
+                </:open_btn>
+              </Bonfire.UI.Common.OpenModalLive>
+            </div>
           </div>
-
-          <!-- <div data-role="share_circle">
-            <Bonfire.UI.Common.OpenModalLive
-              id="share_circle"
-              title_text={l("Share this circle")}
-              open_btn_wrapper_class="flex flex-1 w-full"
-            >
-              <div class="mt-4 prose-sm prose">
-                <p>{l(
-                    "The circle will be turned into a list and shared publicly. Make sure that you're comfortable sharing this circle name and list of members (including any people you add in the future)."
-                  )}</p>
-              </div>
-              <:open_btn>
-                <div class="btn btn-warning btn-circle h-10 min-h-10 max-w-10"><#Icon iconify="heroicons-outline:speakerphone" class="w-4 h-4" />
-                  <span class="sr-only">{l("Share this circle")}</span></div>
-              </:open_btn>
-              <:action_btns>
-                <button
-                  data-role="confirm_share_circle"
-                  type="button"
-                  :on-click="Bonfire.Social.Objects:share"
-                  phx-value-object_assign="circle"
-                  phx-value-boundary="public"
-                  phx-value-go={"/list/#{id(@circle)}"}
-                  class="normal-case  btn btn-warning btn-sm"
-                >
-                  {l("Share this circle")}</button>
-              </:action_btns>
-            </Bonfire.UI.Common.OpenModalLive>
-          </div> -->
-
-          <!-- <div data-role="delete_circle" class="delete_circle">
-            <Bonfire.UI.Common.OpenModalLive
-              id="delete_circle"
-              title_text={l("Delete this circle")}
-              open_btn_wrapper_class="flex flex-1 w-full"
-            >
-              <div class="mt-4 prose-sm prose">
-                <p>{l(
-                    "The circle will be permanently deleted. This action may affect all the activities that included this circle."
-                  )}</p>
-              </div>
-              <:open_btn>
-                <div class="btn btn-error btn-circle"><#Icon iconify="ph:trash-fill" class="w-4 h-4" />
-                  <span class="sr-only">{l("Delete circle")}</span></div>
-              </:open_btn>
-              <:action_btns>
-                <button
-                  data-role="confirm_delete_circle"
-                  type="button"
-                  :on-click="Bonfire.Boundaries:circle_delete"
-                  phx-value-go="/boundaries/circles"
-                  class="normal-case  btn btn-error btn-sm"
-                >
-                  {l("Delete this circle")}</button>
-              </:action_btns>
-            </Bonfire.UI.Common.OpenModalLive>
-          </div> -->
-        </div>
-      {/if}
+        {/if}
+      </div>
     </div>
   </div>
   {#if Enum.count(@members) > 0}
@@ -155,11 +113,7 @@
       <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{l("Members")}</li>
       {#for {id, member} <- @members}
         <li class="list-row">
-          <input
-            type="hidden"
-            name={"circle[encircle][#{id}][circle_id]"}
-            value={e(@circle, :id, @circle_id)}
-          />
+          <input type="hidden" name={"circle[encircle][#{id}][circle_id]"} cle, :id,={true} @circle_id)}>
           <input type="hidden" name={"circle[encircle][#{id}][subject_id]"} value={id}>
 
           {#case member}

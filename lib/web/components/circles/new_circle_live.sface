@@ -13,6 +13,20 @@
         class="w-full input input-bordered"
       />
     </div>
+
+    <div class="w-full form-control mt-3">
+      <label for="description" class="">
+        <span class="sr-only">{l("Enter a description for the circle")}</span>
+      </label>
+      <textarea
+        id="description"
+        name="extra_info[summary]"
+        placeholder={l("Describe what this circle is for...")}
+        class="w-full textarea textarea-bordered"
+        rows="3"
+      />
+    </div>
+
     <input type="hidden" name="scope" value={@scope}>
     {!-- phx-click="Bonfire.Boundaries:circle_create"
       phx-value-no_redirect={if @setting_boundaries, do: "1"}

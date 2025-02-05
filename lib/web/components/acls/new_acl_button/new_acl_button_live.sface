@@ -1,11 +1,12 @@
 <div data-role="new_acl">
-  <Bonfire.UI.Common.OpenModalLive
-    id="new_acl"
-    title_text={l("New boundary preset")}
-    form_opts={%{"phx-submit" => "Bonfire.Boundaries:acl_create"}}
-    no_actions
-  >
-    <Bonfire.UI.Boundaries.NewAclLive scope={@scope} setting_boundaries={@setting_boundaries} />
+  <Bonfire.UI.Common.OpenModalLive id="new_acl" title_text={l("New boundary preset")} no_actions>
+    <form
+      id="new_acl_form"
+      phx-submit="Bonfire.Boundaries:acl_create"
+      phx-change="Bonfire.Boundaries:acl_validate"
+    >
+      <Bonfire.UI.Boundaries.NewAclLive scope={@scope} setting_boundaries={@setting_boundaries} />
+    </form>
     <:open_btn>
       <div class="btn btn-sm btn-neutral">
         {l("New preset")}

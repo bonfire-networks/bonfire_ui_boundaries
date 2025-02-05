@@ -97,10 +97,10 @@
                 </button>
               </form>
 
-              <div class="w-full mt-4 border border-error rounded-lg p-4 bg-error/10">
+              <div class="w-full mt-4 rounded-lg p-4 bg-error/10">
                 <div class="flex items-center gap-2">
                   <#Icon iconify="heroicons-solid:exclamation-circle" class="text-error w-6 h-6" />
-                  <h4 class="text-error text-lg font-medium">{l("Delete the '%{role}' role", role: role)}</h4>
+                  <h4 class="text-error font-medium">{l("Delete the '%{role}' role", role: role)}</h4>
                 </div>
                 <p class="text-error mt-2 text-sm">
                   {l("Warning:This action cannot be undone.")}

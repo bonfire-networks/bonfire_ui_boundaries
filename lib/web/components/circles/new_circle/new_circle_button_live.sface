@@ -1,13 +1,12 @@
 <div data-role="new_circle">
-  <Bonfire.UI.Common.OpenModalLive
-    id="new_circle"
-    title_text={l("Create a new circle")}
-    form_opts={%{"phx-submit" => "Bonfire.Boundaries:circle_create"}}
-    no_actions
-  >
-    <div>
+  <Bonfire.UI.Common.OpenModalLive id="new_circle" title_text={l("Create a new circle")} no_actions>
+    <form
+      id="new_circle_form"
+      phx-submit="Bonfire.Boundaries:circle_create"
+      phx-change="Bonfire.Boundaries:new_circle_validate"
+    >
       <Bonfire.UI.Boundaries.NewCircleLive scope={@scope} setting_boundaries={@setting_boundaries} />
-    </div>
+    </form>
 
     <:open_btn>
       <div class="btn btn-neutral btn-sm">

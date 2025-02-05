@@ -108,12 +108,20 @@ defmodule Bonfire.Boundaries.LiveHandler do
     circle_create(attrs, socket)
   end
 
+  def handle_event("new_circle_validate", attrs, socket) do
+    {:noreply, socket}
+  end
+
   def handle_event("acl_create", %{"name" => name} = attrs, socket) do
     acl_create(Map.merge(attrs, %{named: %{name: name}}), socket)
   end
 
   def handle_event("acl_create", attrs, socket) do
     acl_create(attrs, socket)
+  end
+
+  def handle_event("acl_validate", attrs, socket) do
+    {:noreply, socket}
   end
 
   def handle_event("open_boundaries", _params, socket) do

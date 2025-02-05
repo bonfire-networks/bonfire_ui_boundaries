@@ -50,7 +50,7 @@
                     <textarea
                       id="description"
                       name="extra_info[summary]"
-                      placeholder={l("Describe what this circle is for...")}
+                      placeholder={l("Describe this circle...")}
                       class="w-full textarea textarea-bordered"
                       rows="3"
                     >{e(@circle, :extra_info, :summary, "")}</textarea>
@@ -64,9 +64,11 @@
 
                 <div class="mt-4 alert items-start flex flex-col alert-info alert-soft">
                   <div class="font-bold text-lg">{l("Share this circle")}</div>
-                  <p>{l(
-                      "Turn the circle into a list and share it publicly. Make sure that you're comfortable sharing this circle name and list of members (including any people you add in the future)."
-                    )}</p>
+                  <div>{rich(
+                      l(
+                        "Turn the circle into a list and share it *publicly*. Make sure that you're comfortable sharing this circle name/description and list of members (including any people you add in the future)."
+                      )
+                    )}</div>
 
                   <button
                     data-role="confirm_share_circle"

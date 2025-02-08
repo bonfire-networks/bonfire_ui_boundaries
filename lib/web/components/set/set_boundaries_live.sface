@@ -5,8 +5,8 @@
   >
     <!-- Panel -->
     <section class="p-3 border border-base-content/10 bg-base-100 rounded-lg">
-      <div class="text-sm  mb-2 text-center text-base-content/90 font-medium">{l("Grant more permissions")}</div>
-      <div class="gap-2 flex items-center">
+      <div class="text-xs uppercase mb-4 text-center text-base-content/50 font-semibold">{l("Grant more permissions")}</div>
+      <!-- <div class="gap-2 flex items-center flex-wrap">
         <button
           :for={circle <- @my_circles}
           phx-click="add_circle_to_acl"
@@ -19,9 +19,13 @@
         >
           {Bonfire.Boundaries.LiveHandler.subject_name(circle)}
         </button>
-      </div>
-      <!-- <form class="gap-2 flex items-center" phx-change="multi_select" phx-target="#smart_input_container">
-         <Bonfire.UI.Common.MultiselectLive
+      </div> -->
+      <form
+        class="gap-2 flex items-center"
+        phx-change="multi_select"
+        phx-target="#smart_input_container"
+      >
+        <Bonfire.UI.Common.MultiselectLive
           :if={!@read_only}
           implementation={:live_select}
           field={:to_circles}
@@ -29,7 +33,7 @@
           preloaded_options={results_for_multiselect(@my_circles || [])}
           label={l("Add circles or people")}
         />
-      </form> -->
+      </form>
       <div class="flex h-full flex-1 flex-col gap-2">
         <div class="mt-4 flex justify-between items-center">
           <StatelessComponent

@@ -34,7 +34,7 @@
       <div class="form-control bg-info/30 rounded p-3 mt-2">
         <label class="label !justify-start items-start gap-4 cursor-pointer">
           <input type="checkbox" class="toggle" name="usage" value="ops">
-          <span class="label-text text-info">{l("Use this role only to set system boundaries (e.g. group or instance) rather than content")}</span>
+          <span class="label-text text-sm text-info">{l("Use this role only to set system boundaries (e.g. group or instance) rather than content")}</span>
         </label>
       </div>
 

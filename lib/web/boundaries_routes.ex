@@ -11,9 +11,13 @@ defmodule Bonfire.UI.Boundaries.Routes do
         #   as: Bonfire.Data.AccessControl.Circle
         # )
 
-        live("/list/:id", Bonfire.UI.Boundaries.ListLive, as: Bonfire.Data.AccessControl.Circle)
+        live("/circle/:id", Bonfire.UI.Boundaries.SharedCircleLive,
+          as: Bonfire.Data.AccessControl.Circle
+        )
 
-        # live("/list/:id", live_view_for_component(Bonfire.UI.Boundaries.ListLive), as: Bonfire.Data.AccessControl.Circle) #WIP
+        live("/circle/:id/:tab", Bonfire.UI.Boundaries.SharedCircleLive)
+
+        # live("/list/:id", live_view_for_component(Bonfire.UI.Boundaries.SharedCircleLive), as: Bonfire.Data.AccessControl.Circle) #WIP
       end
 
       if extension_enabled?(:bonfire_ui_me) do

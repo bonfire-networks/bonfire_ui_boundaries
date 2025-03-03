@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.ListLive do
+defmodule Bonfire.UI.Boundaries.SharedCircleLive do
   use Bonfire.UI.Common.Web, :surface_live_view
   alias Bonfire.Boundaries.Circles
 
@@ -10,30 +10,40 @@ defmodule Bonfire.UI.Boundaries.ListLive do
              e(params, "id", nil),
              current_user: current_user(socket)
            ) do
+      name = e(data, :name, nil)
+
       {:ok,
        socket
-       |> assign(:page_title, e(data, :name, nil))
+       |> assign(:page_title, name)
+       |> assign(:members, [])
        |> assign(:nav_items, Bonfire.Common.ExtensionModule.default_nav())
-       |> assign(:circle, e(data, :circle, nil))
-       |> assign(:members, e(data, :members, []))
-       |> assign(:loaded, true)}
+       |> assign(data)
+       |> assign(
+         feed_name: nil,
+         feed_title: name,
+         feed_filters: %{subject_circles: [e(data, :circle, :id, nil)]}
+       )}
     else
       _ ->
-        {:ok,
-         socket
-         |> assign(:page_title, "Shared circle")
-         |> assign(:nav_items, Bonfire.Common.ExtensionModule.default_nav())
-         |> assign(:circle, nil)
-         |> assign(:members, [])
-         |> assign(:loaded, false)}
+        raise(Bonfire.Fail, :not_found)
     end
+  end
+
+  def handle_params(%{"tab" => "members"}, _session, socket) do
+    with {:ok, data} <- load_members(e(assigns(socket), :circle, nil)) do
+      {:noreply, socket |> assign(:selected_tab, "members") |> assign(data)}
+    end
+  end
+
+  def handle_params(_, _session, socket) do
+    {:noreply,
+     socket
+     |> assign(:selected_tab, nil)}
   end
 
   def load_circle(id, opts) do
     with %{id: id} = circle <-
            Circles.get(id, opts)
-           |> repo().maybe_preload(encircles: [subject: [:profile, :character]])
-           |> repo().maybe_preload(encircles: [subject: [:named]])
            |> repo().maybe_preload(caretaker: [caretaker: [:profile, :character]])
            |> repo().maybe_preload(:extra_info)
            |> ok_unwrap() do
@@ -43,6 +53,25 @@ defmodule Bonfire.UI.Boundaries.ListLive do
 
       creator_username = e(circle, :caretaker, :caretaker, :character, :username, "Unknown")
 
+      {:ok,
+       %{
+         circle:
+           circle
+           |> Map.drop([:caretaker])
+           |> Map.put(:creator_name, creator_name)
+           |> Map.put(:creator_username, creator_username),
+         name: e(circle, :named, :name, nil),
+         loaded: true
+       }}
+    end
+  end
+
+  def load_members(circle, _opts \\ []) do
+    with %{id: _id} = circle <-
+           circle
+           |> repo().maybe_preload(encircles: [subject: [:profile, :character]])
+           |> repo().maybe_preload(encircles: [subject: [:named]])
+           |> ok_unwrap() do
       members =
         e(circle, :encircles, [])
         |> Enum.map(& &1.subject)
@@ -50,14 +79,7 @@ defmodule Bonfire.UI.Boundaries.ListLive do
 
       {:ok,
        %{
-         circle:
-           circle
-           |> Map.drop([:encircles, :caretaker])
-           |> Map.put(:creator_name, creator_name)
-           |> Map.put(:creator_username, creator_username),
-         members: members || [],
-         name: e(circle, :named, :name, nil),
-         loaded: true
+         members: members || []
        }}
     end
   end

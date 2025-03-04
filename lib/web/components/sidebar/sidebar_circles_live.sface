@@ -4,16 +4,15 @@
       <details open>
         <summary class="font-bold uppercase text-xs text-base-content/50">{l("Circles")}</summary>
         {#for circle <- e(@circles, [])}
-
-        <li>
-          <LinkLive to={~p"circle/#{id(circle)}"}>
-            <div class="w-7 h-7 rounded-lg bg-base-content/10 flex items-center place-content-center shadow-lg">
-              <Iconify.iconify icon="pajamas:group" class="w-4 h-4 text-base-content/70" />
-            </div>
-            <span class="font-medium text-base-content/80">{LiveHandler.subject_name(circle)}</span>
-          </LinkLive>
-        </li>
-      {/for}
+          <li>
+            <LinkLive to={~p"circle/#{id(circle)}"}>
+              <div class="w-7 h-7 rounded-lg bg-base-content/10 flex items-center place-content-center shadow-lg">
+                <Iconify.iconify icon="pajamas:group" class="w-4 h-4 text-base-content/70" />
+              </div>
+              <span class="font-medium text-base-content/80">{LiveHandler.subject_name(circle)}</span>
+            </LinkLive>
+          </li>
+        {/for}
       </details>
     </li>
   </ul>

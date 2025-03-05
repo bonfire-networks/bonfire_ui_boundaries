@@ -162,7 +162,6 @@ defmodule Bonfire.UI.Boundaries.SetCirclesPermissionsLive do
   end
 
   def handle_event("multi_select", %{"add_circles" => circle_id}, socket) do
-    debug(circle_id, "QUIII")
     circles_list = list_my_circles(current_user(assigns(socket)))
 
     # Find the circle by ID

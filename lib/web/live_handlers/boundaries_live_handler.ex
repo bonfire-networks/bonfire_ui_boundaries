@@ -1036,7 +1036,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
       field: :to_boundaries,
       description: e(acl, :stereotyped, :named, :name, nil),
       name: l("Follows"),
-      icon: "pajamas:group"
+      icon: "rivet-icons:circle"
     }
   end
 

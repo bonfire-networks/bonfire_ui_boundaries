@@ -52,12 +52,14 @@ defmodule Bonfire.UI.Boundaries.SharedCircleLive do
           e(circle, :caretaker, :caretaker, :character, :username, "Unknown")
 
       creator_username = e(circle, :caretaker, :caretaker, :character, :username, "Unknown")
+      creator_id = e(circle, :caretaker, :caretaker, :character, :id, nil)
 
       {:ok,
        %{
          circle:
            circle
            |> Map.drop([:caretaker])
+           |> Map.put(:creator_id, creator_id)
            |> Map.put(:creator_name, creator_name)
            |> Map.put(:creator_username, creator_username),
          name: e(circle, :named, :name, nil),

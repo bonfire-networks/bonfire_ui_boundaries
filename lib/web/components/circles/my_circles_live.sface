@@ -11,7 +11,7 @@
       {#for circle <- e(@circles, [])}
         <li class="list-row">
           <div class="w-10 h-10 flex place-content-center items-center bg-secondary/10 rounded-box">
-            <#Icon iconify="pajamas:group" class="w-5 h-5 text-secondary" />
+            <#Icon iconify="rivet-icons:circle" class="w-5 h-5 text-secondary" />
           </div>
           <div>
             <div>{LiveHandler.subject_name(circle)}</div>

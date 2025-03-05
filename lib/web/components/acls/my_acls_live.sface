@@ -22,14 +22,14 @@
         <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{l("Your Boundary presets")}</li>
         {#for %{id: acl_id} = acl <- e(@acls, []) ++ e(@built_ins, [])}
           <li class="list-row">
-            <div class="w-10 h-10 flex place-content-center items-center bg-secondary/10 rounded-box">
+            <div class="w-12 h-12 flex place-content-center items-center bg-secondary/10 rounded-box">
               <#Icon iconify="ph:hand-fill" class="w-5 h-5" />
             </div>
             <div>
-              <div>{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
+              <div class="text-base font-semibold">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
               <!-- <div class="text-xs uppercase font-semibold opacity-60">{e(circle, :encircles_count, 0)} {l(" Members")}</div> -->
               {!-- {#if e(acl, :grants_count, 0) > 0} --}
-              <div class="flex gap-1 avatar-group">
+              <div class="flex gap-1 mt-1 avatar-group">
                 {#for subject <-
                     Grants.subjects(e(acl, :grants, []))}
                   {#if e(subject, :profile, :id, nil)}
@@ -39,7 +39,7 @@
                       user_id={id(subject)}
                       title={e(subject, :profile, :name, nil) ||
                         e(subject, :character, :username, nil) || id(subject)}
-                      class="w-5 h-5"
+                      class="w-5 h-5 rounded-full"
                       bg_class="rounded-xl"
                     />
                   {#else}
@@ -49,7 +49,7 @@
                           e(subject, :name, nil) || id(subject)}
                         class="flex items-center w-5 h-5 rounded-full place-content-center bg-info"
                       >
-                        <#Icon iconify="pajamas:group" class="inline-block w-4 h-4 text-info-content" />
+                        <#Icon iconify="rivet-icons:circle" class="inline-block w-4 h-4 text-info-content" />
                       </span>
                     </div>
                   {/if}

@@ -2,13 +2,38 @@
   <header class="flex flex-col p-8 pb-0 border-b border-base-content/10">
     <div class="flex items-start gap-4">
       <#Icon iconify="gravity-ui:square-list-ul" class="w-12 h-12 rotate-15 text-secondary stroke-1" />
-      <div class="flex flex-col">
-        <div class="text-xl font-bold">{e(@circle, :named, :name, nil)}</div>
-        <div class="text-sm text-base-content/70">{l("Circle shared by ")} <LinkLive class="link text-base-content" to={"/@" <> e(@circle, :creator_username, "")}>{e(@circle, :creator_name, "")}</LinkLive></div>
+      <div class="flex justify-center items-start flex-1">
+        <div class="flex flex-1 flex-col">
+          <div class="text-xl font-bold">{e(@circle, :named, :name, nil)}</div>
+          <div class="text-sm text-base-content/70">{l("Circle shared by ")} <LinkLive class="link text-base-content" to={"/@" <> e(@circle, :creator_username, "")}>{e(@circle, :creator_name, "")}</LinkLive></div>
 
-        {#if description = e(@circle, :extra_info, :summary, nil)}
-          <div class="text-base-content/70 mt-4">{description}</div>
-        {/if}
+          {#if description = e(@circle, :extra_info, :summary, nil)}
+            <div class="text-base-content/70 mt-4">{description}</div>
+          {/if}
+        </div>
+
+        <div data-position="" phx-hook="Tooltip" id="user_more_menu_links" class="relative">
+          <label
+            class="tooltip-button btn btn-sm btn-circle btn-ghost"
+            tabindex="0"
+            role="button"
+            id="circle-menu"
+            aria-haspopup="true"
+            aria-expanded="true"
+          >
+            <#Icon solid="DotsHorizontal" class="w-4 h-4 opacity/70" />
+          </label>
+          <ul
+            tabindex="0"
+            class="tooltip z-[99999999] menu shadow-sm bg-base-100 border border-base-content/10 w-60 absolute rounded-xl top-0 left-0 hidden"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="circle-menu"
+          >
+            <li>Edit Circle</li>
+            <li>Delete circle</li>
+          </ul>
+        </div>
       </div>
     </div>
     <div role="tablist" class="tabs pt-8 justify-evenly w-full tabs-border">
@@ -27,6 +52,24 @@
 
   <section class="flex flex-col gap-2 divide-y divide-base-content/10">
     {#if @selected_tab == "members"}
+      <form
+        :if={e(@circle, :creator_id, nil) == id(current_user(@__context__))}
+        id="edit_circle_participant"
+        :on-change="multi_select"
+        class="p-4 bg-base-300 w-full flex-1"
+      >
+        <label for={"multi_select_#{__MODULE__}_text_input"} class="sr-only">{l("Search for users to add")}</label>
+        <div class="relative">
+          <Bonfire.UI.Common.MultiselectLive
+            implementation={:live_select}
+            event_target="#circle_preview"
+            form_input_name={__MODULE__}
+            form={:add_to_circles}
+            label={l("Search for circles or users to add")}
+          />
+        </div>
+      </form>
+
       {#for member <- @members}
         <div class="p-4">
           <StatelessComponent

@@ -31,7 +31,7 @@
             {/if}
           </td>
           {#if e(assigns, :read_only, nil) != true}
-            <td :for={{verb, status} <- default_sorted_verbs() || []}>
+            <td :for={{verb, status} <- verbs || []}>
               <Bonfire.UI.Boundaries.YesMaybeFalseLive
                 value={status}
                 read_only={@read_only}

@@ -42,6 +42,8 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
   ]
 
   def update(assigns, socket) do
+    current_user = current_user(socket)
+
     scope =
       (e(assigns, :scope, nil) || e(assigns(socket), :scope, nil))
       |> debug("role_scope")
@@ -51,11 +53,14 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
         assigns,
         :roles,
         Bonfire.Boundaries.Roles.role_verbs(:all,
-          current_user: current_user(socket),
+          current_user: current_user,
           scope: scope
         )
       )
-      |> get_roles_with_verbs(scope)
+      |> get_roles_with_verbs(
+        current_user: current_user,
+        scope: scope
+      )
       |> debug("roles_with_verbsss")
 
     {:ok,
@@ -96,11 +101,11 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
   sorted according to @verb_order.
   Returns a list of tuples: [{role, verbs_with_statuses}].
   """
-  def get_roles_with_verbs(roles, scope) do
+  def get_roles_with_verbs(roles, opts) do
     roles
     |> Enum.map(fn
       {role_name, _display_name} when is_atom(role_name) or is_binary(role_name) ->
-        case Bonfire.Boundaries.Roles.verbs_for_role(maybe_to_atom(role_name), scope: scope) do
+        case Bonfire.Boundaries.Roles.verbs_for_role(maybe_to_atom(role_name), opts) do
           {:ok, can_verbs, cannot_verbs} ->
             # Transform verbs into {verb, status} pairs for the template
             verb_statuses =
@@ -145,6 +150,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
          ) do
       {:ok, edited} ->
         debug(edited, "edited")
+        current_user = current_user(edited)
 
         {
           :noreply,
@@ -156,9 +162,12 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
             Bonfire.Boundaries.Roles.role_verbs(:all,
               one_scope_only: assigns(socket)[:scope_type] not in [:smart_input],
               scope: scope,
-              current_user: current_user(edited)
+              current_user: current_user
             )
-            |> get_roles_with_verbs(scope)
+            |> get_roles_with_verbs(
+              scope: scope,
+              current_user: current_user
+            )
           )
         }
 

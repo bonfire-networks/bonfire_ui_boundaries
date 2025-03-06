@@ -1,11 +1,35 @@
 <div>
   <ul class="menu relative p-0 w-full mt-2">
     <li>
-      <details open>
-        <summary class="relative font-bold uppercase text-xs text-base-content/50">
+      <details open={Bonfire.Common.Settings.get(
+        [Bonfire.UI.Boundaries.MyCirclesLive, :show_circles_nav_open],
+        true,
+        @__context__
+      )}>
+        <summary
+          phx-click="Bonfire.Boundaries.Circles:toggle_circles_nav_visibility"
+          class="relative group font-bold uppercase text-xs text-base-content/50"
+        >
           <span>{l("Circles")}</span>
-          <div class="tooltip normal-case font-normal absolute right-0" data-tip={l("Add circle")}>
-            <button class="btn btn-circle btn-ghost btn-xs"><#Icon iconify="mdi:plus" class="w-4 h-4" /></button>
+          <!-- data-trigger="hover"
+            data-position="top-end"
+            phx-hook="Tooltip"
+            id="circles_nav_settings" -->
+          <div class="normal-case group-hover:opacity-100 opacity-0 font-normal absolute right-0">
+            <Bonfire.UI.Common.OpenModalLive id="new_circle" title_text={l("Create a new circle")} no_actions>
+              <form
+                id="new_circle_form"
+                phx-submit="Bonfire.Boundaries:circle_create"
+                phx-change="Bonfire.Boundaries:new_circle_validate"
+              >
+                <Bonfire.UI.Boundaries.NewCircleLive scope={current_user_id(@__context__)} />
+              </form>
+
+              <:open_btn>
+                <span class="z-9999 btn btn-circle btn-ghost btn-xs"><#Icon iconify="mdi:plus" class="w-4 h-4" /></span>
+              </:open_btn>
+            </Bonfire.UI.Common.OpenModalLive>
+            <!-- <span class="w-auto tooltip z-[9999999999999999] bg-base-300 rounded-md px-2 py-1.5 text-base-content/90 text-[13px] font-medium border border-base-content/10 shadow hidden absolute top-0">{l "New circle"}</span> -->
           </div>
         </summary>
         {#for circle <- e(@circles, [])}

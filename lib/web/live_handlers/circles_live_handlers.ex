@@ -113,4 +113,28 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
         {:noreply, assign_flash(socket, :error, l("Could not add to circle"))}
     end
   end
+
+  def handle_event("toggle_circles_nav_visibility", _params, socket) do
+    debug("toggle_circles_nav_visibility")
+
+    with {:ok, settings} <-
+           Bonfire.Common.Settings.set(
+             %{
+               Bonfire.UI.Boundaries.MyCirclesLive => %{
+                 show_circles_nav_open:
+                   !Bonfire.Common.Settings.get(
+                     [Bonfire.UI.Boundaries.MyCirclesLive, :show_circles_nav_open],
+                     true,
+                     socket
+                   )
+               }
+             },
+             current_user: current_user(socket)
+           ) do
+      {
+        :noreply,
+        socket |> maybe_assign_context(settings)
+      }
+    end
+  end
 end

@@ -80,8 +80,8 @@ defmodule Bonfire.UI.Boundaries.PreviewBoundariesLive do
     data = Jason.decode!(data_json)
 
     # Extract necessary values
-    id = data["id"]
-    username = data["username"]
+    id = e(data, "id", nil)
+    username = e(data, "username", nil)
 
     # Assign the decoded `to_boundaries` to the socket
     # socket = assign(socket, :to_boundaries, to_boundaries)
@@ -96,6 +96,14 @@ defmodule Bonfire.UI.Boundaries.PreviewBoundariesLive do
         socket
       ) do
     {:noreply, preview(socket, id, username)}
+  end
+
+  def handle_event(
+        "multi_select",
+        %{data: _data, text: _text} = params,
+        socket
+      ) do
+    {:noreply, socket}
   end
 
   def preview(socket, id, username) do

@@ -51,9 +51,8 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
         assigns,
         :roles,
         Bonfire.Boundaries.Roles.role_verbs(:all,
-          one_scope_only: true,
-          scope: scope,
-          current_user: current_user(socket)
+          current_user: current_user(socket),
+          scope: scope
         )
       )
       |> get_roles_with_verbs(scope)
@@ -101,7 +100,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
     roles
     |> Enum.map(fn
       {role_name, _display_name} when is_atom(role_name) or is_binary(role_name) ->
-        case Bonfire.Boundaries.Roles.verbs_for_role(role_name, scope: scope) do
+        case Bonfire.Boundaries.Roles.verbs_for_role(maybe_to_atom(role_name), scope: scope) do
           {:ok, can_verbs, cannot_verbs} ->
             # Transform verbs into {verb, status} pairs for the template
             verb_statuses =
@@ -117,7 +116,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
 
             {role_name, verb_statuses}
 
-          _ ->
+          other ->
             {role_name, []}
         end
 

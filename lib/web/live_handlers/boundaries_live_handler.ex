@@ -453,7 +453,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
     end
   end
 
-  def handle_event("role_create", attrs, socket) do
+  def handle_event("role_create", %{"name" => name} = attrs, socket) do
+    debug(attrs, "TETETETETe")
     current_user = current_user_required!(socket)
 
     scope =
@@ -462,13 +463,15 @@ defmodule Bonfire.Boundaries.LiveHandler do
         scope -> scope
       end
 
+    debug(scope, "scope")
+
     with {:ok, _} <-
            Roles.create(
              input_to_atoms(attrs),
              scope: scope,
              current_user: current_user
            ) do
-      Bonfire.UI.Common.OpenModalLive.close()
+      # Bonfire.UI.Common.OpenModalLive.close()
 
       {:noreply,
        socket

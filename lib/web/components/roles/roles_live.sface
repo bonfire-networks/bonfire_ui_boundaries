@@ -6,7 +6,7 @@
           {l("Roles define sets of permissions which you can assign to users and circles")}</span>
       </div>
     </div>
-    <div class="m-4">
+    <div class="m-4 max-w-[var(--inner-main-width)]">
       <Bonfire.UI.Boundaries.TabledRolesLive
         id="test_tabled_roles"
         scope={@scope}

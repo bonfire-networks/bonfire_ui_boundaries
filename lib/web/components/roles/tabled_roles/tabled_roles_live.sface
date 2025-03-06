@@ -1,4 +1,4 @@
-<div class="bg-base-content/5 relative overflow-y-visible overflow-x-auto">
+<div class="w-full bg-base-content/5 relative overflow-y-visible overflow-x-auto">
   {#if Enum.count(@roles_with_verbs || []) > 0}
     <table class="table table-zebra">
       <thead class="text-xs uppercase sticky top-0 z-10 bg-base-100">
@@ -10,8 +10,7 @@
       </thead>
       <tbody>
         <tr :for={{role, verbs} <- @roles_with_verbs || []}>
-          <!-- <code>{inspect(default_sorted_verbs(), pretty: true)}</code> -->
-          <td class="sticky left-0 z-10 bg-base-100/70 backdrop-blur-sm min-w-[180px] flex items-center gap-2 max-w-[180px] truncate ellipsis">
+          <td class="sticky left-0 z-10 bg-base-100/70 backdrop-blur-sm min-w-[180px] h-full gap-2 max-w-[180px] truncate ellipsis">
             {#if @selectable}
               <div class="flex w-full items-center gap-2">
                 <input
@@ -32,7 +31,7 @@
             {/if}
           </td>
           {#if e(assigns, :read_only, nil) != true}
-            <td :for={{verb, status} <- verbs || default_sorted_verbs() || []}>
+            <td :for={{verb, status} <- default_sorted_verbs() || []}>
               <Bonfire.UI.Boundaries.YesMaybeFalseLive
                 value={status}
                 read_only={@read_only}
@@ -40,13 +39,6 @@
                 role={role}
                 verb={verb}
               />
-              <!-- <form :on-change="edit_verb_value" phx-target={@myself}>
-                <select class="select select-bordered select-xs" name={"role[#{role}][#{verb}]"}>
-                  <option selected={status == :can} value="1">Can</option>
-                  <option selected={status == :cannot} value="0">Cannot</option>
-                  <option selected={status == nil} value="">Undefined</option>
-                </select>
-              </form> -->
             </td>
           {#else}
             <td :for={{verb, status} <- verbs || []}>
@@ -130,43 +122,4 @@
       feedback_message={l("Add some roles to get started!")}
     />
   {/if}
-
-  <!-- 
-
-{#if !e(assigns, :mini, false)}
-  <li class="flex items-center justify-between gap-8 p-3">
-    <Bonfire.UI.Boundaries.YesMaybeFalseLive
-      value={@value}
-      read_only={@read_only}
-      event_target={@event_target}
-      id={"role_#{@name}_#{Enums.maybe_elem(@verb, 0) || @verb}"}
-      field_name={"role[#{@name}][#{Enums.maybe_elem(@verb, 0) || @verb}]"}
-    />
-  </li>
-{#else}
-  {#case Bonfire.Boundaries.Verbs.get(@verb, @all_verbs)}
-    {#match nil}
-      <li
-        title={e(@verb, :summary, nil)}
-        class={
-          "badge",
-          "badge-success": @value,
-          "badge-error": !@value
-        }
-      >
-        {@verb}
-      </li>
-    {#match verb}
-      <li
-        title={e(verb, :summary, nil)}
-        class={
-          "badge",
-          "badge-success": @value,
-          "badge-error": !@value
-        }
-      >
-        {e(verb, :verb, nil) || verb}
-      </li>
-  {/case}
-{/if} -->
 </div>

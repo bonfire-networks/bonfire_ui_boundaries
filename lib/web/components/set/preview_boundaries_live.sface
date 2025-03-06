@@ -4,7 +4,7 @@
       {l("Search for a user to preview how boundaries will be applied for.")}</span>
     <div class="">
       <div class="w-full">
-        <form phx-change="multi_select" phx-target={@myself}>
+        <form phx-change="multi_select" id="preview_boundaries_form_multiselect" phx-target={@myself}>
           <Bonfire.UI.Common.MultiselectLive.UserSelectorLive
             selected_options={[]}
             class="focus:outline-0 border-0 border-b h-10 rounded-none border-base-content/10 text-sm select_recipients_input"
@@ -18,7 +18,7 @@
       </div>
 
       <div class="" :if={@preview_boundary_for_id}>
-        <span class="mt-6 block mb-3 text-base-content/90 tracking-wide uppercase text-xs font-normal">{l("Previewing boundaries for")} <b>{@preview_boundary_for_username}</b></span>
+        <span class="my-3 block text-base-content/90 tracking-wide uppercase text-xs font-semibold">{l("Previewing boundaries for")} <b>{@preview_boundary_for_username}</b></span>
 
         <input type="hidden" name="preview_boundary_for_id" value={@preview_boundary_for_id}>
         <div class="">

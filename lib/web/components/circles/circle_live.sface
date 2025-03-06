@@ -101,7 +101,7 @@
 
                 <:open_btn>
                   <div class="btn btn-primary btn-soft">
-                    <#Icon iconify="codicon:settings" class="w-5 h-5 mr-2" />
+                    <#Icon iconify="mingcute:settings-6-fill" class="w-5 h-5 mr-2" />
                     {l("Edit circle")}</div>
                 </:open_btn>
               </Bonfire.UI.Common.OpenModalLive>

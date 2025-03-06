@@ -22,7 +22,7 @@
             "These permissions are set by the creator or caretaker. They specify which actions you can perform on this content."
           )}</span>
         <div class="mt-3">
-          <div class="mb-4 text-xs font-medium tracking-wider uppercase text-base-content/90">{l("Allowed actions")}</div>
+          <div class="mb-4 text-xs font-bold tracking-wider uppercase text-base-content/70">{l("Allowed actions")}</div>
           <div class="flex flex-wrap items-center gap-2">
             <div
               :for={permission_or_verb <- List.wrap(@role_permissions) |> sort_verbs()}

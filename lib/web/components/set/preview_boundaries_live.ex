@@ -60,7 +60,11 @@ defmodule Bonfire.UI.Boundaries.PreviewBoundariesLive do
       :search,
       [search]
     )
-    |> Bonfire.UI.Common.SelectRecipientsLive.results_for_multiselect()
+    |> Enum.map(fn
+      %Needle.Pointer{activity: %{object: user}} -> user
+      other -> other
+    end)
+    |> Bonfire.UI.Boundaries.SetBoundariesLive.results_for_multiselect()
     |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
 
     {:noreply, socket}

@@ -5,28 +5,8 @@ defmodule Bonfire.UI.Boundaries.SharedCircleLive do
   on_mount {LivePlugs, [Bonfire.UI.Me.LivePlugs.LoadCurrentUser]}
 
   def mount(params, _session, socket) do
-    with {:ok, data} <-
-           load_circle(
-             e(params, "id", nil),
-             current_user: current_user(socket)
-           ) do
-      name = e(data, :name, nil)
-
-      {:ok,
-       socket
-       |> assign(:page_title, name)
-       |> assign(:members, [])
-       |> assign(:nav_items, Bonfire.Common.ExtensionModule.default_nav())
-       |> assign(data)
-       |> assign(
-         feed_name: nil,
-         feed_title: name,
-         feed_filters: %{subject_circles: [e(data, :circle, :id, nil)]}
-       )}
-    else
-      _ ->
-        raise(Bonfire.Fail, :not_found)
-    end
+    id = e(params, "id", nil)
+    assign_circle(id, socket, :ok)
   end
 
   def handle_params(%{"tab" => "members"}, _session, socket) do
@@ -35,18 +15,57 @@ defmodule Bonfire.UI.Boundaries.SharedCircleLive do
     end
   end
 
-  def handle_params(_, _session, socket) do
-    {:noreply,
-     socket
-     |> assign(:selected_tab, nil)}
+  def handle_params(params, _session, socket) do
+    id = e(params, "id", nil)
+
+    if id not in ["circle", e(assigns(socket), :circle, :id, nil)] do
+      assign_circle(id, socket, :noreply)
+    else
+      {:noreply,
+       socket
+       |> assign(:selected_tab, nil)}
+    end
+  end
+
+  def assign_circle(id, socket, ok_atom) do
+    with {:ok, data} <-
+           load_circle(
+             id,
+             current_user: current_user(socket)
+           ) do
+      name = e(data, :name, nil)
+
+      {ok_atom,
+       socket
+       |> assign(:page_title, name)
+       |> assign(:selected_tab, nil)
+       |> assign(:members, [])
+       |> assign(:nav_items, Bonfire.Common.ExtensionModule.default_nav())
+       |> assign(data)
+       |> assign(
+         feed_name: :custom,
+         feed_title: name,
+         feed_filters: %{subject_circles: [e(data, :circle, :id, nil)]}
+       )}
+    else
+      {:error, :not_found} ->
+        {:ok,
+         socket
+         |> redirect_to(
+           if(id, do: "/boundaries/scope/user/circle/#{id}", else: "boundaries/circles")
+         )}
+
+      e ->
+        error(e)
+        raise(Bonfire.Fail, e)
+    end
   end
 
   def load_circle(id, opts) do
-    with %{id: id} = circle <-
+    with {:ok, %{id: id} = circle} <-
            Circles.get(id, opts)
            |> repo().maybe_preload(caretaker: [caretaker: [:profile, :character]])
-           |> repo().maybe_preload(:extra_info)
-           |> ok_unwrap() do
+           |> repo().maybe_preload(:extra_info) do
       creator_name =
         e(circle, :caretaker, :caretaker, :profile, :name, nil) ||
           e(circle, :caretaker, :caretaker, :character, :username, "Unknown")

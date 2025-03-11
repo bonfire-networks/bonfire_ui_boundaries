@@ -34,7 +34,7 @@
         </summary>
         {#for circle <- e(@circles, [])}
           <li>
-            <LinkLive to={~p"circle/#{id(circle)}"}>
+            <LinkLive to={~p"/circle/#{id(circle)}"}>
               <div class="w-7 h-7 rounded-lg bg-base-content/10 flex items-center place-content-center shadow-lg">
                 <Iconify.iconify icon="rivet-icons:circle" class="w-4 h-4 text-base-content/70" />
               </div>

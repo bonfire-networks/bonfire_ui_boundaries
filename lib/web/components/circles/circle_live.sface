@@ -116,7 +116,7 @@
       <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{l("Members")}</li>
       {#for {id, member} <- @members}
         <li class="list-row">
-          <input type="hidden" name={"circle[encircle][#{id}][circle_id]"} cle, :id,={true} @circle_id)}>
+          <input type="hidden" name={"circle[encircle][#{id}][circle_id]"} value={e(@circle, :id, nil)}>
           <input type="hidden" name={"circle[encircle][#{id}][subject_id]"} value={id}>
 
           {#case member}

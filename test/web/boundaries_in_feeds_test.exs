@@ -22,7 +22,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
   #   {:ok, post} = Posts.publish(current_user: bob, post_attrs: attrs, boundary: "public")
 
   #   {:ok, view, _html} = live(conn, "/feed/local")
-  #   live_pubsub_wait(view)
+  #   live_async_wait(view)
   #   # open_browser(view)
   #   # Then I should see the post in my feed
   #   assert has_element?(view, "article", html_body)

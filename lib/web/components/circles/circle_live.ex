@@ -19,15 +19,15 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
 
   slot default, required: false
 
-  def update(assigns, %{assigns: %{loaded: true}} = socket) do
-    params = e(assigns, :__context__, :current_params, %{})
+  # def update(assigns, %{assigns: %{loaded: true}} = socket) do
+  #   params = e(assigns, :__context__, :current_params, %{})
 
-    {:ok,
-     socket
-     |> assign(assigns)
-     #  |> assign(page_title: l("Circle"))
-     |> assign(section: e(params, "section", "members"))}
-  end
+  #   {:ok,
+  #    socket
+  #    |> assign(assigns)
+  #    #  |> assign(page_title: l("Circle"))
+  #    |> assign(section: e(params, "section", "members"))}
+  # end
 
   def update(assigns, socket) do
     current_user = current_user(assigns) || current_user(assigns(socket))

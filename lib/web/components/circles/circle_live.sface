@@ -76,7 +76,7 @@
                     phx-click="Bonfire.Social.Objects:share"
                     phx-value-object_assign="circle"
                     phx-value-boundary="public"
-                    phx-value-go={"/list/#{e(@circle, :id, nil)}"}
+                    phx-value-go={"/circle/#{e(@circle, :id, nil)}"}
                     class="btn btn-info w-full"
                   >
                     {l("Share")}

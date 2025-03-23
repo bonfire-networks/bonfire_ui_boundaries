@@ -884,9 +884,18 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
   # @decorate time()
   def update_many(assigns_sockets, opts \\ []) do
+    {first_assigns, _socket} = List.first(assigns_sockets)
+
     update_many_async(
       assigns_sockets,
-      update_many_opts(opts)
+      update_many_opts(
+        opts ++
+          [
+            id:
+              e(first_assigns, :feed_name, nil) || e(first_assigns, :feed_id, nil) ||
+                e(first_assigns, :thread_id, nil) || id(first_assigns)
+          ]
+      )
     )
   end
 

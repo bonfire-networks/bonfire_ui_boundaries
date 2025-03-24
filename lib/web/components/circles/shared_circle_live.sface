@@ -11,12 +11,14 @@
             <div class="text-base-content/70 mt-4">{description}</div>
           {/if}
         </div>
-       
-        <Link to={~p"/boundaries/scope/user/circle/#{id(@circle)}"} class="btn btn-primary btn-sm btn-circle btn-soft">
+
+        <Link
+          to={~p"/boundaries/scope/user/circle/#{id(@circle)}"}
+          class="btn btn-primary btn-sm btn-circle btn-soft"
+        >
           <#Icon iconify="ph:gear-fill" class="w-4 h-4" />
           <!-- {l("Edit circle")}</Link> -->
         </Link>
-                
       </div>
     </div>
     <div role="tablist" class="tabs pt-8 justify-evenly w-full tabs-border">

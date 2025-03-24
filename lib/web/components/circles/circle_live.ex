@@ -19,15 +19,18 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
 
   slot default, required: false
 
-  # def update(assigns, %{assigns: %{loaded: true}} = socket) do
-  #   params = e(assigns, :__context__, :current_params, %{})
+  def update(assigns, %{assigns: %{loaded: true}} = socket) do
+    debug(assigns, "already loaded")
+    # params = e(assigns, :__context__, :current_params, %{})
 
-  #   {:ok,
-  #    socket
-  #    |> assign(assigns)
-  #    #  |> assign(page_title: l("Circle"))
-  #    |> assign(section: e(params, "section", "members"))}
-  # end
+    {
+      :ok,
+      socket
+      |> assign(Enums.filter_empty(assigns, []))
+      #  |> assign(page_title: l("Circle"))
+      #  |> assign(section: e(params, "section", "members"))
+    }
+  end
 
   def update(assigns, socket) do
     current_user = current_user(assigns) || current_user(assigns(socket))
@@ -44,28 +47,28 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
       socket
       |> assign(assigns)
       |> assign(
-        loaded: true,
         # page_title: l("Circle"),
-        section: e(params, "section", "members"),
+        # section: e(params, "section", "members"),
         settings_section_description: l("Create and manage your circle.")
       )
 
     with %{id: id} = circle <-
            (e(assigns, :circle, nil) ||
               Circles.get_for_caretaker(id, current_user, scope: e(assigns(socket), :scope, nil)))
-           |> repo().maybe_preload(encircles: [subject: [:profile, :character]])
-           |> repo().maybe_preload(encircles: [subject: [:named]])
            |> repo().maybe_preload(:extra_info)
            |> ok_unwrap() do
-      debug(circle, "circle")
+      # Get the total count for display purposes
+      total_members_count = nil
+      # Circles.count_members(id)
+      # |> debug("total_members_count")
 
-      members =
-        Enum.map(e(circle, :encircles, []), &{&1.subject_id, &1})
-        |> Map.new()
-        |> debug("members")
-
-      # member_ids = Map.keys(members)
-      # |> debug
+      # Load members with cursor-based pagination
+      %{edges: members, page_info: page_info} =
+        Circles.list_members(
+          id,
+          current_user: current_user
+        )
+        |> debug("paginated_members")
 
       # TODO: handle pagination
       # followed =
@@ -114,8 +117,8 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
             page_title:
               e(circle, :named, :name, nil) || e(assigns(socket), :name, nil) ||
                 e(circle, :stereotyped, :named, :name, nil) || l("Circle"),
-            back: true,
-            circle: circle
+            back: true
+            # circle: circle
             # page_header_aside: [
             #   {Bonfire.UI.Boundaries.HeaderCircleLive,
             #    [
@@ -127,16 +130,36 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
             # ]
           )
 
+      object_acls = Bonfire.Boundaries.list_object_boundaries(circle)
+      # |> debug("acls")
+
+      # {preset_acls, custom_acls} =
+      #   object_acls
+      #   |> Enum.split_with(&e(&1, :named, nil))
+      # |> debug("preset vs custom acls")
+
       {:ok,
        assign(
          socket,
-         circle: Map.drop(circle, [:encircles]),
+         loaded: true,
+         circle_id: id,
+         # |> Map.drop([:encircles]),
+         circle: circle,
          members: members || %{},
          #  page_title: l("Circle"),
          #  suggestions: suggestions,
          stereotype_id: stereotype_id,
          read_only: read_only,
-         settings_section_title: "View " <> e(circle, :named, :name, "") <> " circle"
+         #  settings_section_title: "Manage " <> e(circle, :named, :name, "") <> " circle",
+         page_info: page_info,
+         total_count: total_members_count,
+         to_boundaries: object_acls |> debug("custom_acls"),
+         boundary_preset:
+           Bonfire.Boundaries.preset_boundary_tuple_from_acl(
+             object_acls,
+             Bonfire.Data.AccessControl.Circle
+           )
+           |> debug("boundary_preset")
        )}
 
       # else other ->

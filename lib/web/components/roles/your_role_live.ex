@@ -44,9 +44,11 @@ defmodule Bonfire.UI.Boundaries.YourRoleLive do
     # Convert @verb_order atoms to strings
     # lowercase all verbs
     verbs = Enum.map(verbs, &String.downcase/1)
+    debug(verbs, "verbs")
     verb_order_strings = Enum.map(@verb_order, &Atom.to_string/1)
     debug(verb_order_strings, "verb_order_strings")
     # Keep only the verbs present in both verb_order_strings and verbs
     Enum.filter(verb_order_strings, fn verb -> verb in verbs end)
+    |> debug("sort_verbs")
   end
 end

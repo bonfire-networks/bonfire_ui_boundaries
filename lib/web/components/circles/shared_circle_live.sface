@@ -5,14 +5,23 @@
       <div class="flex justify-center justify-between w-full items-start flex-1">
         <div class="flex flex-1 flex-col">
           <div class="text-xl font-bold">{e(@circle, :named, :name, nil)}</div>
-          <div class="text-sm text-base-content/70">{l("Circle shared by ")} <LinkLive class="link text-base-content" to={"/@" <> e(@circle, :creator_username, "")}>{e(@circle, :creator_name, "")}</LinkLive></div>
+          <div class="text-sm text-base-content/70">{l("Circle shared by ")} <LinkLive class="link text-base-content" to={"/@#{e(@circle, :creator_username, nil)}"}>{e(@circle, :creator_name, "")}</LinkLive></div>
 
           {#if description = e(@circle, :extra_info, :summary, nil)}
             <div class="text-base-content/70 mt-4">{description}</div>
           {/if}
         </div>
 
+        <StatefulComponent
+          module={maybe_component(Bonfire.UI.Boundaries.BoundaryIconLive)}
+          with_label
+          id={"boundary_#{@circle_id || id(@circle)}"}
+          object={@circle}
+          object_type={Bonfire.Data.AccessControl.Circle}
+        />
+
         <Link
+          :if={e(@circle, :creator_id, nil) == current_user_id(@__context__)}
           to={~p"/boundaries/scope/user/circle/#{id(@circle)}"}
           class="btn btn-primary btn-sm btn-circle btn-soft"
         >
@@ -55,17 +64,29 @@
         </div>
       </form> -->
 
-      {#for member <- @members}
+      {#for %{id: id} = member <- @members}
         <div class="p-4">
           <StatelessComponent
             module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
-            profile={e(member, :profile, nil)}
+            profile={e(member, :subject, :profile, nil)}
             avatar_class="w-10 h-10 rounded-full"
-            character={e(member, :character, nil)}
+            character={e(member, :subject, :character, nil)}
             with_summary
           />
         </div>
       {/for}
+
+      <Bonfire.UI.Common.LoadMoreLive
+        live_handler="Bonfire.Boundaries.Circles"
+        page_info={@page_info}
+        infinite_scroll={false}
+        hide_if_no_more
+        hide_guest_fallback={socket_connected?(@__context__)}
+      >
+        <:if_no_more>
+          <p>{l("That's all the members...")}</p>
+        </:if_no_more>
+      </Bonfire.UI.Common.LoadMoreLive>
     {#else}
       <StatefulComponent
         module={maybe_component(Bonfire.UI.Social.FeedLive, @__context__)}

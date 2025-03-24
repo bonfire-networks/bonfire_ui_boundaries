@@ -10,7 +10,10 @@ defmodule Bonfire.UI.Boundaries.SharedCircleLive do
   end
 
   def handle_params(%{"tab" => "members"}, _session, socket) do
-    with {:ok, data} <- load_members(e(assigns(socket), :circle, nil)) do
+    with {:ok, data} <-
+           load_members(
+             e(assigns(socket), :circle_id, nil) || e(assigns(socket), :circle, :id, nil)
+           ) do
       {:noreply, socket |> assign(:selected_tab, "members") |> assign(data)}
     end
   end
@@ -18,7 +21,10 @@ defmodule Bonfire.UI.Boundaries.SharedCircleLive do
   def handle_params(params, _session, socket) do
     id = e(params, "id", nil)
 
-    if id not in ["circle", e(assigns(socket), :circle, :id, nil)] do
+    if id not in [
+         "circle",
+         e(assigns(socket), :circle_id, nil) || e(assigns(socket), :circle, :id, nil)
+       ] do
       assign_circle(id, socket, :noreply)
     else
       {:noreply,
@@ -28,32 +34,41 @@ defmodule Bonfire.UI.Boundaries.SharedCircleLive do
   end
 
   def assign_circle(id, socket, ok_atom) do
+    current_user = current_user(socket)
+
     with {:ok, data} <-
            load_circle(
              id,
-             current_user: current_user(socket)
-           ) do
+             current_user: current_user
+           )
+           |> debug("load_circle") do
       name = e(data, :name, nil)
 
       {ok_atom,
        socket
-       |> assign(:page_title, name)
-       |> assign(:selected_tab, nil)
-       |> assign(:members, [])
-       |> assign(:nav_items, Bonfire.Common.ExtensionModule.default_nav())
-       |> assign(data)
        |> assign(
+         nav_items: Bonfire.Common.ExtensionModule.default_nav(),
+         page_title: name,
+         selected_tab: nil,
+         members: [],
          feed_name: :custom,
          feed_title: name,
-         feed_filters: %{subject_circles: [e(data, :circle, :id, nil)]}
-       )}
+         feed_filters: %{subject_circles: [e(data, :circle, :id, nil)]},
+         page_info: nil
+       )
+       |> assign(data)}
     else
       {:error, :not_found} ->
-        {:ok,
-         socket
-         |> redirect_to(
-           if(id, do: "/boundaries/scope/user/circle/#{id}", else: "boundaries/circles")
-         )}
+        if current_user do
+          {:ok,
+           socket
+           |> redirect_to(
+             if(id, do: "/boundaries/scope/user/circle/#{id}", else: "boundaries/circles")
+           )}
+        else
+          error(id, "Not found or permitted")
+          raise(Bonfire.Fail, :not_found)
+        end
 
       e ->
         error(e)
@@ -75,6 +90,7 @@ defmodule Bonfire.UI.Boundaries.SharedCircleLive do
 
       {:ok,
        %{
+         circle_id: id,
          circle:
            circle
            |> Map.drop([:caretaker])
@@ -87,21 +103,25 @@ defmodule Bonfire.UI.Boundaries.SharedCircleLive do
     end
   end
 
-  def load_members(circle, _opts \\ []) do
-    with %{id: _id} = circle <-
-           circle
-           |> repo().maybe_preload(encircles: [subject: [:profile, :character]])
-           |> repo().maybe_preload(encircles: [subject: [:named]])
-           |> ok_unwrap() do
-      members =
-        e(circle, :encircles, [])
-        |> Enum.map(& &1.subject)
-        |> debug("members")
+  def load_members(circle, opts \\ []) do
+    # Get the total count for display purposes
+    total_members_count = nil
+    # Circles.count_members(id)
+    # |> debug("total_members_count")
 
-      {:ok,
-       %{
-         members: members || []
-       }}
-    end
+    # Load members with cursor-based pagination
+    %{edges: members, page_info: page_info} =
+      Circles.list_members(
+        Enums.id(circle),
+        opts
+      )
+      |> debug("paginated_members")
+
+    {:ok,
+     %{
+       total_members_count: total_members_count,
+       page_info: page_info,
+       members: members || []
+     }}
   end
 end

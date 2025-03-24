@@ -2,6 +2,61 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
   use Bonfire.UI.Common.Web, :live_handler
   alias Bonfire.Boundaries.{Circles, Blocks}
 
+  def handle_params(%{"after" => cursor} = params, _uri, socket) do
+    current_user = current_user(socket)
+    # Get the current circle
+    circle_id = e(assigns(socket), :circle_id, nil) || Enums.id(e(assigns(socket), :circle, nil))
+
+    if circle_id do
+      # Load the next page of members
+      %{edges: members, page_info: page_info} =
+        Circles.list_members(
+          circle_id,
+          current_user: current_user,
+          pagination: input_to_atoms(params)
+        )
+        |> debug("more_paginated_members")
+
+      {:noreply,
+       socket
+       |> assign(
+         members: members,
+         page_info: page_info
+       )}
+    else
+      debug(assigns(socket), "Dunno what circle to paginate for")
+      {:noreply, socket}
+    end
+  end
+
+  # Add handler for the load_more event 
+  def handle_event("load_more", %{} = params, socket) do
+    current_user = current_user_required!(socket)
+    # Get the current circle
+    circle_id = e(assigns(socket), :circle_id, nil) || Enums.id(e(assigns(socket), :circle, nil))
+
+    if circle_id do
+      # Load the next page of members
+      %{edges: members, page_info: page_info} =
+        Circles.list_members(
+          circle_id,
+          current_user: current_user,
+          pagination: input_to_atoms(params)
+        )
+        |> debug("more_paginated_members")
+
+      {:noreply,
+       socket
+       |> assign(
+         members: e(assigns(socket), :members, []) ++ members,
+         page_info: page_info
+       )}
+    else
+      debug(assigns(socket), "Dunno what circle to paginate for")
+      {:noreply, socket}
+    end
+  end
+
   def handle_event("multi_select", %{"data" => data, "text" => text}, socket) do
     debug(data, "multi_select_circle_live")
     add_member(input_to_atoms(data), socket)

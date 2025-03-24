@@ -66,21 +66,44 @@
                   <div class="font-bold text-lg">{l("Share this circle")}</div>
                   <div>{rich(
                       l(
-                        "Turn the circle into a list and share it *publicly*. Make sure that you're comfortable sharing this circle name/description and list of members (including any people you add in the future)."
+                        "You can optionally share your circle with others, for example to share a list of people who post an a particular topic, or team members on a project, etc. Choose who can see the circle and its members (including any future additions) by setting a boundary:"
                       )
                     )}</div>
 
+                  {!-- <StatefulComponent
+    module={maybe_component(Bonfire.UI.Boundaries.BoundaryIconLive, @__context__)}
+    with_label
+    id={"boundary_#{@circle_id || id(@circle)}"}
+    object={@circle}
+    object_type={Types.object_type(@circle)}
+  /> --}
+
+                  <Bonfire.UI.Boundaries.GeneralAccessListLive
+                    set_action="Bonfire.Social.Objects:reset_boundary"
+                    set_opts={%{
+                      "phx-value-object_assign" => "circle",
+                      "phx-value-go" => "/circle/#{e(@circle, :id, nil)}",
+                      "phx-target" => @myself
+                    }}
+                    hide_presets={false}
+                    hide_custom
+                    to_boundaries={@to_boundaries}
+                    boundary_preset={@boundary_preset}
+                  />
+                  {!-- 
                   <button
                     data-role="confirm_share_circle"
                     type="button"
                     phx-click="Bonfire.Social.Objects:share"
+                    phx-target={@myself}
                     phx-value-object_assign="circle"
                     phx-value-boundary="public"
                     phx-value-go={"/circle/#{e(@circle, :id, nil)}"}
                     class="btn btn-info w-full"
                   >
                     {l("Share")}
-                  </button>
+                  </button> 
+                  --}
                 </div>
 
                 <div class="mt-4 flex items-start flex-col alert alert-error alert-soft">
@@ -114,7 +137,7 @@
   {#if Enum.count(@members) > 0}
     <ul role="list" class="list">
       <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{l("Members")}</li>
-      {#for {id, member} <- @members}
+      {#for %{id: id} = member <- @members}
         <li class="list-row">
           <input type="hidden" name={"circle[encircle][#{id}][circle_id]"} value={e(@circle, :id, nil)}>
           <input type="hidden" name={"circle[encircle][#{id}][subject_id]"} value={id}>
@@ -160,6 +183,19 @@
         </li>
       {/for}
     </ul>
+
+    <Bonfire.UI.Common.LoadMoreLive
+      live_handler="Bonfire.Boundaries.Circles"
+      page_info={@page_info}
+      infinite_scroll={false}
+      hide_if_no_more
+      hide_guest_fallback
+      target={@myself}
+    >
+      <:if_no_more>
+        <p>{l("That's all the members...")}</p>
+      </:if_no_more>
+    </Bonfire.UI.Common.LoadMoreLive>
   {#else}
     <li id="no-members" class="flex items-center place-content-center">
       <Bonfire.UI.Common.EmptyFeed

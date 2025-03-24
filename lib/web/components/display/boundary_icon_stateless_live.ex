@@ -30,7 +30,8 @@ defmodule Bonfire.UI.Boundaries.BoundaryIconStatelessLive do
       (existing ||
          Bonfire.Boundaries.preset_boundary_tuple_from_acl(
            assigns[:object_boundary],
-           e(assigns, :object_type, nil)
+           e(assigns, :object_type, nil),
+           custom_tuple: {"custom", l("Custom")}
          ) ||
          {"custom", l("Custom")})
       |> debug("boundary_preset")

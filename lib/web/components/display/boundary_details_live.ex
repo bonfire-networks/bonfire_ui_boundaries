@@ -11,6 +11,8 @@ defmodule Bonfire.UI.Boundaries.BoundaryDetailsLive do
   prop object_boundary, :any, default: nil
   prop object_type, :any, default: nil
   prop boundary_preset, :any, default: nil
+  prop is_caretaker, :any, default: nil
+
   prop scope, :any, default: nil
   prop phx_target, :any, default: nil
 
@@ -28,23 +30,20 @@ defmodule Bonfire.UI.Boundaries.BoundaryDetailsLive do
   def render(assigns) do
     role = Roles.preset_boundary_role_from_acl(assigns[:object_boundary])
 
-    role_name =
+    {role_name, permissions} =
       case role do
-        {role_name, _permissions} -> role_name
-        _ -> nil
+        {role_name, permissions} -> {role_name, permissions || []}
+        _ -> {nil, []}
       end
+      |> debug("role")
 
-    is_caretaker = role_name in ["Administer", "Caretaker"]
+    is_caretaker = role_name in ["Administer", "Caretaker"] or "Grant" in permissions
 
     assigns
     |> assign(
       role_name: role_name,
       is_caretaker: is_caretaker,
-      role_permissions:
-        case role do
-          {_role, permissions} -> permissions
-          _ -> nil
-        end
+      role_permissions: permissions
     )
     |> assign(
       for_view_edit(

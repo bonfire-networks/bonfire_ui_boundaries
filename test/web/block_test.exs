@@ -46,9 +46,9 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
 
     conn
     |> visit("/boundaries/ghosted")
-    |> assert_has("#circle_preview", text: alice.profile.name)
-    |> assert_has("#circle_preview", text: bob.profile.name)
-    |> refute_has("#circle_preview", text: carl.profile.name)
+    |> assert_has("#circle_members", text: alice.profile.name)
+    |> assert_has("#circle_members", text: bob.profile.name)
+    |> refute_has("#circle_members", text: carl.profile.name)
   end
 
   test "I can see a list of silenced users", %{
@@ -64,9 +64,9 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
 
     conn
     |> visit("/boundaries/silenced")
-    |> assert_has("#circle_preview", text: alice.profile.name)
-    |> assert_has("#circle_preview", text: bob.profile.name)
-    |> refute_has("#circle_preview", text: carl.profile.name)
+    |> assert_has("#circle_members", text: alice.profile.name)
+    |> assert_has("#circle_members", text: bob.profile.name)
+    |> refute_has("#circle_members", text: carl.profile.name)
   end
 
   test "I can unghost a previously ghosted user", %{conn: conn, me: me, alice: alice} do
@@ -74,10 +74,10 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
 
     conn
     |> visit("/boundaries/ghosted")
-    |> assert_has("#circle_preview", text: alice.profile.name)
+    |> assert_has("#circle_members", text: alice.profile.name)
     |> click_button("[data-role=remove_user]", "Remove")
     |> assert_has("[role=alert]", text: "Unblocked!")
-    |> refute_has("#circle_preview", text: alice.profile.name)
+    |> refute_has("#circle_members", text: alice.profile.name)
   end
 
   test "I can unsilence a previously silenced user", %{conn: conn, me: me, alice: alice} do
@@ -85,10 +85,10 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
 
     conn
     |> visit("/boundaries/silenced")
-    |> assert_has("#circle_preview", text: alice.profile.name)
+    |> assert_has("#circle_members", text: alice.profile.name)
     |> click_button("[data-role=remove_user]", "Remove")
     |> assert_has("[role=alert]", text: "Unblocked!")
-    |> refute_has("#circle_preview", text: alice.profile.name)
+    |> refute_has("#circle_members", text: alice.profile.name)
   end
 
   test "I can see if I silenced a user from their profile page", %{
@@ -373,9 +373,9 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
 
       conn
       |> visit("/boundaries/instance_ghosted")
-      |> assert_has("#circle_preview", text: alice.profile.name)
-      |> assert_has("#circle_preview", text: bob.profile.name)
-      |> refute_has("#circle_preview", text: carl.profile.name)
+      |> assert_has("#circle_members", text: alice.profile.name)
+      |> assert_has("#circle_members", text: bob.profile.name)
+      |> refute_has("#circle_members", text: carl.profile.name)
     end
 
     test "As an admin I can see a list of instance-wide silenced users", %{
@@ -392,9 +392,9 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
 
       conn
       |> visit("/boundaries/instance_silenced")
-      |> refute_has("#circle_preview", text: alice.profile.name)
-      |> refute_has("#circle_preview", text: bob.profile.name)
-      |> assert_has("#circle_preview", text: carl.profile.name)
+      |> refute_has("#circle_members", text: alice.profile.name)
+      |> refute_has("#circle_members", text: bob.profile.name)
+      |> assert_has("#circle_members", text: carl.profile.name)
     end
 
     test "As an admin I can unghost a previously ghosted user instance-wide", %{
@@ -409,10 +409,10 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
 
       conn
       |> visit("/boundaries/instance_ghosted")
-      |> assert_has("#circle_preview", text: alice.profile.name)
+      |> assert_has("#circle_members", text: alice.profile.name)
       |> click_button("[data-role=remove_user]", "Remove")
       |> assert_has("[role=alert]", text: "Unblocked!")
-      |> refute_has("#circle_preview", text: alice.profile.name)
+      |> refute_has("#circle_members", text: alice.profile.name)
     end
 
     test "As an admin I can unsilence a previously silenced user instance-wide", %{
@@ -427,10 +427,10 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
 
       conn
       |> visit("/boundaries/instance_silenced")
-      |> assert_has("#circle_preview", text: alice.profile.name)
+      |> assert_has("#circle_members", text: alice.profile.name)
       |> click_button("[data-role=remove_user]", "Remove")
       |> assert_has("[role=alert]", text: "Unblocked!")
-      |> refute_has("#circle_preview", text: alice.profile.name)
+      |> refute_has("#circle_members", text: alice.profile.name)
     end
   end
 end

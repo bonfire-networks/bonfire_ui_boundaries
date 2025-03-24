@@ -1,0 +1,101 @@
+<div id="manage_circle">
+  <#slot />
+
+  {!-- {#if description = e(@circle, :extra_info, :summary, nil)}
+        <div class="text-base-content/70 p-2 pb-0">{description}</div>
+      {/if} --}
+  <div class="menu menu-horizontal items-center justify-between gap-3 w-full">
+    {#if !e(@circle, :stereotyped, :stereotype_id, nil) and !@read_only}
+      <form phx-submit="Bonfire.Boundaries:edit" class="w-full mt-4 form-control">
+        <input type="hidden" name="circle_id" value={e(@circle, :id, nil)}>
+        <div class="">
+          <input
+            id="name"
+            name="named[name]"
+            value={e(@circle, :named, :name, nil)}
+            type="text"
+            placeholder="Type here"
+            class="w-full input input-bordered"
+          />
+        </div>
+        <div class="w-full form-control mt-3">
+          <label for="description" class="">
+            <span class="sr-only">{l("Enter a description for the circle")}</span>
+          </label>
+          <textarea
+            id="description"
+            name="extra_info[summary]"
+            placeholder={l("Describe this circle...")}
+            class="w-full textarea textarea-bordered"
+            rows="3"
+          >{e(@circle, :extra_info, :summary, "")}</textarea>
+        </div>
+        <button
+          data-role="edit_name_submit"
+          type="submit"
+          class="w-full mt-3 normal-case btn btn-primary"
+        >{l("Save")}</button>
+      </form>
+
+      <div class="mt-4 alert items-start flex flex-col alert-info alert-soft">
+        <div class="font-bold text-lg">{l("Share this circle")}</div>
+        <div>{rich(
+            l(
+              "You can optionally share your circle with others, for example to share a list of people who post an a particular topic, or team members on a project, etc. Choose who can see the circle and its members (including any future additions) by setting a boundary:"
+            )
+          )}</div>
+
+        {!-- <StatefulComponent
+    module={maybe_component(Bonfire.UI.Boundaries.BoundaryIconLive, @__context__)}
+    with_label
+    id={"boundary_#{@circle_id || id(@circle)}"}
+    object={@circle}
+    object_type={Types.object_type(@circle)}
+  /> --}
+
+        <Bonfire.UI.Boundaries.GeneralAccessListLive
+          set_action="Bonfire.Social.Objects:reset_boundary"
+          set_opts={%{
+            "phx-value-object_assign" => "circle",
+            "phx-value-go" => "/circle/#{e(@circle, :id, nil)}",
+            "phx-target" => @myself
+          }}
+          hide_presets={false}
+          hide_custom
+          to_boundaries={@to_boundaries}
+          boundary_preset={@boundary_preset}
+        />
+        {!-- 
+                  <button
+                    data-role="confirm_share_circle"
+                    type="button"
+                    phx-click="Bonfire.Social.Objects:share"
+                    phx-target={@myself}
+                    phx-value-object_assign="circle"
+                    phx-value-boundary="public"
+                    phx-value-go={"/circle/#{e(@circle, :id, nil)}"}
+                    class="btn btn-info w-full"
+                  >
+                    {l("Share")}
+                  </button> 
+                  --}
+      </div>
+
+      <div class="mt-4 flex items-start flex-col alert alert-error alert-soft w-full">
+        <div class="font-bold text-lg">{l("Delete this circle")}</div>
+        <p>{l(
+            "The circle will be permanently deleted. This action may affect all the activities that included this circle."
+          )}</p>
+
+        <button
+          data-role="confirm_delete_circle"
+          type="button"
+          :on-click="Bonfire.Boundaries:circle_delete"
+          phx-value-go="/boundaries/circles"
+          class="btn btn-error w-full"
+        >
+          {l("Delete")}</button>
+      </div>
+    {/if}
+  </div>
+</div>

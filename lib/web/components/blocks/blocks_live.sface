@@ -1,6 +1,6 @@
 <div>
   {#if @selected_tab == "silenced"}
-    <Bonfire.UI.Boundaries.CircleLive
+    <Bonfire.UI.Boundaries.CircleMembersLive
       id={@circle_id || @id}
       circle_id={@circle_id}
       circle={@circle}
@@ -56,11 +56,11 @@
           </div>
         </div>
       </div>
-    </Bonfire.UI.Boundaries.CircleLive>
+    </Bonfire.UI.Boundaries.CircleMembersLive>
   {#else}
     {!-- ghost --}
 
-    <Bonfire.UI.Boundaries.CircleLive
+    <Bonfire.UI.Boundaries.CircleMembersLive
       id={@circle_id || @id}
       circle_id={@circle_id}
       circle={@circle}
@@ -120,7 +120,7 @@
           </div>
         </div>
       </div>
-    </Bonfire.UI.Boundaries.CircleLive>
+    </Bonfire.UI.Boundaries.CircleMembersLive>
     {!-- </div>
   </div> --}
   {/if}

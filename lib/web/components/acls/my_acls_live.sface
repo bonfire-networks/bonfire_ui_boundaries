@@ -63,7 +63,7 @@
                 do: ~p"/boundaries/scope/instance/acl/#{id(acl)}",
                 else: ~p"/boundaries/acl/#{id(acl)}"}
             >
-              {l("View")}
+              {l("Manage")}
             </LinkLive>
           </li>
         {/for}

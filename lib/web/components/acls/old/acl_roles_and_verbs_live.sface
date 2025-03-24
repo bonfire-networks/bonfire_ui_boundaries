@@ -6,7 +6,7 @@
       setting_boundaries={@setting_boundaries}
     />
   {#elseif @edit_circle_id}
-    <Bonfire.UI.Boundaries.CircleLive
+    <Bonfire.UI.Boundaries.CircleMembersLive
       id={@edit_circle_id}
       circle_id={@edit_circle_id}
       parent_back={@myself}

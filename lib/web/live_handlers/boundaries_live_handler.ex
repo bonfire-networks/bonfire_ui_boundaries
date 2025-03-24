@@ -412,7 +412,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
              attrs
            ) do
       send_self(page_title: e(circle, :named, :name, nil))
-      # maybe_send_update(Bonfire.UI.Boundaries.CircleLive, "view_circle", circle: circle)
+      # maybe_send_update(Bonfire.UI.Boundaries.ManageCircleLive, "view_circle", circle: circle)
       maybe_send_update(Bonfire.UI.Common.ReusableModalLive, "edit_boundary", show: false)
 
       {:noreply,
@@ -652,7 +652,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
   def circle_create(attrs, socket) do
     current_user = current_user_required!(socket)
-    scope = maybe_to_atom(e(attrs, :scope, nil))
+    scope = maybe_to_atom(e(attrs, "scope", nil))
 
     with {:ok, %{id: id} = circle} <-
            Circles.create(
@@ -668,7 +668,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
         section: nil
       )
       |> maybe_redirect_to(
-        ~p"/boundaries/scope/#{if is_atom(scope) && not is_nil(scope), do: scope, else: "user"}/circle/" <>
+        ~p"/boundaries/scope/#{if is_atom(scope) and not is_nil(scope), do: scope, else: "user"}/circle/" <>
           id,
         attrs
       )
@@ -924,7 +924,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
   defp do_preload(list_of_components, list_of_ids, current_user) do
     my_states =
       if is_list(list_of_ids) and list_of_ids != [],
-        do: boundaries_on_objects(list_of_ids, current_user),
+        do: Boundaries.boundaries_on_objects(list_of_ids, current_user),
         else: %{}
 
     # debug(my_states, "boundaries_on_objects")
@@ -937,29 +937,6 @@ defmodule Bonfire.Boundaries.LiveHandler do
            Map.get(my_states, component.object_id) || component.previous_value || false
        }}
     end)
-  end
-
-  def boundaries_on_objects(list_of_ids, current_user) do
-    presets =
-      Bonfire.Boundaries.Controlleds.list_presets_on_objects(list_of_ids)
-      |> debug("presets")
-
-    if not is_nil(current_user) do
-      # display user's computed permission if we have current_user
-      case Bonfire.Boundaries.users_grants_on(current_user, list_of_ids) do
-        custom when custom != %{} and custom != [] ->
-          custom
-          |> Map.new(&{&1.object_id, Map.take(&1, [:verbs, :value])})
-          |> debug("my_grants_on")
-          |> deep_merge(presets, replace_lists: false)
-          |> debug("merged boundaries")
-
-        _empty ->
-          presets
-      end
-    else
-      presets
-    end
   end
 
   def maybe_redirect_to(socket, _, %{"no_redirect" => r}) when r != "" do

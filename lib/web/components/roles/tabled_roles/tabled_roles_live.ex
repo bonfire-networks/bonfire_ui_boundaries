@@ -8,7 +8,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
   prop role, :any, default: nil
   prop field, :atom, default: :to_circles
   prop circle_id, :string, default: nil
-  prop roles, :map, default: nil
+  prop roles, :any, default: nil
   prop event_target, :any, default: nil
 
   #  FIXME: this should be in config where the verbs are defined

@@ -1,207 +1,121 @@
-<div id="circle_preview" class="">
-  <div class="">
-    <#slot />
-    <div
-      :if={@show_add || (!@stereotype_id and !@read_only)}
-      class="flex flex-col gap-3 bg-base-300 rounded-t-xl p-4"
-    >
-      {#if description = e(@circle, :extra_info, :summary, nil)}
-        <div class="text-base-content/70 p-2 pb-0">{description}</div>
-      {/if}
-      <div class="menu menu-horizontal items-center justify-between gap-3 w-full">
-        <form id="edit_circle_participant" :on-change="multi_select" class="w-full flex-1">
-          <label for={"multi_select_#{__MODULE__}_text_input"} class="sr-only">{l("Search for users to add")}</label>
-          <div class="relative">
-            <Bonfire.UI.Common.MultiselectLive
-              implementation={:live_select}
-              event_target="#circle_preview"
-              form_input_name={__MODULE__}
-              form={:add_to_circles}
-              label={l("Search for circles or users to add")}
-            />
-          </div>
-        </form>
+<div class="w-full max-w-full flex flex-col feed w-full max-w-full lg:rounded-xl lg:shadow bg-base-100">
+  <header class="flex flex-col p-8 pb-0 border-b border-base-content/10">
+    <div class="flex items-start gap-4">
+      <#Icon iconify="gravity-ui:square-list-ul" class="w-12 h-12 rotate-15 text-secondary stroke-1" />
+      <div class="flex justify-center justify-between w-full items-start flex-1">
+        <div class="flex flex-1 flex-col">
+          <div class="text-xl font-bold">{e(@circle, :named, :name, nil)}</div>
+          <div class="text-sm text-base-content/70">{l("Circle shared by ")} <LinkLive class="link text-base-content" to={"/@#{e(@circle, :creator_username, nil)}"}>{e(@circle, :creator_name, "")}</LinkLive></div>
 
-        {#if !@stereotype_id and !@read_only}
-          <div class="flex gap-3 items-center">
-            <div data-role="edit_circle_name" class="edit_name">
-              <Bonfire.UI.Common.OpenModalLive
-                id="edit_name"
-                title_text={l("Edit circle")}
-                no_actions
-                open_btn_wrapper_class="flex flex-1 w-full"
-              >
-                <form phx-submit="Bonfire.Boundaries:edit" class="w-full mt-4 form-control">
-                  <input type="hidden" name="circle_id" value={e(@circle, :id, nil)}>
-                  <div class="">
-                    <input
-                      id="name"
-                      name="named[name]"
-                      value={e(@circle, :named, :name, nil)}
-                      type="text"
-                      placeholder="Type here"
-                      class="w-full input input-bordered"
-                    />
-                  </div>
-                  <div class="w-full form-control mt-3">
-                    <label for="description" class="">
-                      <span class="sr-only">{l("Enter a description for the circle")}</span>
-                    </label>
-                    <textarea
-                      id="description"
-                      name="extra_info[summary]"
-                      placeholder={l("Describe this circle...")}
-                      class="w-full textarea textarea-bordered"
-                      rows="3"
-                    >{e(@circle, :extra_info, :summary, "")}</textarea>
-                  </div>
-                  <button
-                    data-role="edit_name_submit"
-                    type="submit"
-                    class="w-full mt-3 normal-case btn btn-primary"
-                  >{l("Save")}</button>
-                </form>
+          {#if description = e(@circle, :extra_info, :summary, nil)}
+            <div class="text-base-content/70 mt-4">{description}</div>
+          {/if}
+        </div>
 
-                <div class="mt-4 alert items-start flex flex-col alert-info alert-soft">
-                  <div class="font-bold text-lg">{l("Share this circle")}</div>
-                  <div>{rich(
-                      l(
-                        "You can optionally share your circle with others, for example to share a list of people who post an a particular topic, or team members on a project, etc. Choose who can see the circle and its members (including any future additions) by setting a boundary:"
-                      )
-                    )}</div>
+        <StatefulComponent
+          module={maybe_component(Bonfire.UI.Boundaries.BoundaryIconLive)}
+          with_label
+          id={"boundary_#{@circle_id || id(@circle)}"}
+          object={@circle}
+          object_type={Bonfire.Data.AccessControl.Circle}
+        />
 
-                  {!-- <StatefulComponent
-    module={maybe_component(Bonfire.UI.Boundaries.BoundaryIconLive, @__context__)}
-    with_label
-    id={"boundary_#{@circle_id || id(@circle)}"}
-    object={@circle}
-    object_type={Types.object_type(@circle)}
-  /> --}
+        {#if @is_caretaker}
+          <div data-role="edit_circle_name" class="edit_name">
+            <Bonfire.UI.Common.OpenModalLive
+              id="edit_name"
+              title_text={l("Edit circle")}
+              no_actions
+              open_btn_wrapper_class="flex flex-1 w-full"
+            >
+              <Bonfire.UI.Boundaries.ManageCircleLive
+                id={"members_#{@circle_id || id(@circle)}"}
+                circle_id={@circle_id || id(@circle)}
+                circle={@circle}
+                read_only={@read_only}
+                to_boundaries={@to_boundaries}
+                boundary_preset={@boundary_preset}
+              />
 
-                  <Bonfire.UI.Boundaries.GeneralAccessListLive
-                    set_action="Bonfire.Social.Objects:reset_boundary"
-                    set_opts={%{
-                      "phx-value-object_assign" => "circle",
-                      "phx-value-go" => "/circle/#{e(@circle, :id, nil)}",
-                      "phx-target" => @myself
-                    }}
-                    hide_presets={false}
-                    hide_custom
-                    to_boundaries={@to_boundaries}
-                    boundary_preset={@boundary_preset}
-                  />
-                  {!-- 
-                  <button
-                    data-role="confirm_share_circle"
-                    type="button"
-                    phx-click="Bonfire.Social.Objects:share"
-                    phx-target={@myself}
-                    phx-value-object_assign="circle"
-                    phx-value-boundary="public"
-                    phx-value-go={"/circle/#{e(@circle, :id, nil)}"}
-                    class="btn btn-info w-full"
-                  >
-                    {l("Share")}
-                  </button> 
-                  --}
+              <:open_btn>
+                <div class="btn btn-sm btn-primary btn-soft">
+                  <#Icon iconify="mingcute:settings-6-fill" class="w-5 h-5 mr-2" />
+                  <span class="sr-only">{l("Edit circle")}</span>
                 </div>
-
-                <div class="mt-4 flex items-start flex-col alert alert-error alert-soft">
-                  <div class="font-bold text-lg">{l("Delete this circle")}</div>
-                  <p>{l(
-                      "The circle will be permanently deleted. This action may affect all the activities that included this circle."
-                    )}</p>
-
-                  <button
-                    data-role="confirm_delete_circle"
-                    type="button"
-                    :on-click="Bonfire.Boundaries:circle_delete"
-                    phx-value-go="/boundaries/circles"
-                    class="btn btn-error w-full"
-                  >
-                    {l("Delete")}</button>
-                </div>
-
-                <:open_btn>
-                  <div class="btn btn-primary btn-soft">
-                    <#Icon iconify="mingcute:settings-6-fill" class="w-5 h-5 mr-2" />
-                    {l("Edit circle")}</div>
-                </:open_btn>
-              </Bonfire.UI.Common.OpenModalLive>
-            </div>
+              </:open_btn>
+            </Bonfire.UI.Common.OpenModalLive>
           </div>
+
+          {!-- <Link
+          to={~p"/boundaries/scope/user/circle/#{id(@circle)}"}
+          class="btn btn-primary btn-sm btn-circle btn-soft"
+        >
+          <#Icon iconify="ph:gear-fill" class="w-4 h-4" />
+          <!-- {l("Edit circle")}</Link> -->
+        </Link> --}
         {/if}
       </div>
     </div>
-  </div>
-  {#if Enum.count(@members) > 0}
-    <ul role="list" class="list">
-      <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{l("Members")}</li>
+    <div role="tablist" class="tabs pt-8 justify-evenly w-full tabs-border">
+      <LinkLive
+        to={"/circle/#{id(@circle)}"}
+        role="tab"
+        class={"tab", "tab-active": @selected_tab != "members"}
+      >{l("Feed")}</LinkLive>
+      <LinkLive
+        to={"/circle/#{id(@circle)}/members"}
+        role="tab"
+        class={"tab", "tab-active": @selected_tab == "members"}
+      >{l("Members")}</LinkLive>
+    </div>
+  </header>
+
+  <section class="flex flex-col gap-2 divide-y divide-base-content/10">
+    {#if @selected_tab == "members"}
+      <div class="pull-right">
+        <Bonfire.UI.Boundaries.CircleMembersLive
+          id={"members_#{@circle_id || id(@circle)}"}
+          circle_id={@circle_id || id(@circle)}
+          circle={@circle}
+          read_only={@read_only}
+          with_batch_follow
+        />
+      </div>
+      <!-- 
       {#for %{id: id} = member <- @members}
-        <li class="list-row">
-          <input type="hidden" name={"circle[encircle][#{id}][circle_id]"} value={e(@circle, :id, nil)}>
-          <input type="hidden" name={"circle[encircle][#{id}][subject_id]"} value={id}>
-
-          {#case member}
-            {#match %{subject: %{profile: %{id: _} = profile}} = member}
-              <StatelessComponent
-                module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
-                profile={profile}
-                avatar_class="w-10 h-10 rounded-box"
-                character={e(member, :subject, :character, nil)}
-                show_summary
-                show_controls={[]}
-              />
-            {#match %{name: name, icon: icon, username: username} when is_binary(name)}
-              <StatelessComponent
-                module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
-                profile={%{name: name, icon: icon}}
-                avatar_class="w-10 h-10 rounded-box"
-                character={%{username: username}}
-                show_summary
-                show_controls={[]}
-              />
-            {#match member}
-              <LinkLive class="text-base font-bold text-base-content">
-                {e(member, :subject, :named, :name, nil) || e(member, :named, :name, nil) ||
-                  e(member, :name, "Unknown")}
-              </LinkLive>
-          {/case}
-          <div>
-            <!-- <div>{LiveHandler.subject_name(circle)}</div>
-            <div class="text-xs uppercase font-semibold opacity-60">{e(circle, :encircles_count, 0)} {l " Members"}</div> -->
-          </div>
-          <button
-            data-role="remove_user"
-            :if={@show_remove || !@read_only}
-            phx-value-subject={id}
-            :on-click="remove"
-            class="btn btn-error btn-soft btn-sm"
-          >
-            {l("Remove")}
-          </button>
-        </li>
+        <div class="p-4">
+          <StatelessComponent
+            module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
+            profile={e(member, :subject, :profile, nil)}
+            avatar_class="w-10 h-10 rounded-full"
+            character={e(member, :subject, :character, nil)}
+            with_summary
+          />
+          
+        </div>
       {/for}
-    </ul>
 
-    <Bonfire.UI.Common.LoadMoreLive
-      live_handler="Bonfire.Boundaries.Circles"
-      page_info={@page_info}
-      infinite_scroll={false}
-      hide_if_no_more
-      hide_guest_fallback
-      target={@myself}
-    >
-      <:if_no_more>
-        <p>{l("That's all the members...")}</p>
-      </:if_no_more>
-    </Bonfire.UI.Common.LoadMoreLive>
-  {#else}
-    <li id="no-members" class="flex items-center place-content-center">
-      <Bonfire.UI.Common.EmptyFeed
-        feedback_title={@feedback_title || l("This circle has no members yet")}
-        feedback_message={@feedback_message || l("Add some users to get started!")}
+      <Bonfire.UI.Common.LoadMoreLive
+        live_handler="Bonfire.Boundaries.Circles"
+        page_info={@page_info}
+        infinite_scroll={false}
+        hide_if_no_more
+        hide_guest_fallback={socket_connected?(@__context__)}
+      >
+        <:if_no_more>
+          <p>{l("That's all the members...")}</p>
+        </:if_no_more>
+      </Bonfire.UI.Common.LoadMoreLive> -->
+    {#else}
+      <StatefulComponent
+        module={maybe_component(Bonfire.UI.Social.FeedLive, @__context__)}
+        id={ComponentID.new(Bonfire.UI.Social.FeedLive, @feed_name, __MODULE__)}
+        feed_filters={@feed_filters}
+        feed_name={@feed_name}
+        feed_title={@feed_title}
+        showing_within={:circle}
+        hide_filters
       />
-    </li>
-  {/if}
+    {/if}
+  </section>
 </div>

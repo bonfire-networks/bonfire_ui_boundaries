@@ -1,0 +1,121 @@
+<div id="circle_members" class="">
+  <div class="">
+    <#slot />
+    <div :if={@show_add || !@read_only} class="flex flex-col gap-3 bg-base-300 rounded-t-xl p-4">
+      {!-- {#if description = e(@circle, :extra_info, :summary, nil)}
+        <div class="text-base-content/70 p-2 pb-0">{description}</div>
+      {/if} --}
+      <div class="menu menu-horizontal items-center justify-between gap-3 w-full">
+        <form id="edit_circle_participant" :on-change="multi_select" class="w-full flex-1">
+          <label for={"multi_select_#{__MODULE__}_text_input"} class="sr-only">{l("Search for users to add")}</label>
+          <div class="relative">
+            <Bonfire.UI.Common.MultiselectLive
+              implementation={:live_select}
+              event_target="#circle_members"
+              form_input_name={__MODULE__}
+              form={:add_to_circles}
+              label={l("Search for circles or users to add")}
+            />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {#if Enum.count(@members) > 0}
+    <ul role="list" class="list">
+      <li class="p-4 pb-2 text-xs tracking-wide">
+        {l("Members")}
+
+        {#case @with_batch_follow && current_user_id(@__context__) && Map.keys(@members)}
+          {#match ids when is_list(ids)}
+            <StatefulComponent
+              module={maybe_component(Bonfire.UI.Social.Graph.FollowButtonLive, @__context__)}
+              id={ComponentID.new(Bonfire.UI.Social.Graph.FollowButtonLive, ids, __MODULE__)}
+              object_ids={ids}
+              my_follow={:skip}
+              hide_text={false}
+              label={l("all members")}
+              container_class="ml-auto"
+              class="btn btn-primary"
+            />
+          {#match _}
+        {/case}
+      </li>
+      {#for {id, member} <- @members}
+        <li class="list-row">
+          <input type="hidden" name={"circle[encircle][#{id}][circle_id]"} value={e(@circle, :id, nil)}>
+          <input type="hidden" name={"circle[encircle][#{id}][subject_id]"} value={id}>
+
+          {#case member}
+            {#match %{subject: %{profile: %{id: _} = profile}} = member}
+              <StatelessComponent
+                module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
+                profile={profile}
+                avatar_class="w-10 h-10 rounded-box"
+                character={e(member, :subject, :character, nil)}
+                show_summary
+                show_controls={[:follow]}
+              />
+            {#match %{name: name, icon: icon, username: username} when is_binary(name)}
+              <StatelessComponent
+                module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
+                profile={%{name: name, icon: icon}}
+                avatar_class="w-10 h-10 rounded-box"
+                character={%{username: username}}
+                show_summary
+                show_controls={[:follow]}
+              />
+            {#match member}
+              <LinkLive class="text-base font-bold text-base-content">
+                {e(member, :subject, :named, :name, nil) || e(member, :named, :name, nil) ||
+                  e(member, :name, "Unknown")}
+              </LinkLive>
+          {/case}
+          <div>
+            <!-- <div>{LiveHandler.subject_name(circle)}</div>
+            <div class="text-xs uppercase font-semibold opacity-60">{e(circle, :encircles_count, 0)} {l " Members"}</div> -->
+          </div>
+          <button
+            data-role="remove_user"
+            :if={@show_remove || !@read_only}
+            phx-value-subject={id}
+            :on-click="remove"
+            class="btn btn-error btn-soft btn-sm"
+          >
+            {l("Remove")}
+          </button>
+        </li>
+      {/for}
+    </ul>
+
+    <Bonfire.UI.Common.LoadMoreLive
+      live_handler="Bonfire.Boundaries.Circles"
+      page_info={@page_info}
+      infinite_scroll={false}
+      hide_if_no_more
+      hide_guest_fallback
+      target={@myself}
+    >
+      <:if_no_more>
+        <p>{l("That's all the members...")}</p>
+      </:if_no_more>
+    </Bonfire.UI.Common.LoadMoreLive>
+
+    {!-- 
+      <div class="mb-2">
+        <StatelessComponent
+          module={maybe_component(Bonfire.UI.Me.WidgetUsersLive, @__context__)}
+          users={@members}
+          widget_title={e(@circle, :named, :name, nil)}
+        />
+      </div>
+     --}
+  {#else}
+    <li id="no-members" class="flex items-center place-content-center">
+      <Bonfire.UI.Common.EmptyFeed
+        feedback_title={@feedback_title || l("This circle has no members yet")}
+        feedback_message={@feedback_message || l("Add some users to get started!")}
+      />
+    </li>
+  {/if}
+</div>

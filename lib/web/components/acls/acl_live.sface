@@ -37,7 +37,7 @@
               setting_boundaries={@setting_boundaries}
             />
           {#elseif @edit_circle_id}
-            <Bonfire.UI.Boundaries.CircleLive
+            <Bonfire.UI.Boundaries.CircleMembersLive
               id={@edit_circle_id}
               circle_id={@edit_circle_id}
               parent_back={@myself}
@@ -104,6 +104,10 @@
                             )}
                           </div>
                         </div>
+
+                        <a href={"/circle/#{id(subject)}/members"} class="btn btn-primary btn-soft">
+                          {l("View circle")}
+                        </a>
                       {/if}
                       <div class="flex items-center gap-2">
                         <Bonfire.UI.Common.OpenModalLive

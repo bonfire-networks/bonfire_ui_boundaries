@@ -22,16 +22,16 @@
     {#match "circle"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.CircleLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.CircleMembersLive, @__context__)}
         selected_tab={@selected_tab}
-        id="view_circle"
+        id="circle_members"
         scope={@scope}
         circle_id={@current_params["id"]}
       />
       <!-- {#match "admin_circle"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.CircleLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.CircleMembersLive, @__context__)}
         selected_tab={@selected_tab}
         id="view_circle"
         scope={@scope}
@@ -42,7 +42,7 @@
     {#match "mod_circle"}
       <StatefulComponent
         :if={current_user(@__context__)}
-        module={maybe_component(Bonfire.UI.Boundaries.CircleLive, @__context__)}
+        module={maybe_component(Bonfire.UI.Boundaries.CircleMembersLive, @__context__)}
         selected_tab={@selected_tab}
         id="view_circle"
         scope={@scope}

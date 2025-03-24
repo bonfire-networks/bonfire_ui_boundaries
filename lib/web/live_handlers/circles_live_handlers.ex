@@ -20,7 +20,9 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
       {:noreply,
        socket
        |> assign(
-         members: members,
+         members:
+           Enum.map(members, &{&1.subject_id, &1})
+           |> Map.new(),
          page_info: page_info
        )}
     else
@@ -48,7 +50,12 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
       {:noreply,
        socket
        |> assign(
-         members: e(assigns(socket), :members, []) ++ members,
+         members:
+           Map.merge(
+             e(assigns(socket), :members, %{}),
+             Enum.map(members, &{&1.subject_id, &1})
+             |> Map.new()
+           ),
          page_info: page_info
        )}
     else

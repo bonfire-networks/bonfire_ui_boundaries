@@ -34,10 +34,10 @@ defmodule Bonfire.UI.Boundaries.CircleTest do
 
     conn
     |> visit("/boundaries/scope/user/circle/#{circle.id}")
-    |> assert_has("#circle_preview", text: alice.profile.name)
+    |> assert_has("#circle_members", text: alice.profile.name)
     |> click_button("[data-role=remove_user]", "Remove")
     |> assert_has("[role=alert]", text: "Removed from circle!")
-    |> refute_has("#circle_preview", text: alice.profile.name)
+    |> refute_has("#circle_members", text: alice.profile.name)
   end
 
   test "I can edit the name of a circle I've previously created", %{conn: conn, me: me} do

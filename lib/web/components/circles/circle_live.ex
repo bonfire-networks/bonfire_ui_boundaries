@@ -1,355 +1,160 @@
 defmodule Bonfire.UI.Boundaries.CircleLive do
-  use Bonfire.UI.Common.Web, :stateful_component
+  use Bonfire.UI.Common.Web, :surface_live_view
   alias Bonfire.Boundaries.Circles
-  alias Bonfire.Boundaries.Blocks
 
-  prop circle_id, :any, default: nil
-  prop circle, :any, default: nil
-  prop circle_type, :atom, default: nil
-  prop name, :string, default: nil
-  prop parent_back, :any, default: nil
-  prop setting_boundaries, :boolean, default: false
-  prop scope, :any, default: nil
-  prop showing_within, :atom, default: nil
-  prop feedback_title, :string, default: nil
-  prop feedback_message, :string, default: nil
-  prop read_only, :boolean, default: false
-  prop show_add, :boolean, default: nil
-  prop show_remove, :boolean, default: nil
+  on_mount {LivePlugs, [Bonfire.UI.Me.LivePlugs.LoadCurrentUser]}
 
-  slot default, required: false
-
-  def update(assigns, %{assigns: %{loaded: true}} = socket) do
-    debug(assigns, "already loaded")
-    # params = e(assigns, :__context__, :current_params, %{})
-
-    {
-      :ok,
-      socket
-      |> assign(Enums.filter_empty(assigns, []))
-      #  |> assign(page_title: l("Circle"))
-      #  |> assign(section: e(params, "section", "members"))
-    }
+  def mount(params, _session, socket) do
+    # id = e(params, "id", nil)
+    # assign_circle(socket, id, :ok)
+    {:ok, socket}
   end
 
-  def update(assigns, socket) do
-    current_user = current_user(assigns) || current_user(assigns(socket))
+  # def handle_params(%{"tab" => "members"}, _session, socket) do
+  #   # with {:ok, data} <-
+  #   #        load_members(
+  #   #          e(assigns(socket), :circle_id, nil) || e(assigns(socket), :circle, :id, nil)
+  #   #        ) do
+  #     {:noreply, socket 
+  #     |> assign(:selected_tab, "members") 
+  #     #|> assign(data)
+  #     }
+  #   # end
+  # end
 
-    params =
-      e(assigns, :__context__, :current_params, %{})
-      |> debug("current_params")
+  def handle_params(params, _session, socket) do
+    id = e(params, "id", nil)
 
-    id =
-      (e(assigns, :circle_id, nil) || e(params, "id", nil))
-      |> debug("circle_id")
-
-    socket =
+    if id not in [
+         "circle",
+         e(assigns(socket), :circle_id, nil) || e(assigns(socket), :circle, :id, nil)
+       ] do
       socket
-      |> assign(assigns)
-      |> assign(
-        # page_title: l("Circle"),
-        # section: e(params, "section", "members"),
-        settings_section_description: l("Create and manage your circle.")
-      )
+      |> assign(:selected_tab, params["tab"])
+      |> assign_circle(id, :noreply)
+    else
+      {:noreply,
+       socket
+       |> assign(:selected_tab, params["tab"])}
+    end
+  end
 
-    with %{id: id} = circle <-
-           (e(assigns, :circle, nil) ||
-              Circles.get_for_caretaker(id, current_user, scope: e(assigns(socket), :scope, nil)))
-           |> repo().maybe_preload(:extra_info)
-           |> ok_unwrap() do
-      # Get the total count for display purposes
-      total_members_count = nil
-      # Circles.count_members(id)
-      # |> debug("total_members_count")
+  def assign_circle(socket, id, ok_atom) do
+    current_user = current_user(socket)
 
-      # Load members with cursor-based pagination
-      %{edges: members, page_info: page_info} =
-        Circles.list_members(
-          id,
-          current_user: current_user
-        )
-        |> debug("paginated_members")
+    with {:ok, data} <-
+           load_circle(
+             id,
+             current_user,
+             current_user: current_user
+           )
+           |> debug("load_circle") do
+      name = e(data, :name, nil)
 
-      # TODO: handle pagination
-      # followed =
-      #   Bonfire.Social.Graph.Follows.list_my_followed(current_user,
-      #     paginate: false,
-      #     exclude_ids: member_ids
-      #   )
-
-      # already_seen_ids = member_ids ++ Enum.map(followed, & &1.edge.object_id)
-
-      # # |> debug
-      # followers =
-      #   Bonfire.Social.Graph.Follows.list_my_followers(current_user,
-      #     paginate: false,
-      #     exclude_ids: already_seen_ids
-      #   )
-
-      # # |> debug
-
-      # suggestions =
-      #   Enum.map(followers ++ followed ++ [current_user], fn follow ->
-      #     u = f(follow)
-      #     {uid(u), u}
-      #   end)
-      #   |> Map.new()
-      #   |> debug
-
-      stereotype_id = e(circle, :stereotyped, :stereotype_id, nil)
-
-      follow_stereotypes = Circles.stereotypes(:follow)
-
-      read_only = e(assigns, :read_only, nil) || e(assigns(socket), :read_only, nil)
-
-      read_only =
-        if is_nil(read_only) do
-          Circles.is_built_in?(circle) ||
-            stereotype_id in follow_stereotypes
+      {ok_atom,
+       socket
+       |> assign(
+         nav_items: Bonfire.Common.ExtensionModule.default_nav(),
+         # TODO
+         read_only: true,
+         page_title: name,
+         members: [],
+         feed_name: :custom,
+         feed_title: name,
+         feed_filters: %{subject_circles: [e(data, :circle, :id, nil)]},
+         page_info: nil,
+         show_remove: true
+       )
+       |> assign(data)}
+    else
+      {:error, :not_found} ->
+        if current_user do
+          {ok_atom,
+           socket
+           |> redirect_to(
+             if(id, do: "/boundaries/scope/user/circle/#{id}", else: "boundaries/circles")
+           )}
         else
-          read_only
+          error(id, "Not found or permitted")
+          raise(Bonfire.Fail, :not_found)
         end
 
-      if socket_connected?(socket),
-        do:
-          send_self(
-            read_only: read_only,
-            page_title:
-              e(circle, :named, :name, nil) || e(assigns(socket), :name, nil) ||
-                e(circle, :stereotyped, :named, :name, nil) || l("Circle"),
-            back: true
-            # circle: circle
-            # page_header_aside: [
-            #   {Bonfire.UI.Boundaries.HeaderCircleLive,
-            #    [
-            #      circle: circle,
-            #      stereotype_id: stereotype_id,
-            #      #  suggestions: suggestions,
-            #      read_only: read_only
-            #    ]}
-            # ]
-          )
+      e ->
+        error(e)
+        raise(Bonfire.Fail, e)
+    end
+  end
 
-      object_acls = Bonfire.Boundaries.list_object_boundaries(circle)
-      # |> debug("acls")
+  def load_circle(id, current_user, opts) do
+    with {:ok, %{id: id} = circle} <-
+           Circles.get(id, opts)
+           |> repo().maybe_preload(caretaker: [caretaker: [:profile, :character]])
+           |> repo().maybe_preload(:extra_info) do
+      creator_name =
+        e(circle, :caretaker, :caretaker, :profile, :name, nil) ||
+          e(circle, :caretaker, :caretaker, :character, :username, "Unknown")
 
-      # {preset_acls, custom_acls} =
-      #   object_acls
-      #   |> Enum.split_with(&e(&1, :named, nil))
-      # |> debug("preset vs custom acls")
+      creator_username = e(circle, :caretaker, :caretaker, :character, :username, "Unknown")
+      creator_id = e(circle, :caretaker, :caretaker, :character, :id, nil)
+
+      # object_acls = Bonfire.Boundaries.list_object_boundaries(id)
+      preset_acl = Bonfire.Boundaries.Controlleds.get_preset_on_object(id)
+
+      object_boundaries =
+        Bonfire.Boundaries.boundary_on_object(id, preset_acl, current_user)
+        |> debug("boundary_on_object")
+
+      is_caretaker =
+        creator_id == id(current_user) or
+          Bonfire.Boundaries.can?(current_user, :configure, object_boundaries)
 
       {:ok,
-       assign(
-         socket,
-         loaded: true,
+       %{
          circle_id: id,
-         # |> Map.drop([:encircles]),
-         circle: circle,
-         members: members || %{},
-         #  page_title: l("Circle"),
-         #  suggestions: suggestions,
-         stereotype_id: stereotype_id,
-         read_only: read_only,
-         #  settings_section_title: "Manage " <> e(circle, :named, :name, "") <> " circle",
-         page_info: page_info,
-         total_count: total_members_count,
-         to_boundaries: object_acls |> debug("custom_acls"),
+         circle:
+           circle
+           |> Map.drop([:caretaker])
+           |> Map.put(:creator_id, creator_id)
+           |> Map.put(:creator_name, creator_name)
+           |> Map.put(:creator_username, creator_username),
+         name: e(circle, :named, :name, nil),
+         loaded: true,
+         to_boundaries: object_boundaries,
          boundary_preset:
            Bonfire.Boundaries.preset_boundary_tuple_from_acl(
-             object_acls,
+             preset_acl,
              Bonfire.Data.AccessControl.Circle
            )
-           |> debug("boundary_preset")
-       )}
-
-      # else other ->
-      #   error(other)
-      #   {:ok, socket
-      #     |> assign_flash(:error, l "Could not find circle")
-      #     |> assign(
-      #       circle: nil,
-      #       members: [],
-      #       suggestions: [],
-      #       read_only: true
-      #     )
-      #     # |> redirect_to("/boundaries/circles")
-      #   }
+           |> debug("boundary_preset"),
+         is_caretaker: is_caretaker,
+         read_only:
+           is_nil(current_user) or
+             !(is_caretaker or
+                 Bonfire.Boundaries.can?(current_user, :edit, object_boundaries)
+                 |> debug("can assign?"))
+       }}
     end
   end
 
-  def handle_event("multi_select", %{data: data, text: text}, socket) do
-    debug(data, "multi_select_circle_live")
-    add_member(input_to_atoms(data), socket)
-  end
+  # def load_members(circle, opts \\ []) do
+  #   # Get the total count for display purposes
+  #   total_members_count = nil
+  #   # Circles.count_members(id)
+  #   # |> debug("total_members_count")
 
-  def handle_event("multi_select", %{id: id, name: _name}, socket) do
-    add_member(input_to_atoms(e(assigns(socket), :suggestions, %{})[id]) || id, socket)
-  end
+  #   # Load members with cursor-based pagination
+  #   %{edges: members, page_info: page_info} =
+  #     Circles.list_members(
+  #       Enums.id(circle),
+  #       opts
+  #     )
+  #     |> debug("paginated_members")
 
-  def handle_event(
-        "multi_select",
-        %{"_target" => ["add_to_circles", module_name], "add_to_circles" => multi_select_data} =
-          params,
-        socket
-      ) do
-    debug(multi_select_data, "multi_select_data")
-    debug(module_name, "module_name")
-
-    with {:ok, json_str} when is_binary(json_str) <- Map.fetch(multi_select_data, module_name),
-         {:ok, data} when is_map(data) <- Jason.decode(json_str) do
-      debug(data, "multi_select_decoded")
-      add_member(input_to_atoms(data), socket)
-    else
-      error ->
-        debug(error, "multi_select_decode_error")
-        {:noreply, socket}
-    end
-  end
-
-  # Catch-all for other multi_select events
-  def handle_event("multi_select", params, socket) do
-    debug(params, "unhandled_multi_select")
-    {:noreply, socket}
-  end
-
-  def handle_event(
-        "live_select_change",
-        %{"field" => _field, "id" => live_select_id, "text" => search},
-        socket
-      ) do
-    do_results_for_multiselect(search)
-    |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
-
-    {:noreply, socket}
-  end
-
-  def handle_event(
-        "live_select_change",
-        %{"field" => _field, "id" => live_select_id, "text" => search},
-        %{assigns: %{circle_type: circle_type}} = socket
-      )
-      when circle_type in [:silence, :ghost] do
-    current_user_id =
-      current_user_id(socket)
-      |> debug("avoid blocking myself")
-
-    do_results_for_multiselect(search)
-    |> Enum.reject(fn {_name, %{id: id}} -> id == current_user_id end)
-    |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
-
-    {:noreply, socket}
-  end
-
-  def handle_event(
-        "remove",
-        %{"subject" => id} = _attrs,
-        %{assigns: %{scope: scope, circle_type: circle_type}} = socket
-      )
-      when is_binary(id) and circle_type in [:silence, :ghost] do
-    with {:ok, _} <-
-           Blocks.unblock(id, circle_type, scope || current_user(assigns(socket))) do
-      {:noreply,
-       socket
-       |> update(:members, &Map.drop(&1, [id]))
-       |> assign_flash(:info, l("Unblocked!"))}
-    else
-      other ->
-        error(other)
-
-        {:noreply, assign_flash(socket, :error, l("Could not unblock"))}
-    end
-  end
-
-  def handle_event("remove", %{"subject" => id} = _attrs, socket) when is_binary(id) do
-    with {1, _} <-
-           Circles.remove_from_circles(id, e(assigns(socket), :circle, nil)) do
-      {:noreply,
-       socket
-       |> update(:members, &Map.drop(&1, [id]))
-       |> assign_flash(:info, l("Removed from circle!"))}
-    else
-      other ->
-        error(other)
-
-        {:noreply, assign_flash(socket, :error, l("Could not remove from circle"))}
-    end
-  end
-
-  def handle_event(event, params, socket) do
-    debug(event, "Unmatched event in CircleLive")
-    debug(params, "Unmatched event params")
-    {:noreply, socket}
-  end
-
-  def do_results_for_multiselect(search) do
-    Bonfire.Common.Utils.maybe_apply(
-      Bonfire.Me.Users,
-      :search,
-      [search]
-    )
-    |> Enum.map(fn
-      %Needle.Pointer{activity: %{object: user}} -> user
-      other -> other
-    end)
-    |> Bonfire.UI.Boundaries.SetBoundariesLive.results_for_multiselect()
-    |> debug("results_for_multiselect")
-  end
-
-  def add_member(subject, %{assigns: %{scope: scope, circle_type: circle_type}} = socket)
-      when circle_type in [:silence, :ghost] do
-    with id when is_binary(id) <- uid(subject),
-         current_user_id when not is_nil(current_user_id) <- current_user_id(socket),
-         false <- id == current_user_id,
-         {:ok, _} <- Blocks.block(id, circle_type, scope || current_user(assigns(socket))) do
-      {:noreply,
-       socket
-       |> assign_flash(:info, l("Blocked!"))
-       |> assign(
-         members:
-           Map.merge(
-             %{id => subject},
-             e(assigns(socket), :members, %{})
-           )
-           |> debug()
-       )}
-    else
-      true ->
-        {:noreply, assign_flash(socket, :error, l("Cannot block yourself."))}
-
-      other ->
-        error(other)
-
-        {:noreply, assign_flash(socket, :error, l("Could not block"))}
-    end
-  end
-
-  def add_member(subject, socket) do
-    with id when is_binary(id) <- uid(subject),
-         current_user_id when not is_nil(current_user_id) <- current_user_id(socket),
-         false <- id == current_user_id,
-         {:ok, _} <- Circles.add_to_circles(id, e(assigns(socket), :circle, nil)) do
-      {:noreply,
-       socket
-       |> assign_flash(:info, l("Added to circle!"))
-       |> assign(
-         members:
-           Map.merge(
-             %{id => subject},
-             e(assigns(socket), :members, %{})
-           )
-       )}
-    else
-      true ->
-        {:noreply, assign_flash(socket, :error, l("Cannot add yourself to the circle."))}
-
-      other ->
-        error(other)
-
-        {:noreply, assign_flash(socket, :error, l("Could not add to circle"))}
-    end
-  end
-
-  def f(%{edge: %{object: %{profile: _} = user}}), do: user
-  def f(%{edge: %{subject: %{profile: _} = user}}), do: user
-  def f(user), do: user
+  #   {:ok,
+  #    %{
+  #      total_members_count: total_members_count,
+  #      page_info: page_info,
+  #      members: members || []
+  #    }}
+  # end
 end

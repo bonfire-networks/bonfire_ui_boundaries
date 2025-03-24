@@ -11,7 +11,7 @@
           {!-- <p class="mt-1 text-base font-regular text-base-content opacity-80">This is a sample description to help remember what this circle is about.</p> --}
           <div :if={!e(@circle, :stereotyped, nil)} class="flex items-center mt-3 space-x-3">
             <button
-              :on-click="Bonfire.Boundaries:circle_delete"
+              :on-click="Bonfire.Boundaries.Circles:circle_delete"
               class="inline-flex items-center btn btn-primary w-max"
             ><#Icon solid="Trash" />{l("Delete circle")}</button>
           </div>
@@ -23,7 +23,7 @@
     <div class="block" x-cloak x-data="{ adding: false, removing: false }">
       <h3 class="mb-2 font-sm text-medium text-base-content opacity-80">Circle Members</h3>
       <div class="relative overflow-hidden border rounded-lg drag_drop__container__to">
-        <form :on-change={if !@read_only, do: "Bonfire.Boundaries:circle_edit"}>
+        <form :on-change={if !@read_only, do: "Bonfire.Boundaries.Circles:circle_edit"}>
           <input type="hidden" name="circle[id]" value={e(@circle, :id, "")}>
           <input type="hidden" id="circle_changed" name="circle_changed" value="0">
 

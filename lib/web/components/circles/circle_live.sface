@@ -5,19 +5,20 @@
       <div class="flex justify-center justify-between w-full items-start flex-1">
         <div class="flex flex-1 flex-col">
           <div class="text-xl font-bold">{e(@circle, :named, :name, nil)}</div>
-          <div class="text-sm text-base-content/70">{l("Circle shared by ")} <LinkLive class="link text-base-content" to={"/@#{e(@circle, :creator_username, nil)}"}>{e(@circle, :creator_name, "")}</LinkLive></div>
+          <div class="text-sm text-base-content/70">{l("Circle created by ")} <LinkLive class="link text-base-content" to={"/@#{e(@circle, :creator_username, nil)}"}>{e(@circle, :creator_name, "")}</LinkLive></div>
 
           {#if description = e(@circle, :extra_info, :summary, nil)}
             <div class="text-base-content/70 mt-4">{description}</div>
           {/if}
         </div>
 
-        <StatefulComponent
-          module={maybe_component(Bonfire.UI.Boundaries.BoundaryIconLive)}
-          with_label
-          id={"boundary_#{@circle_id || id(@circle)}"}
+        <StatelessComponent
+          module={maybe_component(Bonfire.UI.Boundaries.BoundaryIconStatelessLive)}
+          with_label={false}
           object={@circle}
           object_type={Bonfire.Data.AccessControl.Circle}
+          object_boundaries={@to_boundaries}
+          boundary_preset={@boundary_preset}
         />
 
         {#if @is_caretaker}

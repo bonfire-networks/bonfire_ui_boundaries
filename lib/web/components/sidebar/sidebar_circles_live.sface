@@ -19,8 +19,8 @@
             <Bonfire.UI.Common.OpenModalLive id="new_circle" title_text={l("Create a new circle")} no_actions>
               <form
                 id="new_circle_form"
-                phx-submit="Bonfire.Boundaries:circle_create"
-                phx-change="Bonfire.Boundaries:new_circle_validate"
+                phx-submit="Bonfire.Boundaries.Circles:create"
+                phx-change="Bonfire.Boundaries.Circles:validate_for_create"
               >
                 <Bonfire.UI.Boundaries.NewCircleLive scope={current_user_id(@__context__)} />
               </form>

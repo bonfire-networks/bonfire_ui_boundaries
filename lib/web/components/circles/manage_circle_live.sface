@@ -6,7 +6,7 @@
       {/if} --}
   <div class="menu menu-horizontal items-center justify-between gap-3 w-full">
     {#if !e(@circle, :stereotyped, :stereotype_id, nil) and !@read_only}
-      <form phx-submit="Bonfire.Boundaries:edit" class="w-full mt-4 form-control">
+      <form phx-submit="Bonfire.Boundaries.Circles:edit" class="w-full mt-4 form-control">
         <input type="hidden" name="circle_id" value={e(@circle, :id, nil)}>
         <div class="">
           <input
@@ -90,7 +90,7 @@
         <button
           data-role="confirm_delete_circle"
           type="button"
-          :on-click="Bonfire.Boundaries:circle_delete"
+          :on-click="Bonfire.Boundaries.Circles:circle_delete"
           phx-value-go="/boundaries/circles"
           class="btn btn-error w-full"
         >

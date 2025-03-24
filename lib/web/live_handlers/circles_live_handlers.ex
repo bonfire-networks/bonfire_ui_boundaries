@@ -104,6 +104,142 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     {:noreply, socket}
   end
 
+  def handle_event("remove_from_circle", %{"subject_id" => subject}, socket) do
+    _current_user = current_user_required!(socket)
+    id = uid!(e(assigns(socket), :circle, nil))
+
+    with {:ok, _circle} <-
+           Circles.remove_from_circles(subject, id) do
+      {:noreply,
+       socket
+       |> assign_flash(:info, l("Member was removed"))
+       |> redirect_to("/boundaries/circles")}
+    end
+  end
+
+  def handle_event("toggle_circles_nav_visibility", _params, socket) do
+    debug("toggle_circles_nav_visibility")
+
+    with {:ok, settings} <-
+           Bonfire.Common.Settings.set(
+             %{
+               Bonfire.UI.Boundaries.MyCirclesLive => %{
+                 show_circles_nav_open:
+                   !Bonfire.Common.Settings.get(
+                     [Bonfire.UI.Boundaries.MyCirclesLive, :show_circles_nav_open],
+                     true,
+                     socket
+                   )
+               }
+             },
+             current_user: current_user(socket)
+           ) do
+      {
+        :noreply,
+        socket |> maybe_assign_context(settings)
+      }
+    end
+  end
+
+  def handle_event("create", %{"name" => name} = attrs, socket) do
+    circle_create(Map.merge(attrs, %{named: %{name: name}}), socket)
+  end
+
+  def handle_event("create", attrs, socket) do
+    circle_create(attrs, socket)
+  end
+
+  def handle_event("validate_for_create", attrs, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event("edit", attrs, socket) do
+    debug(e(attrs, "circle_id", nil), "edit circlee")
+    id = uid!(e(attrs, "circle_id", nil))
+
+    with {:ok, circle} <-
+           Circles.edit(
+             id,
+             current_user_required!(socket),
+             attrs
+           ) do
+      send_self(page_title: e(circle, :named, :name, nil))
+      # maybe_send_update(Bonfire.UI.Boundaries.ManageCircleLive, "view_circle", circle: circle)
+      maybe_send_update(Bonfire.UI.Common.ReusableModalLive, "edit_boundary", show: false)
+
+      {:noreply,
+       socket
+       |> assign_flash(:info, l("Edited!"))
+       # Close the modal by setting show to false
+       |> assign(show: false)
+       |> assign(circle: circle)}
+    else
+      other ->
+        error(other)
+
+        {:noreply, assign_flash(socket, :error, l("Could not edit circle"))}
+    end
+  end
+
+  def handle_event("circle_edit", %{"circle" => circle_params}, socket) do
+    # params = input_to_atoms(params)
+    id = uid!(e(assigns(socket), :circle, nil))
+
+    with {:ok, _circle} <-
+           Circles.edit(id, current_user_required!(socket), %{
+             encircles: e(circle_params, "encircle", [])
+           }) do
+      {:noreply, assign_flash(socket, :info, "OK")}
+    end
+  end
+
+  def handle_event("circle_delete", _, socket) do
+    id = uid!(e(assigns(socket), :circle, nil))
+
+    with {:ok, _circle} <-
+           Circles.delete(id, current_user_required!(socket)) |> debug() do
+      {:noreply,
+       socket
+       |> assign_flash(:info, l("Deleted"))
+       |> redirect_to("/boundaries/circles")}
+    end
+  end
+
+  def circle_create(attrs, socket) do
+    current_user = current_user_required!(socket)
+    scope = maybe_to_atom(e(attrs, "scope", nil))
+
+    with {:ok, %{id: id} = circle} <-
+           Circles.create(
+             scope || current_user,
+             attrs
+           ) do
+      # Bonfire.UI.Common.OpenModalLive.close()
+
+      socket
+      |> assign_flash(:info, "Circle created!")
+      |> assign(
+        circles: [circle] ++ e(assigns(socket), :circles, []),
+        section: nil
+      )
+      |> maybe_redirect_to(
+        ~p"/circle/#{id}",
+        attrs
+      )
+      |> maybe_add_to_acl(circle)
+    end
+  end
+
+  defp maybe_add_to_acl(socket, subject) do
+    _current_user = current_user_required!(socket)
+
+    if e(assigns(socket), :acl, nil) do
+      Bonfire.UI.Boundaries.AclLive.add_to_acl(subject, socket)
+    else
+      {:noreply, socket}
+    end
+  end
+
   defp maybe_filter_current_user(results, %{assigns: %{circle_type: circle_type}} = socket)
        when circle_type in [:silence, :ghost] do
     current_user_id = current_user_id(socket)
@@ -176,27 +312,143 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     end
   end
 
-  def handle_event("toggle_circles_nav_visibility", _params, socket) do
-    debug("toggle_circles_nav_visibility")
+  # def set_circles(selected_circles, previous_circles, add_to_previous \\ false) do
+  #   # debug(previous_circles: previous_circles)
+  #   # selected_circles = Enum.uniq(selected_circles)
+  #   # debug(selected_circles: selected_circles)
 
-    with {:ok, settings} <-
-           Bonfire.Common.Settings.set(
-             %{
-               Bonfire.UI.Boundaries.MyCirclesLive => %{
-                 show_circles_nav_open:
-                   !Bonfire.Common.Settings.get(
-                     [Bonfire.UI.Boundaries.MyCirclesLive, :show_circles_nav_open],
-                     true,
-                     socket
-                   )
-               }
-             },
-             current_user: current_user(socket)
-           ) do
-      {
-        :noreply,
-        socket |> maybe_assign_context(settings)
-      }
+  #   previous_ids =
+  #     Enum.map(previous_circles, fn
+  #       {_name, id} -> id
+  #       _ -> nil
+  #     end)
+
+  #   # debug(previous_ids: previous_ids)
+
+  #   public = Bonfire.Boundaries.Circles.circles()[:guest]
+
+  #   # public/guests defaults to also being visible to local users and federating
+  #   selected_circles =
+  #     if public in selected_circles and public not in previous_ids do
+  #       selected_circles ++
+  #         [
+  #           Bonfire.Boundaries.Circles.circles()[:local],
+  #           Bonfire.Boundaries.Circles.circles()[:admin],
+  #           Bonfire.Boundaries.Circles.circles()[:activity_pub]
+  #         ]
+  #     else
+  #       selected_circles
+  #     end
+
+  #   # debug(new_selected_circles: selected_circles)
+
+  #   existing =
+  #     if add_to_previous,
+  #       do: previous_circles,
+  #       else: known_circle_tuples(selected_circles, previous_circles)
+
+  #   # fix this ugly thing
+  #   (existing ++
+  #      Enum.map(selected_circles, &Bonfire.Boundaries.Circles.get_tuple/1))
+  #   |> Enums.filter_empty([])
+  #   |> Enum.uniq()
+
+  #   # |> debug()
+  # end
+
+  # def known_circle_tuples(selected_circles, previous_circles) do
+  #   Enum.filter(previous_circles, fn
+  #     {%{id: id} = circle, _old_role} -> id in selected_circles
+  #     {id, _role} -> id in selected_circles
+  #     _ -> nil
+  #   end)
+  # end
+
+  def set_circles_tuples(field, circles, socket) do
+    debug(circles, "set roles for #{field}")
+    debug(e(socket, :assigns, nil), "set roles for #{field}")
+
+    previous_value =
+      e(assigns(socket), field, [])
+      |> debug("previous_value")
+
+    known_circles =
+      previous_value
+      |> Enum.map(fn
+        {%{id: id} = circle, _old_role} ->
+          {id, circle}
+
+        {%{"id" => id} = circle, _old_role} ->
+          {id, circle}
+
+        _ ->
+          nil
+      end)
+      |> debug("known_circles")
+
+    circles =
+      (circles || [])
+      |> Enum.map(fn
+        {circle, roles} ->
+          Enum.map(roles, &{ed(known_circles, id(circle), nil) || circle, &1})
+      end)
+      |> List.flatten()
+      |> debug("computed")
+
+    if previous_value != circles do
+      # WIP: Here on or boundary_items_live.ex we need to fetch the user or circle id to return a map containing the name and optional image to render on the boundary_items_live.sface
+      maybe_send_update(
+        Bonfire.UI.Boundaries.CustomizeBoundaryLive,
+        "customize_boundary_live",
+        %{field => circles}
+      )
+
+      socket
+      |> assign(field, circles)
+
+      # |> assign_global(
+      #   _already_live_selected_:
+      #     Enum.uniq(e(assigns(socket), :__context, :_already_live_selected_, []) ++ [field])
+      # )
+    else
+      socket
     end
+  end
+
+  def remove_from_circle_tuples(ids, previous_circles) do
+    deselected_circles = ids(ids)
+
+    previous_circles
+    |> debug()
+    |> Enum.reject(fn
+      {circle, _role} ->
+        id(circle) in deselected_circles
+
+      # {_name, id} -> id(circle) in deselected_circles
+      circle ->
+        id(circle) in deselected_circles
+        # _ -> nil
+    end)
+  end
+
+  def my_circles_paginated(scope, attrs \\ nil) do
+    Bonfire.Boundaries.Circles.list_my_with_counts(scope,
+      exclude_stereotypes: true,
+      exclude_built_ins: true,
+      paginate?: true,
+      paginate: attrs
+    )
+    |> repo().maybe_preload(encircles: [subject: [:profile]])
+  end
+
+  def maybe_redirect_to(socket, _, %{"no_redirect" => r}) when r != "" do
+    socket
+  end
+
+  def maybe_redirect_to(socket, path, _attrs) do
+    redirect_to(
+      socket,
+      path
+    )
   end
 end

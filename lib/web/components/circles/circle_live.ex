@@ -100,13 +100,13 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
       # object_acls = Bonfire.Boundaries.list_object_boundaries(id)
       preset_acl = Bonfire.Boundaries.Controlleds.get_preset_on_object(id)
 
-      object_boundaries =
+      object_boundary =
         Bonfire.Boundaries.boundary_on_object(id, preset_acl, current_user)
         |> debug("boundary_on_object")
 
       is_caretaker =
         creator_id == id(current_user) or
-          Bonfire.Boundaries.can?(current_user, :configure, object_boundaries)
+          Bonfire.Boundaries.can?(current_user, :configure, object_boundary)
 
       {:ok,
        %{
@@ -119,18 +119,19 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
            |> Map.put(:creator_username, creator_username),
          name: e(circle, :named, :name, nil),
          loaded: true,
-         to_boundaries: object_boundaries,
+         to_boundaries: object_boundary,
          boundary_preset:
            Bonfire.Boundaries.preset_boundary_tuple_from_acl(
              preset_acl,
-             Bonfire.Data.AccessControl.Circle
+             Bonfire.Data.AccessControl.Circle,
+             custom_tuple: {"custom", l("Custom")}
            )
            |> debug("boundary_preset"),
          is_caretaker: is_caretaker,
          read_only:
            is_nil(current_user) or
              !(is_caretaker or
-                 Bonfire.Boundaries.can?(current_user, :edit, object_boundaries)
+                 Bonfire.Boundaries.can?(current_user, :edit, object_boundary)
                  |> debug("can assign?"))
        }}
     end

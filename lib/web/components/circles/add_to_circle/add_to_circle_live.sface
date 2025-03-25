@@ -23,7 +23,7 @@
       {#else}
         <div class="btn w-full flex-1 btn-secondary btn-soft">
           <#Icon iconify="rivet-icons:circle" class="w-4 h-4 shrink-0" />
-          <span class="sr-only">{@label || l("Add to circles")}</span>
+          <span class="">{@label || l("Add to circles")}</span>
         </div>
       {/if}
     </:open_btn>

@@ -108,6 +108,8 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
         case Bonfire.Boundaries.Roles.verbs_for_role(maybe_to_atom(role_name), opts) do
           {:ok, can_verbs, cannot_verbs} ->
             # Transform verbs into {verb, status} pairs for the template
+            debug(can_verbs, "can_verbs")
+            debug(cannot_verbs, "cannot_verbs")
             verb_statuses =
               @verb_order
               |> Enum.map(fn verb ->

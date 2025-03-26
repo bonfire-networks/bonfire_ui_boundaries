@@ -1,5 +1,6 @@
 <div class="w-full bg-base-content/5 relative overflow-y-visible overflow-x-auto">
   {#if Enum.count(@roles_with_verbs || []) > 0}
+  {inspect(@roles_with_verbs)}
     <table class="table table-zebra">
       <thead class="text-xs uppercase sticky top-0 z-10 bg-base-100">
         <tr>

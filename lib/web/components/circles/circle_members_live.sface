@@ -28,7 +28,7 @@
 
         {#case @with_batch_follow && current_user_id(@__context__) && Map.keys(@members)}
           {#match ids when is_list(ids)}
-            <StatefulComponent
+            <!-- <StatefulComponent
               module={maybe_component(Bonfire.UI.Social.Graph.FollowButtonLive, @__context__)}
               id={ComponentID.new(Bonfire.UI.Social.Graph.FollowButtonLive, ids, __MODULE__)}
               object_ids={ids}
@@ -37,7 +37,21 @@
               label={l("all members")}
               container_class="ml-auto"
               class="btn btn-primary"
-            />
+            /> -->
+
+            <a
+              phx-click={click_with_data_id("#circle_members", "a", "follow")}
+              rel="noopener noreferrer"
+              phx-disable-with={l("Following all...")}
+              class="btn btn-primary"
+            >
+              <div class="flex items-center gap-2">
+                <div iconify="heroicons-solid:user-add" class="w-4 h-4 shrink-0" aria-hidden="true" />
+
+                <span class="truncate ellipsis ml-2">
+                  {l("Follow all members")}</span>
+              </div>
+            </a>
           {#match _}
         {/case}
       </li>

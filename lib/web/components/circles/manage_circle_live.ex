@@ -33,38 +33,6 @@ defmodule Bonfire.UI.Boundaries.ManageCircleLive do
     }
   end
 
-  def update(%{circle: %{} = circle} = assigns, %{assigns: %{to_boundaries: nil}} = socket) do
-    debug(circle, "circle already loaded")
-
-    socket =
-      socket
-      |> assign(assigns)
-
-    object_acls = Bonfire.Boundaries.list_object_boundaries(circle)
-    # |> debug("acls")
-
-    # {preset_acls, custom_acls} =
-    #   object_acls
-    #   |> Enum.split_with(&e(&1, :named, nil))
-    # |> debug("preset vs custom acls")
-
-    {:ok,
-     assign(
-       socket,
-       loaded: true,
-       #  page_title: l("Circle"),
-       #  suggestions: suggestions,
-       #  settings_section_title: "Manage " <> e(circle, :named, :name, "") <> " circle",
-       to_boundaries: object_acls |> debug("custom_acls"),
-       boundary_preset:
-         Bonfire.Boundaries.preset_boundary_tuple_from_acl(
-           object_acls,
-           Bonfire.Data.AccessControl.Circle
-         )
-         |> debug("boundary_preset")
-     )}
-  end
-
   def update(%{circle: nil} = assigns, socket) do
     debug("need to load the circle")
     current_user = current_user(assigns) || current_user(assigns(socket))
@@ -111,7 +79,7 @@ defmodule Bonfire.UI.Boundaries.ManageCircleLive do
         #  settings_section_title: "Manage " <> e(circle, :named, :name, "") <> " circle"
       })
       |> debug("circle loaded")
-      |> update(socket)
+      |> assign(socket)
 
       # else other ->
       #   error(other)
@@ -128,9 +96,59 @@ defmodule Bonfire.UI.Boundaries.ManageCircleLive do
     end
   end
 
+  def update(%{boundary_preset: boundary_preset} = assigns, socket)
+      when is_nil(boundary_preset) or boundary_preset == {"custom", "Custom"} do
+    circle =
+      debug(
+        e(assigns, :circle, :id, nil) || e(assigns, :circle_id, nil) ||
+          e(assigns(socket), :circle, :id, nil) || e(assigns(socket), :circle_id, nil),
+        "circle already loaded, but we're not sure what its boundaries are"
+      )
+
+    socket
+    |> assign(assigns)
+    |> load_boundaries(circle)
+  end
+
   def update(assigns, socket) do
+    debug(assigns, "nothing to do")
+
     {:ok,
      socket
      |> assign(assigns)}
+  end
+
+  def load_boundaries(socket, circle) do
+    debug(circle, "circle already loaded, but we're not sure what its boundaries are")
+
+    object_acls = Bonfire.Boundaries.list_object_boundaries(circle)
+    # |> debug("acls")
+
+    boundary_preset =
+      if object_acls == [] do
+        {"private", l("Private")}
+      end
+
+    # {preset_acls, custom_acls} =
+    #   object_acls
+    #   |> Enum.split_with(&e(&1, :named, nil))
+    # |> debug("preset vs custom acls")
+
+    {:ok,
+     assign(
+       socket,
+       loaded: true,
+       #  page_title: l("Circle"),
+       #  suggestions: suggestions,
+       #  settings_section_title: "Manage " <> e(circle, :named, :name, "") <> " circle",
+       to_boundaries: object_acls |> debug("custom_acls"),
+       boundary_preset:
+         (boundary_preset ||
+            Bonfire.Boundaries.preset_boundary_tuple_from_acl(
+              object_acls,
+              Bonfire.Data.AccessControl.Circle
+            ))
+         |> debug("boundary_preset")
+     )}
   end
 end

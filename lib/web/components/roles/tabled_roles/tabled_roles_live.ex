@@ -110,6 +110,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
             # Transform verbs into {verb, status} pairs for the template
             debug(can_verbs, "can_verbs")
             debug(cannot_verbs, "cannot_verbs")
+
             verb_statuses =
               @verb_order
               |> Enum.map(fn verb ->

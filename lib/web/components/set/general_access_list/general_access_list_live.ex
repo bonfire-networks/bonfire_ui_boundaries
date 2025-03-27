@@ -9,6 +9,7 @@ defmodule Bonfire.UI.Boundaries.GeneralAccessListLive do
   prop my_acls, :any, default: nil
   prop to_boundaries, :any, default: nil
   prop hide_custom, :boolean, default: false
+  prop hide_private, :boolean, default: true
   prop is_customizable, :boolean, default: false
   prop scope, :any, default: :user
 

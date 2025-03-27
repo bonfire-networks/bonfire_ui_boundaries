@@ -61,6 +61,7 @@
             "phx-target" => @myself
           }}
           hide_presets={false}
+          hide_private={false}
           hide_custom
           to_boundaries={@to_boundaries}
           boundary_preset={@boundary_preset}

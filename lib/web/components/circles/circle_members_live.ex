@@ -174,24 +174,44 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
     add_member(input_to_atoms(e(assigns(socket), :suggestions, %{})[id]) || id, socket)
   end
 
+  # def handle_event(
+  #       "multi_select",
+  #       %{"_target" => ["add_to_circles", module_name], "add_to_circles" => multi_select_data} =
+  #         params,
+  #       socket
+  #     ) do
+  #   debug(multi_select_data, "multi_select_data")
+  #   debug(module_name, "module_name")
+
+  #   with {:ok, json_str} when is_binary(json_str) <- Map.fetch(multi_select_data, module_name),
+  #        {:ok, data} when is_map(data) <- Jason.decode(json_str) do
+  #     debug(data, "multi_select_decoded")
+  #     add_member(input_to_atoms(data), socket)
+  #   else
+  #     error ->
+  #       debug(error, "multi_select_decode_error")
+  #       {:noreply, socket}
+  #   end
+  # end
+
   def handle_event(
         "multi_select",
-        %{"_target" => ["add_to_circles", module_name], "add_to_circles" => multi_select_data} =
-          params,
+        %{
+          "Elixir.Bonfire.UI.Boundaries.CircleMembersLive_text_input" => "",
+          "Elixir.Bonfire.UI.Boundaries.CircleMembersLive" => ""
+        },
+        socket
+      ) do
+    {:noreply, socket}
+  end
+
+  def handle_event(
+        "multi_select",
+        %{"_target" => _target, "add_to_circles" => multi_select_data},
         socket
       ) do
     debug(multi_select_data, "multi_select_data")
-    debug(module_name, "module_name")
-
-    with {:ok, json_str} when is_binary(json_str) <- Map.fetch(multi_select_data, module_name),
-         {:ok, data} when is_map(data) <- Jason.decode(json_str) do
-      debug(data, "multi_select_decoded")
-      add_member(input_to_atoms(data), socket)
-    else
-      error ->
-        debug(error, "multi_select_decode_error")
-        {:noreply, socket}
-    end
+    {:noreply, socket}
   end
 
   # Catch-all for other multi_select events

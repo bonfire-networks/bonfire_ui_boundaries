@@ -7,6 +7,60 @@ defmodule Bonfire.Boundaries.LiveHandler do
   alias Bonfire.Boundaries.Roles
   # alias Bonfire.Boundaries.Grants
 
+  def handle_event(
+        "multi_select",
+        %{data: %{"id" => id, "username" => username}} = _params,
+        socket
+      )
+      when not is_nil(id) and not is_nil(username) do
+    {:noreply, preview(socket, id, username)}
+  end
+
+  def preview(socket, id, username) do
+    current_user = current_user(assigns(socket))
+
+    boundaries =
+      Enum.map(
+        List.wrap(socket.assigns[:boundary_preset] || socket.assigns[:to_boundaries] || []),
+        fn
+          {slug, _} -> slug
+          slug -> slug
+        end
+      )
+
+    opts = [
+      preview_for_id: id,
+      boundary: e(boundaries, "mentions"),
+      to_circles: e(assigns(socket), :to_circles, []),
+      context_id: e(assigns(socket), :context_id, nil)
+      # TODO: also calculate mentions from current draft text to take those into account in boundary calculation
+      # mentions: [],
+      # reply_to_id: e(assigns(socket), :reply_to_id, nil),
+    ]
+
+    with {:ok, verbs} <-
+           Bonfire.Boundaries.Acls.preview(current_user, opts)
+           |> debug("preview") do
+      role = Bonfire.Boundaries.Roles.preset_boundary_role_from_acl(verbs)
+
+      role_name =
+        case role do
+          {role_name, _permissions} -> role_name
+          _ -> nil
+        end
+
+      socket
+      |> assign(
+        role_name: role_name,
+        preview_boundary_for_username: username,
+        preview_boundary_for_id: id || :guests,
+        preview_boundary_verbs: verbs
+      )
+
+      # |> push_event("change", "#smart_input")
+    end
+  end
+
   def handle_event("set_default_boundary", %{"id" => id, "scope" => scope} = _params, socket) do
     Bonfire.Common.Settings.LiveHandler.handle_event(
       "set",

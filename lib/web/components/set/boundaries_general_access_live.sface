@@ -10,6 +10,7 @@
           id="define_boundary"
           no_actions
           no_header
+          without_form
           open_btn_wrapper_class="flex flex-1 w-full"
         >
           <Bonfire.UI.Boundaries.CustomizeBoundaryLive

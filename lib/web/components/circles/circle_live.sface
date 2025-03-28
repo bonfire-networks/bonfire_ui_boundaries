@@ -1,4 +1,7 @@
-<div class="w-full max-w-full flex flex-col feed w-full max-w-full lg:rounded-xl lg:shadow bg-base-100">
+<div
+  id="circle_view"
+  class="w-full max-w-full flex flex-col feed w-full max-w-full lg:rounded-xl lg:shadow bg-base-100"
+>
   <header class="flex flex-col p-8 pb-0 border-b border-base-content/10">
     <div class="flex items-start gap-4">
       <#Icon iconify="gravity-ui:square-list-ul" class="w-12 h-12 rotate-15 text-secondary stroke-1" />
@@ -12,49 +15,53 @@
           {/if}
         </div>
 
-        <StatelessComponent
-          module={maybe_component(Bonfire.UI.Boundaries.BoundaryIconStatelessLive)}
-          with_label={false}
-          object={@circle}
-          object_type={Bonfire.Data.AccessControl.Circle}
-          object_boundaries={@to_boundaries}
-          boundary_preset={@boundary_preset}
-        />
-
-        {#if @is_caretaker}
-          <div data-role="edit_circle_name" class="edit_name">
-            <Bonfire.UI.Common.OpenModalLive
-              id="edit_name"
-              title_text={l("Edit circle")}
-              no_actions
-              open_btn_wrapper_class="flex flex-1 w-full"
-            >
-              <Bonfire.UI.Boundaries.ManageCircleLive
-                id={"members_#{@circle_id || id(@circle)}"}
-                circle_id={@circle_id || id(@circle)}
-                circle={@circle}
-                read_only={@read_only}
-                to_boundaries={@to_boundaries}
-                boundary_preset={@boundary_preset}
-              />
-
-              <:open_btn>
-                <div class="btn btn-sm btn-primary btn-soft">
-                  <#Icon iconify="mingcute:settings-6-fill" class="w-5 h-5 mr-2" />
-                  <span class="sr-only">{l("Edit circle")}</span>
-                </div>
-              </:open_btn>
-            </Bonfire.UI.Common.OpenModalLive>
+        <div class="flex items-center gap-2">
+          <div class="tooltip" data-tip="hello">
+            <StatelessComponent
+              module={maybe_component(Bonfire.UI.Boundaries.BoundaryIconStatelessLive)}
+              object={@circle}
+              class="btn btn-sm btn-circle"
+              object_type={Bonfire.Data.AccessControl.Circle}
+              object_boundaries={@to_boundaries}
+              boundary_preset={@boundary_preset}
+            />
           </div>
 
-          {!-- <Link
+          {#if @is_caretaker}
+            <div data-role="edit_circle_name" class="edit_name">
+              <Bonfire.UI.Common.OpenModalLive
+                id="edit_name"
+                title_text={l("Edit circle")}
+                no_actions
+                open_btn_wrapper_class="flex flex-1 w-full"
+              >
+                <Bonfire.UI.Boundaries.ManageCircleLive
+                  id={"members_#{@circle_id || id(@circle)}"}
+                  circle_id={@circle_id || id(@circle)}
+                  circle={@circle}
+                  read_only={@read_only}
+                  to_boundaries={@to_boundaries}
+                  boundary_preset={@boundary_preset}
+                />
+
+                <:open_btn>
+                  <div class="btn btn-sm btn-primary btn-circle btn-soft">
+                    <#Icon iconify="mingcute:settings-6-fill" class="w-4 h-4" />
+                    <span class="sr-only">{l("Edit circle")}</span>
+                  </div>
+                </:open_btn>
+              </Bonfire.UI.Common.OpenModalLive>
+            </div>
+
+            {!-- <Link
           to={~p"/boundaries/scope/user/circle/#{id(@circle)}"}
           class="btn btn-primary btn-sm btn-circle btn-soft"
         >
           <#Icon iconify="ph:gear-fill" class="w-4 h-4" />
           <!-- {l("Edit circle")}</Link> -->
         </Link> --}
-        {/if}
+          {/if}
+        </div>
       </div>
     </div>
     <div role="tablist" class="tabs pt-8 justify-evenly w-full tabs-border">

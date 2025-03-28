@@ -23,13 +23,14 @@
       <form
         class="gap-2 flex items-center"
         phx-change="multi_select"
-        phx-target="#smart_input_container"
+        phx-target="#customize-boundary-live"
       >
         <Bonfire.UI.Common.MultiselectLive
           :if={!@read_only}
           implementation={:live_select}
           field={:to_circles}
           form_input_name={__MODULE__}
+          event_target="#smart_input"
           preloaded_options={results_for_multiselect(@my_circles || [])}
           label={l("Add circles or people")}
         />
@@ -72,11 +73,12 @@
       class="p-3 border border-dashed border-error/20 bg-error/5 rounded-lg"
     >
       <div class="text-sm text-center mb-2 text-error/90 font-medium">{l("Revoke permissions")}</div>
-      <form phx-change="multi_select" phx-target="#smart_input_container">
+      <form phx-change="multi_select" phx-target="#customize-boundary-live">
         <Bonfire.UI.Common.MultiselectLive
           :if={!@read_only}
           implementation={:live_select}
           field={:exclude_circles}
+          event_target="#smart_input"
           form_input_name={Bonfire.UI.Boundaries.ExcludeBoundaries}
           preloaded_options={results_for_multiselect(@my_circles, :exclude_circles)}
           label={l("Select or search for circles or people to exclude")}

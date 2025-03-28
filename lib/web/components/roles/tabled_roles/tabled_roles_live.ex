@@ -54,11 +54,13 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
         :roles,
         Bonfire.Boundaries.Roles.role_verbs(:all,
           current_user: current_user,
+          one_scope_only: true,
           scope: scope
         )
       )
       |> get_roles_with_verbs(
         current_user: current_user,
+        one_scope_only: true,
         scope: scope
       )
       |> debug("roles_with_verbsss")
@@ -169,7 +171,8 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
             )
             |> get_roles_with_verbs(
               scope: scope,
-              current_user: current_user
+              current_user: current_user,
+              one_scope_only: true
             )
           )
         }

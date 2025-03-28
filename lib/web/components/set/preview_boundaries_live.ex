@@ -1,5 +1,6 @@
 defmodule Bonfire.UI.Boundaries.PreviewBoundariesLive do
   use Bonfire.UI.Common.Web, :stateful_component
+  use Bonfire.Common.Utils
   # alias Bonfire.Boundaries.Roles
 
   # declare_module_optional(l("Preview boundaries in composer"),
@@ -39,22 +40,22 @@ defmodule Bonfire.UI.Boundaries.PreviewBoundariesLive do
   #   }
   # end
 
-  def update(assigns, socket) do
-    socket =
-      socket
-      |> assign(assigns)
-      |> assign_new(:boundary_preset, fn ->
-        assigns[:boundary_preset] || socket.assigns[:boundary_preset]
-      end)
-      |> assign_new(:to_boundaries, fn ->
-        assigns[:to_boundaries] || socket.assigns[:to_boundaries]
-      end)
-      |> assign(all_verbs: Bonfire.Boundaries.Verbs.verbs())
-
-    {:ok, socket}
-  end
+  # def update(assigns, socket) do
+  #   socket =
+  #     socket
+  #     |> assign(assigns)
+  #     |> assign_new(:boundary_preset, fn ->
+  #       assigns[:boundary_preset] || socket.assigns[:boundary_preset]
+  #     end)
+  #     |> assign_new(:to_boundaries, fn ->
+  #       assigns[:to_boundaries] || socket.assigns[:to_boundaries]
+  #     end)
+  #     |> assign(all_verbs: Bonfire.Boundaries.Verbs.verbs())
+  #   {:ok, socket}
+  # end
 
   def handle_event("live_select_change", %{"id" => live_select_id, "text" => search}, socket) do
+    # Only trigger search if the search text is at least 3 characters to prevent unnecessary operations
     Utils.maybe_apply(
       Bonfire.Me.Users,
       :search,
@@ -72,41 +73,54 @@ defmodule Bonfire.UI.Boundaries.PreviewBoundariesLive do
 
   def handle_event(
         "multi_select",
+        %{data: %{"id" => id, "username" => username}} = _params,
+        socket
+      )
+      when not is_nil(id) and not is_nil(username) do
+    {:noreply, preview(socket, id, username)}
+  end
+
+  def handle_event(
+        "multi_select",
         %{
+          "_target" => _target,
+          "preview_boundaries_form" => %{
+            id: id,
+            username: username
+          },
+          "preview_boundaries_text_input" => text_input
+        } = _params,
+        socket
+      )
+      when not is_nil(id) and not is_nil(username) do
+    {:noreply, preview(socket, id, username)}
+  end
+
+  # THIS SHOULD NOT BE FIRED AT ALL
+  def handle_event(
+        "multi_select",
+        %{
+          "_target" => _target,
           "multi_select" => %{
-            "Elixir.Bonfire.UI.Boundaries.PreviewBoundariesLive" => data_json
-            # other params...
+            "Elixir.Bonfire.UI.Boundaries.PreviewBoundariesLive" => "",
+            "Elixir.Bonfire.UI.Boundaries.PreviewBoundariesLive_text_input" => ""
           }
-        } = params,
+        },
         socket
       ) do
-    # Decode JSON strings
-    data = Jason.decode!(data_json)
-
-    # Extract necessary values
-    id = e(data, "id", nil)
-    username = e(data, "username", nil)
-
-    # Assign the decoded `to_boundaries` to the socket
-    # socket = assign(socket, :to_boundaries, to_boundaries)
-
-    # Proceed with preview
-    {:noreply, preview(socket, id, username)}
+    {:noreply, socket}
   end
 
+  # THIS I DONT KNOW WHY IT IS FIRED
   def handle_event(
         "multi_select",
-        %{data: %{"id" => id, "username" => username}} = params,
+        %{
+          "_target" => _target,
+          "multi_select" => multi_select_data
+        } = _params,
         socket
       ) do
-    {:noreply, preview(socket, id, username)}
-  end
-
-  def handle_event(
-        "multi_select",
-        %{data: _data, text: _text} = params,
-        socket
-      ) do
+    debug(multi_select_data, "multi_select_data")
     {:noreply, socket}
   end
 

@@ -4,7 +4,7 @@
       href={"/remote_interaction?type=block&name=#{l("this user or instance")}&url=#{@permalink || URIs.canonical_url(@object)}"}
       class="flex items-center w-full gap-2 text-sm text-base-content"
     >
-      <#Icon iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" />
+      <!-- <#Icon iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" /> -->
       <span class="truncate ellipsis">{l("Block")}</span>
     </a>
   </li>
@@ -18,7 +18,7 @@
         <details>
           <summary class="text-base-content/70">
             <div class="flex items-center w-full gap-2 text-sm text-base-content">
-              <#Icon iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" />
+              <!-- <#Icon iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" /> -->
               <span class="truncate ellipsis">{l("Block")}</span>
             </div>
           </summary>
@@ -33,7 +33,7 @@
                   type={:hide}
                   open_btn_label={@open_btn_label}
                   parent_id={"user-#{@parent_id}"}
-                  with_icon
+                  with_icon={@with_icon}
                   label={@extra_object_label}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
                 />
@@ -50,7 +50,7 @@
                   type={:ghost}
                   open_btn_label={@open_btn_label}
                   parent_id={"user-#{@parent_id}"}
-                  with_icon
+                  with_icon={@with_icon}
                   label={e(@object, :profile, :name, l("this user"))}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
                 />
@@ -64,7 +64,7 @@
                   type={:silence}
                   open_btn_label={@open_btn_label}
                   parent_id={"user-#{@parent_id}"}
-                  with_icon
+                  with_icon={@with_icon}
                   label={e(@object, :profile, :name, l("this user"))}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
                 />
@@ -78,7 +78,7 @@
                   type={:block}
                   open_btn_label={@open_btn_label}
                   parent_id={"user-#{@parent_id}"}
-                  with_icon
+                  with_icon={@with_icon}
                   label={e(@object, :profile, :name, l("this user"))}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
                 />
@@ -89,7 +89,7 @@
               <!-- Block user's instance -->
               <li class="">
                 <Bonfire.UI.Boundaries.BlockButtonLive
-                  with_icon
+                  with_icon={@with_icon}
                   type={:ghost}
                   object={block_peer}
                   is_local_user={false}
@@ -101,7 +101,7 @@
               </li>
               <li class="">
                 <Bonfire.UI.Boundaries.BlockButtonLive
-                  with_icon
+                  with_icon={@with_icon}
                   type={:silence}
                   object={block_peer}
                   is_local_user={false}
@@ -113,7 +113,7 @@
               </li>
               <li class="">
                 <Bonfire.UI.Boundaries.BlockButtonLive
-                  with_icon
+                  with_icon={@with_icon}
                   type={:block}
                   object={block_peer}
                   is_local_user={false}

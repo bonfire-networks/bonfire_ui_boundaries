@@ -15,14 +15,13 @@
       name={@name}
     />
     <:open_btn>
-      {#if !@as_icon}
-        <div class="flex items-center w-full gap-2 text-sm text-base-content">
+      {#if @as_icon}
+        <div class="btn w-full flex-1 btn-secondary btn-soft">
           <#Icon iconify="rivet-icons:circle" class="w-4 h-4 shrink-0" />
           <span>{@label || l("Add to circles")}</span>
         </div>
       {#else}
-        <div class="btn w-full flex-1 btn-secondary btn-soft">
-          <#Icon iconify="rivet-icons:circle" class="w-4 h-4 shrink-0" />
+        <div class="flex items-center w-full gap-2 text-sm text-base-content">
           <span class="">{@label || l("Add to circles")}</span>
         </div>
       {/if}

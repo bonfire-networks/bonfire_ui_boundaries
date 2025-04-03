@@ -58,7 +58,6 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
          # TODO
          read_only: true,
          page_title: name,
-         members: [],
          feed_name: :custom,
          feed_title: name,
          feed_filters: %{subject_circles: [e(data, :circle, :id, nil)]},

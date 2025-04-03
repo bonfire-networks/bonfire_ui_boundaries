@@ -33,26 +33,23 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       account = fake_account!()
       me = fake_user!(account)
       alice = fake_user!(account)
+
       {:ok, circle} = Circles.create(me, %{named: %{name: "family"}})
       conn = conn(user: me, account: account)
       next = "/circle/#{circle.id}/members"
       {:ok, view, _html} = live(conn, next)
 
-      render_submit(view, "multi_select",
-      %{
-        data: %{
-          "field" => "to_circles",
-          "icon" => "/images/avatar.png",
-          "id" => "01JQ1V2GQ3JCBM8EZESQ10MP1Z",
-          "name" => "Nicolas-Carroll",
-          "type" => "user",
-          "username" => "Nicolas_Carroll"
-        },
-        text: "Nicolas-Carroll - Nicolas_Carroll"
-      })
-
-
-      assert render(view) =~ "Added to circle!"
+      assert render_submit(view, "Bonfire.UI.Boundaries.CircleMembersLive:multi_select", %{
+               "data" => %{
+                 "field" => "to_circles",
+                 "icon" => "/images/avatar.png",
+                 "id" => id(alice),
+                 "name" => "alice",
+                 "type" => "user",
+                 "username" => "alice"
+               },
+               "text" => "alice"
+             }) =~ "Added to circle!"
     end
 
     test "I can remove a user from a circle", %{conn: conn, me: me, account: account} do
@@ -101,7 +98,11 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       |> assert_has(text: "meme")
     end
 
-    test "I can add a user and assign a role to a boundary", %{conn: conn, me: me, account: account} do
+    test "I can add a user and assign a role to a boundary", %{
+      conn: conn,
+      me: me,
+      account: account
+    } do
       alice = fake_user!(account)
       {:ok, acl} = Acls.create(%{named: %{name: "meme"}}, current_user: me)
 
@@ -126,7 +127,11 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       |> assert_has(text: "Removed from boundary")
     end
 
-    test "I can add a circle and assign a role to a boundary", %{conn: conn, me: me, account: account} do
+    test "I can add a circle and assign a role to a boundary", %{
+      conn: conn,
+      me: me,
+      account: account
+    } do
       {:ok, circle} = Circles.create(me, %{named: %{name: "family"}})
       {:ok, acl} = Acls.create(%{named: %{name: "meme"}}, current_user: me)
 
@@ -166,17 +171,25 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       # Verify the current role and change it
       conn
       |> visit("/boundaries/acl/#{acl.id}")
-      |> assert_has("#edit_grants ul:first-child select option[selected]", text: "Cannot Participate")
+      |> assert_has("#edit_grants ul:first-child select option[selected]",
+        text: "Cannot Participate"
+      )
       |> choose("Cannot Interact")
       |> assert_has(text: "Role assigned")
 
       # Verify the role was updated
       conn
       |> visit("/boundaries/acl/#{acl.id}")
-      |> assert_has("#edit_grants ul:first-child select option[selected]", text: "Cannot Interact")
+      |> assert_has("#edit_grants ul:first-child select option[selected]",
+        text: "Cannot Interact"
+      )
     end
 
-    test "I can add a user, assign a role to a boundary, and then edit that role", %{conn: conn, me: me, account: account} do
+    test "I can add a user, assign a role to a boundary, and then edit that role", %{
+      conn: conn,
+      me: me,
+      account: account
+    } do
       alice = fake_user!(account)
       {:ok, acl} = Acls.create(%{named: %{name: "meme"}}, current_user: me)
 
@@ -191,7 +204,9 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       # Verify the current role and change it
       conn
       |> visit("/boundaries/acl/#{acl.id}")
-      |> assert_has("#edit_grants ul:first-child select option[selected]", text: "Cannot Administer")
+      |> assert_has("#edit_grants ul:first-child select option[selected]",
+        text: "Cannot Administer"
+      )
       |> choose("Cannot Read")
       |> assert_has(text: "Role assigned")
 

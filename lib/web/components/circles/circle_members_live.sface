@@ -6,12 +6,11 @@
         <div class="text-base-content/70 p-2 pb-0">{description}</div>
       {/if} --}
       <div class="menu menu-horizontal items-center justify-between gap-3 w-full">
-        <form phx-change="multi_select" phx-target={@myself} class="w-full flex-1">
+        <form id="add_members" phx-change="multi_select" phx-target={@myself} class="w-full flex-1">
           <label for={"multi_select_#{__MODULE__}_text_input"} class="sr-only">{l("Search for users to add")}</label>
           <div class="relative">
             <Bonfire.UI.Common.MultiselectLive
               implementation={:live_select}
-              event_target="#circle_view"
               mode={:single}
               form_input_name={__MODULE__}
               field={:add_to_circles}

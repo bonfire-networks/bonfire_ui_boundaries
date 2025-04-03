@@ -16,7 +16,7 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <div class="tooltip" data-tip="hello">
+          <div>
             <StatelessComponent
               module={maybe_component(Bonfire.UI.Boundaries.BoundaryIconStatelessLive)}
               object={@circle}

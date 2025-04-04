@@ -6,9 +6,19 @@
       {/if} --}
   <div class="menu menu-horizontal items-center justify-between gap-3 w-full">
     {#if !e(@circle, :stereotyped, :stereotype_id, nil) and !@read_only}
-      <form phx-submit="Bonfire.Boundaries.Circles:edit" class="w-full mt-4 form-control">
+      <form id="edit_circle_general" phx-submit="Bonfire.Boundaries.Circles:edit" class="w-full mt-4 form-control">
         <input type="hidden" name="circle_id" value={e(@circle, :id, nil)}>
-        <div class="">
+        <fieldset class="fieldset">
+          <label for="circle_name" class="fieldset-legend">{l "Circle name"}</label>
+          <input
+            id="circle_name"
+            name="named[name]"
+            value={e(@circle, :named, :name, nil)}
+            type="text"
+            class="input w-full" 
+            placeholder="Type here" />
+        </fieldset>
+        <!-- <div class="">
           <input
             id="name"
             name="named[name]"
@@ -17,11 +27,9 @@
             placeholder="Type here"
             class="w-full input input-bordered"
           />
-        </div>
-        <div class="w-full form-control mt-3">
-          <label for="description" class="">
-            <span class="sr-only">{l("Enter a description for the circle")}</span>
-          </label>
+        </div> -->
+        <fieldset class="w-full fieldset mt-2">
+          <label for="description" class="fieldset-legend">{l("Enter a description for the circle")}</label>
           <textarea
             id="description"
             name="extra_info[summary]"
@@ -29,11 +37,11 @@
             class="w-full textarea textarea-bordered"
             rows="3"
           >{e(@circle, :extra_info, :summary, "")}</textarea>
-        </div>
+        </fieldset>
         <button
           data-role="edit_name_submit"
           type="submit"
-          class="w-full mt-3 normal-case btn btn-primary"
+          class="w-full mt-2 normal-case btn btn-primary"
         >{l("Save")}</button>
       </form>
 

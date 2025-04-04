@@ -735,7 +735,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
         skip_if_set: :object_boundary,
         preload_status_key: :preloaded_async_boundaries,
         assigns_to_params_fn: &assigns_to_params/1,
-        preload_fn: &do_preload/3
+        preload_fn: &do_preload_many/3
       ]
   end
 
@@ -751,13 +751,13 @@ defmodule Bonfire.Boundaries.LiveHandler do
   end
 
   @decorate time()
-  defp do_preload(list_of_components, list_of_ids, current_user) do
+  defp do_preload_many(list_of_components, list_of_ids, current_user) do
     my_states =
       if is_list(list_of_ids) and list_of_ids != [],
         do: Boundaries.boundaries_on_objects(list_of_ids, current_user),
         else: %{}
 
-    # debug(my_states, "boundaries_on_objects")
+    error(my_states, "boundaries_on_objects!")
 
     list_of_components
     |> Map.new(fn component ->
@@ -836,7 +836,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
       {_, %{name: nil}} -> true
       _ -> false
     end)
-    |> debug("myacccl")
+
+    # |> debug("myacccl")
   end
 
   defp acl_meta(%{id: acl_id, stereotyped: %{stereotype_id: "1HANDP1CKEDZEPE0P1E1F0110W"}} = acl) do

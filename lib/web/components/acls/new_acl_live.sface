@@ -1,6 +1,5 @@
 <div class="">
   <div x-data="{name: ''}" class="w-full mt-3">
-    
     <fieldset class="w-full fieldset">
       <label for="name" class="fieldset-legentd">{l("Enter a name for the boundary preset")}</label>
       <input

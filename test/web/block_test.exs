@@ -150,7 +150,8 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       |> assert_has("[data-id=hero_data]", text: alice.profile.name)
     end
 
-    test "I can read post via direct link", %{conn: conn, alice: alice, me: me} do
+    # FIXME? is this intended behaviour?
+    test "I can still read their post via direct link", %{conn: conn, alice: alice, me: me} do
       assert {:ok, _silenced} = Bonfire.Boundaries.Blocks.block(alice, :silence, current_user: me)
       html_body = "epic html message"
       attrs = %{post_content: %{html_body: html_body}}

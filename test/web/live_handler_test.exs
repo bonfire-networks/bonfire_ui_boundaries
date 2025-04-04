@@ -53,7 +53,6 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
              }) =~ "Added to circle!"
     end
 
-
     test "I can remove a user from a circle", %{conn: conn, me: me, account: account} do
       alice = fake_user!(account)
       {:ok, circle} = Circles.create(me, %{named: %{name: "family"}})
@@ -91,6 +90,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       |> click_button("[data-role=confirm_delete_circle]", "Delete")
       # |> PhoenixTest.open_browser()
       |> assert_path("/boundaries/circles")
+
       # |> assert_has("[role=alert]", text: "Deleted")
     end
 
@@ -100,15 +100,13 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
     } do
       {:ok, circle} = Bonfire.Boundaries.Circles.create(me, %{named: %{name: "family"}})
       alice = fake_user!()
+
       conn
       |> visit("/@#{alice.character.username}")
       |> click_button("[data-id=profile_main_actions] [data-role=open_modal]", "Add to circles")
       |> click_button("[data-role=add_to_circle]", "family")
       |> assert_has("[role=alert]", text: "Added to circle!")
     end
-
-
-
   end
 
   describe "Basic Boundaries actions" do
@@ -137,13 +135,15 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
         conn
         |> click_button("[data-role=add-circle-to-acl]", "family")
       end)
-      |> assert_has("[role=alert]", text: "Select a role (or custom permissions) to finish adding it to the boundary.")
+      |> assert_has("[role=alert]",
+        text: "Select a role (or custom permissions) to finish adding it to the boundary."
+      )
       |> click_button("[data-role=open_modal]", "Edit role")
       |> within("#edit_grants", fn conn ->
         conn
         |> choose("Administer")
       end)
-      |> assert_has("[role=alert]",text: "Role assigned")
+      |> assert_has("[role=alert]", text: "Role assigned")
     end
 
     test "I can remove a user from a boundary", %{conn: conn, me: me, account: account} do
@@ -186,7 +186,6 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
     #   |> click_button("[data-role=remove_from_boundary_btn]", "Remove")
     #   |> assert_has(text: "Removed from boundary")
     # end
-
 
     test "I can edit settings of a boundary and delete it", %{conn: conn, me: me} do
       {:ok, acl} = Acls.create(%{named: %{name: "meme"}}, current_user: me)

@@ -148,7 +148,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
       conn(user: alice, account: account)
       |> visit("/feed/local")
       |> assert_has("article")
-      |> open_browser()
+      # |> open_browser()
       |> refute_has("article button[data-role=like_enabled]")
 
     # login as bob and verify that he can like the post

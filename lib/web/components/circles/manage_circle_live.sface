@@ -6,17 +6,22 @@
       {/if} --}
   <div class="menu menu-horizontal items-center justify-between gap-3 w-full">
     {#if !e(@circle, :stereotyped, :stereotype_id, nil) and !@read_only}
-      <form id="edit_circle_general" phx-submit="Bonfire.Boundaries.Circles:edit" class="w-full mt-4 form-control">
+      <form
+        id="edit_circle_general"
+        phx-submit="Bonfire.Boundaries.Circles:edit"
+        class="w-full mt-4 form-control"
+      >
         <input type="hidden" name="circle_id" value={e(@circle, :id, nil)}>
         <fieldset class="fieldset">
-          <label for="circle_name" class="fieldset-legend">{l "Circle name"}</label>
+          <label for="circle_name" class="fieldset-legend">{l("Circle name")}</label>
           <input
             id="circle_name"
             name="named[name]"
             value={e(@circle, :named, :name, nil)}
             type="text"
-            class="input w-full" 
-            placeholder="Type here" />
+            class="input w-full"
+            placeholder="Type here"
+          />
         </fieldset>
         <!-- <div class="">
           <input

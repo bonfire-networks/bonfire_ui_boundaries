@@ -37,6 +37,7 @@ defmodule Bonfire.UI.Boundaries.BlockButtonLive do
     end)
     |> assign(
       :can_instance_wide?,
+      # TODO: optimise so it doesn't make a query every time
       Bonfire.Boundaries.can?(assigns[:__context__], :block, :instance_wide)
     )
     |> render_sface()

@@ -209,5 +209,16 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       |> click_button("[data-id=delete_boundary]", "Delete this boundary preset")
       |> assert_path("/boundaries/acls")
     end
+
+    test "I can pick the preset previously created from the list of presets on composer", %{
+      conn: conn,
+      me: me
+    } do
+      {:ok, acl} = Bonfire.Boundaries.Acls.create(%{named: %{name: "New ACL"}}, current_user: me)
+
+      conn
+      |> visit("/dashboard")
+      |> assert_has("[data-role=custom_boundary]", text: "New ACL")
+    end
   end
 end

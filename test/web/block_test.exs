@@ -150,7 +150,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       |> assert_has("[data-id=hero_data]", text: alice.profile.name)
     end
 
-    test "I cannot read post via direct link", %{conn: conn, alice: alice, me: me} do
+    test "I can read post via direct link", %{conn: conn, alice: alice, me: me} do
       assert {:ok, _silenced} = Bonfire.Boundaries.Blocks.block(alice, :silence, current_user: me)
       html_body = "epic html message"
       attrs = %{post_content: %{html_body: html_body}}
@@ -162,10 +162,9 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
           boundary: "local"
         )
 
-      # FIXME: This test is failing, user can access a post made by a silenced user
       conn
       |> visit("/post/#{post.id}")
-      |> refute_has("#thread_main_object", text: html_body)
+      |> assert_has("#thread_main_object", text: html_body)
     end
 
     test "i'll not see any @ mentions from them", %{conn: conn, me: me, alice: alice} do

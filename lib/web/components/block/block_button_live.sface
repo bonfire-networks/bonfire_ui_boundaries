@@ -302,7 +302,7 @@
       <div :if={@can_instance_wide?} class="">
         {#if Bonfire.Boundaries.Blocks.is_blocked?(@object, :silence, :instance_wide) &&
             Bonfire.Boundaries.Blocks.is_blocked?(@object, :ghost, :instance_wide)}
-          {#case if(is_nil(@is_local_user), do: is_local?(@object), else: @is_local_user)}
+          {#case if(is_nil(@is_local_user), do: is_local?(@object, preload_if_needed: false), else: @is_local_user)}
             {#match true}
               <div class="">
                 <p class="mt-0 text-sm text-base-content">
@@ -333,7 +333,7 @@
         {#else}
           <div class="flex flex-col p-2 mt-5 space-y-3 border rounded border-error/30 bg-error/5">
             <div class="text-base font-semibold">{l("Super powers")}</div>
-            {#case if(is_nil(@is_local_user), do: is_local?(@object), else: @is_local_user)}
+            {#case if(is_nil(@is_local_user), do: is_local?(@object, preload_if_needed: false), else: @is_local_user)}
               {#match true}
                 <p class="mt-0 text-sm">
                   {l(

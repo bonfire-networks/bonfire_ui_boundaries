@@ -6,6 +6,14 @@ defmodule Bonfire.UI.Boundaries.SidebarCirclesLive do
     exclude_from_nav: false
   )
 
+  def update(assigns, %{assigns: %{circles: _}} = socket) do
+    debug("already loaded")
+
+    {:ok,
+     socket
+     |> assign(assigns)}
+  end
+
   def update(assigns, socket) do
     # scope = LiveHandler.scope_origin(assigns, socket)
     # |> IO.inspect

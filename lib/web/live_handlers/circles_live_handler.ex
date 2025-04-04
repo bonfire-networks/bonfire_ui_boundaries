@@ -438,7 +438,8 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
       paginate?: true,
       paginate: attrs
     )
-    |> repo().maybe_preload(encircles: [subject: [:profile]])
+
+    # |> repo().maybe_preload(encircles: [subject: [:profile]])
   end
 
   def maybe_redirect_to(socket, _, %{"no_redirect" => r}) when r != "" do

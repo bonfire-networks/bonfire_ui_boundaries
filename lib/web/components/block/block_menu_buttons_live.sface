@@ -10,7 +10,7 @@
   </li>
 {#else}
   {#case {current_user_id(@__context__) == id(@object), e(peered(@object, @peered), :peer_id, nil),
-     is_local?(@object)}}
+     is_local?(@object, preload_if_needed: false)}}
     {#match {true, _, _}}
       <div />
     {#match {_, block_peer, is_local_user}}

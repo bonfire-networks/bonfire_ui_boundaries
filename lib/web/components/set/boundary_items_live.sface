@@ -22,14 +22,14 @@
           <span class="w-9 h-9 rounded-full bg-info/10 flex items-center place-content-center">
             <#Icon iconify="rivet-icons:circle" class="inline-block w-5 h-5 text-base-content/70" />
           </span>
-          <div class="text-base font-medium text-base-content truncate max-w-[210px]">{data}</div>
+          <div class="text-base font-medium text-base-content truncate max-w-[210px]">{name(data, @my_circles)}</div>
         </div>
       {#match _}
         <div class="flex items-center gap-3 grow">
           <span class="w-9 h-9 rounded-full bg-info/10 flex items-center place-content-center">
             <#Icon iconify="rivet-icons:circle" class="inline-block w-5 h-5 text-base-content/70" />
           </span>
-          <div class="text-sm font-bold group-hover:underline text-base-content">{name(data) ||
+          <div class="text-base font-medium text-base-content truncate max-w-[210px]">{name(data) ||
               l("Unknown circle or user")}</div>
         </div>
     {/case}

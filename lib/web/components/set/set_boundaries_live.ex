@@ -202,100 +202,48 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
     {:noreply, socket}
   end
 
-  # def handle_event(
-  #       "multi_select",
-  #       %{
-  #         "_target" => ["multi_select", module_name],
-  #         "multi_select" => multi_select_data
-  #       },
-  #       socket
-  #     ) do
-  #   # Extract the JSON string for the specific module
-  #   case Map.fetch(multi_select_data, module_name) do
-  #     {:ok, json_string} ->
-  #       # Decode the JSON string
-  #       case Jason.decode(json_string) do
-  #         {:ok, %{"id" => id, "name" => name, "type" => type, "field" => field}} ->
-  #           # Convert field to atom
-  #           field_atom = maybe_to_atom(field)
+  # File: /extensions/bonfire_ui_boundaries/lib/web/live_handlers/boundaries_live_handler.ex
 
-  #           # Process the decoded data
-  #           IO.inspect({id, name, type, field_atom}, label: "Decoded MultiSelect Data")
+def handle_event(
+  "multi_select",
+  %{data: data, text: _text},
+  socket
+) do
+  field = maybe_to_atom(e(data, "field", :to_boundaries)) |> debug("field")
 
-  #           # Append the data to the existing list in the socket assigns
-  #           appended_data =
-  #             case field_atom do
-  #               :to_boundaries ->
-  #                 e(assigns(socket), field_atom, []) ++ [{id, name}]
+  # Get current values
+  current_values = e(assigns(socket), field, [])
 
-  #               :to_circles ->
-  #                 e(assigns(socket), field_atom, []) ++ [{id, nil}]
+  # Generate rich circle data if needed
+  circle_data =
+    case data do
+      %{"id" => id, "name" => name} ->
+        %{id: id, name: name, field: field}
+      other ->
+        other
+    end
 
-  #               :exclude_circles ->
-  #                 e(assigns(socket), field_atom, []) ++ [{id, nil}]
+  # Check if this circle is already in the list to avoid duplicates
+  already_exists = Enum.any?(current_values, fn {existing, _} ->
+    id(existing) == id(circle_data)
+  end)
 
-  #               _ ->
-  #                 e(assigns(socket), field_atom, []) ++ [{id, name}]
-  #             end
-  #             |> Enum.uniq()
-
-  #           {:noreply,
-  #            socket
-  #            |> assign(field_atom, appended_data)
-  #            |> assign_global(
-  #              _already_live_selected_:
-  #                Enum.uniq(
-  #                  e(assigns(socket), :__context, :_already_live_selected_, []) ++ [field_atom]
-  #                )
-  #            )}
-
-  #         {:error, %Jason.DecodeError{} = decode_error} ->
-  #           # Handle JSON decoding errors
-  #           IO.warn("Failed to decode multi_select data: #{inspect(decode_error)}")
-  #           {:noreply, socket}
-  #       end
-
-  #     :error ->
-  #       # Handle the case where the expected key is not found
-  #       IO.warn("Expected key not found in multi_select data")
-  #       {:noreply, socket}
-  #   end
-  # end
-
-  def handle_event(
-        "multi_select",
-        %{data: data, text: _text},
-        socket
-      ) do
-    # debug(data, text)
-
-    field =
-      maybe_to_atom(e(data, "field", :to_boundaries))
-      |> debug("field")
-
+  if already_exists do
+    {:noreply, socket} # Skip if already exists
+  else
+    # Add the circle with a default role (can be updated later)
     appended_data =
       case field do
         :to_boundaries ->
-          # [{"public", l("Public")}]
-          []
-          |> (e(assigns(socket), field, ...) ++
-                [{id(data), data}])
-
+          current_values ++ [{circle_data, nil}]
         :to_circles ->
-          e(assigns(socket), field, []) ++
-            [{data, nil}]
-
+          current_values ++ [{circle_data, "read"}] # Default to "read" role
         :exclude_circles ->
-          e(assigns(socket), field, []) ++
-            [{data, nil}]
-
+          current_values ++ [{circle_data, "cannot_read"}] # Default to "cannot_read" role
         _ ->
-          e(assigns(socket), field, []) ++
-            [{data, id(data)}]
+          current_values ++ [{circle_data, nil}]
       end
-      |> debug("list")
-      |> Enum.uniq()
-      |> debug("uniq")
+      |> debug("updated_list")
 
     maybe_send_update(
       Bonfire.UI.Boundaries.CustomizeBoundaryLive,
@@ -305,15 +253,13 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
 
     {:noreply,
      socket
-     |> assign(
-       field,
-       appended_data
-     )
+     |> assign(field, appended_data)
      |> assign_global(
        _already_live_selected_:
          Enum.uniq(e(assigns(socket), :__context, :_already_live_selected_, []) ++ [field])
      )}
   end
+end
 
   def handle_event("tagify_add", attrs, socket) do
     handle_event("select_boundary", attrs, socket)

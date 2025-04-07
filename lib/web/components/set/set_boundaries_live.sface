@@ -32,7 +32,7 @@
           form_input_name={__MODULE__}
           event_target="#smart_input"
           preloaded_options={results_for_multiselect(@my_circles || [])}
-          label={l("Add circles or people")}
+          label={l("Add circles")}
         />
       </form>
       <div class="flex h-full flex-1 flex-col gap-2">
@@ -53,6 +53,7 @@
               read_only={@read_only}
               to_boundaries={@to_boundaries}
               circles={@to_circles}
+              my_circles={@my_circles}
               roles_for_dropdown={(@roles_for_dropdown || [])
               |> Enum.reject(fn
                 {"cannot_" <> _, _} -> true
@@ -84,12 +85,16 @@
           label={l("Select or search for circles or people to exclude")}
         />
       </form>
+      {inspect(@exclude_circles)}
+      {inspect(@to_circles)}
       {#if is_list(@exclude_circles) && @exclude_circles != []}
+
         <form phx-change="Bonfire.Boundaries:select" class="mt-2" phx-target="#smart_input_live">
           <Bonfire.UI.Boundaries.BoundaryItemsLive
             read_only={@read_only}
             to_boundaries={[]}
             circles={@exclude_circles}
+            my_circles={@my_circles}
             field={:exclude_circles}
             roles_for_dropdown={(@roles_for_dropdown || [])
             |> Enum.filter(fn

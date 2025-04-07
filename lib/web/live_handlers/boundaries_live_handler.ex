@@ -332,7 +332,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
   def handle_event("select", %{"exclude_circles" => circles} = _params, socket) do
     {:noreply,
-    socket |> Bonfire.Boundaries.Circles.LiveHandler.set_circles_tuples(:exclude_circles, circles, ...)}
+     socket
+     |> Bonfire.Boundaries.Circles.LiveHandler.set_circles_tuples(:exclude_circles, circles, ...)}
   end
 
   def handle_event("select", _params, socket) do

@@ -25,12 +25,20 @@ defmodule Bonfire.UI.Boundaries.BoundaryItemsLive do
         debug(circle, "built-in circle check")
 
         case circle do
-          {name, _id} when is_binary(name) -> name
-          {slug, %{name: name}} when is_atom(slug) and is_binary(name) -> name
+          {name, _id} when is_binary(name) ->
+            name
+
+          {slug, %{name: name}} when is_atom(slug) and is_binary(name) ->
+            name
+
           # Check for special stereotypes
           _ ->
             if Bonfire.Boundaries.Circles.is_stereotype?(data) do
-              circle_map = Enum.find(Bonfire.Boundaries.Circles.circles() |> Map.values(), fn c -> c.id == data end)
+              circle_map =
+                Enum.find(Bonfire.Boundaries.Circles.circles() |> Map.values(), fn c ->
+                  c.id == data
+                end)
+
               debug(circle_map, "stereotype circle map")
               e(circle_map, :name, data)
             else
@@ -42,10 +50,17 @@ defmodule Bonfire.UI.Boundaries.BoundaryItemsLive do
                 # If all else fails, fetch directly as a last resort
                 # Use a safe try-rescue block to catch any ID validation errors
                 try do
-                  with {:ok, circle} <- Bonfire.Boundaries.Circles.get(data, [exclude_stereotypes: false, exclude_block_stereotypes: false, exclude_built_ins: false]) do
-                    name = e(circle, :named, :name, nil) ||
-                          e(circle, :stereotyped, :named, :name, nil) ||
-                          e(circle, :stereotype_named, :name, nil)
+                  with {:ok, circle} <-
+                         Bonfire.Boundaries.Circles.get(data,
+                           exclude_stereotypes: false,
+                           exclude_block_stereotypes: false,
+                           exclude_built_ins: false
+                         ) do
+                    name =
+                      e(circle, :named, :name, nil) ||
+                        e(circle, :stereotyped, :named, :name, nil) ||
+                        e(circle, :stereotype_named, :name, nil)
+
                     name || data
                   else
                     _ -> data
@@ -59,10 +74,12 @@ defmodule Bonfire.UI.Boundaries.BoundaryItemsLive do
 
       circle ->
         # Found in my_circles, extract the name
-        name = e(circle, :name, nil) || e(circle, "name", nil) ||
-               e(circle, :profile, :name, nil) ||
-               e(circle, :named, :name, nil) ||
-               e(circle, :stereotyped, :named, :name, nil)
+        name =
+          e(circle, :name, nil) || e(circle, "name", nil) ||
+            e(circle, :profile, :name, nil) ||
+            e(circle, :named, :name, nil) ||
+            e(circle, :stereotyped, :named, :name, nil)
+
         debug(name, "circle name from my_circles")
         name || data
     end
@@ -81,14 +98,19 @@ defmodule Bonfire.UI.Boundaries.BoundaryItemsLive do
       String.replace(data, "_unused_", "")
     else
       # Try to get the circle directly - ensuring we include all circle types
-      with {:ok, circle} <- Bonfire.Boundaries.Circles.get(data, [exclude_stereotypes: false, exclude_block_stereotypes: false, exclude_built_ins: false]) do
+      with {:ok, circle} <-
+             Bonfire.Boundaries.Circles.get(data,
+               exclude_stereotypes: false,
+               exclude_block_stereotypes: false,
+               exclude_built_ins: false
+             ) do
         debug(circle, "circle fetched")
 
         # Get name from multiple possible sources
         name =
           e(circle, :named, :name, nil) ||
-          e(circle, :stereotyped, :named, :name, nil) ||
-          e(circle, :stereotype_named, :name, nil)
+            e(circle, :stereotyped, :named, :name, nil) ||
+            e(circle, :stereotype_named, :name, nil)
 
         debug(name, "circle name")
         name || data
@@ -99,12 +121,20 @@ defmodule Bonfire.UI.Boundaries.BoundaryItemsLive do
           debug(circle, "built-in circle check")
 
           case circle do
-            {name, _id} when is_binary(name) -> name
-            {slug, %{name: name}} when is_atom(slug) and is_binary(name) -> name
+            {name, _id} when is_binary(name) ->
+              name
+
+            {slug, %{name: name}} when is_atom(slug) and is_binary(name) ->
+              name
+
             # Check for special stereotypes (based on the constants in circles.ex)
             _ ->
               if Bonfire.Boundaries.Circles.is_stereotype?(data) do
-                circle_map = Enum.find(Bonfire.Boundaries.Circles.circles() |> Map.values(), fn c -> c.id == data end)
+                circle_map =
+                  Enum.find(Bonfire.Boundaries.Circles.circles() |> Map.values(), fn c ->
+                    c.id == data
+                  end)
+
                 debug(circle_map, "stereotype circle map")
                 e(circle_map, :name, data)
               else

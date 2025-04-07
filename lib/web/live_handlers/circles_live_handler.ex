@@ -417,116 +417,128 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
 
   # File: /extensions/bonfire_ui_boundaries/lib/web/live_handlers/circles_live_handler.ex
 
-# File: /extensions/bonfire_ui_boundaries/lib/web/live_handlers/circles_live_handler.ex
+  # File: /extensions/bonfire_ui_boundaries/lib/web/live_handlers/circles_live_handler.ex
 
-def set_circles_tuples(field, circles, socket) do
-  debug(circles, "set roles for #{field}")
+  def set_circles_tuples(field, circles, socket) do
+    debug(circles, "set roles for #{field}")
 
-  previous_value = e(assigns(socket), field, [])
-  |> debug("previous_value")
+    previous_value =
+      e(assigns(socket), field, [])
+      |> debug("previous_value")
 
-  # Create a lookup map of existing circles by ID
-  known_circles =
-    previous_value
-    |> Enum.map(fn
-      {%{id: id} = circle, _old_role} -> {id, circle}
-      {%{"id" => id} = circle, _old_role} -> {id, circle}
-      {circle, _} when is_binary(circle) -> {circle, circle}
-      _ -> nil
-    end)
-    |> Enum.reject(&is_nil/1)
-    |> Map.new()
-    |> debug("known_circles")
+    # Create a lookup map of existing circles by ID
+    known_circles =
+      previous_value
+      |> Enum.map(fn
+        {%{id: id} = circle, _old_role} -> {id, circle}
+        {%{"id" => id} = circle, _old_role} -> {id, circle}
+        {circle, _} when is_binary(circle) -> {circle, circle}
+        _ -> nil
+      end)
+      |> Enum.reject(&is_nil/1)
+      |> Map.new()
+      |> debug("known_circles")
 
-  # Process incoming circle roles (might be partial)
-  updated_circle_tuples =
-    (circles || [])
-    |> Enum.flat_map(fn
-      {circle_id, roles} when is_list(roles) ->
-        Enum.map(roles, fn role ->
+    # Process incoming circle roles (might be partial)
+    updated_circle_tuples =
+      (circles || [])
+      |> Enum.flat_map(fn
+        {circle_id, roles} when is_list(roles) ->
+          Enum.map(roles, fn role ->
+            circle_data = Map.get(known_circles, id(circle_id)) || circle_id
+            {circle_data, role}
+          end)
+
+        {circle_id, role} ->
           circle_data = Map.get(known_circles, id(circle_id)) || circle_id
-          {circle_data, role}
-        end)
-      {circle_id, role} ->
-        circle_data = Map.get(known_circles, id(circle_id)) || circle_id
-        [{circle_data, role}]
-    end)
-    |> debug("updated_circle_tuples")
+          [{circle_data, role}]
+      end)
+      |> debug("updated_circle_tuples")
 
-  # Create map of circle_id -> updated role
-  updated_roles_by_id =
-    updated_circle_tuples
-    |> Enum.map(fn {circle, role} -> {id(circle), role} end)
-    |> Map.new()
-    |> debug("updated_roles_by_id")
+    # Create map of circle_id -> updated role
+    updated_roles_by_id =
+      updated_circle_tuples
+      |> Enum.map(fn {circle, role} -> {id(circle), role} end)
+      |> Map.new()
+      |> debug("updated_roles_by_id")
 
-  # Update existing circles with new roles where applicable
-  updated_circles =
-    previous_value
-    |> Enum.map(fn {circle, old_role} ->
-      circle_id = id(circle)
-      case Map.get(updated_roles_by_id, circle_id) do
-        nil -> {circle, old_role} # Keep existing role if not in update
-        new_role -> {circle, new_role} # Update with new role
-      end
-    end)
-    |> debug("updated_existing_circles")
+    # Update existing circles with new roles where applicable
+    updated_circles =
+      previous_value
+      |> Enum.map(fn {circle, old_role} ->
+        circle_id = id(circle)
 
-  # Add any completely new circles not in previous list
-  existing_ids = Enum.map(updated_circles, fn {circle, _} -> id(circle) end)
-  new_circles =
-    updated_circle_tuples
-    |> Enum.reject(fn {circle, _} -> id(circle) in existing_ids end)
-    |> debug("completely_new_circles")
+        case Map.get(updated_roles_by_id, circle_id) do
+          # Keep existing role if not in update
+          nil -> {circle, old_role}
+          # Update with new role
+          new_role -> {circle, new_role}
+        end
+      end)
+      |> debug("updated_existing_circles")
 
-  # Final merged list preserves all circles
-  merged_circles = updated_circles ++ new_circles
-    |> debug("merged_circles")
+    # Add any completely new circles not in previous list
+    existing_ids = Enum.map(updated_circles, fn {circle, _} -> id(circle) end)
 
-  # Only update if there's a change
-  if merged_circles != previous_value do
-    maybe_send_update(
-      Bonfire.UI.Boundaries.CustomizeBoundaryLive,
-      "customize_boundary_live",
-      %{field => merged_circles}
-    )
+    new_circles =
+      updated_circle_tuples
+      |> Enum.reject(fn {circle, _} -> id(circle) in existing_ids end)
+      |> debug("completely_new_circles")
 
-    socket
-    |> assign(field, merged_circles)
-  else
-    socket
+    # Final merged list preserves all circles
+    merged_circles =
+      (updated_circles ++ new_circles)
+      |> debug("merged_circles")
+
+    # Only update if there's a change
+    if merged_circles != previous_value do
+      maybe_send_update(
+        Bonfire.UI.Boundaries.CustomizeBoundaryLive,
+        "customize_boundary_live",
+        %{field => merged_circles}
+      )
+
+      socket
+      |> assign(field, merged_circles)
+    else
+      socket
+    end
   end
-end
 
   # File: /extensions/bonfire_ui_boundaries/lib/web/live_handlers/circles_live_handler.ex
 
-def remove_from_circle_tuples(ids, previous_circles) do
-  # Make sure we have a list and convert all IDs to strings for comparison
-  deselected_ids = ids
-    |> List.wrap()
-    |> Enum.map(fn
-      %{id: id} -> to_string(id)
-      %{"id" => id} -> to_string(id)
-      id when is_binary(id) -> to_string(id)
-      other -> to_string(other)
-    end)
-    |> debug("deselected_ids")
+  def remove_from_circle_tuples(ids, previous_circles) do
+    # Make sure we have a list and convert all IDs to strings for comparison
+    deselected_ids =
+      ids
+      |> List.wrap()
+      |> Enum.map(fn
+        %{id: id} -> to_string(id)
+        %{"id" => id} -> to_string(id)
+        id when is_binary(id) -> to_string(id)
+        other -> to_string(other)
+      end)
+      |> debug("deselected_ids")
 
-  # Only remove circles with matching IDs
-  previous_circles
-  |> debug("before_removal: #{inspect(deselected_ids)}")
-  |> Enum.reject(fn
-    {circle, _role} ->
-      to_string(id(circle)) in deselected_ids
-    circle when is_map(circle) ->
-      to_string(id(circle)) in deselected_ids
-    circle when is_binary(circle) ->
-      to_string(circle) in deselected_ids
-    _ ->
-      false  # Don't remove anything we can't identify
-  end)
-  |> debug("after_removal")
-end
+    # Only remove circles with matching IDs
+    previous_circles
+    |> debug("before_removal: #{inspect(deselected_ids)}")
+    |> Enum.reject(fn
+      {circle, _role} ->
+        to_string(id(circle)) in deselected_ids
+
+      circle when is_map(circle) ->
+        to_string(id(circle)) in deselected_ids
+
+      circle when is_binary(circle) ->
+        to_string(circle) in deselected_ids
+
+      _ ->
+        # Don't remove anything we can't identify
+        false
+    end)
+    |> debug("after_removal")
+  end
 
   def my_circles_paginated(scope, attrs \\ nil) do
     Bonfire.Boundaries.Circles.list_my_with_counts(scope,

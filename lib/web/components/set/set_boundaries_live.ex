@@ -204,62 +204,70 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
 
   # File: /extensions/bonfire_ui_boundaries/lib/web/live_handlers/boundaries_live_handler.ex
 
-def handle_event(
-  "multi_select",
-  %{data: data, text: _text},
-  socket
-) do
-  field = maybe_to_atom(e(data, "field", :to_boundaries)) |> debug("field")
+  def handle_event(
+        "multi_select",
+        %{data: data, text: _text},
+        socket
+      ) do
+    field = maybe_to_atom(e(data, "field", :to_boundaries)) |> debug("field")
 
-  # Get current values
-  current_values = e(assigns(socket), field, [])
+    # Get current values
+    current_values = e(assigns(socket), field, [])
 
-  # Generate rich circle data if needed
-  circle_data =
-    case data do
-      %{"id" => id, "name" => name} ->
-        %{id: id, name: name, field: field}
-      other ->
-        other
-    end
+    # Generate rich circle data if needed
+    circle_data =
+      case data do
+        %{"id" => id, "name" => name} ->
+          %{id: id, name: name, field: field}
 
-  # Check if this circle is already in the list to avoid duplicates
-  already_exists = Enum.any?(current_values, fn {existing, _} ->
-    id(existing) == id(circle_data)
-  end)
-
-  if already_exists do
-    {:noreply, socket} # Skip if already exists
-  else
-    # Add the circle with a default role (can be updated later)
-    appended_data =
-      case field do
-        :to_boundaries ->
-          current_values ++ [{circle_data, nil}]
-        :to_circles ->
-          current_values ++ [{circle_data, "read"}] # Default to "read" role
-        :exclude_circles ->
-          current_values ++ [{circle_data, "cannot_read"}] # Default to "cannot_read" role
-        _ ->
-          current_values ++ [{circle_data, nil}]
+        other ->
+          other
       end
-      |> debug("updated_list")
 
-    maybe_send_update(
-      Bonfire.UI.Boundaries.CustomizeBoundaryLive,
-      "customize_boundary_live",
-      %{field => appended_data}
-    )
+    # Check if this circle is already in the list to avoid duplicates
+    already_exists =
+      Enum.any?(current_values, fn {existing, _} ->
+        id(existing) == id(circle_data)
+      end)
 
-    {:noreply,
-     socket
-     |> assign(field, appended_data)
-     |> assign_global(
-       _already_live_selected_:
-         Enum.uniq(e(assigns(socket), :__context, :_already_live_selected_, []) ++ [field])
-     )}
+    if already_exists do
+      # Skip if already exists
+      {:noreply, socket}
+    else
+      # Add the circle with a default role (can be updated later)
+      appended_data =
+        case field do
+          :to_boundaries ->
+            current_values ++ [{circle_data, nil}]
+
+          :to_circles ->
+            # Default to "read" role
+            current_values ++ [{circle_data, "read"}]
+
+          :exclude_circles ->
+            # Default to "cannot_read" role
+            current_values ++ [{circle_data, "cannot_read"}]
+
+          _ ->
+            current_values ++ [{circle_data, nil}]
+        end
+        |> debug("updated_list")
+
+      maybe_send_update(
+        Bonfire.UI.Boundaries.CustomizeBoundaryLive,
+        "customize_boundary_live",
+        %{field => appended_data}
+      )
+
+      {:noreply,
+       socket
+       |> assign(field, appended_data)
+       |> assign_global(
+         _already_live_selected_:
+           Enum.uniq(e(assigns(socket), :__context, :_already_live_selected_, []) ++ [field])
+       )}
+    end
   end
-end
 
   def handle_event("tagify_add", attrs, socket) do
     handle_event("select_boundary", attrs, socket)

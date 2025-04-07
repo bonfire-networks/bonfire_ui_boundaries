@@ -88,7 +88,6 @@
       {inspect(@exclude_circles)}
       {inspect(@to_circles)}
       {#if is_list(@exclude_circles) && @exclude_circles != []}
-
         <form phx-change="Bonfire.Boundaries:select" class="mt-2" phx-target="#smart_input_live">
           <Bonfire.UI.Boundaries.BoundaryItemsLive
             read_only={@read_only}

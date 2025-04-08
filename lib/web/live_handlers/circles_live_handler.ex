@@ -415,9 +415,6 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
   #   end
   # end
 
-  # File: /extensions/bonfire_ui_boundaries/lib/web/live_handlers/circles_live_handler.ex
-
-  # File: /extensions/bonfire_ui_boundaries/lib/web/live_handlers/circles_live_handler.ex
 
   def set_circles_tuples(field, circles, socket) do
     debug(circles, "set roles for #{field}")
@@ -433,6 +430,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
         {%{id: id} = circle, _old_role} -> {id, circle}
         {%{"id" => id} = circle, _old_role} -> {id, circle}
         {circle, _} when is_binary(circle) -> {circle, circle}
+        circle when is_binary(circle) -> {circle, circle}
         _ -> nil
       end)
       |> Enum.reject(&is_nil/1)

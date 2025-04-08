@@ -6,6 +6,8 @@
           <label class="tooltip-button flex items-center justify-between gap-2 btn-ghost normal-case  btn-xs btn text-primary">
             <Bonfire.UI.Boundaries.BoundariesPresetNameLive
               icon_class="w-5 h-5 text-primary"
+              to_circles={@to_circles}
+              exclude_circles={@exclude_circles}
               to_boundaries={@to_boundaries}
             />
           </label>

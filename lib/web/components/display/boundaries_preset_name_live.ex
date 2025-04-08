@@ -3,6 +3,8 @@ defmodule Bonfire.UI.Boundaries.BoundariesPresetNameLive do
 
   prop to_boundaries, :any, default: nil
   prop boundary_preset, :any, default: nil
+  prop to_cirlces, :any, default: []
+  prop exclude_circles, :any, default: []
 
   prop class, :css_class, default: ""
   prop icon_class, :css_class, default: "w-5 h-5 text-base-content/60"

@@ -4,8 +4,8 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesButtonLive do
 
   prop to_boundaries, :any, default: nil
   prop boundary_preset, :any, default: nil
-  prop to_circles, :any, default: nil
-  prop exclude_circles, :any, default: nil
+  prop to_circles, :any, default: []
+  prop exclude_circles, :any, default: []
 
   def clone_context(to_boundaries) do
     case to_boundaries do

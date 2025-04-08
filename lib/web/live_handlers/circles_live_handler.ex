@@ -415,7 +415,6 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
   #   end
   # end
 
-
   # def set_circles_tuples(field, circles, socket) do
   #   debug(circles, "set roles for #{field}")
 

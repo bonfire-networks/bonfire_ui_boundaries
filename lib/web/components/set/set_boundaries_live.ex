@@ -242,11 +242,11 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
 
           :to_circles ->
             # Default to "read" role
-            current_values ++ [{circle_data, "read"}]
+            current_values ++ [{circle_data, nil}]
 
           :exclude_circles ->
             # Default to "cannot_read" role
-            current_values ++ [{circle_data, "cannot_read"}]
+            current_values ++ [{circle_data, nil}]
 
           _ ->
             current_values ++ [{circle_data, nil}]

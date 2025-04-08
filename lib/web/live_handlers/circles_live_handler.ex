@@ -416,6 +416,93 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
   # end
 
 
+  # def set_circles_tuples(field, circles, socket) do
+  #   debug(circles, "set roles for #{field}")
+
+  #   previous_value =
+  #     e(assigns(socket), field, [])
+  #     |> debug("previous_value")
+
+  #   # Create a lookup map of existing circles by ID
+  #   known_circles =
+  #     previous_value
+  #     |> Enum.map(fn
+  #       {%{id: id} = circle, _old_role} -> {id, circle}
+  #       {%{"id" => id} = circle, _old_role} -> {id, circle}
+  #       {circle, _} when is_binary(circle) -> {circle, circle}
+  #       circle when is_binary(circle) -> {circle, circle}
+  #       _ -> nil
+  #     end)
+  #     |> Enum.reject(&is_nil/1)
+  #     |> Map.new()
+  #     |> debug("known_circles")
+
+  #   # Process incoming circle roles (might be partial)
+  #   updated_circle_tuples =
+  #     (circles || [])
+  #     |> Enum.flat_map(fn
+  #       {circle_id, roles} when is_list(roles) ->
+  #         Enum.map(roles, fn role ->
+  #           circle_data = Map.get(known_circles, id(circle_id)) || circle_id
+  #           {circle_data, role}
+  #         end)
+
+  #       {circle_id, role} ->
+  #         circle_data = Map.get(known_circles, id(circle_id)) || circle_id
+  #         [{circle_data, role}]
+  #     end)
+  #     |> debug("updated_circle_tuples")
+
+  #   # Create map of circle_id -> updated role
+  #   updated_roles_by_id =
+  #     updated_circle_tuples
+  #     |> Enum.map(fn {circle, role} -> {id(circle), role} end)
+  #     |> Map.new()
+  #     |> debug("updated_roles_by_id")
+
+  #   # Update existing circles with new roles where applicable
+  #   updated_circles =
+  #     previous_value
+  #     |> Enum.map(fn {circle, old_role} ->
+  #       circle_id = id(circle)
+
+  #       case Map.get(updated_roles_by_id, circle_id) do
+  #         # Keep existing role if not in update
+  #         nil -> {circle, old_role}
+  #         # Update with new role
+  #         new_role -> {circle, new_role}
+  #       end
+  #     end)
+  #     |> debug("updated_existing_circles")
+
+  #   # Add any completely new circles not in previous list
+  #   existing_ids = Enum.map(updated_circles, fn {circle, _} -> id(circle) end)
+
+  #   new_circles =
+  #     updated_circle_tuples
+  #     |> Enum.reject(fn {circle, _} -> id(circle) in existing_ids end)
+  #     |> debug("completely_new_circles")
+
+  #   # Final merged list preserves all circles
+  #   merged_circles =
+  #     (updated_circles ++ new_circles)
+  #     |> debug("merged_circles")
+
+  #   # Only update if there's a change
+  #   if merged_circles != previous_value do
+  #     maybe_send_update(
+  #       Bonfire.UI.Boundaries.CustomizeBoundaryLive,
+  #       "customize_boundary_live",
+  #       %{field => merged_circles}
+  #     )
+
+  #     socket
+  #     |> assign(field, merged_circles)
+  #   else
+  #     socket
+  #   end
+  # end
+
   def set_circles_tuples(field, circles, socket) do
     debug(circles, "set roles for #{field}")
 
@@ -437,20 +524,45 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
       |> Map.new()
       |> debug("known_circles")
 
-    # Process incoming circle roles (might be partial)
+    # Process incoming circle roles
     updated_circle_tuples =
-      (circles || [])
-      |> Enum.flat_map(fn
-        {circle_id, roles} when is_list(roles) ->
-          Enum.map(roles, fn role ->
-            circle_data = Map.get(known_circles, id(circle_id)) || circle_id
-            {circle_data, role}
-          end)
+      if is_map(circles) do
+        # Handle map format from form submission (circle_id => [role])
+        Enum.flat_map(circles, fn
+          {circle_id, roles_array} when is_list(roles_array) ->
+            # Skip _unused_ entries
+            if String.starts_with?(circle_id, "_unused_") do
+              []
+            else
+              # Extract role from array - usually just the first element
+              role = List.first(roles_array)
+              circle_data = Map.get(known_circles, circle_id) || circle_id
+              [{circle_data, role}]
+            end
 
-        {circle_id, role} ->
-          circle_data = Map.get(known_circles, id(circle_id)) || circle_id
-          [{circle_data, role}]
-      end)
+          {circle_id, role} ->
+            if String.starts_with?(circle_id, "_unused_") do
+              []
+            else
+              circle_data = Map.get(known_circles, circle_id) || circle_id
+              [{circle_data, role}]
+            end
+        end)
+      else
+        # Handle the case where circles is a list of tuples (legacy format)
+        (circles || [])
+        |> Enum.flat_map(fn
+          {circle_id, roles} when is_list(roles) ->
+            Enum.map(roles, fn role ->
+              circle_data = Map.get(known_circles, id(circle_id)) || circle_id
+              {circle_data, role}
+            end)
+
+          {circle_id, role} ->
+            circle_data = Map.get(known_circles, id(circle_id)) || circle_id
+            [{circle_data, role}]
+        end)
+      end
       |> debug("updated_circle_tuples")
 
     # Create map of circle_id -> updated role

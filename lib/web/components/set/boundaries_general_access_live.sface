@@ -22,6 +22,7 @@
             my_acls={@my_acls}
             is_customizable
             to_circles={@to_circles}
+            exclude_circles={@exclude_circles}
             to_boundaries={@to_boundaries}
             hide_custom={@hide_custom}
           />

@@ -12,8 +12,8 @@ defmodule Bonfire.UI.Boundaries.BoundariesGeneralAccessLive do
   prop hide_custom, :boolean, default: false
   prop set_action, :string, default: nil
   prop set_opts, :map, default: %{}
-  prop to_circles, :any, default: nil
-  prop exclude_circles, :any, default: nil
+  prop to_circles, :any, default: []
+  prop exclude_circles, :any, default: []
   prop parent_id, :string, default: nil
   prop is_customizable, :boolean, default: false
 

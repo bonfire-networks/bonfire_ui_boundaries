@@ -17,6 +17,7 @@
               to_boundaries={@to_boundaries}
               is_customizable
               to_circles={@to_circles}
+              exclude_circles={@exclude_circles}
               boundary_preset={@boundary_preset}
               hide_custom={!module_enabled?(Bonfire.UI.Boundaries.SetBoundariesLive, @__context__)}
             />

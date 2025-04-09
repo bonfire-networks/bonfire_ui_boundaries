@@ -10,6 +10,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
   prop circle_id, :string, default: nil
   prop roles, :any, default: nil
   prop event_target, :any, default: nil
+  prop one_scope_only, :boolean, default: true
 
   #  FIXME: this should be in config where the verbs are defined
   @verb_order [
@@ -43,7 +44,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
 
   def update(assigns, socket) do
     current_user = current_user(socket)
-
+    IO.inspect(e(assigns, :one_scope_only, nil), label: "CAZZ")
     scope =
       (e(assigns, :scope, nil) || e(assigns(socket), :scope, nil))
       |> debug("role_scope")
@@ -60,7 +61,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
       )
       |> get_roles_with_verbs(
         current_user: current_user,
-        one_scope_only: true,
+        one_scope_only: e(assigns, :one_scope_only, true),
         scope: scope
       )
       |> debug("roles_with_verbsss")
@@ -104,6 +105,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
   Returns a list of tuples: [{role, verbs_with_statuses}].
   """
   def get_roles_with_verbs(roles, opts) do
+    IO.inspect(opts, label: "CAZZ2")
     roles
     |> Enum.map(fn
       {role_name, _display_name} when is_atom(role_name) or is_binary(role_name) ->
@@ -172,7 +174,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
             |> get_roles_with_verbs(
               scope: scope,
               current_user: current_user,
-              one_scope_only: true
+              one_scope_only: e(socket, :assigns, :one_scope_only, true)
             )
           )
         }

@@ -92,24 +92,16 @@
                           <#Icon iconify="rivet-icons:circle" class="inline-block w-5 h-5 text-base-content" />
                         </div>
                         <div>
-                          <div>{LiveHandler.subject_name(subject)}</div>
-                          <div class="text-xs uppercase font-semibold text-primary">
-                            {Recase.to_title(
-                              to_string(
-                                Bonfire.Boundaries.Roles.role_from_grants(Map.values(grants || %{}),
-                                  scope: @scope,
-                                  current_user: current_user(@__context__)
-                                )
-                              )
-                            )}
-                          </div>
+                          <div class="text-lg">{LiveHandler.subject_name(subject)}</div>
+                            <a href={"/circle/#{id(subject)}/members"} class="link link-hover text-base-content/70">
+                              {l("View circle")}
+                            </a>
                         </div>
 
-                        <a href={"/circle/#{id(subject)}/members"} class="btn btn-primary btn-soft">
-                          {l("View circle")}
-                        </a>
+                        
                       {/if}
                       <div class="flex items-center gap-2">
+                        <div>
                         <Bonfire.UI.Common.OpenModalLive
                           id={"edit_role_for_#{uid(subject)}"}
                           title_text={l("Edit role")}
@@ -127,6 +119,7 @@
                                 selectable
                                 circle_id={subject_id}
                                 event_target={@myself}
+                                one_scope_only={false}
                                 role={Bonfire.Boundaries.Roles.role_from_grants(Map.values(grants || %{}),
                                   scope: @scope,
                                   current_user: current_user(@__context__)
@@ -137,12 +130,23 @@
                             </form>
                           </div>
                           <:open_btn>
-                            <div data-role="toggle_role" class="btn btn-primary btn-soft">
-                              {l("Edit role")}
+                            <div data-role="toggle_role" class="btn btn-primary btn-sm btn-soft">
+                               {Recase.to_title(
+                                  to_string(
+                                    Bonfire.Boundaries.Roles.role_from_grants(Map.values(grants || %{}),
+                                      scope: @scope,
+                                      current_user: current_user(@__context__)
+                                    )
+                                  )
+                                )}
+                                <#Icon solid="ChevronDown" class="w-4 h-4" />
+                                <span class="sr-only">
+                                  {l("Edit role")}
+                                </span>
                             </div>
                           </:open_btn>
                         </Bonfire.UI.Common.OpenModalLive>
-
+                        </div>
                         {#if !@read_only}
                           <span>
                             <Bonfire.UI.Common.OpenModalLive
@@ -171,7 +175,7 @@
                                 {l("Remove")}
                               </button>
                               <:open_btn>
-                                <div data-role="remove_from_boundary_modal" class="btn-soft btn btn-error btn-circle">
+                                <div data-role="remove_from_boundary_modal" class="btn-soft btn-sm btn btn-error btn-circle">
                                   <span class="sr-only">{l("Delete")}</span>
                                   <#Icon iconify="ic:baseline-minus" class="w-4 h-4" />
                                 </div>

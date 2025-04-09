@@ -158,6 +158,20 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       |> assert_has("[role=alert]", text: "Removed from boundary")
     end
 
+    test "I can see the verbs associated to a role when editing a boundary", %{
+      conn: conn,
+      me: me,
+      account: account
+    } do
+      alice = fake_user!(account)
+      {:ok, acl} = Acls.create(%{named: %{name: "meme"}}, current_user: me)
+      Grants.grant_role(alice.id, acl.id, "contribute", current_user: me)
+
+      conn
+      |> visit("/boundaries/acl/#{acl.id}")
+      |> click_button("[data-role=open_modal]", "Edit role")
+      |> assert_has("[data-value=edit_read_can]", text: "Can")
+    end
     # test "I can add a circle and assign a role to a boundary", %{
     #   conn: conn,
     #   me: me,

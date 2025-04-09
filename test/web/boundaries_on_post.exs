@@ -10,7 +10,6 @@ defmodule Bonfire.UI.Boundaries.OnPostTest do
   alias Bonfire.Boundaries.Circles
 
   test "Test creating a post with a 'custom' boundary and verify that only users that belong to the circle selected can read the post." do
-    feed_id = Bonfire.Social.Feeds.named_feed_id(:local)
     # create a bunch of users
     account = fake_account!()
     me = fake_user!(account)

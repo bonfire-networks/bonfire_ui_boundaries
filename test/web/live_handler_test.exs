@@ -172,6 +172,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       |> click_button("[data-role=open_modal]", "Edit role")
       |> assert_has("[data-value=edit_read_can]", text: "Can")
     end
+
     # test "I can add a circle and assign a role to a boundary", %{
     #   conn: conn,
     #   me: me,

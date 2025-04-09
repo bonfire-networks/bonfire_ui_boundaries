@@ -125,7 +125,6 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
   #   refute has_element?(view, "article")
   # end
 
-
   test "Test adding a user with a 'read' role and verify that the user can see the post but not interact with it." do
     account = fake_account!()
     me = fake_user!(account)

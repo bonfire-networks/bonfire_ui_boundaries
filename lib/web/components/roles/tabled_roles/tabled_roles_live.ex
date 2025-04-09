@@ -44,6 +44,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
 
   def update(assigns, socket) do
     current_user = current_user(socket)
+
     scope =
       (e(assigns, :scope, nil) || e(assigns(socket), :scope, nil))
       |> debug("role_scope")

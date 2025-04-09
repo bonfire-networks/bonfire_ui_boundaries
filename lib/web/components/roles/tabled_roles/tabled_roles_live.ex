@@ -44,7 +44,6 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
 
   def update(assigns, socket) do
     current_user = current_user(socket)
-    IO.inspect(e(assigns, :one_scope_only, nil), label: "CAZZ")
     scope =
       (e(assigns, :scope, nil) || e(assigns(socket), :scope, nil))
       |> debug("role_scope")
@@ -105,7 +104,6 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
   Returns a list of tuples: [{role, verbs_with_statuses}].
   """
   def get_roles_with_verbs(roles, opts) do
-    IO.inspect(opts, label: "CAZZ2")
     roles
     |> Enum.map(fn
       {role_name, _display_name} when is_atom(role_name) or is_binary(role_name) ->

@@ -1,15 +1,19 @@
 {#case clone_context(@to_boundaries)}
   {#match false}
-    <div class="flex items-center px-1 border-l border-r border-base-content/10">
+    <div class="flex items-center">
       <div class="flex relative z-50 items-center flex-1 gap-2">
         <div class="" phx-hook="Tooltip" id="popup_boundaries">
-          <label class="tooltip-button flex items-center justify-between gap-2 btn-ghost normal-case  btn-xs btn text-primary">
+          <label class="tooltip-button flex items-center gap-2 btn-ghost btn-sm btn">
             <Bonfire.UI.Boundaries.BoundariesPresetNameLive
-              icon_class="w-5 h-5 text-primary"
+              icon_class="w-5 h-5"
               to_circles={@to_circles}
               exclude_circles={@exclude_circles}
               to_boundaries={@to_boundaries}
             />
+            {#if @to_circles != [] || @exclude_circles != []}
+              <#Icon iconify="mingcute:asterisk-fill" class="w-3 h-3 text-accent" />
+            {/if}
+            <#Icon solid="chevronDown" class="w-4 h-4 text-base-content/60" />
           </label>
           <ul
             tabindex="0"
@@ -23,15 +27,73 @@
               boundary_preset={@boundary_preset}
               hide_custom={!module_enabled?(Bonfire.UI.Boundaries.SetBoundariesLive, @__context__)}
             />
+
+            <!-- <li class="flex items-center flex-row gap-2 mx-4 mb-2">
+            <div class="flex flex-1 p-0">
+              <Bonfire.UI.Common.OpenModalLive
+                reusable_modal_id="persistent_modal"
+                id="define_boundary"
+                no_actions
+                no_header
+                without_form
+                open_btn_wrapper_class="flex-1"
+              >
+                <Bonfire.UI.Boundaries.CustomizeBoundaryLive
+                  id="customize_boundary_live"
+                  boundary_preset={@boundary_preset}
+                  my_acls={@my_acls}
+                  is_customizable
+                  to_circles={@to_circles}
+                  exclude_circles={@exclude_circles}
+                  to_boundaries={@to_boundaries}
+                  hide_custom={true}
+                />
+                <:open_btn>
+                  <div class="btn btn-primary w-full btn-soft btn-sm">
+                    {l("Advanced boundary")}
+                  </div>
+                </:open_btn>
+              </Bonfire.UI.Common.OpenModalLive>
+            </div>
+            <div class="flex flex-1 p-0">
+              <Bonfire.UI.Common.OpenModalLive
+                id="preview_boundaries"
+                reusable_modal_id="persistent_modal"
+                title_text={l("Preview boundaries for any user")}
+                no_actions
+                without_form
+                open_btn_wrapper_class="flex flex-1 w-full items-center gap-2"
+                >
+                <StatefulComponent
+                  :if={maybe_apply(Bonfire.UI.Boundaries.SetBoundariesButtonLive, :clone_context, @to_boundaries) ==
+                    false}
+                  module={maybe_component(Bonfire.UI.Boundaries.PreviewBoundariesLive, @__context__)}
+                  id="boundaries_preview"
+                  boundary_preset={@boundary_preset}
+                  to_boundaries={@to_boundaries}
+                  to_circles={@to_circles}
+                  exclude_circles={@exclude_circles}
+                />
+
+                <:open_btn>
+                  <div
+                    class="w-full btn btn-sm flex"
+                    title={l("Preview boundary")}
+                  >
+                    <span>
+                      {l("Preview boundary")}
+                    </span>
+                  </div>
+                </:open_btn>
+              </Bonfire.UI.Common.OpenModalLive>
+              </div>
+            </li> -->
           </ul>
         </div>
       </div>
-      {#if @to_circles != [] || @exclude_circles != []}
-        <#Icon iconify="mingcute:asterisk-fill" class="w-4 h-4 text-accent" />
-      {/if}
     </div>
   {#match boundary_name}
-    <div class="btn-active btn btn-ghost btn-sm max-w-[120px] cursor-default btn-wide">
+    <div class="btn-active btn btn-ghost btn-sm max-w-[120px] cursor-default">
       <span>{boundary_name}</span>
     </div>
 {/case}

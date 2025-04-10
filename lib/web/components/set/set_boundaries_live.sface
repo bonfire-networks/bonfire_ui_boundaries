@@ -5,7 +5,7 @@
   >
     <!-- Panel -->
     <section class="p-3 border border-base-content/10 bg-base-100 rounded-lg">
-      <div class="text-xs uppercase mb-4 text-center text-base-content/50 font-semibold">{l("Grant more permissions")}</div>
+      <div class="text-sm text-center mb-2 text-base-content/90 font-medium">{l("Grant more permissions")}</div>
       <!-- <div class="gap-2 flex items-center flex-wrap">
         <button
           :for={circle <- @my_circles}

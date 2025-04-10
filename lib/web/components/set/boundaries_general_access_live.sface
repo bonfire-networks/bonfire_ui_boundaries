@@ -1,39 +1,8 @@
 {!-- style="min-height: 320px; height: 360px" --}
 <div class="h-full flex-1">
   <div class="boundaries_general_access menu flex flex-col gap-1 flex-1 h-full flex-nowrap overflow-y-auto w-full">
-    <div class="lg:flex hidden items-center justify-between mb-2 w-full gap-2">
+    <div class="lg:block hidden items-center justify-between mb-2 w-full gap-2">
       <div class="items-start text-left flex-1 text-xs font-semibold uppercase text-base-content/50 px-2 pt-2">{l("Define the boundary")}</div>
-
-      <div :if={@is_customizable}>
-        <Bonfire.UI.Common.OpenModalLive
-          reusable_modal_id="persistent_modal"
-          id="define_boundary"
-          no_actions
-          no_header
-          without_form
-          open_btn_wrapper_class="flex flex-1 w-full"
-        >
-          <Bonfire.UI.Boundaries.CustomizeBoundaryLive
-            id="customize_boundary_live"
-            hide_presets={@hide_presets}
-            boundary_preset={@boundary_preset}
-            set_action={@set_action}
-            set_opts={@set_opts}
-            my_acls={@my_acls}
-            is_customizable
-            to_circles={@to_circles}
-            exclude_circles={@exclude_circles}
-            to_boundaries={@to_boundaries}
-            hide_custom={@hide_custom}
-          />
-          <:open_btn>
-            <div class="btn btn-soft btn-secondary btn-xs">
-              {l("Advanced")}
-            </div>
-          </:open_btn>
-        </Bonfire.UI.Common.OpenModalLive>
-      </div>
-    </div>
 
     <Bonfire.UI.Boundaries.GeneralAccessListLive
       hide_presets={@hide_presets}
@@ -44,6 +13,74 @@
       to_boundaries={@to_boundaries}
       hide_custom
     />
+
+<div class="flex items-center flex-row gap-2 mx-2 mt-2">
+  <div :if={@is_customizable} class="flex flex-1 p-0">
+    <Bonfire.UI.Common.OpenModalLive
+      reusable_modal_id="persistent_modal"
+      id="define_boundary"
+      no_actions
+      no_header
+      without_form
+      open_btn_wrapper_class="flex flex-1 w-full"
+    >
+      <Bonfire.UI.Boundaries.CustomizeBoundaryLive
+        id="customize_boundary_live"
+        hide_presets={@hide_presets}
+        boundary_preset={@boundary_preset}
+        set_action={@set_action}
+        set_opts={@set_opts}
+        my_acls={@my_acls}
+        is_customizable
+        to_circles={@to_circles}
+        exclude_circles={@exclude_circles}
+        to_boundaries={@to_boundaries}
+        hide_custom={@hide_custom}
+      />
+      <:open_btn>
+        <div class="btn btn-soft btn-secondary btn-sm w-full">
+          {l("Advanced")}
+        </div>
+      </:open_btn>
+    </Bonfire.UI.Common.OpenModalLive>
+  </div>
+<div class="flex flex-1 p-0">
+              <Bonfire.UI.Common.OpenModalLive
+                id="preview_boundaries"
+                reusable_modal_id="persistent_modal"
+                title_text={l("Preview boundaries for any user")}
+                no_actions
+                without_form
+                open_btn_wrapper_class="flex flex-1 w-full items-center gap-2"
+                >
+                <StatefulComponent
+                  :if={maybe_apply(Bonfire.UI.Boundaries.SetBoundariesButtonLive, :clone_context, @to_boundaries) ==
+                    false}
+                  module={maybe_component(Bonfire.UI.Boundaries.PreviewBoundariesLive, @__context__)}
+                  id="boundaries_preview"
+                  boundary_preset={@boundary_preset}
+                  to_boundaries={@to_boundaries}
+                  to_circles={@to_circles}
+                  exclude_circles={@exclude_circles}
+                />
+
+                <:open_btn>
+                  <div
+                    class="w-full btn btn-sm flex"
+                    title={l("Preview boundary")}
+                  >
+                    <!-- <#Icon iconify="ph:eyes-fill" class="w-5 h-5 text-base-content/90" /> -->
+                    <span>
+                      {l("Preview boundary")}
+                    </span>
+                  </div>
+                </:open_btn>
+              </Bonfire.UI.Common.OpenModalLive>
+              </div>
+            </div>
+
+    </div>
+
   </div>
   {!-- <Bonfire.UI.Boundaries.BoundaryComposerActionsLive :if={!@is_dropdown} done_label={l("Back")} /> --}
 </div>

@@ -35,12 +35,15 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
   end
 
   def update(assigns, socket) do
+    debug("load circles")
     context = assigns[:__context__] || assigns(socket)[:__context__]
     current_user = current_user(context)
 
     %{page_info: page_info, edges: edges} =
       Bonfire.Boundaries.Circles.LiveHandler.my_circles_paginated(current_user)
 
+    circles_already_loaded =
+        Circles.preload_encircled_by(e(assigns, :user_id, nil), edges, force: true)
     # Bonfire.Boundaries.Circles.list_my_with_counts(current_user, exclude_stereotypes: true)
     # # |> repo().maybe_preload(encircles: [subject: [:profile]])
     # |> Circles.preload_encircled_by(e(assigns, :user_id, nil), ...)
@@ -50,7 +53,7 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
      socket
      |> assign(assigns)
      |> assign(page_info: page_info)
-     |> assign(circles: edges)}
+     |> assign(circles: circles_already_loaded)}
   end
 
   def handle_event("circle_create_from_modal", %{"name" => name} = attrs, socket) do

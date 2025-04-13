@@ -373,7 +373,7 @@
 
   <:open_btn>
     <div class={e(@class, "btn btn-sm flex items-center gap-2 btn-outline ")}>
-      <!-- <#Icon
+      <#Icon
         :if={@with_icon && @type == :ghost}
         iconify="mingcute:ghost-fill"
         class="w-4 h-4 stroke-1 text-base-content/70"
@@ -392,7 +392,7 @@
         :if={@with_icon && @type == :hide}
         iconify="heroicons-solid:eye-off"
         class="w-4 h-4 stroke-1 text-base-content/70"
-      /> -->
+      />
 
       <span :if={!@hide_text} class="text-left truncate ellipsis">
         {@open_btn_label ||

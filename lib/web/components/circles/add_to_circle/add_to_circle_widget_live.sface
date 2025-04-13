@@ -15,7 +15,7 @@
         <Bonfire.UI.Common.EmptyFeed feedback_title={l("You need to create at list one circle")} />
       {#else}
         {#for circle <- e(@circles, [])}
-          {#if Enum.any?(e(circle, :encircles, []), fn c -> Map.get(c, :subject_id) == @user_id end)}
+          {#if e(circle, :encircle_subjects, nil)}
             <li class="bg-base-content/5 rounded-xl">
               <button
                 class="flex !px-2 items-center justify-between"

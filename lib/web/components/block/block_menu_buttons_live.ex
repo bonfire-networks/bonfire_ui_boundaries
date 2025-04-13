@@ -3,7 +3,7 @@ defmodule Bonfire.UI.Boundaries.BlockMenuButtonsLive do
   import Bonfire.Boundaries.Integration
 
   prop object, :any, default: nil
-  prop silence_extra_object, :any, default: nil
+  prop hide_object, :any, default: nil
   prop parent_id, :string, default: nil
   prop peered, :any, default: nil
   prop permalink, :string, default: nil

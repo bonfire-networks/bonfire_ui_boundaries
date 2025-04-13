@@ -4,13 +4,13 @@
       href={"/remote_interaction?type=block&name=#{l("this user or instance")}&url=#{@permalink || URIs.canonical_url(@object)}"}
       class="flex items-center w-full gap-2 text-sm text-base-content"
     >
-      <!-- <#Icon iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" /> -->
+      <#Icon :if={@with_icon} iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" />
       <span class="truncate ellipsis">{l("Block")}</span>
     </a>
   </li>
 {#else}
-  {#case {current_user_id(@__context__) == id(@object), e(peered(@object, @peered), :peer_id, nil),
-     is_local?(@object, preload_if_needed: false)}}
+  {#case {current_user_id(@__context__) == id(@object), peered(@object, nil),
+     is_local?(@peered || @object, preload_if_needed: false)}}
     {#match {true, _, _}}
       <div />
     {#match {_, block_peer, is_local_user}}
@@ -18,16 +18,16 @@
         <details>
           <summary class="text-base-content/70">
             <div class="flex items-center w-full gap-2 text-sm text-base-content">
-              <!-- <#Icon iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" /> -->
+              <#Icon :if={@with_icon} iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" />
               <span class="truncate ellipsis">{l("Block")}</span>
             </div>
           </summary>
           <ul>
-            {#if @silence_extra_object}
+            {#if @hide_object}
               <li data-role="hide_modal" class="hover:bg-neutral/20">
                 {!-- WIP - TODO: add the boundary to the extra object's custom object ACL --}
                 <Bonfire.UI.Boundaries.BlockButtonLive
-                  object={@silence_extra_object}
+                  object={@hide_object}
                   is_local_user={nil}
                   scope={@scope}
                   type={:hide}
@@ -91,11 +91,11 @@
                 <Bonfire.UI.Boundaries.BlockButtonLive
                   with_icon={@with_icon}
                   type={:ghost}
-                  object={block_peer}
+                  object={e(block_peer, :peer_id, nil)}
                   is_local_user={false}
                   scope={@scope}
                   parent_id={"instance-#{@parent_id}"}
-                  label={URI.parse(e(peered(@object, @peered), :canonical_uri, "#")).host}
+                  label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
                 />
               </li>
@@ -103,11 +103,11 @@
                 <Bonfire.UI.Boundaries.BlockButtonLive
                   with_icon={@with_icon}
                   type={:silence}
-                  object={block_peer}
+                  object={e(block_peer, :peer_id, nil)}
                   is_local_user={false}
                   scope={@scope}
                   parent_id={"instance-#{@parent_id}"}
-                  label={URI.parse(e(peered(@object, @peered), :canonical_uri, "#")).host}
+                  label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
                 />
               </li>
@@ -115,11 +115,11 @@
                 <Bonfire.UI.Boundaries.BlockButtonLive
                   with_icon={@with_icon}
                   type={:block}
-                  object={block_peer}
+                  object={e(block_peer, :peer_id, nil)}
                   is_local_user={false}
                   scope={@scope}
                   parent_id={"instance-#{@parent_id}"}
-                  label={URI.parse(e(peered(@object, @peered), :canonical_uri, "#")).host}
+                  label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
                 />
               </li>

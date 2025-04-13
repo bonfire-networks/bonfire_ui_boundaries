@@ -12,7 +12,7 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
     # current_user = current_user(assigns) || current_user(assigns(socket))
 
     circles_passed_down =
-      Circles.preload_encircled_by(e(assigns, :user_id, nil), circles_passed_down)
+      Circles.list_subject_in_circles(e(assigns, :user_id, nil), circles_passed_down)
 
     {:ok,
      socket
@@ -22,11 +22,11 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
 
   def update(assigns, %{assigns: %{circles: circles_already_loaded}} = socket)
       when circles_already_loaded != [] do
-    debug("use circles already loaded (but reload membership)")
+    debug("use circles already loaded (but load membership)")
     # current_user = current_user(assigns) || current_user(assigns(socket))
 
     circles_already_loaded =
-      Circles.preload_encircled_by(e(assigns, :user_id, nil), circles_already_loaded, force: true)
+      Circles.list_subject_in_circles(e(assigns, :user_id, nil), circles_already_loaded)
 
     {:ok,
      socket
@@ -39,21 +39,17 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
     context = assigns[:__context__] || assigns(socket)[:__context__]
     current_user = current_user(context)
 
-    %{page_info: page_info, edges: edges} =
+    %{page_info: page_info, edges: circles} =
       Bonfire.Boundaries.Circles.LiveHandler.my_circles_paginated(current_user)
 
-    circles_already_loaded =
-        Circles.preload_encircled_by(e(assigns, :user_id, nil), edges, force: true)
-    # Bonfire.Boundaries.Circles.list_my_with_counts(current_user, exclude_stereotypes: true)
-    # # |> repo().maybe_preload(encircles: [subject: [:profile]])
-    # |> Circles.preload_encircled_by(e(assigns, :user_id, nil), ...)
-    # |> debug("circles")
+    circles =
+      Circles.list_subject_in_circles(e(assigns, :user_id, nil), circles)
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign(page_info: page_info)
-     |> assign(circles: circles_already_loaded)}
+     |> assign(circles: circles)}
   end
 
   def handle_event("circle_create_from_modal", %{"name" => name} = attrs, socket) do
@@ -64,13 +60,19 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
     circle_create_from_modal(attrs, socket)
   end
 
-  def handle_event("add", %{"id" => id, "circle" => circle}, socket) do
+  def handle_event("add", %{"id" => user_id, "circle" => circle}, socket) do
     # TODO: check permission
     # current_user = current_user(assigns(socket))
-    with {:ok, _} <- Circles.add_to_circles(id, circle) do
+    with {:ok, _} <- Circles.add_to_circles(user_id, circle) do
       {:noreply,
        socket
-       |> update(:circles, &Circles.preload_encircled_by(id, &1, force: true))
+       |> update(
+         :circles,
+         &Circles.list_subject_in_circles(user_id, &1,
+           reload_circle_id: Enums.id(circle),
+           inc_reload_count: 1
+         )
+       )
        |> assign_flash(:info, l("Added to circle!"))}
     else
       other ->
@@ -80,13 +82,19 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
     end
   end
 
-  def handle_event("remove", %{"id" => id, "circle" => circle}, socket) do
+  def handle_event("remove", %{"id" => user_id, "circle" => circle}, socket) do
     # TODO: check permission
     # current_user = current_user(assigns(socket))
-    with {1, _} <- Circles.remove_from_circles(id, circle) do
+    with {1, _} <- Circles.remove_from_circles(user_id, circle) do
       {:noreply,
        socket
-       |> update(:circles, &Circles.preload_encircled_by(id, &1, force: true))
+       |> update(
+         :circles,
+         &Circles.list_subject_in_circles(user_id, &1,
+           reload_circle_id: Enums.id(circle),
+           inc_reload_count: -1
+         )
+       )
        |> assign_flash(:info, l("removed from circle!"))}
     else
       other ->

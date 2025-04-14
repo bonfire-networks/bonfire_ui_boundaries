@@ -45,7 +45,7 @@
             character={e(current_user(@__context__), :character, nil)}
             show_controls={[]}
           />
-          <div class="btn btn-sm btn-disabled  normal-case">{l("Caretaker")}</div>
+          <div class="btn btn-sm btn-disabled normal-case">{l("Caretaker")}</div>
         </div>
         <form phx-change="Bonfire.Boundaries:select" phx-target="#smart_input_live">
           {#if is_list(@to_circles) and @to_circles != []}

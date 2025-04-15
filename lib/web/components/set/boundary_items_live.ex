@@ -9,7 +9,6 @@ defmodule Bonfire.UI.Boundaries.BoundaryItemsLive do
   prop my_circles, :any, default: []
   slot default, required: false
 
-
   def acls_from_role(role) do
     {:ok, permissions, []} = Bonfire.Boundaries.Roles.verbs_for_role(maybe_to_atom(role), %{})
     permissions
@@ -161,11 +160,12 @@ defmodule Bonfire.UI.Boundaries.BoundaryItemsLive do
 
   def filter_circles(circles, allowed_roles) do
     # Convert roles list to strings for comparison
-    allowed_role_strings = Enum.map(allowed_roles, fn
-      {role, _label} -> to_string(role)
-      role when is_atom(role) -> to_string(role)
-      role -> role
-    end)
+    allowed_role_strings =
+      Enum.map(allowed_roles, fn
+        {role, _label} -> to_string(role)
+        role when is_atom(role) -> to_string(role)
+        role -> role
+      end)
 
     Enum.filter(circles, fn
       {_circle_id, role} when is_nil(role) or role == "" -> true

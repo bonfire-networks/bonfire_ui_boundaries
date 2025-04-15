@@ -8,4 +8,5 @@ defmodule Bonfire.UI.Boundaries.AddToCircleLive do
   prop name, :any, default: nil
   prop as_icon, :boolean, default: false
   prop label, :any, default: nil
+  prop hide_icon, :boolean, default: false
 end

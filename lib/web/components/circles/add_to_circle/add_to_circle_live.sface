@@ -16,8 +16,12 @@
     />
     <:open_btn>
       {#if @as_icon}
-        <div class="btn w-full flex-1 btn-secondary btn-soft">
+        <div class="btn w-full  btn-secondary btn-soft">
           <#Icon iconify="rivet-icons:circle" class="w-4 h-4 shrink-0" />
+          <span>{@label || l("Add to circles")}</span>
+        </div>
+      {#elseif e(@hide_icon, false)}
+        <div class="btn w-full flex-1 btn-secondary btn-soft">
           <span>{@label || l("Add to circles")}</span>
         </div>
       {#else}

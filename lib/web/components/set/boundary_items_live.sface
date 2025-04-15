@@ -1,13 +1,14 @@
 <div class="flex flex-1 flex-col flex-wrap">
-<!-- filter the @circles with this logic =
+  <!-- filter the @circles with this logic =
       Enum.filter(circles, fn
         {_circle_id, role} -> to_string(role) in roles_for_dropdown
         _other -> false # Ignore items that are not 2-element tuples
       end)
  -->
-  <div 
-    :for={{data, role} <- filter_circles(@circles || [], @roles_for_dropdown)} 
-    class="flex py-2 items-center w-full justify-between">
+  <div
+    :for={{data, role} <- filter_circles(@circles || [], @roles_for_dropdown)}
+    class="flex py-2 items-center w-full justify-between"
+  >
     {#case debug(data, "idata")}
       {#match %{profile: profile, character: character} when not is_nil(profile)}
         <StatelessComponent

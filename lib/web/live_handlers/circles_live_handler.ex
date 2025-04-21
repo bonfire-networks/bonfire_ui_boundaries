@@ -96,7 +96,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
         current_user: current_user,
         paginate: false
       )
-      |> do_results_for_multiselect()
+      |> prepare_results_for_multiselect()
       |> maybe_filter_current_user(socket)
 
     maybe_send_update(LiveSelect.Component, live_select_id, options: results)
@@ -248,7 +248,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
 
   defp maybe_filter_current_user(results, _), do: results
 
-  defp do_results_for_multiselect({:ok, results}) do
+  defp prepare_results_for_multiselect({:ok, results}) do
     results
     |> Enum.map(fn user ->
       name = e(user, :profile, :name, nil) || e(user, :character, :username, nil)
@@ -256,7 +256,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     end)
   end
 
-  defp do_results_for_multiselect(_), do: []
+  defp prepare_results_for_multiselect(_), do: []
 
   def add_member(subject, %{assigns: %{scope: scope, circle_type: circle_type}} = socket)
       when circle_type in [:silence, :ghost] do
@@ -288,8 +288,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
 
   def add_member(subject, socket) do
     with id when is_binary(id) <- uid(subject),
-         current_user_id when not is_nil(current_user_id) <- current_user_id(socket),
-         false <- id == current_user_id,
+         current_user_id when is_binary(current_user_id) <- current_user_id(socket),
          {:ok, _} <- Circles.add_to_circles(id, e(assigns(socket), :circle, nil)) do
       {:noreply,
        socket
@@ -302,9 +301,6 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
            )
        )}
     else
-      true ->
-        {:noreply, assign_flash(socket, :error, l("Cannot add yourself to the circle."))}
-
       other ->
         error(other)
 

@@ -2,6 +2,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   use Bonfire.UI.Common.Web, :stateful_component
   alias Bonfire.Boundaries.Circles
   alias Bonfire.Boundaries.Blocks
+  alias Bonfire.Boundaries.Circles.LiveHandler
 
   prop circle_id, :any, default: nil
   prop circle, :any, default: nil
@@ -167,13 +168,13 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
 
   def handle_event("multi_select", %{data: data, text: text}, socket) do
     debug(data, "multi_select_circle_live")
-    add_member(input_to_atoms(data), socket)
+    LiveHandler.add_member(input_to_atoms(data), socket)
   end
 
   #  special case needed for tests that don't go through live_select
   def handle_event("multi_select", %{"data" => data, "text" => text}, socket) do
     debug(data, "multi_select_circle_live")
-    add_member(input_to_atoms(data), socket)
+    LiveHandler.add_member(input_to_atoms(data), socket)
   end
 
   # def handle_event("multi_select", %{id: id, name: _name}, socket) do
@@ -192,7 +193,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   #   with {:ok, json_str} when is_binary(json_str) <- Map.fetch(multi_select_data, module_name),
   #        {:ok, data} when is_map(data) <- Jason.decode(json_str) do
   #     debug(data, "multi_select_decoded")
-  #     add_member(input_to_atoms(data), socket)
+  #     LiveHandler.add_member(input_to_atoms(data), socket)
   #   else
   #     error ->
   #       debug(error, "multi_select_decode_error")
@@ -309,61 +310,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
     |> debug("results_for_multiselect")
   end
 
-  def add_member(subject, %{assigns: %{scope: scope, circle_type: circle_type}} = socket)
-      when circle_type in [:silence, :ghost] do
-    with id when is_binary(id) <- uid(subject),
-         current_user_id when not is_nil(current_user_id) <- current_user_id(socket),
-         false <- id == current_user_id,
-         {:ok, _} <- Blocks.block(id, circle_type, scope || current_user(assigns(socket))) do
-      {:noreply,
-       socket
-       |> assign_flash(:info, l("Blocked!"))
-       |> assign(
-         members:
-           Map.merge(
-             %{id => subject},
-             e(assigns(socket), :members, %{})
-           )
-           |> debug()
-       )}
-    else
-      true ->
-        {:noreply, assign_flash(socket, :error, l("Cannot block yourself."))}
-
-      other ->
-        error(other)
-
-        {:noreply, assign_flash(socket, :error, l("Could not block"))}
-    end
-  end
-
-  def add_member(subject, socket) do
-    with id when is_binary(id) <- uid(subject),
-         current_user_id when not is_nil(current_user_id) <- current_user_id(socket),
-         false <- id == current_user_id,
-         {:ok, _} <- Circles.add_to_circles(id, e(assigns(socket), :circle, nil)) do
-      {:noreply,
-       socket
-       |> assign_flash(:info, l("Added to circle!"))
-       |> assign(
-         members:
-           Map.merge(
-             %{id => subject},
-             e(assigns(socket), :members, %{})
-           )
-       )}
-    else
-      true ->
-        {:noreply, assign_flash(socket, :error, l("Cannot add yourself to the circle."))}
-
-      other ->
-        error(other)
-
-        {:noreply, assign_flash(socket, :error, l("Could not add to circle"))}
-    end
-  end
-
-  def f(%{edge: %{object: %{profile: _} = user}}), do: user
-  def f(%{edge: %{subject: %{profile: _} = user}}), do: user
-  def f(user), do: user
+  # def f(%{edge: %{object: %{profile: _} = user}}), do: user
+  # def f(%{edge: %{subject: %{profile: _} = user}}), do: user
+  # def f(user), do: user
 end

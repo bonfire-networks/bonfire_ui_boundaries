@@ -14,8 +14,8 @@
         hide_custom
       />
 
-      <div class="flex items-center flex-row gap-2 mx-2 mt-2">
-        <div :if={@is_customizable} class="flex flex-1 p-0">
+      <div class="flex items-center flex-col lg:flex-row gap-2 mx-2 mt-2">
+        <div :if={@is_customizable} class="flex w-full flex-1 p-0">
           <Bonfire.UI.Common.OpenModalLive
             reusable_modal_id="persistent_modal"
             id="define_boundary"
@@ -44,7 +44,7 @@
             </:open_btn>
           </Bonfire.UI.Common.OpenModalLive>
         </div>
-        <div class="flex flex-1 p-0">
+        <div class="flex flex-1 w-full p-0">
           <Bonfire.UI.Common.OpenModalLive
             id="preview_boundaries"
             reusable_modal_id="persistent_modal"
@@ -65,7 +65,7 @@
             />
 
             <:open_btn>
-              <div class="w-full btn btn-sm flex" title={l("Preview boundary")}>
+              <div class="w-full btn btn-sm flex btn-soft" title={l("Preview boundary")}>
                 <!-- <#Icon iconify="ph:eyes-fill" class="w-5 h-5 text-base-content/90" /> -->
                 <span>
                   {l("Preview boundary")}

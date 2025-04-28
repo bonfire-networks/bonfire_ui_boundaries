@@ -15,8 +15,8 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
   #   #        load_members(
   #   #          e(assigns(socket), :circle_id, nil) || e(assigns(socket), :circle, :id, nil)
   #   #        ) do
-  #     {:noreply, socket 
-  #     |> assign(:selected_tab, "members") 
+  #     {:noreply, socket
+  #     |> assign(:selected_tab, "members")
   #     #|> assign(data)
   #     }
   #   # end
@@ -30,6 +30,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
          e(assigns(socket), :circle_id, nil) || e(assigns(socket), :circle, :id, nil)
        ] do
       socket
+      |> assign(:page, id)
       |> assign(:selected_tab, params["tab"])
       |> assign_circle(id, :noreply)
     else

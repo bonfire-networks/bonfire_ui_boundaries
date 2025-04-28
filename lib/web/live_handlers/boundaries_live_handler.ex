@@ -758,7 +758,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
         do: Boundaries.boundaries_on_objects(list_of_ids, current_user),
         else: %{}
 
-    error(my_states, "boundaries_on_objects!")
+    debug(my_states, "boundaries_on_objects!")
 
     list_of_components
     |> Map.new(fn component ->

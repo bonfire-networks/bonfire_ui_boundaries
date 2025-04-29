@@ -36,9 +36,9 @@
           <li>
             <LinkLive to={~p"/circle/#{id(circle)}"} class={"menu-active": id(circle) == @page}>
               <div class="w-7 h-7 rounded-lg bg-base-content/10 flex items-center place-content-center shadow-lg">
-                <Iconify.iconify icon="rivet-icons:circle" class="w-4 h-4 text-base-content/70" />
+                <Iconify.iconify icon="rivet-icons:circle" class="w-4 h-4 opacity-70" />
               </div>
-              <span class="font-medium text-base-content/80">{LiveHandler.subject_name(circle)}</span>
+              <span class="font-medium opacity-80">{LiveHandler.subject_name(circle)}</span>
             </LinkLive>
           </li>
         {/for}

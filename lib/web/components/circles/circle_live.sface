@@ -16,7 +16,7 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <div>
+          <!-- <div>
             <StatelessComponent
               module={maybe_component(Bonfire.UI.Boundaries.BoundaryIconStatelessLive)}
               object={@circle}
@@ -25,7 +25,7 @@
               object_boundaries={@to_boundaries}
               boundary_preset={@boundary_preset}
             />
-          </div>
+          </div> -->
 
           {#if @is_caretaker}
             <div data-role="edit_circle_name" class="edit_name">

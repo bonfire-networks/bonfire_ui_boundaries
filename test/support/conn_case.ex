@@ -32,6 +32,9 @@ defmodule Bonfire.UI.Boundaries.ConnCase do
       import Bonfire.UI.Boundaries.Test.ConnHelpers
       import Bonfire.UI.Boundaries.Test.FakeHelpers
 
+      use Bonfire.Common.Config
+      use Bonfire.Common.Settings
+
       alias Bonfire.UI.Boundaries.Fake
       import Bonfire.UI.Boundaries.Fake
       # alias Bonfire.UI.Boundaries.Router.Helpers, as: Routes

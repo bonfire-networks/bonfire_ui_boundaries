@@ -4,9 +4,8 @@
       [:ui, :boundary_preset],
       "public",
       Bonfire.Common.Settings.LiveHandler.scoped(@scope, @__context__)
-      |> debug("scopped")
-    )
-    |> to_string()}
+      # |> debug("scopped")
+    )}
   </label>
   <ul
     tabindex="0"

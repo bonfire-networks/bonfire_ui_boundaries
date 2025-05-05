@@ -15,7 +15,10 @@
       />
 
       <div class="flex items-center flex-col lg:flex-row gap-2 mx-2 mt-2">
-        <div :if={@is_customizable} class="flex w-full flex-1 p-0">
+        <div
+          :if={@is_customizable && module_enabled?(Bonfire.UI.Boundaries.PreviewBoundariesLive, @__context__)}
+          class="flex w-full flex-1 p-0"
+        >
           <Bonfire.UI.Common.OpenModalLive
             reusable_modal_id="persistent_modal"
             id="define_boundary"
@@ -44,7 +47,10 @@
             </:open_btn>
           </Bonfire.UI.Common.OpenModalLive>
         </div>
-        <div class="flex flex-1 w-full p-0">
+        <div
+          :if={module_enabled?(Bonfire.UI.Boundaries.PreviewBoundariesLive, @__context__)}
+          class="flex flex-1 w-full p-0"
+        >
           <Bonfire.UI.Common.OpenModalLive
             id="preview_boundaries"
             reusable_modal_id="persistent_modal"
@@ -56,7 +62,7 @@
             <StatefulComponent
               :if={maybe_apply(Bonfire.UI.Boundaries.SetBoundariesButtonLive, :clone_context, @to_boundaries) ==
                 false}
-              module={maybe_component(Bonfire.UI.Boundaries.PreviewBoundariesLive, @__context__)}
+              module={Bonfire.UI.Boundaries.PreviewBoundariesLive}
               id="boundaries_preview"
               boundary_preset={@boundary_preset}
               to_boundaries={@to_boundaries}

@@ -41,6 +41,7 @@ defmodule Bonfire.UI.Boundaries.GeneralAccessListLive do
     Enum.any?(acls, fn
       %{id: id} -> id == preset
       {p, _} -> p == preset
+      p -> p == preset
     end)
   end
 

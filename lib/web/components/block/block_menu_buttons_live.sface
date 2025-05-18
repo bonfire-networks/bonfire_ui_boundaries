@@ -32,7 +32,7 @@
                   scope={@scope}
                   type={:hide}
                   open_btn_label={@open_btn_label}
-                  parent_id={"user-#{@parent_id}"}
+                  parent_id={"hide-#{@parent_id}"}
                   with_icon={@with_icon}
                   label={@extra_object_label}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
@@ -49,7 +49,7 @@
                   scope={@scope}
                   type={:ghost}
                   open_btn_label={@open_btn_label}
-                  parent_id={"user-#{@parent_id}"}
+                  parent_id={"user-ghost-#{@parent_id}"}
                   with_icon={@with_icon}
                   label={e(@object, :profile, :name, l("this user"))}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
@@ -63,7 +63,7 @@
                   scope={@scope}
                   type={:silence}
                   open_btn_label={@open_btn_label}
-                  parent_id={"user-#{@parent_id}"}
+                  parent_id={"user-silence-#{@parent_id}"}
                   with_icon={@with_icon}
                   label={e(@object, :profile, :name, l("this user"))}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
@@ -77,7 +77,7 @@
                   scope={@scope}
                   type={:block}
                   open_btn_label={@open_btn_label}
-                  parent_id={"user-#{@parent_id}"}
+                  parent_id={"user-block-#{@parent_id}"}
                   with_icon={@with_icon}
                   label={e(@object, :profile, :name, l("this user"))}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
@@ -94,7 +94,7 @@
                   object={e(block_peer, :peer_id, nil)}
                   is_local_user={false}
                   scope={@scope}
-                  parent_id={"instance-#{@parent_id}"}
+                  parent_id={"instance-ghost-#{@parent_id}"}
                   label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
                 />
@@ -106,7 +106,7 @@
                   object={e(block_peer, :peer_id, nil)}
                   is_local_user={false}
                   scope={@scope}
-                  parent_id={"instance-#{@parent_id}"}
+                  parent_id={"instance-silence-#{@parent_id}"}
                   label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
                 />
@@ -118,7 +118,7 @@
                   object={e(block_peer, :peer_id, nil)}
                   is_local_user={false}
                   scope={@scope}
-                  parent_id={"instance-#{@parent_id}"}
+                  parent_id={"instance-block-#{@parent_id}"}
                   label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
                   class="flex items-center w-full gap-2 text-sm text-base-content"
                 />

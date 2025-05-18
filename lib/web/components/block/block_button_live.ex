@@ -15,7 +15,7 @@ defmodule Bonfire.UI.Boundaries.BlockButtonLive do
   prop only_user, :boolean, default: false
 
   # visual
-  prop parent_id, :string, default: nil
+  prop parent_id, :any, default: nil
   prop with_icon, :boolean, default: false
   prop icon_class, :css_class, default: nil
   prop hide_text, :boolean, default: false

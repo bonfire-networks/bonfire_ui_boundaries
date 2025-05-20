@@ -31,7 +31,7 @@ defmodule Bonfire.UI.Boundaries.RolesLive do
               if(!assigns[:read_only],
                 do:
                   {Bonfire.UI.Boundaries.NewRoleButtonLive,
-                   [scope: scope, scope_type: scope_type]}
+                   [scope: scope, scope_type: scope_type, setting_boundaries: false]},
               )
             ]
           )

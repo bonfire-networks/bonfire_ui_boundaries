@@ -12,7 +12,7 @@ defmodule Bonfire.UI.Boundaries.EditCircleLive do
     with {:ok, circle} <-
            Circles.get_for_caretaker(
              id,
-             current_user(assigns) || current_user(assigns(socket))
+             current_user(assigns) || current_user(socket)
            )
            |> repo().maybe_preload(encircles: [subject: [:profile, :character]]) do
       debug(circle, "circle")

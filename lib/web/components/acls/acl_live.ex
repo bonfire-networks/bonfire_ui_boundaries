@@ -27,7 +27,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
   end
 
   def update(assigns, socket) do
-    current_user = current_user(assigns) || current_user(assigns(socket))
+    current_user = current_user(assigns) || current_user(socket)
     params = e(assigns, :__context__, :current_params, %{})
 
     acl_id = e(assigns, :acl_id, nil) || e(assigns(socket), :acl_id, nil) || e(params, "id", nil)
@@ -77,7 +77,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
   end
 
   def assign_updated(socket, force? \\ false) do
-    current_user = current_user(assigns(socket))
+    current_user = current_user(socket)
 
     acl_id = e(assigns(socket), :acl_id, nil)
     acl = e(assigns(socket), :acl, nil)
@@ -297,7 +297,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
         %{assigns: %{scope: %schema{}}} = socket
       )
       when schema == Bonfire.Classify.Category do
-    # current_user = current_user(assigns(socket))
+    # current_user = current_user(socket)
     # for groups and the like
     # TODO: should they have their own circles?
     (Bonfire.Boundaries.Circles.list_my_with_global(
@@ -317,7 +317,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
         %{"id" => live_select_id, "text" => search},
         socket
       ) do
-    current_user = current_user(assigns(socket))
+    current_user = current_user(socket)
 
     (Bonfire.Boundaries.Circles.list_my_with_global(
        [current_user, Bonfire.Boundaries.Scaffold.Instance.activity_pub_circle()],

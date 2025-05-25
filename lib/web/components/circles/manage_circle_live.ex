@@ -35,7 +35,7 @@ defmodule Bonfire.UI.Boundaries.ManageCircleLive do
 
   def update(%{circle: nil} = assigns, socket) do
     debug("need to load the circle")
-    current_user = current_user(assigns) || current_user(assigns(socket))
+    current_user = current_user(assigns) || current_user(socket)
 
     params =
       e(assigns, :__context__, :current_params, %{}) ||

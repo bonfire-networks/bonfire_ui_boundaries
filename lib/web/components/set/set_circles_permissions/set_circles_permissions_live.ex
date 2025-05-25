@@ -127,7 +127,7 @@ defmodule Bonfire.UI.Boundaries.SetCirclesPermissionsLive do
   end
 
   # def list_my_boundaries(socket) do
-  #   current_user = current_user(assigns(socket))
+  #   current_user = current_user(socket)
   #   Bonfire.Boundaries.Acls.list_my(current_user)
   # end
 
@@ -140,7 +140,7 @@ defmodule Bonfire.UI.Boundaries.SetCirclesPermissionsLive do
   end
 
   def live_select_change(live_select_id, search, circle_field, socket) do
-    current_user = current_user(assigns(socket))
+    current_user = current_user(socket)
     # Bonfire.Boundaries.Acls.list_my(current_user, search: search) ++
     (Bonfire.Boundaries.Circles.list_my_with_global(
        [current_user, Bonfire.Boundaries.Scaffold.Instance.activity_pub_circle()],
@@ -162,7 +162,7 @@ defmodule Bonfire.UI.Boundaries.SetCirclesPermissionsLive do
   end
 
   def handle_event("multi_select", %{"add_circles" => circle_id}, socket) do
-    circles_list = list_my_circles(current_user(assigns(socket)))
+    circles_list = list_my_circles(current_user(socket))
 
     # Find the circle by ID
     circle = Enum.find(circles_list, fn c -> c.id == circle_id end)

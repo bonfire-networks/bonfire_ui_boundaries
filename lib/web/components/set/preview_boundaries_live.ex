@@ -125,7 +125,7 @@ defmodule Bonfire.UI.Boundaries.PreviewBoundariesLive do
   end
 
   def preview(socket, id, username) do
-    current_user = current_user(assigns(socket))
+    current_user = current_user(socket)
 
     boundaries =
       Enum.map(

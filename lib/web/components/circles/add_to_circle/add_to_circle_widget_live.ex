@@ -9,7 +9,7 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
 
   def update(%{circles: circles_passed_down} = assigns, socket) when circles_passed_down != [] do
     debug("use circles passed down by parent component")
-    # current_user = current_user(assigns) || current_user(assigns(socket))
+    # current_user = current_user(assigns) || current_user(socket)
 
     circles_passed_down =
       Circles.list_subject_in_circles(e(assigns, :user_id, nil), circles_passed_down)
@@ -23,7 +23,7 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
   def update(assigns, %{assigns: %{circles: circles_already_loaded}} = socket)
       when circles_already_loaded != [] do
     debug("use circles already loaded (but load membership)")
-    # current_user = current_user(assigns) || current_user(assigns(socket))
+    # current_user = current_user(assigns) || current_user(socket)
 
     circles_already_loaded =
       Circles.list_subject_in_circles(e(assigns, :user_id, nil), circles_already_loaded)
@@ -62,7 +62,7 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
 
   def handle_event("add", %{"id" => user_id, "circle" => circle}, socket) do
     # TODO: check permission
-    # current_user = current_user(assigns(socket))
+    # current_user = current_user(socket)
     with {:ok, _} <- Circles.add_to_circles(user_id, circle) do
       {:noreply,
        socket
@@ -84,7 +84,7 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
 
   def handle_event("remove", %{"id" => user_id, "circle" => circle}, socket) do
     # TODO: check permission
-    # current_user = current_user(assigns(socket))
+    # current_user = current_user(socket)
     with {1, _} <- Circles.remove_from_circles(user_id, circle) do
       {:noreply,
        socket

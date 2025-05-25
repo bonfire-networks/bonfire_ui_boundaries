@@ -35,7 +35,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   end
 
   def update(assigns, socket) do
-    current_user = current_user(assigns) || current_user(assigns(socket))
+    current_user = current_user(assigns) || current_user(socket)
 
     params =
       e(assigns, :__context__, :current_params, %{})
@@ -262,7 +262,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
       )
       when is_binary(id) and circle_type in [:silence, :ghost] do
     with {:ok, _} <-
-           Blocks.unblock(id, circle_type, scope || current_user(assigns(socket))) do
+           Blocks.unblock(id, circle_type, scope || current_user(socket)) do
       {:noreply,
        socket
        |> update(:members, &Map.drop(&1, [id]))

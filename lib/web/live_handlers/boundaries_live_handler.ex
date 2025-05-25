@@ -17,7 +17,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
   end
 
   def preview(socket, id, username) do
-    current_user = current_user(assigns(socket))
+    current_user = current_user(socket)
 
     boundaries =
       Enum.map(
@@ -804,7 +804,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
   end
 
   def prepare_assigns(socket) do
-    current_user = current_user(assigns(socket))
+    current_user = current_user(socket)
     my_acls = e(assigns(socket)[:__context__], :my_acls, nil) || my_acls(id(current_user))
 
     to_boundaries =

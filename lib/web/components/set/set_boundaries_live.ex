@@ -141,7 +141,7 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
   end
 
   # def list_my_boundaries(socket) do
-  #   current_user = current_user(assigns(socket))
+  #   current_user = current_user(socket)
   #   Bonfire.Boundaries.Acls.list_my(current_user)
   # end
 
@@ -160,7 +160,7 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
   end
 
   def live_select_change(live_select_id, search, circle_field, socket) do
-    current_user = current_user(assigns(socket))
+    current_user = current_user(socket)
     # Bonfire.Boundaries.Acls.list_my(current_user, search: search) ++
 
     # Get the list of circles

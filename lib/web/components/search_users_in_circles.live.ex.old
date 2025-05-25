@@ -20,7 +20,7 @@ defmodule Bonfire.UI.Boundaries.SearchUsersInCirclesLive do
   prop is_editable, :boolean, default: false
 
   def handle_event("live_select_change", %{"id" => live_select_id, "text" => search}, socket) do
-    # current_user = current_user(assigns(socket))
+    # current_user = current_user(socket)
     do_results_for_multiselect(search)
     |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
 
@@ -43,7 +43,7 @@ defmodule Bonfire.UI.Boundaries.SearchUsersInCirclesLive do
   def add_member(subject, %{assigns: %{scope: scope, circle_type: circle_type}} = socket)
       when circle_type in [:silence, :ghost] do
     with id when is_binary(id) <- uid(subject),
-         {:ok, _} <- Blocks.block(id, circle_type, scope || current_user(assigns(socket))) do
+         {:ok, _} <- Blocks.block(id, circle_type, scope || current_user(socket)) do
       {:noreply,
        socket
        |> assign_flash(:info, l("Blocked!"))

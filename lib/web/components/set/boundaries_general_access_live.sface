@@ -16,7 +16,7 @@
 
       <div class="flex items-center flex-col lg:flex-row gap-2 mx-2 mt-2">
         <div
-          :if={@is_customizable && module_enabled?(Bonfire.UI.Boundaries.PreviewBoundariesLive, @__context__)}
+          :if={@is_customizable}
           class="flex w-full flex-1 p-0"
         >
           <Bonfire.UI.Common.OpenModalLive

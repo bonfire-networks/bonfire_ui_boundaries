@@ -155,7 +155,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
     conn =
       conn(user: bob, account: account)
       |> visit("/post/#{post.id}")
-      |> assert_has("article button[data-role=like_enabled]")
+      |> assert_has_or_open_browser("article button[data-role=like_enabled]")
   end
 
   # test "adding a user with an 'interact' role and verify that the user can like and boost the post." do

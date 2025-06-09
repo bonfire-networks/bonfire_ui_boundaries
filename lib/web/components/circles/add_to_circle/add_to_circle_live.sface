@@ -1,4 +1,4 @@
-<div class="flex-1 flex" data-role="add_to_circle">
+<div class="" data-role="add_to_circle">
   <Bonfire.UI.Common.OpenModalLive
     id={ComponentID.new(
       Bonfire.UI.Common.OpenModalLive,
@@ -16,9 +16,9 @@
     />
     <:open_btn>
       {#if @as_icon}
-        <div class="btn w-full  btn-secondary btn-soft">
+        <div data-tip={l("Add to circles")} class="tooltip btn btn-outline border-base-content/10 btn-circle">
           <#Icon iconify="rivet-icons:circle" class="w-4 h-4 shrink-0" />
-          <span>{@label || l("Add to circles")}</span>
+          <span class="sr-only">{@label || l("Add to circles")}</span>
         </div>
       {#elseif e(@hide_icon, false)}
         <div class="btn w-full flex-1 btn-secondary btn-soft">

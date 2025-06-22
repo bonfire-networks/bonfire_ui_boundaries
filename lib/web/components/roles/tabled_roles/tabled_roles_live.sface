@@ -107,7 +107,7 @@
 
               <:open_btn>
                 <div class="btn btn-sm btn-circle btn-ghost">
-                  <#Icon iconify="ph:gear-fill" class="w-4 h-4 opacity-80" />
+                  <#Icon iconify="ph:gear-fill" class="w-4 h-4" />
                   <span class="sr-only">{l("Edit role")}</span>
                 </div>
               </:open_btn>

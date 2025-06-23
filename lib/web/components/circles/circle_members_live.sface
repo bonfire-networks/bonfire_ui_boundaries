@@ -1,7 +1,7 @@
 <div id="circle_members" class="">
   <div class="">
     <#slot />
-    <div :if={@show_add || !@read_only} class="flex flex-col gap-3 bg-base-300 p-4">
+    <div :if={@show_add || !@read_only} class="flex flex-col gap-3 pt-2 px-1">
       {!-- {#if description = e(@circle, :extra_info, :summary, nil)}
         <div class="text-base-content/70 p-2 pb-0">{description}</div>
       {/if} --}
@@ -24,8 +24,8 @@
   </div>
   {#case Enum.count(@members)}
     {#match count when count > 0}
-        <div class="p-4 pb-2 flex items-center justify-between">
-          <span class="text-xs uppercase flex-1">{l("Members")}</span>
+        <div class="p-4 py-2 flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase flex-1">{l("Members")}</span>
 
           {#if @with_batch_follow && current_user_id(@__context__)}
             <a

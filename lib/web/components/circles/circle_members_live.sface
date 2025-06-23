@@ -24,8 +24,7 @@
   </div>
   {#case Enum.count(@members)}
     {#match count when count > 0}
-      <ul role="list" class="list">
-        <li class="p-4 pb-2 flex items-center justify-between">
+        <div class="p-4 pb-2 flex items-center justify-between">
           <span class="text-xs uppercase flex-1">{l("Members")}</span>
 
           {#if @with_batch_follow && current_user_id(@__context__)}
@@ -43,13 +42,14 @@
               </div>
             </a>
           {/if}
-        </li>
+        </div>
+      <ul role="list" class="list">
         {#for {id, member} <- @members}
-          <li class="p-4 py-2 flex items-center justify-between">
+          <li class="border-b border-base-content/10 p-3">
             <input type="hidden" name={"circle[encircle][#{id}][circle_id]"} value={e(@circle, :id, nil)}>
             <input type="hidden" name={"circle[encircle][#{id}][subject_id]"} value={id}>
 
-            <div class="flex-1 w-full mr-2">
+
               {#case member}
                 {#match %{subject: %{profile: %{id: _} = profile}} = member}
                   <StatelessComponent
@@ -59,8 +59,19 @@
                     avatar_class="w-10 h-10 rounded-box"
                     character={e(member, :subject, :character, nil)}
                     show_summary
+                    class="btn btn-sm"
                     show_controls={[:follow]}
-                  />
+                  >
+                    <button
+                      data-role="remove_user"
+                      :if={@show_remove || !@read_only}
+                      phx-value-subject={id}
+                      :on-click="remove"
+                      class="btn btn-error btn-soft btn-sm"
+                    >
+                      {l("Remove")}
+                    </button>
+                  </StatelessComponent>
                 {#match %{name: name, icon: icon, username: username} when is_binary(name)}
                   <StatelessComponent
                     module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
@@ -69,24 +80,27 @@
                     character={%{username: username}}
                     wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-col lg:flex-row justify-between"
                     show_summary
+                    class="btn btn-sm"
                     show_controls={[:follow]}
-                  />
+                  >
+                    <button
+                      data-role="remove_user"
+                      :if={@show_remove || !@read_only}
+                      phx-value-subject={id}
+                      :on-click="remove"
+                      class="btn btn-error btn-soft btn-sm"
+                    >
+                      {l("Remove")}
+                    </button>
+                  </StatelessComponent>
                 {#match member}
                   <LinkLive class="text-base font-bold text-base-content">
                     {e(member, :subject, :named, :name, nil) || e(member, :named, :name, nil) ||
                       e(member, :name, "Unknown")}
                   </LinkLive>
               {/case}
-            </div>
-            <button
-              data-role="remove_user"
-              :if={@show_remove || !@read_only}
-              phx-value-subject={id}
-              :on-click="remove"
-              class="btn btn-error btn-soft btn-sm"
-            >
-              {l("Remove")}
-            </button>
+
+           
           </li>
         {/for}
       </ul>

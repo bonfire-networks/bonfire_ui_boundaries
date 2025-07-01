@@ -22,7 +22,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       conn
       |> visit("/boundaries/circles")
       |> click_button("[data-role=open_modal]", "New circle")
-      |> fill_in("Enter a name for the circle", with: "Friends")
+      |> fill_in("Enter a name for the circle", with: "Friends", exact: false)
       |> click_button("[data-role=new_circle_submit]", "Create")
       # |> assert_path("/circle/friends")
       # |> assert_has("[role=banner]", text: "Circle created!")

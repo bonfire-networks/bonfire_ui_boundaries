@@ -3,7 +3,7 @@ defmodule Bonfire.UI.Boundaries.MyCirclesPreviewLive do
   # alias Bonfire.Boundaries.Integration
   alias Bonfire.Boundaries.LiveHandler
 
-  prop selected_tab, :any, default: "timeline"
+  prop selected_tab, :any, default: nil
   prop loading, :boolean, default: false
   prop hide_tabs, :boolean, default: false
   prop showing_within, :atom, default: :profile

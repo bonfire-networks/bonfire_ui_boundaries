@@ -11,7 +11,7 @@
       {#for %{id: id} = circle <- e(@circles, [])}
         <li class="list-row">
           <div class="w-10 h-10 flex place-content-center items-center bg-secondary/10 rounded-box">
-            <#Icon iconify="rivet-icons:circle" class="w-5 h-5 text-secondary" />
+            <#Icon iconify="ph:circle-duotone" class="w-5 h-5 text-secondary" />
           </div>
           <div>
             <div>{LiveHandler.subject_name(circle)}</div>
@@ -34,7 +34,7 @@
 
               <:open_btn>
                 <div class="btn btn-secondary btn-soft">
-                  <#Icon iconify="mingcute:settings-6-fill" class="w-5 h-5 mr-2" />
+                  <#Icon iconify="ph:sliders-horizontal-duotone" class="w-5 h-5 mr-2" />
                   {l("Edit circle")}</div>
               </:open_btn>
             </Bonfire.UI.Common.OpenModalLive>

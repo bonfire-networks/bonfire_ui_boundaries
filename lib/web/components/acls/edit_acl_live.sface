@@ -17,7 +17,7 @@
       {#else}
         <div class="flex items-center gap-3">
           <span class="flex items-center w-10 h-10 rounded-full place-content-center bg-info">
-            <#Icon iconify="rivet-icons:circle" class="inline-block w-5 h-5 text-info-content" />
+            <#Icon iconify="ph:circle-duotone" class="inline-block w-5 h-5 text-info-content" />
           </span>
           <div class="text-sm truncate max-w-[160px] font-medium text-base-content">{LiveHandler.subject_name(subject)}</div>
         </div>
@@ -40,7 +40,7 @@
           />
           <div class="dropdown dropdown-end">
             <label tabindex="0" class="rounded btn btn-square btn-ghost btn-sm">
-              <#Icon solid="DotsVertical" class="w-4 h-4" />
+              <#Icon iconify="ph:dots-three-outline-vertical-duotone" class="w-4 h-4" />
             </label>
             <ul tabindex="0" class="w-48 p-1 rounded shadow dropdown-content menu bg-base-200">
               {!-- <li :if={!@setting_boundaries}>

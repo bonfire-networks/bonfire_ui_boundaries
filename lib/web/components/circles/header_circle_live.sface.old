@@ -55,7 +55,7 @@
 
   <div :if={!@read_only and !@stereotype_id} aria-haspopup="true" class="dropdown dropdown-end">
     <label tabindex="0" class="rounded btn btn-xs btn-ghost btn-square">
-      <#Icon solid="DotsVertical" class="w-4 h-4" />
+      <#Icon iconify="ph:dots-three-outline-vertical-duotone" class="w-4 h-4" />
     </label>
     <ul
       tabindex="0"

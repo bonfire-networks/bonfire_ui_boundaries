@@ -7,6 +7,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
   def mount(params, _session, socket) do
     # id = e(params, "id", nil)
     # assign_circle(socket, id, :ok)
+
     {:ok, socket}
   end
 

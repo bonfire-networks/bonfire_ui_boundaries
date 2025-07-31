@@ -2,14 +2,14 @@
   {#case e(@type, nil)}
     {#match :group}
       <section class="bg-base-content/5 rounded-lg p-4">
-        <form id="edit_acl_members" class="" :on-change="select">
+        <!-- <form id="edit_acl_members" class="" :on-change="select">
           <Bonfire.UI.Common.MultiselectLive
             implementation={:live_select}
             form_input_name={:add_circles_to_acl_group}
             preloaded_options={@my_circles}
             label={l("Search for circles or users to add")}
           />
-        </form>
+        </form> -->
         <Bonfire.UI.Boundaries.EditAclLive
           feed_by_subject={@feed_by_subject}
           setting_boundaries={@setting_boundaries}
@@ -46,6 +46,17 @@
           {#else}
             <div class="p-6 bg-base-300 w-full border-base-content/10 border-b" :if={!@read_only}>
               <div class="text-xs text-center uppercase mb-6 text-base-content/80 font-medium">{l("Add one or more circles to this boundary")}</div>
+              <form class="gap-2 flex items-center" phx-change="multi_select">
+                <Bonfire.UI.Common.MultiselectLive
+                  :if={!@read_only}
+                  implementation={:live_select}
+                  field={:to_circles}
+                  form_input_name={__MODULE__}
+                  event_target={@myself}
+                  preloaded_options={Bonfire.UI.Boundaries.SetBoundariesLive.results_for_multiselect(@my_circles || [])}
+                  label={l("Add circles")}
+                />
+              </form>
               <form
                 id="edit_acl_members"
                 class="flex items-center gap-2 w-full flex-1 flex-wrap"
@@ -89,7 +100,7 @@
                         />
                       {#else}
                         <div class="flex items-center w-10 h-10 rounded-full place-content-center bg-info/10">
-                          <#Icon iconify="rivet-icons:circle" class="inline-block w-5 h-5 text-base-content" />
+                          <#Icon iconify="ph:circle-duotone" class="inline-block w-5 h-5 text-base-content" />
                         </div>
                         <div>
                           <div class="text-lg">{LiveHandler.subject_name(subject)}</div>

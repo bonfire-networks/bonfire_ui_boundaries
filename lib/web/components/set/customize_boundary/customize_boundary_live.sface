@@ -11,7 +11,7 @@
       <div class="text-sm font-light text-base-content/70">{l("Select a preset to apply to your activity")}</div>
     </div>
     <div data-position="bottom-end" phx-hook="Tooltip" id="popup_boundaries_in_modal">
-      <label class="tooltip-button flex items-center justify-between gap-2 btn-soft btn-secondary btn">
+      <label class="tooltip-button flex items-center justify-between gap-2 btn-soft btn-primary btn">
         <Bonfire.UI.Boundaries.BoundariesPresetNameLive
           icon_class="w-5 h-5"
           to_boundaries={@to_boundaries}

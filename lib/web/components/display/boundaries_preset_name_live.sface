@@ -8,7 +8,7 @@
       }
     >
       <span :if={@with_icon} class={@icon_wrapper}>
-        <#Icon iconify="ph:globe" class={@icon_class} />
+        <#Icon iconify="ph:globe-duotone" class={@icon_class} />
       </span>
       <div class="flex flex-col gap-0 items-start">
         <span
@@ -34,7 +34,7 @@
       }
     >
       <span :if={@with_icon} class={@icon_wrapper}>
-        <#Icon iconify="mingcute:campground-fill" class={@icon_class} />
+        <#Icon iconify="ph:campfire-duotone" class={@icon_class} />
       </span>
       <div class="flex flex-col gap-0 items-start">
         <span
@@ -122,7 +122,7 @@
           {#match "Mentions"}
             <span class="text-base">@</span>
           {#match "Follows"}
-            <#Icon iconify="rivet-icons:circle" class={@icon_class} />
+            <#Icon iconify="ph:circle-duotone" class={@icon_class} />
           {#match _}
             <#Icon iconify="fluent:door-tag-20-filled" class={@icon_class} />
         {/case}
@@ -144,7 +144,7 @@
       }
     >
       <span :if={@with_icon} class={@icon_wrapper}>
-        <#Icon iconify="ph:gear-fill" class={@icon_class} />
+        <#Icon iconify="ph:gear-six-duotone" class={@icon_class} />
       </span>
       <span class={
         "text-sm normal-case",
@@ -162,7 +162,7 @@
       }
     >
       <span :if={@with_icon} class={@icon_wrapper}>
-        <#Icon iconify="ph:gear-fill" class={@icon_class} />
+        <#Icon iconify="ph:gear-six-duotone" class={@icon_class} />
       </span>
       <span class={
         "text-sm normal-case",

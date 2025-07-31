@@ -4,7 +4,7 @@
 >
   <header class="flex flex-col p-8 pb-0 border-b border-base-content/10">
     <div class="flex items-start gap-4">
-      <#Icon iconify="gravity-ui:square-list-ul" class="w-12 h-12 rotate-15 text-secondary stroke-1" />
+      <#Icon iconify="ph:circle-duotone" class="w-12 h-12 rotate-15 text-secondary stroke-1" />
       <div class="flex justify-center justify-between w-full items-start flex-1">
         <div class="flex flex-1 flex-col">
           <div class="text-xl font-bold">{e(@circle, :named, :name, nil)}</div>
@@ -46,20 +46,12 @@
 
                 <:open_btn>
                   <div class="btn btn-sm btn-primary btn-circle btn-soft">
-                    <#Icon iconify="mingcute:settings-6-fill" class="w-4 h-4" />
+                    <#Icon iconify="ph:sliders-horizontal-duotone" class="w-5 h-5" />
                     <span class="sr-only">{l("Edit circle")}</span>
                   </div>
                 </:open_btn>
               </Bonfire.UI.Common.OpenModalLive>
             </div>
-
-            {!-- <Link
-          to={~p"/boundaries/scope/user/circle/#{id(@circle)}"}
-          class="btn btn-primary btn-sm btn-circle btn-soft"
-        >
-          <#Icon iconify="ph:gear-fill" class="w-4 h-4" />
-          <!-- {l("Edit circle")}</Link> -->
-        </Link> --}
           {/if}
         </div>
       </div>

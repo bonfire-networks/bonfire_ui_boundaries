@@ -49,7 +49,7 @@
                           e(subject, :name, nil) || id(subject)}
                         class="flex items-center w-5 h-5 rounded-full place-content-center bg-info"
                       >
-                        <#Icon iconify="rivet-icons:circle" class="inline-block w-4 h-4 text-info-content" />
+                        <#Icon iconify="ph:circle-duotone" class="inline-block w-4 h-4 text-info-content" />
                       </span>
                     </div>
                   {/if}

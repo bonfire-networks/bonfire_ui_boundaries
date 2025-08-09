@@ -9,7 +9,7 @@
     </form>
 
     <:open_btn>
-      <div class="btn btn-neutral btn-sm">
+      <div class="btn btn-sm">
         {l("New circle")}
       </div>
     </:open_btn>

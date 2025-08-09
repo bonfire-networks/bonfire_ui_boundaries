@@ -49,7 +49,7 @@
           </LinkLive>
 
           {!-- <LinkLive
-            class="btn btn-sm btn-secondary btn-soft"
+            class="btn btn-sm"
             to={if @scope != nil,
               do: ~p"/boundaries/scope/instance/circle/#{id}",
               else: ~p"/boundaries/scope/user/circle/#{id}"}

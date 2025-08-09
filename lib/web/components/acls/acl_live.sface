@@ -44,19 +44,8 @@
               setting_boundaries={@setting_boundaries}
             />
           {#else}
-            <div class="p-6 bg-base-300 w-full border-base-content/10 border-b" :if={!@read_only}>
-              <div class="text-xs text-center uppercase mb-6 text-base-content/80 font-medium">{l("Add one or more circles to this boundary")}</div>
-              <form class="gap-2 flex items-center" phx-change="multi_select">
-                <Bonfire.UI.Common.MultiselectLive
-                  :if={!@read_only}
-                  implementation={:live_select}
-                  field={:to_circles}
-                  form_input_name={__MODULE__}
-                  event_target={@myself}
-                  preloaded_options={Bonfire.UI.Boundaries.SetBoundariesLive.results_for_multiselect(@my_circles || [])}
-                  label={l("Add circles")}
-                />
-              </form>
+            <div class="p-6 w-full border-base-content/10 border-b" :if={!@read_only}>
+              <div class="text-xs text-left uppercase mb-4 text-base-content/80 font-semibold">{l("Add one or more circles to this boundary")}</div>
               <form
                 id="edit_acl_members"
                 class="flex items-center gap-2 w-full flex-1 flex-wrap"
@@ -64,7 +53,7 @@
               >
                 <button
                   disabled={Enum.any?(@feed_by_subject, fn {id, _} -> id == elem(circle, 1)[:id] end)}
-                  class="btn btn-sm btn-soft btn-secondary rounded-full"
+                  class="btn btn-sm btn-soft btn-primary rounded-full"
                   :for={circle <- @my_circles}
                   type="button"
                   data-role="add-circle-to-acl"
@@ -99,13 +88,18 @@
                           with_summary
                         />
                       {#else}
-                        <div class="flex items-center w-10 h-10 rounded-full place-content-center bg-info/10">
-                          <#Icon iconify="ph:circle-duotone" class="inline-block w-5 h-5 text-base-content" />
-                        </div>
+                        <!-- <div class="flex items-center w-10 h-10 rounded-full place-content-center bg-info/10"> -->
+                          <#Icon iconify="ph:circle-duotone" class="w-7 h-7 text-primary" />
+                        <!-- </div> -->
                         <div>
-                          <div class="text-lg">{LiveHandler.subject_name(subject)}</div>
-                          <a href={"/circle/#{id(subject)}/members"} class="link link-hover text-base-content/70">
+                          <div class="text-base font-semibold">{LiveHandler.subject_name(subject)}</div>
+                          <a href={"/circle/#{id(subject)}/members"} class="link link-hover text-sm text-base-content/70">
                             {l("View circle")}
+                            {#case circle_member_count(subject)}
+                              {#match nil}
+                              {#match count}
+                                 • {count} {l("users")}
+                            {/case}
                           </a>
                         </div>
                       {/if}
@@ -139,7 +133,7 @@
                               </form>
                             </div>
                             <:open_btn>
-                              <div data-role="toggle_role" class="btn btn-primary btn-sm btn-soft">
+                              <div data-role="toggle_role" class="btn btn-sm">
                                 {Recase.to_title(
                                   to_string(
                                     Bonfire.Boundaries.Roles.role_from_grants(Map.values(grants || %{}),
@@ -184,9 +178,9 @@
                                 {l("Remove")}
                               </button>
                               <:open_btn>
-                                <div data-role="remove_from_boundary_modal" class="btn-soft btn-sm btn btn-error btn-circle">
+                                <div data-role="remove_from_boundary_modal" class="btn-sm btn btn-square">
                                   <span class="sr-only">{l("Delete")}</span>
-                                  <#Icon iconify="ic:baseline-minus" class="w-4 h-4" />
+                                  <#Icon iconify="ph:trash-duotone" class="w-4 h-4 text-error" />
                                 </div>
                               </:open_btn>
                             </Bonfire.UI.Common.OpenModalLive>

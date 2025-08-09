@@ -10,7 +10,7 @@
       </thead>
       <tbody>
         <tr :for={{role, verbs} <- @roles_with_verbs || []}>
-          <td class="sticky left-0 z-10 bg-base-100/70 backdrop-blur-sm min-w-[180px] h-full gap-2 max-w-[180px] truncate ellipsis">
+          <td class="sticky left-0 z-10 text-sm font-bold bg-base-100/70 backdrop-blur-sm min-w-[180px] h-full gap-2 max-w-[180px] truncate ellipsis">
             {#if @selectable}
               <div class="flex w-full items-center gap-2">
                 <input

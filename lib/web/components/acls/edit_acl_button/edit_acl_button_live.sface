@@ -79,7 +79,7 @@
     </section>
 
     <:open_btn>
-      <div class="btn btn-neutral btn-sm">
+      <div class="btn btn-sm">
         {l("Edit")}</div>
     </:open_btn>
   </Bonfire.UI.Common.OpenModalLive>

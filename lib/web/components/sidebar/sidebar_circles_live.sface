@@ -34,7 +34,7 @@
         </summary>
         {#for circle <- e(@circles, [])}
           <li>
-            <LinkLive to={~p"/circle/#{id(circle)}"} class={"gap-3", "menu-active": id(circle) == @page}>
+            <LinkLive to={~p"/circle/#{id(circle)}"} class={"gap-3", "bg-primary/10": id(circle) == @page}>
               <div>
                 <Iconify.iconify icon="ph:circle-duotone" class="w-6 h-6 text-primary/80" />
               </div>

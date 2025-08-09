@@ -10,7 +10,7 @@
     </div>
 
     <:open_btn>
-      <div class="btn btn-sm btn-neutral">
+      <div class="btn btn-sm">
         {l("New role")}
       </div>
     </:open_btn>

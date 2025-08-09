@@ -97,6 +97,7 @@
         :if={current_user(@__context__)}
         module={maybe_component(Bonfire.UI.Boundaries.AclLive, @__context__)}
         setting_boundaries={false}
+        title={l("Instance permissions")}
         selected_tab="acls"
         id="acl"
         scope={:instance}

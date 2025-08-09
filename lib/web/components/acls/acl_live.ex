@@ -16,6 +16,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
   prop scope, :any, default: nil
   prop usage, :any, default: :all
   prop type, :atom, default: nil
+  prop title, :string, default: nil
 
   def update(assigns, %{assigns: %{loaded: true}} = socket) do
     params = e(assigns, :__context__, :current_params, %{})
@@ -107,7 +108,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
            e(assigns(socket), :scope_type, nil) not in [:group, Bonfire.Classify.Category] do
         send_self(
           back: true,
-          page_title: e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil),
+          page_title: e(assigns(socket), :title, nil) || e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil),
           acl: acl,
           page_header_aside: [
             {Bonfire.UI.Boundaries.EditAclButtonLive,
@@ -470,4 +471,11 @@ defmodule Bonfire.UI.Boundaries.AclLive do
     # |> debug()
     # [{"value":"good", "text":"The Good, the Bad and the Ugly"}, {"value":"matrix", "text":"The Matrix"}]
   end
+
+  def circle_member_count(subject) do
+    if Types.object_type(subject) == Bonfire.Data.AccessControl.Circle do
+      Bonfire.Boundaries.Circles.count_members(id(subject))
+    end
+  end
+
 end

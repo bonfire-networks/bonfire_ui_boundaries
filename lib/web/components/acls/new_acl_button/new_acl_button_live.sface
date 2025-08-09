@@ -8,7 +8,7 @@
       <Bonfire.UI.Boundaries.NewAclLive scope={@scope} setting_boundaries={@setting_boundaries} />
     </form>
     <:open_btn>
-      <div class="btn btn-sm btn-neutral">
+      <div class="btn btn-sm">
         {l("New preset")}
       </div>
     </:open_btn>

@@ -8,6 +8,8 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   prop circle, :any, default: nil
   prop circle_type, :atom, default: nil
   prop name, :string, default: nil
+  prop title, :string, default: nil
+  prop description, :string, default: nil
   prop parent_back, :any, default: nil
   prop setting_boundaries, :boolean, default: false
   prop scope, :any, default: nil
@@ -21,16 +23,28 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
 
   slot default, required: false
 
-  def update(assigns, %{assigns: %{loaded: true}} = socket) do
-    debug(assigns, "already loaded")
-    # params = e(assigns, :__context__, :current_params, %{})
+  def update(assigns, %{assigns: %{loaded: true} = socket_assigns} = socket) do
+    # When already loaded, we still need to update the page_title if a new title is provided
+    title_from_assigns = e(assigns, :title, nil)
+    
+    if title_from_assigns do
+      # Get the circle from socket assigns
+      circle = e(socket_assigns, :circle, nil)
+      
+      # Update page_title with the new title
+      final_title = title_from_assigns || 
+                    e(circle, :named, :name, nil) || 
+                    e(circle, :stereotyped, :named, :name, nil) || 
+                    l("Circle")
+      
+      if socket_connected?(socket),
+        do: send_self(page_title: final_title)
+    end
 
     {
       :ok,
       socket
       |> assign(Enums.filter_empty(assigns, []))
-      #  |> assign(page_title: l("Circle"))
-      #  |> assign(section: e(params, "section", "members"))
     }
   end
 
@@ -117,7 +131,8 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
           send_self(
             read_only: read_only,
             page_title:
-              e(circle, :named, :name, nil) || e(assigns(socket), :name, nil) ||
+              e(assigns, :title, nil) || e(assigns(socket), :title, nil) ||
+                e(circle, :named, :name, nil) || e(assigns(socket), :name, nil) ||
                 e(circle, :stereotyped, :named, :name, nil) || l("Circle"),
             back: true
             # circle: circle

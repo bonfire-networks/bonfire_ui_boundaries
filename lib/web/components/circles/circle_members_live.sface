@@ -1,10 +1,12 @@
 <div id="circle_members" class="">
   <div class="">
     <#slot />
-    <div :if={@show_add || !@read_only} class="flex flex-col gap-3 pt-2 px-1">
-      {!-- {#if description = e(@circle, :extra_info, :summary, nil)}
-        <div class="text-base-content/70 p-2 pb-0">{description}</div>
-      {/if} --}
+    <div :if={@show_add || !@read_only} class="flex flex-col gap-3">
+      {#if description = @description || e(@circle, :extra_info, :summary, nil)}
+        <div class="p-4 border-b border-base-content/10">
+          <span class="text-base-content/80">{description}</span>
+        </div>
+      {/if}
       <div class="menu menu-horizontal items-center justify-between gap-3 w-full">
         <form id="add_members" phx-change="multi_select" phx-target={@myself} class="w-full flex-1">
           <label for={"multi_select_#{__MODULE__}_text_input"} class="sr-only">{l("Search for users to add")}</label>
@@ -14,6 +16,7 @@
               mode={:single}
               form_input_name={__MODULE__}
               field={:add_to_circles}
+              show_search
               debounce={300}
               label={l("Search for circles or users to add")}
             />
@@ -57,7 +60,6 @@
                   wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-col lg:flex-row justify-between"
                   avatar_class="w-10 h-10 rounded-box"
                   character={e(member, :subject, :character, nil)}
-                  show_summary
                   class="btn btn-sm"
                   show_controls={[:follow]}
                 >

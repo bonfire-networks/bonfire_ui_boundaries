@@ -30,6 +30,7 @@
           implementation={:live_select}
           field={:to_circles}
           form_input_name={__MODULE__}
+          show_search
           event_target="#smart_input"
           preloaded_options={results_for_multiselect(@my_circles || [])}
           label={l("Add circles")}
@@ -79,6 +80,7 @@
           :if={!@read_only}
           implementation={:live_select}
           field={:exclude_circles}
+          show_search
           event_target="#smart_input"
           form_input_name={Bonfire.UI.Boundaries.ExcludeBoundaries}
           preloaded_options={results_for_multiselect(@my_circles, :exclude_circles)}

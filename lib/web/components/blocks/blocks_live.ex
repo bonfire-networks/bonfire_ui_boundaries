@@ -4,6 +4,8 @@ defmodule Bonfire.UI.Boundaries.BlocksLive do
 
   prop selected_tab, :any
   prop name, :string, default: nil
+  prop title, :string, default: nil
+  prop description, :string, default: nil
   prop blocks, :list, default: []
   prop page_info, :any
   prop scope, :any, default: nil
@@ -56,7 +58,7 @@ defmodule Bonfire.UI.Boundaries.BlocksLive do
        selected_tab: tab,
        read_only: read_only,
        block_type: block_type,
-       # page_title: l("Blocks")<>" - #{scope} #{tab}",
+       title: e(assigns, :title, nil),  # Keep title so it can be passed to child components
        #  current_user: current_user,
        circle: if(is_map(circle), do: circle),
        circle_id: id(circle)
@@ -64,7 +66,6 @@ defmodule Bonfire.UI.Boundaries.BlocksLive do
        #  blocks: blocks
 
        # page_info: e(q, :page_info, [])
-     )
-     |> debug("blas")}
+     )}
   end
 end

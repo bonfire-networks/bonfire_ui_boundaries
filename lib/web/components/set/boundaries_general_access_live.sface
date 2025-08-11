@@ -2,7 +2,7 @@
 <div class="h-full flex-1">
   <div class="boundaries_general_access menu flex flex-col gap-1 flex-1 h-full flex-nowrap overflow-y-auto w-full">
     <div class="block items-center justify-between mb-2 w-full gap-2">
-      <div class="items-start text-left flex-1 text-xs font-semibold uppercase text-base-content/50 px-2 pt-2">{l("Define the boundary")}</div>
+      <div class="items-start text-left flex-1 text-xs font-semibold uppercase text-base-content/50 p-2">{l("Define the boundary")}</div>
 
       <Bonfire.UI.Boundaries.GeneralAccessListLive
         hide_presets={@hide_presets}
@@ -68,8 +68,7 @@
             />
 
             <:open_btn>
-              <div class="w-full btn btn-sm flex btn-soft" title={l("Preview boundary")}>
-                <!-- <#Icon iconify="ph:eyes-fill" class="w-5 h-5 text-base-content/90" /> -->
+              <div class="w-full btn btn-sm flex" title={l("Preview boundary")}>
                 <span>
                   {l("Preview boundary")}
                 </span>

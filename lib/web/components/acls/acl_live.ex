@@ -17,6 +17,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
   prop usage, :any, default: :all
   prop type, :atom, default: nil
   prop title, :string, default: nil
+  prop description, :string, default: nil
 
   def update(assigns, %{assigns: %{loaded: true}} = socket) do
     params = e(assigns, :__context__, :current_params, %{})

@@ -24,7 +24,7 @@
           <span class="sr-only">{@label || l("Add to circles")}</span>
         </div>
       {#elseif e(@hide_icon, false)}
-        <div class="btn w-full flex-1 btn-secondary btn-soft">
+        <div class="btn w-full flex-1 btn-sm">
           <span>{@label || l("Add to circles")}</span>
         </div>
       {#else}

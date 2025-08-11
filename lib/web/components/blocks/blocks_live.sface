@@ -5,6 +5,8 @@
       circle_id={@circle_id}
       circle={@circle}
       name={@name}
+      title={@title}
+      description={@description}
       circle_type={:silence}
       scope={@scope}
       setting_boundaries={false}
@@ -65,6 +67,8 @@
       circle_id={@circle_id}
       circle={@circle}
       name={@name}
+      title={@title}
+      description={@description}
       circle_type={:ghost}
       scope={@scope}
       setting_boundaries={false}

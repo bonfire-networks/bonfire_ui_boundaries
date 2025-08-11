@@ -7,15 +7,15 @@
   </div>
   <div class="">
     <ul role="list" class="list">
-      <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{l("Your circles")}</li>
+      <li class="p-4 pb-2 text-sm opacity-60 tracking-wide">{l("Your circles")}</li>
       {#for %{id: id} = circle <- e(@circles, [])}
         <li class="list-row">
-          <div class="w-10 h-10 flex place-content-center items-center bg-secondary/10 rounded-box">
-            <#Icon iconify="ph:circle-duotone" class="w-5 h-5 text-secondary" />
+          <div class="w-10 h-10 flex place-content-center items-center">
+            <#Icon iconify="ph:circle-duotone" class="w-7 h-7 text-primary" />
           </div>
           <div>
-            <div>{LiveHandler.subject_name(circle)}</div>
-            <div class="text-xs uppercase font-semibold opacity-60">{e(circle, :encircles_count, 0)} {l(" Members")}</div>
+            <div class="text-base font-medium">{LiveHandler.subject_name(circle)}</div>
+            <div class="text-xs opacity-80">{e(circle, :encircles_count, 0)} {l(" Members")}</div>
           </div>
 
           <div data-role="edit_circle_name" class="edit_name">
@@ -33,18 +33,18 @@
               />
 
               <:open_btn>
-                <div class="btn btn-secondary btn-soft">
+                <div class="btn btn-sm">
                   <#Icon iconify="ph:sliders-horizontal-duotone" class="w-5 h-5 mr-2" />
                   {l("Edit circle")}</div>
               </:open_btn>
             </Bonfire.UI.Common.OpenModalLive>
           </div>
 
-          <LinkLive class="btn btn-secondary btn-soft" to={"/circle/#{id}/members"}>
+          <LinkLive class="btn btn-sm" to={"/circle/#{id}/members"}>
             {l("Manage members")}
           </LinkLive>
 
-          <LinkLive class="btn btn-primary btn-soft" to={"/circle/#{id}"}>
+          <LinkLive class="btn btn-primary btn-sm" to={"/circle/#{id}"}>
             {l("View feed")}
           </LinkLive>
 

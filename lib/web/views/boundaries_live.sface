@@ -60,15 +60,17 @@
         scope={@scope}
       />
     {#match "silenced"}
-      <Bonfire.UI.Boundaries.BlocksLive id="blocks" selected_tab="silenced" />
+      <Bonfire.UI.Boundaries.BlocksLive id="blocks" selected_tab="silenced" title={l("Silenced Users")} />
     {#match "ghosted"}
-      <Bonfire.UI.Boundaries.BlocksLive id="blocks" selected_tab="ghosted" />
+      <Bonfire.UI.Boundaries.BlocksLive id="blocks" selected_tab="ghosted" title={l("Ghosted Users")} />
     {#match "instance_silenced"}
       <Bonfire.UI.Boundaries.BlocksLive
         scope={:instance_wide}
         id="blocks"
         selected_tab="silenced"
         name={l("Silenced instance-wide")}
+        title={l("Silenced Users instance-wide")}
+        description={l("Silenced users and instances are hidden from feeds and notifications on this instance. They won't appear in posts, mentions, or messages, but can still see public content.")}
       />
     {#match "instance_ghosted"}
       <Bonfire.UI.Boundaries.BlocksLive
@@ -76,6 +78,8 @@
         id="blocks"
         selected_tab="ghosted"
         name={l("Ghosted instance-wide")}
+        title={l("Ghosted Users instance-wide")}
+        description={l("Ghosted users and instances cannot see or interact with anyone on this instance. This is a stronger form of blocking where they are completely invisible to each other.")}
       />
       {!-- {#match "instance_circles"}
       <StatefulComponent
@@ -98,6 +102,7 @@
         module={maybe_component(Bonfire.UI.Boundaries.AclLive, @__context__)}
         setting_boundaries={false}
         title={l("Instance permissions")}
+        description={l("Define who can do what on this instance")}
         selected_tab="acls"
         id="acl"
         scope={:instance}

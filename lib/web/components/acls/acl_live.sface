@@ -2,14 +2,6 @@
   {#case e(@type, nil)}
     {#match :group}
       <section class="bg-base-content/5 rounded-lg p-4">
-        <!-- <form id="edit_acl_members" class="" :on-change="select">
-          <Bonfire.UI.Common.MultiselectLive
-            implementation={:live_select}
-            form_input_name={:add_circles_to_acl_group}
-            preloaded_options={@my_circles}
-            label={l("Search for circles or users to add")}
-          />
-        </form> -->
         <Bonfire.UI.Boundaries.EditAclLive
           feed_by_subject={@feed_by_subject}
           setting_boundaries={@setting_boundaries}
@@ -22,11 +14,11 @@
     {#match nil}
       <div>
         <div
-          :if={!@setting_boundaries && e(@acl, :extra_info, :summary, nil)}
+          :if={!@setting_boundaries && (e(@description, nil) || e(@acl, :extra_info, :summary, nil))}
           class="p-4 border-b border-base-content/10"
         >
           <span class="text-base-content/70">
-            {e(@acl, :extra_info, :summary, "No description provided for this boundary preset.")}
+            {e(@description, nil) || e(@acl, :extra_info, :summary, "No description provided for this boundary preset.")}
           </span>
         </div>
         <div class="">
@@ -45,7 +37,7 @@
             />
           {#else}
             <div class="p-6 w-full border-base-content/10 border-b" :if={!@read_only}>
-              <div class="text-xs text-left uppercase mb-4 text-base-content/80 font-semibold">{l("Add one or more circles to this boundary")}</div>
+              <div class="text-xs text-left uppercase mb-4 text-base-content/80 font-semibold">{l("Your circles")}</div>
               <form
                 id="edit_acl_members"
                 class="flex items-center gap-2 w-full flex-1 flex-wrap"

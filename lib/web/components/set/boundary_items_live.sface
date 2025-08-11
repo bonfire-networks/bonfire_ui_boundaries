@@ -28,21 +28,21 @@
         />
       {#match _ when is_binary(data)}
         <div class="flex items-center gap-3 grow">
-          <span class="w-9 h-9 rounded-full bg-info/10 flex items-center place-content-center">
-            <#Icon iconify="ph:circle-duotone" class="inline-block w-5 h-5 text-base-content/70" />
+          <span class="w-9 h-9 flex items-center place-content-center">
+            <#Icon iconify="ph:circle-duotone" class="inline-block w-7 h-7 text-primary" />
           </span>
           <div class="text-base font-medium text-base-content truncate max-w-[210px]">{name(data, @my_circles)}</div>
         </div>
       {#match _}
         <div class="flex items-center gap-3 grow">
-          <span class="w-9 h-9 rounded-full bg-info/10 flex items-center place-content-center">
-            <#Icon iconify="ph:circle-duotone" class="inline-block w-5 h-5 text-base-content/70" />
+          <span class="w-9 h-9 flex items-center place-content-center">
+            <#Icon iconify="ph:circle-duotone" class="inline-block w-7 h-7 text-primary" />
           </span>
           <div class="text-base font-medium text-base-content truncate max-w-[210px]">{name(data) ||
               l("Unknown circle or user")}</div>
         </div>
     {/case}
-    <div class="items-center flex gap-2">
+    <div class="items-center flex gap-1">
       <div class="flex items-center gap-2">
         {#if @read_only}
           {role}
@@ -79,7 +79,6 @@
           </:open_btn>
         </Bonfire.UI.Common.OpenModalLive> -->
       </div>
-
       <div
         :if={!@read_only}
         phx-click={JS.push("Bonfire.Boundaries:remove_circle",
@@ -90,9 +89,9 @@
           },
           target: "#smart_input"
         )}
-        class="btn btn-xs btn-circle btn-ghost"
+        class="btn btn-sm btn-square"
       >
-        <#Icon iconify="ic:baseline-minus" class="w-4 h-4" />
+        <#Icon iconify="ph:trash-duotone" class="w-4 h-4 text-error" />
       </div>
     </div>
   </div>

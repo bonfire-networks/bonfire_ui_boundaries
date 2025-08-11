@@ -32,6 +32,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
        ] do
       socket
       |> assign(:page, id)
+      |> assign(:back, true)
       |> assign(:selected_tab, params["tab"])
       |> assign_circle(id, :noreply)
     else

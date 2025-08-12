@@ -26,17 +26,18 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   def update(assigns, %{assigns: %{loaded: true} = socket_assigns} = socket) do
     # When already loaded, we still need to update the page_title if a new title is provided
     title_from_assigns = e(assigns, :title, nil)
-    
+
     if title_from_assigns do
       # Get the circle from socket assigns
       circle = e(socket_assigns, :circle, nil)
-      
+
       # Update page_title with the new title
-      final_title = title_from_assigns || 
-                    e(circle, :named, :name, nil) || 
-                    e(circle, :stereotyped, :named, :name, nil) || 
-                    l("Circle")
-      
+      final_title =
+        title_from_assigns ||
+          e(circle, :named, :name, nil) ||
+          e(circle, :stereotyped, :named, :name, nil) ||
+          l("Circle")
+
       if socket_connected?(socket),
         do: send_self(page_title: final_title)
     end

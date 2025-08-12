@@ -6,7 +6,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
 
   def mount(params, _session, socket) do
     # id = e(params, "id", nil)
-    # assign_circle(socket, id, :ok)
+    # assign_circle(socket, id, params, :ok)
 
     {:ok, socket}
   end
@@ -34,7 +34,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
       |> assign(:page, id)
       |> assign(:back, true)
       |> assign(:selected_tab, params["tab"])
-      |> assign_circle(id, :noreply)
+      |> assign_circle(id, params, :noreply)
     else
       {:noreply,
        socket
@@ -42,7 +42,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
     end
   end
 
-  def assign_circle(socket, id, ok_atom) do
+  def assign_circle(socket, id, params, ok_atom) do
     current_user = current_user(socket)
 
     with {:ok, data} <-
@@ -74,7 +74,10 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
           {ok_atom,
            socket
            |> redirect_to(
-             if(id, do: "/boundaries/scope/user/circle/#{id}", else: "boundaries/circles")
+             if(id,
+               do: "/boundaries/scope/#{e(params, "scope", "user")}/circle/#{id}",
+               else: "boundaries/circles"
+             )
            )}
         else
           error(id, "Not found or permitted")

@@ -1,7 +1,7 @@
 defmodule Bonfire.UI.Boundaries.EditAclLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
-  prop feed_by_subject, :any, default: nil
+  prop acl_subject_verb_grants, :any, default: nil
   prop setting_boundaries, :boolean, default: false
   prop scope, :any, default: nil
   prop usage, :any, default: :all

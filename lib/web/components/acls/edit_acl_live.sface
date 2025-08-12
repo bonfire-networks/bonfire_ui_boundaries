@@ -2,7 +2,7 @@
   <ul class="flex flex-col divide-y divide-base-content/10">
     <li
       :for={{{subject_id, %{subject: subject, grants: grants} = _subject_verb_grants}, _i} <-
-        Enum.with_index(@feed_by_subject || [])}
+        Enum.with_index(@acl_subject_verb_grants || [])}
       class="flex items-center justify-between p-4"
     >
       {#if e(subject, :profile, :id, nil)}

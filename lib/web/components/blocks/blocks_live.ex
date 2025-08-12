@@ -58,7 +58,8 @@ defmodule Bonfire.UI.Boundaries.BlocksLive do
        selected_tab: tab,
        read_only: read_only,
        block_type: block_type,
-       title: e(assigns, :title, nil),  # Keep title so it can be passed to child components
+       # Keep title so it can be passed to child components
+       title: e(assigns, :title, nil),
        #  current_user: current_user,
        circle: if(is_map(circle), do: circle),
        circle_id: id(circle)

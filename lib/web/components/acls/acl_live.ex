@@ -109,7 +109,9 @@ defmodule Bonfire.UI.Boundaries.AclLive do
            e(assigns(socket), :scope_type, nil) not in [:group, Bonfire.Classify.Category] do
         send_self(
           back: true,
-          page_title: e(assigns(socket), :title, nil) || e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil),
+          page_title:
+            e(assigns(socket), :title, nil) || e(acl, :named, :name, nil) ||
+              e(acl, :stereotyped, :named, :name, nil),
           acl: acl,
           page_header_aside: [
             {Bonfire.UI.Boundaries.EditAclButtonLive,
@@ -124,14 +126,14 @@ defmodule Bonfire.UI.Boundaries.AclLive do
 
       # verbs = e(assigns(socket), :verbs, [])
 
-      feed_by_subject = Grants.subject_verb_grants(e(acl, :grants, []))
+      acl_subject_verb_grants = Grants.subject_verb_grants(e(acl, :grants, []))
       # list_by_verb = verb_subject_grant(e(acl, :grants, []))
       socket
       |> assign(
         loaded: true,
         settings_section_title: "View " <> e(acl, :named, :name, "") <> " boundary",
         acl: acl,
-        feed_by_subject: feed_by_subject,
+        acl_subject_verb_grants: acl_subject_verb_grants,
         # list_by_verb: Map.merge(verbs, list_by_verb),
         # subjects: subjects(e(acl, :grants, [])),
         read_only: read_only
@@ -372,7 +374,8 @@ defmodule Bonfire.UI.Boundaries.AclLive do
       # subjects: ([subject] ++ e(assigns(socket), :subjects, [])) |> Enum.uniq_by(&uid/1),
       # so tagify doesn't remove it as invalid
       # suggestions: Map.put(e(assigns(socket), :suggestions, %{}), id, subject_name),
-      feed_by_subject: e(assigns(socket), :feed_by_subject, %{}) |> Map.merge(subject_map)
+      acl_subject_verb_grants:
+        e(assigns(socket), :acl_subject_verb_grants, %{}) |> Map.merge(subject_map)
       # list_by_verb:
       #   e(assigns(socket), :list_by_verb, %{})
       #   |> Enum.map(fn
@@ -478,5 +481,4 @@ defmodule Bonfire.UI.Boundaries.AclLive do
       Bonfire.Boundaries.Circles.count_members(id(subject))
     end
   end
-
 end

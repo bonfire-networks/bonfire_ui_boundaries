@@ -346,7 +346,7 @@ assign(
 
 ```elixir
 # Show if user is blocked
-<Bonfire.UI.Boundaries.ProfileBlockedIndicatorLive
+<Bonfire.UI.Boundaries.ProfileBlockedIndicator
   user={@user}
   __context__={@__context__}
 />

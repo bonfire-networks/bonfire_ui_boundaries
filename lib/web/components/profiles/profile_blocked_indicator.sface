@@ -22,7 +22,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Re-enable")}
             parent_id={"#{@parent_id}_user-#{id(@user)}"}
-            class="link link-error text-sm"
+            class="btn btn-error btn-sm"
           />
         </div>
       </div>
@@ -40,7 +40,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unghost instance-wide")}
             parent_id={"#{@parent_id}_user-#{id(@user)}"}
-            class="link link-primary text-sm"
+            class="btn btn-primary btn-sm"
           />
         </div>
       </div>
@@ -59,7 +59,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unsilence instance-wide")}
             parent_id={"#{@parent_id}_user-#{id(@user)}"}
-            class="link link-primary text-sm"
+            class="btn btn-primary text-sm"
           />
         </div>
       </div>
@@ -76,7 +76,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unblock")}
             parent_id={"#{@parent_id}_user-#{id(@user)}"}
-            class="link link-error text-sm"
+            class="btn btn-error btn-sm"
           />
         </div>
       </div>
@@ -93,7 +93,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unsilence")}
             parent_id={"#{@parent_id}_user-#{id(@user)}"}
-            class="link link-primary text-sm"
+            class="btn btn-primary btn-sm"
           />
         </div>
       </div>
@@ -109,7 +109,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unghost")}
             parent_id={"#{@parent_id}_user-#{id(@user)}"}
-            class="link link-primary text-sm"
+            class="btn btn-primary btn-sm"
           />
         </div>
         {!-- <button class="link link-primary link-sm">{l "Unghost"}</button> --}

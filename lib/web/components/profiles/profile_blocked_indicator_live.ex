@@ -6,7 +6,6 @@ defmodule Bonfire.UI.Boundaries.ProfileBlockedIndicatorLive do
   prop user, :map
   prop boundary_preset, :any, default: nil
 
-  prop skip_preload, :boolean, default: false
   prop ghosted?, :boolean, default: nil
   prop ghosted_instance_wide?, :boolean, default: nil
   prop silenced?, :boolean, default: nil

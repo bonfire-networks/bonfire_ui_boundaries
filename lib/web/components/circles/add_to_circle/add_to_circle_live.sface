@@ -18,7 +18,7 @@
       {#if @as_icon}
         <div
           data-tip={l("Add to circles")}
-          class="tooltip btn btn-outline border-base-content/10 btn-circle"
+          class="tooltip btn btn-outline btn-sm border-base-content/10 btn-circle"
         >
           <#Icon iconify="ph:circle-duotone" class="w-4 h-4 shrink-0" />
           <span class="sr-only">{@label || l("Add to circles")}</span>

@@ -5,7 +5,7 @@
        !@silenced?)}
   <!-- not blocked -->
 {#else}
-  <div class="mt-2">
+  <div class="mt-2 px-2 p-1 rounded-lg bg-neutral/70 backdrop-blur-sm">
     {#if @ghosted_instance_wide? || @silenced_instance_wide?}
       <div
         :if={@ghosted_instance_wide? && @silenced_instance_wide?}

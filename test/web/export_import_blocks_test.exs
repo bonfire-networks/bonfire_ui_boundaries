@@ -1,4 +1,4 @@
-defmodule Bonfire.UI.Boundaries.ImportBlocksTest do
+defmodule Bonfire.UI.Boundaries.ExportImportBlocksTest do
   use Bonfire.UI.Boundaries.ConnCase, async: true
 
   alias Bonfire.Social.Graph.Import

@@ -5,11 +5,11 @@
        !@silenced?)}
   <!-- not blocked -->
 {#else}
-  <div class="mt-2 px-2 p-1 rounded-lg bg-neutral/70 backdrop-blur-sm">
+  <div class="mt-2 p-2 rounded-xl bg-neutral/70 backdrop-blur-sm">
     {#if @ghosted_instance_wide? || @silenced_instance_wide?}
       <div
         :if={@ghosted_instance_wide? && @silenced_instance_wide?}
-        class="flex items-baseline gap-2 mb-2"
+        class="flex items-center justify-between gap-2"
       >
         <div class="prose prose-md text-sm font-normal text-base-content/70">{l("Instance moderators have blocked this user.")}</div>
         <div :if={Bonfire.Boundaries.can?(@__context__, :block, :instance)}>
@@ -22,13 +22,13 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Re-enable")}
             parent_id={"#{@parent_id}_user-#{id(@user)}"}
-            class="btn btn-error btn-sm"
+            class="btn btn-error btn-xs"
           />
         </div>
       </div>
       <div
         :if={@ghosted_instance_wide? && !@silenced_instance_wide?}
-        class="flex items-baseline gap-2 mb-2"
+        class="flex items-center justify-between gap-2"
       >
         <div class="prose prose-md text-sm font-normal text-base-content/70">{l("Instance moderators have ghosted this user.")}</div>
         <div :if={Bonfire.Boundaries.can?(@__context__, :block, :instance)}>
@@ -40,13 +40,13 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unghost instance-wide")}
             parent_id={"#{@parent_id}_user-#{id(@user)}"}
-            class="btn btn-primary btn-sm"
+            class="btn btn-primary btn-xs"
           />
         </div>
       </div>
       <div
         :if={!@ghosted_instance_wide? && @silenced_instance_wide?}
-        class="flex items-baseline gap-2 mb-2"
+        class="flex items-center justify-between gap-2"
       >
         <div class="prose prose-md text-sm font-normal text-base-content/70">{l("Instance moderators have silenced this user.")}</div>
         <div :if={Bonfire.Boundaries.can?(@__context__, :block, :instance)}>
@@ -59,12 +59,12 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unsilence instance-wide")}
             parent_id={"#{@parent_id}_user-#{id(@user)}"}
-            class="btn btn-primary text-sm"
+            class="btn btn-primary btn-xs"
           />
         </div>
       </div>
     {#elseif @ghosted? || @silenced?}
-      <div :if={@ghosted? && @silenced?} class="flex items-baseline gap-2 mb-2">
+      <div :if={@ghosted? && @silenced?} class="flex items-center gap-2 justify-between">
         <div class="prose prose-md text-sm font-normal text-base-content/70">{l("You have blocked this user.")}
         </div>
         <div>
@@ -76,11 +76,11 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unblock")}
             parent_id={"#{@parent_id}_user-#{id(@user)}"}
-            class="btn btn-error btn-sm"
+            class="btn btn-error btn-xs"
           />
         </div>
       </div>
-      <div :if={!@ghosted? && @silenced?} class="flex items-baseline gap-2 mb-2">
+      <div :if={!@ghosted? && @silenced?} class="flex items-center gap-2 justify-between">
         <div class="prose prose-md text-sm font-normal text-base-content/70">{l("You have silenced this user.")}
         </div>
         <div>
@@ -93,11 +93,11 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unsilence")}
             parent_id={"#{@parent_id}_user-#{id(@user)}"}
-            class="btn btn-primary btn-sm"
+            class="btn btn-primary btn-xs"
           />
         </div>
       </div>
-      <div :if={@ghosted? && !@silenced?} class="flex items-baseline gap-2 mb-2">
+      <div :if={@ghosted? && !@silenced?} class="flex items-center justify-between gap-2">
         <div class="prose prose-md text-sm font-normal text-base-content/70">{l("You have ghosted this user.")}
         </div>
         <div>
@@ -109,7 +109,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unghost")}
             parent_id={"#{@parent_id}_user-#{id(@user)}"}
-            class="btn btn-primary btn-sm"
+            class="btn btn-primary btn-xs"
           />
         </div>
         {!-- <button class="link link-primary link-sm">{l "Unghost"}</button> --}

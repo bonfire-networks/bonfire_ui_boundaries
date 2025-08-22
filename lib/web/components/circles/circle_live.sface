@@ -1,5 +1,5 @@
 <div id="circle_view" class="w-full max-w-full flex flex-col feed w-full max-w-full bg-base-100">
-  <header class="flex flex-col px-4 pt-2 pb-0 border-b border-base-content/10">
+  <header class="flex flex-col px-4 pt-4 pb-0 border-b border-base-content/10">
     <div class="flex items-start gap-4">
       <#Icon iconify="ph:circle-duotone" class="w-12 h-12 rotate-15 text-secondary stroke-1" />
       <div class="flex justify-center justify-between w-full items-start flex-1">

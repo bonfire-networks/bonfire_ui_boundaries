@@ -28,7 +28,7 @@
               hide_custom={!module_enabled?(Bonfire.UI.Boundaries.SetBoundariesLive, @__context__)}
             />
 
-            <!-- <li class="flex items-center flex-row gap-2 mx-4 mb-2">
+            {!-- <li class="flex items-center flex-row gap-2 mx-4 mb-2">
             <div class="flex flex-1 p-0">
               <Bonfire.UI.Common.OpenModalLive
                 reusable_modal_id="persistent_modal"
@@ -89,7 +89,7 @@
                 </:open_btn>
               </Bonfire.UI.Common.OpenModalLive>
               </div>
-            </li> -->
+            </li> --}
           </ul>
         </div>
       </div>
@@ -99,7 +99,7 @@
       <span>{boundary_name}</span>
     </div>
 {/case}
-<!-- 
+{!-- 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const dialog = document.getElementById('my_modal_5');
@@ -116,4 +116,4 @@
       }
     });
   });
-</script> -->
+</script> --}

@@ -28,7 +28,7 @@ defmodule Bonfire.UI.Boundaries.BoundariesLive do
       assign(
         socket,
         selected_tab: "user",
-        without_secondary_widgets: true,
+        # without_secondary_widgets: true,
         nav_items:
           List.wrap(
             maybe_apply(Bonfire.UI.Me.SidebarSettingsNavLive, :declared_nav, [],

@@ -8,7 +8,9 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
     # id = e(params, "id", nil)
     # assign_circle(socket, id, params, :ok)
 
-    {:ok, socket}
+    {:ok,
+     socket
+     |> assign(:circle, nil)}
   end
 
   # def handle_params(%{"tab" => "members"}, _session, socket) do

@@ -7,7 +7,7 @@
  -->
   <div
     :for={{data, role} <- filter_circles(@circles || [], @roles_for_dropdown)}
-    class="flex py-2 items-center w-full justify-between"
+    class="flex py-2 flex-col lg:flex-row lg:items-center w-full lg:justify-between"
   >
     {#case debug(data, "idata")}
       {#match %{profile: profile, character: character} when not is_nil(profile)}
@@ -31,19 +31,19 @@
           <span class="w-9 h-9 flex items-center place-content-center">
             <#Icon iconify="ph:circle-duotone" class="inline-block w-7 h-7 text-primary" />
           </span>
-          <div class="text-base font-medium text-base-content truncate max-w-[210px]">{name(data, @my_circles)}</div>
+          <div class="text-sm font-medium text-base-content truncate max-w-[210px]">{name(data, @my_circles)}</div>
         </div>
       {#match _}
         <div class="flex items-center gap-3 grow">
           <span class="w-9 h-9 flex items-center place-content-center">
             <#Icon iconify="ph:circle-duotone" class="inline-block w-7 h-7 text-primary" />
           </span>
-          <div class="text-base font-medium text-base-content truncate max-w-[210px]">{name(data) ||
+          <div class="text-sm font-medium text-base-content truncate max-w-[210px]">{name(data) ||
               l("Unknown circle or user")}</div>
         </div>
     {/case}
     <div class="items-center flex gap-1">
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 flex-1 lg:flex-auto">
         {#if @read_only}
           {role}
         {#else}

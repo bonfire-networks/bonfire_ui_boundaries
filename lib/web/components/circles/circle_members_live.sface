@@ -61,7 +61,7 @@
                   avatar_class="w-10 h-10 rounded-box"
                   character={e(member, :subject, :character, nil)}
                   class="btn btn-sm"
-                  show_controls={[:follow]}
+                  show_controls={[:follows_me, :follow]}
                 >
                   <button
                     data-role="remove_user"
@@ -82,7 +82,7 @@
                   wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-col lg:flex-row justify-between"
                   show_summary
                   class="btn btn-sm"
-                  show_controls={[:follow]}
+                  show_controls={[:follows_me, :follow]}
                 >
                   <button
                     data-role="remove_user"

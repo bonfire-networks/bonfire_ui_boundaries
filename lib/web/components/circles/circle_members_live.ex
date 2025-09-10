@@ -73,7 +73,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
            (e(assigns, :circle, nil) ||
               Circles.get_for_caretaker(id, current_user, scope: e(assigns(socket), :scope, nil)))
            |> repo().maybe_preload(:extra_info)
-           |> ok_unwrap() do
+           |> from_ok() do
       # Get the total count for display purposes
       total_members_count = nil
       # Circles.count_members(id)

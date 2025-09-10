@@ -52,7 +52,7 @@ defmodule Bonfire.UI.Boundaries.ManageCircleLive do
            (e(assigns, :circle, nil) ||
               Circles.get_for_caretaker(id, current_user, scope: scope))
            |> repo().maybe_preload(:extra_info)
-           |> ok_unwrap() do
+           |> from_ok() do
       stereotype_id = e(circle, :stereotyped, :stereotype_id, nil)
 
       follow_stereotypes = Circles.stereotypes(:follow)

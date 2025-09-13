@@ -25,7 +25,7 @@
             <#Icon iconify="ph:intersection-duotone" class="w-7 h-7 text-primary" />
             <div>
               <div class="text-sm font-semibold">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
-              <!-- <div class="text-xs uppercase font-semibold opacity-60">{e(circle, :encircles_count, 0)} {l(" Members")}</div> -->
+              {!-- <div class="text-xs uppercase font-semibold opacity-60">{e(circle, :encircles_count, 0)} {l(" Members")}</div> --}
               {!-- {#if e(acl, :grants_count, 0) > 0} --}
               <div class="flex items-center gap-2 mt-1">
                 {#case Grants.subjects(e(acl, :grants, []))}

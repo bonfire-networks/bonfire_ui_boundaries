@@ -6,7 +6,7 @@
     <!-- Panel -->
     <section class="p-3 border border-base-content/10 bg-base-100 rounded-lg">
       <div class="text-sm text-center mb-2 text-base-content/90 font-medium">{l("Grant more permissions")}</div>
-      <!-- <div class="gap-2 flex items-center flex-wrap">
+      {!-- <div class="gap-2 flex items-center flex-wrap">
         <button
           :for={circle <- @my_circles}
           phx-click="add_circle_to_acl"
@@ -19,7 +19,7 @@
         >
           {Bonfire.Boundaries.LiveHandler.subject_name(circle)}
         </button>
-      </div> -->
+      </div> --}
       <form
         class="gap-2 flex items-center"
         phx-change="multi_select"

@@ -29,14 +29,13 @@
         <input type="radio" class="radio" name="usage" value="">
         <span class="label-text">{l("Use this role to set boundaries when posting")}</span>
       </label>
-    </div> --}
-
-      <!-- <div class="form-control bg-info/30 rounded p-3 mt-2">
+    </div>
+     <div class="form-control bg-info/30 rounded p-3 mt-2">
         <label class="label !justify-start items-start gap-4 cursor-pointer">
           <input type="checkbox" class="toggle" name="usage" value="ops">
           <span class="label-text text-sm text-info">{l("Use this role only to set system boundaries (e.g. group or instance) rather than content")}</span>
         </label>
-      </div> -->
+      </div> --}
 
       <div class="form-control bg-info/30 rounded p-3 mt-2" :if={@scope == :instance}>
         <label class="label !justify-start gap-2 cursor-pointer">

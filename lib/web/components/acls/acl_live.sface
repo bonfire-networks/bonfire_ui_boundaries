@@ -82,9 +82,7 @@
                           with_summary
                         />
                       {#else}
-                        <!-- <div class="flex items-center w-10 h-10 rounded-full place-content-center bg-info/10"> -->
                         <#Icon iconify="ph:circle-duotone" class="w-7 h-7 text-primary" />
-                        <!-- </div> -->
                         <div>
                           <div class="text-base font-semibold">{LiveHandler.subject_name(subject)}</div>
 

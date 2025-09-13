@@ -23,7 +23,7 @@
             placeholder="Type here"
           />
         </fieldset>
-        <!-- <div class="">
+        {!-- <div class="">
           <input
             id="name"
             name="named[name]"
@@ -32,7 +32,7 @@
             placeholder="Type here"
             class="w-full input input-bordered"
           />
-        </div> -->
+        </div> --}
         <fieldset class="w-full fieldset mt-2">
           <label for="description" class="fieldset-legend">{l("Enter a description for the circle")}</label>
           <textarea

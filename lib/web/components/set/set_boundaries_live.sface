@@ -48,7 +48,7 @@
           />
           <div class="btn btn-sm btn-disabled normal-case">{l("Caretaker")}</div>
         </div>
-        <form phx-change="Bonfire.Boundaries:select" phx-target="#smart_input_live">
+        <form phx-change="Bonfire.Boundaries:select" phx-target="#customize-boundary-live">
           {#if is_list(@to_circles) and @to_circles != []}
             <Bonfire.UI.Boundaries.BoundaryItemsLive
               read_only={@read_only}
@@ -88,7 +88,7 @@
         />
       </form>
       {#if is_list(@exclude_circles) && @exclude_circles != []}
-        <form phx-change="Bonfire.Boundaries:select" class="mt-2" phx-target="#smart_input_live">
+        <form phx-change="Bonfire.Boundaries:select" class="mt-2" phx-target="#customize-boundary-live">
           <Bonfire.UI.Boundaries.BoundaryItemsLive
             read_only={@read_only}
             to_boundaries={[]}

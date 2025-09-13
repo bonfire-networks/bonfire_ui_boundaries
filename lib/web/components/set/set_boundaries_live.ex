@@ -218,7 +218,7 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
     circle_data =
       case data do
         %{"id" => id, "name" => name} ->
-          %{id: id, name: name, field: field}
+          %{id: id, name: name}
 
         other ->
           other

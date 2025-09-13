@@ -310,14 +310,26 @@ defmodule Bonfire.Boundaries.LiveHandler do
         %{"to_circles" => to_circles, "exclude_circles" => exclude_circles} = _params,
         socket
       ) do
-    {:noreply,
-     socket
-     |> Bonfire.Boundaries.Circles.LiveHandler.set_circles_tuples(:to_circles, to_circles, ...)
-     |> Bonfire.Boundaries.Circles.LiveHandler.set_circles_tuples(
-       :exclude_circles,
-       exclude_circles,
-       ...
-     )}
+    updated_socket =
+      socket
+      |> Bonfire.Boundaries.Circles.LiveHandler.set_circles_tuples(:to_circles, to_circles, ...)
+      |> Bonfire.Boundaries.Circles.LiveHandler.set_circles_tuples(
+        :exclude_circles,
+        exclude_circles,
+        ...
+      )
+
+    # Sync the updated data with SmartInputContainerLive for form submission
+    maybe_send_update(
+      Bonfire.UI.Common.SmartInputContainerLive,
+      :smart_input,
+      %{
+        to_circles: e(assigns(updated_socket), :to_circles, []),
+        exclude_circles: e(assigns(updated_socket), :exclude_circles, [])
+      }
+    )
+
+    {:noreply, updated_socket}
   end
 
   def handle_event("multi_select", _params, socket) do
@@ -325,15 +337,33 @@ defmodule Bonfire.Boundaries.LiveHandler do
   end
 
   def handle_event("select", %{"to_circles" => circles} = _params, socket) do
-    {:noreply,
-     socket
-     |> Bonfire.Boundaries.Circles.LiveHandler.set_circles_tuples(:to_circles, circles, ...)}
+    updated_socket =
+      socket
+      |> Bonfire.Boundaries.Circles.LiveHandler.set_circles_tuples(:to_circles, circles, ...)
+
+    # Sync the updated to_circles with SmartInputContainerLive for form submission
+    maybe_send_update(
+      Bonfire.UI.Common.SmartInputContainerLive,
+      :smart_input,
+      %{to_circles: e(assigns(updated_socket), :to_circles, [])}
+    )
+
+    {:noreply, updated_socket}
   end
 
   def handle_event("select", %{"exclude_circles" => circles} = _params, socket) do
-    {:noreply,
-     socket
-     |> Bonfire.Boundaries.Circles.LiveHandler.set_circles_tuples(:exclude_circles, circles, ...)}
+    updated_socket =
+      socket
+      |> Bonfire.Boundaries.Circles.LiveHandler.set_circles_tuples(:exclude_circles, circles, ...)
+
+    # Sync the updated exclude_circles with SmartInputContainerLive for form submission  
+    maybe_send_update(
+      Bonfire.UI.Common.SmartInputContainerLive,
+      :smart_input,
+      %{exclude_circles: e(assigns(updated_socket), :exclude_circles, [])}
+    )
+
+    {:noreply, updated_socket}
   end
 
   def handle_event("select", _params, socket) do
@@ -344,27 +374,26 @@ defmodule Bonfire.Boundaries.LiveHandler do
       when action in ["deselect", "remove_circle"] and is_binary(deselected) do
     field = e(attrs, "field", nil) |> Types.maybe_to_atom() || :to_circles
 
+    updated_circles =
+      Bonfire.Boundaries.Circles.LiveHandler.remove_from_circle_tuples(
+        [deselected],
+        e(assigns(socket), field, [])
+      )
+
     maybe_send_update(
       Bonfire.UI.Boundaries.CustomizeBoundaryLive,
       "customize_boundary_live",
-      %{
-        field =>
-          Bonfire.Boundaries.Circles.LiveHandler.remove_from_circle_tuples(
-            [deselected],
-            e(assigns(socket), field, [])
-          )
-      }
+      %{field => updated_circles}
     )
 
-    {:noreply,
-     assign(
-       socket,
-       field,
-       Bonfire.Boundaries.Circles.LiveHandler.remove_from_circle_tuples(
-         [deselected],
-         e(assigns(socket), field, [])
-       )
-     )}
+    # Sync the removal with SmartInputContainerLive for form submission
+    maybe_send_update(
+      Bonfire.UI.Common.SmartInputContainerLive,
+      :smart_input,
+      %{field => updated_circles}
+    )
+
+    {:noreply, assign(socket, field, updated_circles)}
   end
 
   def handle_event("load_more", attrs, socket) do

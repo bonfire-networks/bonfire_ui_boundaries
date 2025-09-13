@@ -7,7 +7,7 @@
  -->
   <div
     :for={{data, role} <- filter_circles(@circles || [], @roles_for_dropdown)}
-    class="flex py-2 flex-col lg:flex-row lg:items-center w-full lg:justify-between"
+    class="flex py-2 items-center w-full justify-between"
   >
     {#case debug(data, "idata")}
       {#match %{profile: profile, character: character} when not is_nil(profile)}

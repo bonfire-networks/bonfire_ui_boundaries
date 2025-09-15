@@ -21,7 +21,7 @@
             only_admin
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Re-enable")}
-            parent_id={"#{@parent_id}_user-#{id(@user)}"}
+            parent_id={deterministic_dom_id(__MODULE__, id(@user), "user", @parent_id)}
             class="btn btn-error btn-xs"
           />
         </div>
@@ -39,7 +39,7 @@
             only_admin
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unghost instance-wide")}
-            parent_id={"#{@parent_id}_user-#{id(@user)}"}
+            parent_id={deterministic_dom_id(__MODULE__, id(@user), "user", @parent_id)}
             class="btn btn-primary btn-xs"
           />
         </div>
@@ -58,7 +58,7 @@
             title={l("Unsilence %{user} instance-wide", user: e(@user, :profile, :name, ""))}
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unsilence instance-wide")}
-            parent_id={"#{@parent_id}_user-#{id(@user)}"}
+            parent_id={deterministic_dom_id(__MODULE__, id(@user), "user", @parent_id)}
             class="btn btn-primary btn-xs"
           />
         </div>
@@ -75,7 +75,7 @@
             only_user
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unblock")}
-            parent_id={"#{@parent_id}_user-#{id(@user)}"}
+            parent_id={deterministic_dom_id(__MODULE__, id(@user), "user", @parent_id)}
             class="btn btn-error btn-xs"
           />
         </div>
@@ -92,7 +92,7 @@
             title={l("Unsilence %{user}", user: e(@user, :profile, :name, ""))}
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unsilence")}
-            parent_id={"#{@parent_id}_user-#{id(@user)}"}
+            parent_id={deterministic_dom_id(__MODULE__, id(@user), "user", @parent_id)}
             class="btn btn-primary btn-xs"
           />
         </div>
@@ -108,7 +108,7 @@
             only_user
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unghost")}
-            parent_id={"#{@parent_id}_user-#{id(@user)}"}
+            parent_id={deterministic_dom_id(__MODULE__, id(@user), "user", @parent_id)}
             class="btn btn-primary btn-xs"
           />
         </div>

@@ -3,7 +3,7 @@
   :if={@object}
   id={ComponentID.new(
     Bonfire.UI.Common.OpenModalLive,
-    "block_#{@parent_id}_#{id(@object)}_#{@type}",
+    deterministic_dom_id(__MODULE__, id(@object), "modal", @parent_id),
     __MODULE__
   )}
   title_text={@title ||

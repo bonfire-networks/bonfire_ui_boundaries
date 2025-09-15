@@ -1,15 +1,11 @@
 <div class="" data-role="add_to_circle">
   <Bonfire.UI.Common.OpenModalLive
-    id={ComponentID.new(
-      Bonfire.UI.Common.OpenModalLive,
-      "add_to_circle_modal_#{@parent_id}_#{@user_id}",
-      __MODULE__
-    )}
+    id={deterministic_dom_id(__MODULE__, @user_id, "add_to_circle_modal", @parent_id)}
     no_actions
     modal_class="add_to_circle"
   >
     <AddToCircleWidgetLive
-      id={"add-to-circle-widget-#{@parent_id}-#{@user_id}"}
+      id={deterministic_dom_id(__MODULE__, @user_id, "add-to-circle-widget", @parent_id)}
       circles={@circles}
       user_id={@user_id}
       name={@name}

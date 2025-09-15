@@ -3,7 +3,7 @@
     <div class="flex items-center">
       <div class="flex relative z-50 items-center flex-1 gap-2">
         <div class="" phx-hook="Tooltip" id="popup_boundaries">
-          <label class="tooltip-button flex items-center gap-2 btn-xs h-[30px] btn btn-primary btn-outline font-normal">
+          <label class="tooltip-button border-primary/30 flex items-center gap-2 btn-xs h-[30px] btn btn-primary btn-outline font-normal">
             <Bonfire.UI.Boundaries.BoundariesPresetNameLive
               icon_class="w-5 h-5"
               to_circles={@to_circles}

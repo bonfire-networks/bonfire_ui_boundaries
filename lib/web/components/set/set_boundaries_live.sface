@@ -6,21 +6,22 @@
     <!-- Panel -->
     <section class="p-3 border border-base-content/10 bg-base-100 rounded-lg">
       <div class="text-sm text-center mb-2 text-base-content/90 font-medium">{l("Grant more permissions")}</div>
-      {!-- <div class="gap-2 flex items-center flex-wrap">
+      <div class="gap-2 flex items-center flex-wrap">
         <button
           :for={circle <- @my_circles}
           phx-click="add_circle_to_acl"
           phx-target="#customize-boundary-live"
           phx-value-circle_id={circle.id}
           phx-value-circle_name={Bonfire.Boundaries.LiveHandler.subject_name(circle)}
-          class="btn btn-sm btn-soft btn-accent rounded-full"
+          class={"btn btn-sm btn-outline border-base-content/30 rounded-full", "btn-disabled": Enum.any?(@to_circles || [], fn {included_circle, _} -> id(included_circle) == circle.id end)}
+          disabled={Enum.any?(@to_circles || [], fn {included_circle, _} -> id(included_circle) == circle.id end)}
           type="button"
           data-role="add-circle-to-acl"
         >
           {Bonfire.Boundaries.LiveHandler.subject_name(circle)}
         </button>
-      </div> --}
-      <form
+      </div>
+      <!-- <form
         class="gap-2 flex items-center"
         phx-change="multi_select"
         phx-target="#customize-boundary-live"
@@ -31,11 +32,11 @@
           field={:to_circles}
           form_input_name={__MODULE__}
           show_search
-          event_target="#smart_input"
+          event_target={@myself}
           preloaded_options={results_for_multiselect(@my_circles || [])}
           label={l("Add circles")}
         />
-      </form>
+      </form> -->
       <div class="flex h-full flex-1 flex-col gap-2">
         <div class="mt-4 flex justify-between items-center">
           <StatelessComponent
@@ -75,18 +76,33 @@
       class="p-3 border border-dashed border-error/20 bg-error/5 rounded-lg"
     >
       <div class="text-sm text-center mb-2 text-error/90 font-medium">{l("Revoke permissions")}</div>
-      <form phx-change="multi_select" phx-target="#customize-boundary-live">
+      <!-- <form phx-change="multi_select" phx-target="#customize-boundary-live">
         <Bonfire.UI.Common.MultiselectLive
           :if={!@read_only}
           implementation={:live_select}
           field={:exclude_circles}
           show_search
-          event_target="#smart_input"
+          event_target="#customize-boundary-live"
           form_input_name={Bonfire.UI.Boundaries.ExcludeBoundaries}
           preloaded_options={results_for_multiselect(@my_circles, :exclude_circles)}
           label={l("Select or search for circles or people to exclude")}
         />
-      </form>
+      </form> -->
+      <div class="gap-2 flex items-center flex-wrap">
+        <button
+          :for={circle <- @my_circles}
+          phx-click="add_circle_to_exclude"
+          phx-target="#customize-boundary-live"
+          phx-value-circle_id={circle.id}
+          phx-value-circle_name={Bonfire.Boundaries.LiveHandler.subject_name(circle)}
+          class={"btn btn-sm btn-soft btn-outline border-base-content/30 rounded-full", "btn-disabled": Enum.any?(@exclude_circles || [], fn {excluded_circle, _} -> id(excluded_circle) == circle.id end)}
+          disabled={Enum.any?(@exclude_circles || [], fn {excluded_circle, _} -> id(excluded_circle) == circle.id end)}
+          type="button"
+          data-role="add-circle-to-exclude"
+        >
+          {Bonfire.Boundaries.LiveHandler.subject_name(circle)}
+        </button>
+      </div>
       {#if is_list(@exclude_circles) && @exclude_circles != []}
         <form phx-change="Bonfire.Boundaries:select" class="mt-2" phx-target="#customize-boundary-live">
           <Bonfire.UI.Boundaries.BoundaryItemsLive

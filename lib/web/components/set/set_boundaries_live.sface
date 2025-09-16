@@ -13,7 +13,11 @@
           phx-target="#customize-boundary-live"
           phx-value-circle_id={circle.id}
           phx-value-circle_name={Bonfire.Boundaries.LiveHandler.subject_name(circle)}
-          class={"btn btn-sm btn-outline border-base-content/30 rounded-full", "btn-disabled": Enum.any?(@to_circles || [], fn {included_circle, _} -> id(included_circle) == circle.id end)}
+          class={
+            "btn btn-sm btn-outline border-base-content/30 rounded-full",
+            "btn-disabled":
+              Enum.any?(@to_circles || [], fn {included_circle, _} -> id(included_circle) == circle.id end)
+          }
           disabled={Enum.any?(@to_circles || [], fn {included_circle, _} -> id(included_circle) == circle.id end)}
           type="button"
           data-role="add-circle-to-acl"
@@ -95,7 +99,13 @@
           phx-target="#customize-boundary-live"
           phx-value-circle_id={circle.id}
           phx-value-circle_name={Bonfire.Boundaries.LiveHandler.subject_name(circle)}
-          class={"btn btn-sm btn-soft btn-outline border-base-content/30 rounded-full", "btn-disabled": Enum.any?(@exclude_circles || [], fn {excluded_circle, _} -> id(excluded_circle) == circle.id end)}
+          class={
+            "btn btn-sm btn-soft btn-outline border-base-content/30 rounded-full",
+            "btn-disabled":
+              Enum.any?(@exclude_circles || [], fn {excluded_circle, _} ->
+                id(excluded_circle) == circle.id
+              end)
+          }
           disabled={Enum.any?(@exclude_circles || [], fn {excluded_circle, _} -> id(excluded_circle) == circle.id end)}
           type="button"
           data-role="add-circle-to-exclude"

@@ -3,7 +3,7 @@ defmodule Bonfire.UI.Boundaries.ExportImportCirclesTest do
   use Bonfire.Common.Utils
 
   alias Bonfire.Boundaries.Circles
-  alias Bonfire.Social.Graph.Import
+  alias Bonfire.Social.Import
 
   setup do
     account = fake_account!()

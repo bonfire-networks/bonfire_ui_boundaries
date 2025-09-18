@@ -12,36 +12,6 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
   prop event_target, :any, default: nil
   prop one_scope_only, :boolean, default: true
 
-  #  FIXME: this should be in config where the verbs are defined
-  @verb_order [
-    :see,
-    :read,
-    :request,
-    :like,
-    :boost,
-    :flag,
-    :reply,
-    :mention,
-    :message,
-    :tag,
-    :label,
-    :follow,
-    :schedule,
-    :pin,
-    :create,
-    :edit,
-    :delete,
-    :vote,
-    :toggle,
-    :describe,
-    :grant,
-    :assign,
-    :invite,
-    :mediate,
-    :block,
-    :configure
-  ]
-
   def update(assigns, socket) do
     current_user = current_user(socket)
 
@@ -71,37 +41,37 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
      |> assign(assigns)
      |> assign(
        scope: scope,
-       verb_order: verb_order(),
+       all_verbs: verb_order(),
        roles_with_verbs: roles_with_verbs
      )}
   end
 
-  def verb_order, do: @verb_order
+  def verb_order, do: Config.get!(:preferred_verb_order)
 
-  @doc """
-  Sorts a list of verbs according to the predefined @verb_order.
-  """
-  def sort_verbs(can_verbs, cannot_verbs) do
-    verb_order()
-    |> Enum.map(fn verb ->
-      cond do
-        verb in can_verbs -> {verb, :can}
-        verb in cannot_verbs -> {verb, :cannot}
-        true -> {verb, nil}
-      end
-    end)
-  end
+  # @doc """
+  # Sorts a list of verbs according to the predefined verb_order.
+  # """
+  # def sort_verbs(can_verbs, cannot_verbs) do
+  #   verb_order()
+  #   |> Enum.map(fn verb ->
+  #     cond do
+  #       verb in can_verbs -> {verb, :can}
+  #       verb in cannot_verbs -> {verb, :cannot}
+  #       true -> {verb, nil}
+  #     end
+  #   end)
+  # end
 
-  def default_sorted_verbs() do
-    verb_order()
-    |> Enum.map(fn verb ->
-      {verb, nil}
-    end)
-  end
+  # def default_sorted_verbs() do
+  #   verb_order()
+  #   |> Enum.map(fn verb ->
+  #     {verb, nil}
+  #   end)
+  # end
 
   @doc """
   Retrieves all roles and their associated verbs (both can_verbs and cannot_verbs),
-  sorted according to @verb_order.
+  sorted according to verb_order.
   Returns a list of tuples: [{role, verbs_with_statuses}].
   """
   def get_roles_with_verbs(roles, opts) do
@@ -115,7 +85,7 @@ defmodule Bonfire.UI.Boundaries.TabledRolesLive do
             debug(cannot_verbs, "cannot_verbs")
 
             verb_statuses =
-              @verb_order
+              verb_order()
               |> Enum.map(fn verb ->
                 cond do
                   verb in can_verbs -> {verb, :can}

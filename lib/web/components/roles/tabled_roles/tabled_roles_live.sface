@@ -4,7 +4,7 @@
       <thead class="text-xs uppercase sticky top-0 z-10 bg-base-100">
         <tr>
           <th class="sticky left-0 z-20 bg-base-100/70 backdrop-blur-sm">{l("Role")}</th>
-          <th class="text-center font-medium" :for={verb <- @verb_order}>{verb}</th>
+          <th class="text-center font-medium" :for={verb <- @all_verbs}>{verb}</th>
           <th class="sticky right-0 z-20 bg-base-100/70 backdrop-blur-sm" />
         </tr>
       </thead>

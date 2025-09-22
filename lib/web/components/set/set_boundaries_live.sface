@@ -14,20 +14,20 @@
 
       <div class="mt-3">
         <form
-          id="add_members_to_acl"
+          id={"add_members_to_acl_#{@parent_id || "customize_boundary_live"}"}
           phx-change="change"
           phx-target={"##{@parent_id || "customize_boundary_live"}"}
           class="w-full flex-1"
         >
           <label
-            for="multi_select_Elixir.Bonfire.UI.Boundaries.CustomizeBoundaryLive_text_input"
+            for={"multi_select_#{@parent_id || "customize_boundary_live"}_text_input"}
             class="sr-only"
           >{l("Search for users to add")}</label>
           <div class="relative">
             <Bonfire.UI.Common.MultiselectLive
               implementation={:live_select}
               mode={:tags}
-              form_input_name="Elixir.Bonfire.UI.Boundaries.CustomizeBoundaryLive"
+              form_input_name={@parent_id || "customize_boundary_live"}
               field={:selected_users}
               show_search
               debounce={300}

@@ -179,33 +179,64 @@ defmodule Bonfire.Boundaries.LiveHandler do
   def handle_event("replace_boundary", %{"id" => acl_id} = params, socket) do
     debug(acl_id, "replace_boundary")
 
+    new_to_boundaries = [{acl_id, e(params, "name", acl_id)}]
+
+    # Reset circles when changing boundaries (they'll be rebuilt from the new boundary if needed)
+    reset_circles = []
+
     maybe_send_update(
       Bonfire.UI.Boundaries.CustomizeBoundaryLive,
       "customize_boundary_live",
-      to_boundaries: [{acl_id, e(params, "name", acl_id)}]
+      to_boundaries: new_to_boundaries
+    )
+
+    # Also send the update to SmartInputContainerLive for form submission
+    maybe_send_update(
+      Bonfire.UI.Common.SmartInputContainerLive,
+      :smart_input,
+      %{
+        to_boundaries: new_to_boundaries,
+        to_circles: reset_circles,
+        exclude_circles: reset_circles
+      }
     )
 
     {:noreply,
-     assign(
-       socket,
-       :to_boundaries,
-       [{acl_id, e(params, "name", acl_id)}]
-     )}
+     socket
+     |> assign(:to_boundaries, new_to_boundaries)
+     |> assign(:to_circles, reset_circles)
+     |> assign(:exclude_circles, reset_circles)}
   end
 
   def handle_event("select_boundary", %{"id" => acl_id} = params, socket) do
     debug(acl_id, "select_boundary")
 
+    new_to_boundaries =
+      Bonfire.UI.Boundaries.SetBoundariesLive.set_clean_boundaries(
+        e(assigns(socket), :to_boundaries, []),
+        acl_id,
+        e(params, "name", acl_id)
+      )
+
+    # Reset circles when changing boundaries (they'll be rebuilt from the new boundary if needed)
+    reset_circles = []
+
+    # Send the update to SmartInputContainerLive for form submission
+    maybe_send_update(
+      Bonfire.UI.Common.SmartInputContainerLive,
+      :smart_input,
+      %{
+        to_boundaries: new_to_boundaries,
+        to_circles: reset_circles,
+        exclude_circles: reset_circles
+      }
+    )
+
     {:noreply,
-     assign(
-       socket,
-       :to_boundaries,
-       Bonfire.UI.Boundaries.SetBoundariesLive.set_clean_boundaries(
-         e(assigns(socket), :to_boundaries, []),
-         acl_id,
-         e(params, "name", acl_id)
-       )
-     )}
+     socket
+     |> assign(:to_boundaries, new_to_boundaries)
+     |> assign(:to_circles, reset_circles)
+     |> assign(:exclude_circles, reset_circles)}
   end
 
   def handle_event("remove_boundary", %{"id" => id} = _params, socket) do
@@ -345,7 +376,10 @@ defmodule Bonfire.Boundaries.LiveHandler do
     maybe_send_update(
       Bonfire.UI.Common.SmartInputContainerLive,
       :smart_input,
-      %{to_circles: e(assigns(updated_socket), :to_circles, [])}
+      %{
+        to_circles: e(assigns(updated_socket), :to_circles, []),
+        exclude_circles: e(assigns(updated_socket), :exclude_circles, [])
+      }
     )
 
     {:noreply, updated_socket}
@@ -356,11 +390,14 @@ defmodule Bonfire.Boundaries.LiveHandler do
       socket
       |> Bonfire.Boundaries.Circles.LiveHandler.set_circles_tuples(:exclude_circles, circles, ...)
 
-    # Sync the updated exclude_circles with SmartInputContainerLive for form submission  
+    # Sync the updated exclude_circles with SmartInputContainerLive for form submission
     maybe_send_update(
       Bonfire.UI.Common.SmartInputContainerLive,
       :smart_input,
-      %{exclude_circles: e(assigns(updated_socket), :exclude_circles, [])}
+      %{
+        to_circles: e(assigns(updated_socket), :to_circles, []),
+        exclude_circles: e(assigns(updated_socket), :exclude_circles, [])
+      }
     )
 
     {:noreply, updated_socket}

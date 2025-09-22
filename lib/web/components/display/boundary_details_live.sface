@@ -1,5 +1,5 @@
 <div x-data="{edit: false}">
-  <div x-show="!edit">
+  <div class="mb-3" x-show="!edit">
     <div class="border border-base-content/10 mb-3 rounded-box w-full">
       <div class="flex items-center w-full p-4 gap-3">
         <Bonfire.UI.Boundaries.BoundariesPresetNameLive
@@ -19,43 +19,6 @@
   </div>
 
   {#if @is_caretaker}
-    {#if @object_id}
-      <button
-        x-show="!edit"
-        type="button"
-        x-on:click="edit = !edit"
-        type="button"
-        class="btn btn-sm btn-outline float-right"
-      >
-        {l("Edit boundaries")}
-      </button>
-      <button
-        x-show="edit"
-        type="button"
-        x-on:click="edit = !edit"
-        class="btn btn-sm btn-outline float-right"
-      >
-        {l("Done")}
-      </button>
-    {/if}
-
-    <div x-show="!edit">
-      {#if (is_list(@to_circles) and @to_circles != []) or
-          (is_list(@exclude_circles) and @exclude_circles != [])}
-        {!--
-          WIP: https://github.com/bonfire-networks/bonfire-app/issues/630
-          NOTE: we set read_only here because editing only happens in AclLive
-           --}
-        <!-- <Bonfire.UI.Boundaries.SetBoundariesLive
-          read_only
-          is_caretaker={@is_caretaker}
-          to_boundaries={@to_boundaries}
-          to_circles={@to_circles}
-          exclude_circles={@exclude_circles}
-        /> -->
-      {/if}
-    </div>
-
     <div x-show="edit" :if={@object_id}>
       {#if is_list(@custom_acls) and @custom_acls != []}
         <div :for={acl <- @custom_acls}>
@@ -64,12 +27,16 @@
             setting_boundaries
             acl_id={id(acl)}
             acl={acl}
+            show_general_boundary={@show_general_boundary}
+            to_boundaries={@to_boundaries}
+            to_circles={@to_circles}
+            exclude_circles={@exclude_circles}
           />
           <!-- read_only={@read_only} -->
         </div>
       {/if}
 
-      <details class="dropdown">
+      <!-- <details class="dropdown">
         <summary class="btn btn-active btn-outline btn-sm">
           {l("Add a boundary preset")}
         </summary>
@@ -86,9 +53,9 @@
             parent_id="boundaries_in_activity_preview"
           />
         </ul>
-      </details>
+      </details> -->
 
-      {#if is_list(@preset_acls) and @preset_acls != []}
+      <!-- {#if is_list(@preset_acls) and @preset_acls != []}
         <ul class="flex flex-col divide-y divide-base-content/10 px-4 mt-2">
           <li :for={acl <- @preset_acls} class="flex items-center justify-between py-4">
             <div class="flex items-center gap-3">
@@ -140,6 +107,38 @@
             </div>
           </li>
         </ul>
+      {/if} -->
+    </div>
+
+    {#if @object_id}
+      <button
+        x-show="!edit"
+        type="button"
+        x-on:click="edit = !edit"
+        type="button"
+        class="btn btn-warning w-full"
+      >
+        {l("Edit boundaries")}
+      </button>
+      <button x-show="edit" type="button" x-on:click="edit = !edit" class="btn btn-soft w-full my-3">
+        {l("Done")}
+      </button>
+    {/if}
+
+    <div x-show="!edit">
+      {#if (is_list(@to_circles) and @to_circles != []) or
+          (is_list(@exclude_circles) and @exclude_circles != [])}
+        {!--
+          WIP: https://github.com/bonfire-networks/bonfire-app/issues/630
+          NOTE: we set read_only here because editing only happens in AclLive
+           --}
+        <!-- <Bonfire.UI.Boundaries.SetBoundariesLive
+          read_only
+          is_caretaker={@is_caretaker}
+          to_boundaries={@to_boundaries}
+          to_circles={@to_circles}
+          exclude_circles={@exclude_circles}
+        /> -->
       {/if}
     </div>
   {/if}

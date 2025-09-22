@@ -21,8 +21,8 @@
         >{l("Public")}</span>
         <span
           :if={@with_description}
-          class="flex-1 w-full text-xs font-normal text-base-content/70 text-left"
-        >{l("Publicly visible to everyone")}</span>
+          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+        >{l("Publicly visible to everyone. Discoverable by search engines.")}</span>
       </div>
     </span>
   {#match {"local", _}}
@@ -47,8 +47,34 @@
         >{l("Local")}</span>
         <span
           :if={@with_description}
-          class="flex-1 w-full text-xs font-normal text-base-content/70 text-left"
-        >{l("Only instance users can see and reply")}</span>
+          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+        >{l("Everyone on this instance will be able to see, like, boost, and reply.")}</span>
+      </div>
+    </span>
+  {#match {_, "Follows"}}
+    <span
+      title={l("Local: everyone on this instance can see, link, boost, and reply.")}
+      class={
+        @class,
+        "flex items-center gap-2": @with_label && @with_icon
+      }
+    >
+      <span :if={@with_icon} class={@icon_wrapper}>
+        <#Icon iconify="ph:eye-duotone" class={@icon_class} />
+      </span>
+      <div class="flex flex-col gap-0 items-start">
+        <span
+          data-scope="local-boundary-set"
+          class={
+            "text-sm normal-case",
+            "sr-only": !@with_label,
+            "btn btn-sm btn-outline": @with_icon != true
+          }
+        >{l("Follows")}</span>
+        <span
+          :if={@with_description}
+          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+        >{l("People who I follow may read, like, boost and reply.")}</span>
       </div>
     </span>
   {#match {"open" = preset, boundary_name}}
@@ -70,7 +96,7 @@
         }>{boundary_name || l("Open")}</span>
         <span
           :if={@with_description}
-          class="flex-1 w-full text-xs font-normal text-base-content/70 text-left"
+          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
         >{l("Anyone can join and participate")}</span>
       </div>
     </div>
@@ -127,11 +153,17 @@
             <#Icon iconify="fluent:door-tag-20-filled" class={@icon_class} />
         {/case}
       </span>
-      <span class={
-        "text-sm normal-case",
-        "sr-only": !@with_label,
-        "btn btn-sm btn-outline": @with_icon != true
-      }>{e(name, :name, nil) || name || l("Preset Boundary")}</span>
+      <div class="flex flex-col gap-0 items-start">
+        <span class={
+          "text-sm normal-case",
+          "sr-only": !@with_label,
+          "btn btn-sm btn-outline": @with_icon != true
+        }>{e(name, :name, nil) || name || l("Preset Boundary")}</span>
+        <span
+          :if={@with_description}
+          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+        >{e(name, :description, "A custom boundary")}</span>
+      </div>
     </span>
   {#match {id, name} when is_binary(name)}
     <span
@@ -146,11 +178,17 @@
       <span :if={@with_icon} class={@icon_wrapper}>
         <#Icon iconify="ph:gear-six-duotone" class={@icon_class} />
       </span>
-      <span class={
-        "text-sm normal-case",
-        "sr-only": !@with_label,
-        "btn btn-sm btn-outline": @with_icon != true
-      }>{name}</span>
+      <div class="flex flex-col gap-0 items-start">
+        <span class={
+          "text-sm normal-case",
+          "sr-only": !@with_label,
+          "btn btn-sm btn-outline": @with_icon != true
+        }>{name}</span>
+        <span
+          :if={@with_description}
+          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+        >{l("A custom boundary")}</span>
+      </div>
     </span>
   {#match other}
     <span

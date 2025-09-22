@@ -1,122 +1,69 @@
-{#if @read_only}
-  {#case @value}
-    {#match true}
-      <div class="badge badge-success badge-sm">
-        <#Icon solid="Check" class="w-4 h-4" />
-        <span class="">{l("Can")}</span>
-      </div>
-    {#match false}
-      <div class="badge badge-error badge-sm">
-        <#Icon solid="X" class="w-4 h-4" />
-        <span class="">{l("Cannot")}</span>
-      </div>
-    {#match nil}
-      <#Icon solid="Minus" class="w-4 h-4 text-gray-400" />
-  {/case}
-{#else}
-  <div class="flex items-center boundaries-switches">
-    <div class="border p-1 flex items-center gap-1 border-base-content/10 rounded-xl">
-      <button
-        data-id={"#{@role}_#{@verb}_can"}
-        data-value={"#{@role}_#{@verb}_#{@value}"}
-        class={
-          "text-base-content/70 p-1 rounded-lg hover:bg-base-content/10 transition-colors duration-100",
-          "bg-success hover:bg-success text-success-content": @value == :can
-        }
-        phx-click="edit_verb_value"
-        phx-value-role={@role}
-        phx-value-verb={@verb}
-        phx-value-status={1}
-        phx-target={@event_target}
-      >
-        <#Icon solid="Check" class="w-4 h-4" />
-        <span class="sr-only">{l("Can")}</span>
-      </button>
-      <button
-        data-id={"#{@role}_#{@verb}_undefined"}
-        class={
-          "text-base-content/70 p-1 rounded-lg hover:bg-base-content/10 transition-colors duration-100",
-          "bg-neutral hover:bg-neutral text-neutral-content": @value == nil
-        }
-        phx-click="edit_verb_value"
-        phx-value-role={@role}
-        phx-value-verb={@verb}
-        phx-value-status=""
-        phx-target={@event_target}
-      >
-        <#Icon solid="Minus" class="w-4 h-4" />
-        <span class="sr-only">{l("Undefined")}</span>
-      </button>
-      <button
-        data-id={"#{@role}_#{@verb}_cannot"}
-        class={
-          "text-base-content/70 p-1 rounded-lg hover:bg-base-content/10 transition-colors duration-100",
-          "bg-error hover:bg-error text-error-content": @value == :cannot
-        }
-        phx-click="edit_verb_value"
-        phx-value-role={@role}
-        phx-value-verb={@verb}
-        phx-value-status={0}
-        phx-target={@event_target}
-      >
-        <#Icon solid="X" class="w-4 h-4" />
-        <span class="sr-only">{l("Cannot")}</span>
-      </button>
-    </div>
-    <!-- <form
-      data-id={@id}
-      :on-change="edit_verb_value"
+<div class="flex items-center boundaries-switches">
+  <div class="border p-1 flex items-center gap-1 border-base-content/10 rounded-xl">
+    <button
+      data-id={"#{@role}_#{@verb}_can"}
+      data-value={"#{@role}_#{@verb}_#{@value}"}
+      class={
+        "text-base-content/70 p-1 rounded-lg transition-colors duration-100",
+        "bg-success hover:bg-success text-success-content":
+          (@value == :can or @value == true) and not @read_only,
+        "bg-success/50 text-success-content/50": (@value == :can or @value == true) and @read_only,
+        "hover:bg-base-content/10": not @read_only,
+        "cursor-not-allowed opacity-50": @read_only,
+        "cursor-pointer": not @read_only
+      }
+      phx-click={if @read_only, do: nil, else: "edit_verb_value"}
+      phx-value-role={@role}
+      phx-value-verb={@verb}
+      phx-value-status={1}
       phx-target={@event_target}
-      class="flex items-center gap-3"
+      title={if @read_only, do: l("This permission is defined by the preset boundary"), else: nil}
     >
-      <label class="tooltip tooltip-top" data-tip={if @value == true, do: l("Can")}>
-        <input
-          class="absolute opacity-0"
-          name={@field_name}
-          type="radio"
-          value="1"
-          checked={@value == true}
-          disabled={@read_only}
-        />
-        <div class={
-          "btn btn-circle btn-outline btn-sm btn-yes",
-          "btn-disabled": @read_only
-        }>
-          <#Icon solid="Check" class="w-4 h-4" />
-        </div>
-      </label>
-      <label class="tooltip tooltip-top" data-tip={if @value == true, do: l("Not specified")}>
-        <input
-          class="absolute opacity-0"
-          name={@field_name}
-          type="radio"
-          value=""
-          checked={is_nil(@value)}
-          disabled={@read_only}
-        />
-        <div class={
-          "btn btn-circle btn-outline btn-sm btn-maybe",
-          "btn-disabled": @read_only
-        }>
-          <#Icon solid="Minus" class="w-4 h-4" />
-        </div>
-      </label>
-      <label class="tooltip tooltip-top" data-tip={if @value == true, do: l("Cannot")}>
-        <input
-          class="absolute opacity-0"
-          name={@field_name}
-          type="radio"
-          value="0"
-          checked={@value == false}
-          disabled={@read_only}
-        />
-        <div class={
-          "btn btn-circle btn-outline btn-sm btn-no",
-          "btn-disabled": @read_only
-        }>
-          <#Icon solid="X" class="w-4 h-4" />
-        </div>
-      </label>
-    </form> -->
+      <#Icon solid="Check" class="w-4 h-4" />
+      <span class="sr-only">{l("Can")}</span>
+    </button>
+    <button
+      data-id={"#{@role}_#{@verb}_undefined"}
+      data-value={"#{@role}_#{@verb}_nil"}
+      class={
+        "text-base-content/70 p-1 rounded-lg transition-colors duration-100",
+        "bg-neutral hover:bg-neutral text-neutral-content": @value == nil and not @read_only,
+        "bg-neutral/50 text-neutral-content/50": @value == nil and @read_only,
+        "hover:bg-base-content/10": not @read_only,
+        "cursor-not-allowed opacity-50": @read_only,
+        "cursor-pointer": not @read_only
+      }
+      phx-click={if @read_only, do: nil, else: "edit_verb_value"}
+      phx-value-role={@role}
+      phx-value-verb={@verb}
+      phx-value-status=""
+      phx-target={@event_target}
+      title={if @read_only, do: l("This permission is defined by the preset boundary"), else: nil}
+    >
+      <#Icon solid="Minus" class="w-4 h-4" />
+      <span class="sr-only">{l("Undefined")}</span>
+    </button>
+    <button
+      data-id={"#{@role}_#{@verb}_cannot"}
+      data-value={"#{@role}_#{@verb}_cannot"}
+      class={
+        "text-base-content/70 p-1 rounded-lg transition-colors duration-100",
+        "bg-error hover:bg-error text-error-content":
+          (@value == :cannot or @value == false) and not @read_only,
+        "bg-error/50 text-error-content/50": (@value == :cannot or @value == false) and @read_only,
+        "hover:bg-base-content/10": not @read_only,
+        "cursor-not-allowed opacity-50": @read_only,
+        "cursor-pointer": not @read_only
+      }
+      phx-click={if @read_only, do: nil, else: "edit_verb_value"}
+      phx-value-role={@role}
+      phx-value-verb={@verb}
+      phx-value-status={0}
+      phx-target={@event_target}
+      title={if @read_only, do: l("This permission is defined by the preset boundary"), else: nil}
+    >
+      <#Icon solid="X" class="w-4 h-4" />
+      <span class="sr-only">{l("Cannot")}</span>
+    </button>
   </div>
-{/if}
+</div>

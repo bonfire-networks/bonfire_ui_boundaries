@@ -53,17 +53,6 @@ defmodule Bonfire.UI.Boundaries.SetCirclesPermissionsLive do
 
   def reject_presets(_), do: []
 
-  def boundaries_to_preset(to_boundaries) do
-    List.wrap(to_boundaries)
-    |> Enum.filter(fn
-      {x, _} when x in @presets -> true
-      x when x in @presets -> true
-      _ -> false
-    end)
-    |> List.first()
-    |> debug()
-  end
-
   # def set_clean_boundaries(to_boundaries, "custom", _name) do
   #   Keyword.drop(to_boundaries, ["public", "local", "mentions"])
   # end

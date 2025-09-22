@@ -124,6 +124,11 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
   #   feed_id = Bonfire.Social.Feeds.my_feed_id(:inbox, carl)
   #   refute has_element?(view, "article")
   # end
+  test "test adding public boundary and verify that everyone can read, like, boost and reply" do
+  end
+
+  test "test adding public boundary and add the custom trusted circle with alice in it the edit permission and verify that alice can edit the post" do
+  end
 
   test "Test adding a user with a 'read' role and verify that the user can see the post but not interact with it." do
     account = fake_account!()

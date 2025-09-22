@@ -7,7 +7,7 @@
  -->
   <div
     :for={{data, role} <- filter_circles(@circles || [], @roles_for_dropdown)}
-    class="flex py-2 items-center w-full justify-between"
+    class="flex py-2 items-start gap-3 w-full justify-between border-b border-base-content/10 pb-4"
   >
     {#case debug(data, "idata")}
       {#match %{profile: profile, character: character} when not is_nil(profile)}
@@ -27,22 +27,65 @@
           show_controls={[]}
         />
       {#match _ when is_binary(data)}
-        <div class="flex items-center gap-3 grow">
-          <span class="w-9 h-9 flex items-center place-content-center">
-            <#Icon iconify="ph:circle-duotone" class="inline-block w-7 h-7 text-primary" />
-          </span>
-          <div class="text-sm font-medium text-base-content truncate max-w-[210px]">{name(data, @my_circles)}</div>
+        <div class="flex items-start gap-2 grow">
+          <#Icon iconify="ph:circle-duotone" class="shrink-0 w-6 h-6 text-primary" />
+
+          <div class="flex flex-col">
+            <div class="text-sm font-medium text-base-content truncate max-w-[210px]">{name(data, @my_circles)}</div>
+            <!-- Dynamic list of verbs enabled/disabled by the role -->
+            <div class="text-xs text-base-content/70">
+              {#case verbs_text_for_role(role)}
+                {#match ""}
+                  <!-- No permissions to display -->
+                {#match text}
+                  {l("They")}
+                  {#for part <- String.split(text, ~r/\b(can|cannot)\b/, include_captures: true)}
+                    {#case part}
+                      {#match "can"}
+                        <span class="">can</span>
+                      {#match "cannot"}
+                        <span class="">cannot</span>
+                      {#match verb_text when verb_text != ""}
+                        <span class="font-medium text-primary">{verb_text}</span>
+                      {#match ""}
+                        <!-- Skip empty strings -->
+                    {/case}
+                  {/for}.
+              {/case}
+            </div>
+          </div>
         </div>
       {#match _}
-        <div class="flex items-center gap-3 grow">
-          <span class="w-9 h-9 flex items-center place-content-center">
-            <#Icon iconify="ph:circle-duotone" class="inline-block w-7 h-7 text-primary" />
-          </span>
-          <div class="text-sm font-medium text-base-content truncate max-w-[210px]">{name(data) ||
-              l("Unknown circle or user")}</div>
+        <div class="flex items-start gap-2 grow">
+          <#Icon iconify="ph:circle-duotone" class="shrink-0 w-6 h-6 text-primary" />
+
+          <div class="flex flex-col">
+            <div class="text-sm font-medium text-base-content truncate max-w-[210px]">{name(data) ||
+                l("Unknown circle or user")}</div>
+            <div class="text-xs text-base-content/70">
+              {#case verbs_text_for_role(role)}
+                {#match ""}
+                  <!-- No permissions to display -->
+                {#match text}
+                  {l("They")}
+                  {#for part <- String.split(text, ~r/\b(can|cannot)\b/, include_captures: true)}
+                    {#case part}
+                      {#match "can"}
+                        <span class="">can</span>
+                      {#match "cannot"}
+                        <span class="">cannot</span>
+                      {#match verb_text when verb_text != ""}
+                        <span class="font-medium text-primary">{verb_text}</span>
+                      {#match ""}
+                        <!-- Skip empty strings -->
+                    {/case}
+                  {/for}.
+              {/case}
+            </div>
+          </div>
         </div>
     {/case}
-    <div class="items-center flex gap-1">
+    <div class="items-center flex gap-2">
       <div class="flex items-center gap-2 flex-1 lg:flex-auto">
         {#if @read_only}
           {role}
@@ -55,29 +98,6 @@
             field={@field}
           />
         {/if}
-        <!-- <Bonfire.UI.Common.OpenModalLive
-          reusable_modal_id={if @__context__[:sticky], do: "persistent_modal"}
-          id={"explain_role#{id(data)}"}
-          title_text={l("Role details")}
-          no_actions
-          open_btn_wrapper_class="flex flex-1 w-full"
-        >
-          <div class="border border-base-content/10 mt-4 rounded-box">
-            <Bonfire.UI.Boundaries.YourRoleLive
-              is_caretaker={nil}
-              role_permissions={acls_from_role(role)}
-              role_name={role}
-              label={l("")}
-              scope={:preview}
-            />
-          </div>
-
-          <:open_btn>
-            <div class="btn btn-sm btn-circle btn-ghost" aria-label="Add description">
-              <#Icon iconify="heroicons-outline:information-circle" class="w-4 h-4 text-base-content/70" />
-            </div>
-          </:open_btn>
-        </Bonfire.UI.Common.OpenModalLive> -->
       </div>
       <div
         :if={!@read_only}
@@ -89,7 +109,7 @@
           },
           target: "#smart_input"
         )}
-        class="btn btn-sm btn-square"
+        class="btn btn-sm btn-circle btn-ghost"
       >
         <#Icon iconify="ph:trash-duotone" class="w-4 h-4 text-error" />
       </div>

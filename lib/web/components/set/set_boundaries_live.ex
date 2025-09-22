@@ -1,6 +1,7 @@
 defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
-  use Bonfire.UI.Common.Web, :stateless_component
+  use Bonfire.UI.Common.Web, :stateful_component
   use Bonfire.Common.Utils
+  alias Bonfire.UI.Boundaries.VerbPermissionsHelper
 
   # declare_module_optional(l("Custom boundaries in composer"),
   #   description:
@@ -13,38 +14,33 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
   prop to_boundaries, :any, default: nil
   prop to_circles, :list, default: []
   prop exclude_circles, :list, default: []
-
+  prop verb_permissions, :map, default: %{}
+  prop parent_id, :string, default: nil
+  prop acl_mode, :boolean, default: false
+  prop show_general_boundary, :boolean, default: false
+  prop selected_users, :list, default: []
   prop my_circles, :list, default: nil
+
+  # Verb filtering options (computed by parent)
+  prop available_verbs, :list, default: []
+  prop preset_boundary, :any, default: nil
 
   # prop showing_within, :atom, default: nil
 
   prop open_boundaries, :boolean, default: false
   # prop hide_breakdown, :boolean, default: false
   # prop click_override, :boolean, default: false
-  prop read_only, :boolean, default: false
   prop is_caretaker, :boolean, default: true
 
   @presets ["public", "local", "mentions", "custom"]
   def presets, do: @presets
 
-  def render(%{read_only: false, my_circles: nil} = assigns) do
-    # TODO: only load this once per persistent session, or when we open the composer
-    assigns
-    |> assign(
-      :my_circles,
-      e(assigns[:__context__], :my_circles, nil) ||
-        list_my_circles(current_user(assigns[:__context__]))
-    )
-    |> assign_new(:roles_for_dropdown, fn ->
-      Bonfire.Boundaries.Roles.roles_for_dropdown(nil, scope: nil, context: assigns[:__context__])
-    end)
-    |> render_sface()
-  end
-
-  def render(assigns) do
-    assigns
-    |> assign_new(:roles_for_dropdown, fn -> [] end)
-    |> render_sface()
+  @doc """
+  Get the value for a specific verb-circle combination from verb_permissions.
+  This is called on-demand from the template.
+  """
+  def get_verb_value_for_display(verb_permissions, verb_slug, circle_id) do
+    get_in(verb_permissions, [to_string(verb_slug), circle_id])
   end
 
   def reject_presets(to_boundaries)
@@ -61,12 +57,107 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
       _ -> false
     end)
     |> List.first()
-    |> debug()
   end
 
   # def set_clean_boundaries(to_boundaries, "custom", _name) do
   #   Keyword.drop(to_boundaries, ["public", "local", "mentions"])
   # end
+
+  def get_preset_circles_info({preset_key, _name}), do: get_preset_circles_info(preset_key)
+
+  def get_preset_circles_info(boundary_preset) when is_binary(boundary_preset) do
+    # Get ACL names for this preset
+    acl_names = Bonfire.Boundaries.acls_from_preset_boundary_names(boundary_preset)
+
+    # Get grants for each ACL from configuration and return as tuples for BoundaryItemsLive
+    acl_names
+    |> Enum.flat_map(fn acl_name ->
+      case Bonfire.Boundaries.Grants.get(acl_name) do
+        grants when is_map(grants) ->
+          Enum.map(grants, fn {circle_slug, role_or_verbs} ->
+            circle = Bonfire.Boundaries.Circles.get(circle_slug)
+            role = if(is_atom(role_or_verbs), do: role_or_verbs, else: :custom)
+
+            # Return tuple format expected by BoundaryItemsLive
+            {circle, role}
+          end)
+
+        _ ->
+          []
+      end
+    end)
+    |> Enum.reject(fn {circle, _role} -> is_nil(circle) end)
+  end
+
+  def get_preset_circles_info(_), do: []
+
+  def get_preset_verb_permissions(boundary_preset, verb)
+      when is_binary(boundary_preset) and is_atom(verb) do
+    # Get ACL names for this preset
+    acl_names = Bonfire.Boundaries.acls_from_preset_boundary_names(boundary_preset)
+
+    # Get grants for each ACL and extract verb permissions
+    acl_names
+    |> Enum.flat_map(fn acl_name ->
+      case Bonfire.Boundaries.Grants.get(acl_name) do
+        grants when is_map(grants) ->
+          Enum.map(grants, fn {circle_slug, role_or_verbs} ->
+            circle = Bonfire.Boundaries.Circles.get(circle_slug)
+
+            # Convert role to verbs or use verbs directly
+            verbs =
+              if is_atom(role_or_verbs) do
+                # Get verbs for role
+                case Bonfire.Boundaries.Roles.verbs_for_role(role_or_verbs, %{}) do
+                  {:ok, can_verbs, cannot_verbs} ->
+                    {can_verbs, cannot_verbs}
+
+                  _ ->
+                    {[], []}
+                end
+              else
+                # Direct verbs
+                {List.wrap(role_or_verbs), []}
+              end
+
+            # Check if the specific verb is in can/cannot lists
+            {can_verbs, cannot_verbs} = verbs
+            verb_atom = maybe_to_atom(verb)
+
+            value =
+              cond do
+                verb_atom in can_verbs -> :can
+                verb_atom in cannot_verbs -> :cannot
+                true -> nil
+              end
+
+            {id(circle), value}
+          end)
+          |> Enum.reject(fn {circle_id, _} -> is_nil(circle_id) end)
+
+        _ ->
+          []
+      end
+    end)
+    # Convert to map for easy lookup
+    |> Map.new()
+  end
+
+  def get_preset_verb_permissions(_, _), do: %{}
+
+  # Helper function to parse verbs into a list of atoms consistently
+  defp parse_verbs(verbs) do
+    case verbs do
+      verbs_string when is_binary(verbs_string) ->
+        verbs_string |> String.split(",") |> Enum.map(&maybe_to_atom/1)
+
+      verb_list when is_list(verb_list) ->
+        Enum.map(verb_list, &maybe_to_atom/1)
+
+      single_verb ->
+        [maybe_to_atom(single_verb)]
+    end
+  end
 
   def set_clean_boundaries(to_boundaries, acl_id, name)
       when acl_id in @presets do
@@ -76,6 +167,13 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
 
   def set_clean_boundaries(to_boundaries, acl_id, name) do
     to_boundaries ++ [{acl_id, name}]
+  end
+
+  def list_my_circles(scope) do
+    # TODO: load using LivePlug to avoid re-loading on render?
+    Bonfire.Boundaries.Circles.list_my(scope,
+      exclude_block_stereotypes: true
+    )
   end
 
   def circles_for_multiselect(context, circle_field \\ :to_circles)
@@ -89,6 +187,21 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
         (e(context, :my_circles, nil) || list_my_circles(current_user))
         |> results_for_multiselect(circle_field)
     end
+  end
+
+  def selected_users_for_tags(my_circles) do
+    # Filter out only users (not circles) and format them for LiveSelect tags
+    my_circles
+    |> Enum.filter(fn item -> e(item, :user_type, nil) == "permission_entry" end)
+    |> Enum.map(fn user ->
+      name = e(user, :name, "Unnamed User")
+      username = e(user, :character, :username, nil)
+      display_name = if username, do: "#{name} (@#{username})", else: name
+
+      # Return just a simple tuple with display name and user ID
+      # LiveSelect doesn't need the full user object for tags display
+      {display_name, e(user, :id)}
+    end)
   end
 
   def results_for_multiselect(results, circle_field \\ :to_circles) do
@@ -138,142 +251,5 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
 
     # Reduce the results to show in dropdown for clarity to 4 items
     # |> Enum.take(4)
-  end
-
-  # def list_my_boundaries(socket) do
-  #   current_user = current_user(socket)
-  #   Bonfire.Boundaries.Acls.list_my(current_user)
-  # end
-
-  def list_my_circles_with_global(scope) do
-    # TODO: load using LivePlug to avoid re-loading on render?
-    Bonfire.Boundaries.Circles.list_my_with_global(scope,
-      exclude_block_stereotypes: true
-    )
-  end
-
-  def list_my_circles(scope) do
-    # TODO: load using LivePlug to avoid re-loading on render?
-    Bonfire.Boundaries.Circles.list_my(scope,
-      exclude_block_stereotypes: true
-    )
-  end
-
-  def live_select_change(live_select_id, search, circle_field, socket) do
-    current_user = current_user(socket)
-    # Bonfire.Boundaries.Acls.list_my(current_user, search: search) ++
-
-    # Get the list of circles
-    circle_results =
-      Bonfire.Boundaries.Circles.list_my_with_global(
-        [current_user, Bonfire.Boundaries.Scaffold.Instance.activity_pub_circle()],
-        search: search
-      )
-
-    # Get the list of users and exclude the current user
-    user_results =
-      Bonfire.Common.Utils.maybe_apply(
-        Bonfire.Me.Users,
-        :search,
-        [search]
-      )
-      |> Enum.reject(fn user -> user.id == current_user.id end)
-
-    # Combine the results
-    (circle_results ++ user_results)
-    |> results_for_multiselect(circle_field)
-    |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
-
-    {:noreply, socket}
-  end
-
-  def handle_event("live_select_change", %{"id" => live_select_id, "text" => search}, socket) do
-    live_select_change(live_select_id, search, :to_circles, socket)
-  end
-
-  def handle_event(
-        "multi_select",
-        %{
-          "_target" => _target,
-          "multi_select" => multi_select_data
-        },
-        socket
-      ) do
-    {:noreply, socket}
-  end
-
-  # File: /extensions/bonfire_ui_boundaries/lib/web/live_handlers/boundaries_live_handler.ex
-
-  def handle_event(
-        "multi_select",
-        %{data: data, text: _text},
-        socket
-      ) do
-    field = maybe_to_atom(e(data, "field", :to_boundaries)) |> debug("field")
-
-    # Get current values
-    current_values = e(assigns(socket), field, [])
-
-    # Generate rich circle data if needed
-    circle_data =
-      case data do
-        %{"id" => id, "name" => name} ->
-          %{id: id, name: name}
-
-        other ->
-          other
-      end
-
-    # Check if this circle is already in the list to avoid duplicates
-    already_exists =
-      Enum.any?(current_values, fn {existing, _} ->
-        id(existing) == id(circle_data)
-      end)
-
-    if already_exists do
-      # Skip if already exists
-      {:noreply, socket}
-    else
-      # Add the circle with a default role (can be updated later)
-      appended_data =
-        case field do
-          :to_boundaries ->
-            current_values ++ [{circle_data, nil}]
-
-          :to_circles ->
-            # Default to "read" role
-            current_values ++ [{circle_data, nil}]
-
-          :exclude_circles ->
-            # Default to "cannot_read" role
-            current_values ++ [{circle_data, nil}]
-
-          _ ->
-            current_values ++ [{circle_data, nil}]
-        end
-        |> debug("updated_list")
-
-      maybe_send_update(
-        Bonfire.UI.Boundaries.CustomizeBoundaryLive,
-        "customize_boundary_live",
-        %{field => appended_data}
-      )
-
-      {:noreply,
-       socket
-       |> assign(field, appended_data)
-       |> assign_global(
-         _already_live_selected_:
-           Enum.uniq(e(assigns(socket), :__context, :_already_live_selected_, []) ++ [field])
-       )}
-    end
-  end
-
-  def handle_event("tagify_add", attrs, socket) do
-    handle_event("select_boundary", attrs, socket)
-  end
-
-  def handle_event("tagify_remove", attrs, socket) do
-    handle_event("remove_boundary", attrs, socket)
   end
 end

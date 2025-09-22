@@ -10,7 +10,7 @@
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
             value: %{id: "public", name: l("Public")},
-            target: "#smart_input_live"
+            target: "#customize_boundary_live"
           )}
         phx-value-id="public"
         phx-value-name={l("Public")}
@@ -51,7 +51,7 @@
       |> JS.toggle(to: "#composer_container")
       |> JS.push("Bonfire.Boundaries:custom_from_preset_template",
         value: %{boundary: "public", name: l("Public")},
-        target: "#smart_input_live"
+        target: "#customize_boundary_live"
       )}
       class="btn btn-xs btn-ghost normal-case btn-circle"
       title={l("Customise or add extra boundaries")}
@@ -73,7 +73,7 @@
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
             value: %{id: "local", name: l("Local")},
-            target: "#smart_input_live"
+            target: "#customize_boundary_live"
           )}
         phx-value-id="local"
         phx-value-name={l("Local")}
@@ -113,7 +113,7 @@
             |> JS.toggle(to: "#composer_container")
             |> JS.push("Bonfire.Boundaries:custom_from_preset_template",
               value: %{boundary: "local", name: l("Local")},
-              target: "#smart_input_live"
+              target: "#customize_boundary_live"
             )}
             class="btn btn-xs btn-ghost normal-case btn-circle"
             title={l("Customise or add extra boundaries")}
@@ -125,38 +125,40 @@
     </div>
 
     <!-- MENTIONS-ONLY -->
-    {!-- <div class={
-        "flex items-center gap-3 p-2 justify-between rounded-lg hover:bg-base-content/5",
-        "bg-base-content/5": matches?(@boundary_preset, "mentions")
-      }>
-        <button
-          class="text-base-content"
-          phx-click={@set_action ||
-            JS.push("Bonfire.Boundaries:replace_boundary",
-              value: %{id: "mentions", name: l("Mentions")},
-              target: "#smart_input_live"
-            )}
-          phx-value-id="mentions"
-          phx-value-name={l("Mentions")}
-          type="button"
-          {...@set_opts}
-        >
-          <div class="flex items-center gap-2">
-            <div class="flex items-center text-left">
-              <div class="flex-shrink-0">
-                <#Icon iconify="ri:at-line" class={"w-4 h-4 text-base-content/90", "!w-4 !h-4": @is_dropdown} />
-                <!-- <span class={"text-2xl", "!text-lg": @is_dropdown}>﹫</span> -->
-              </div>
-              <div class="flex flex-col ml-3">
-                <div class="text-sm font-semibold text-base-content/90">{l("Mentions")}</div>
-                <p class="hidden lg:block text-xs text-base-content/70">
-                  {l("Anyone mentioned will be able to see, interact, and reply.")}
-                </p>
-              </div>
+    <div class={
+      "flex items-center gap-3 rounded-lg justify-between hover:bg-base-content/5",
+      "bg-base-content/5": matches?(@boundary_preset, "mentions")
+    }>
+      <button
+        class="text-base-content flex items-center p-2 gap-2 justify-between w-full"
+        phx-click={@set_action ||
+          JS.push("Bonfire.Boundaries:replace_boundary",
+            value: %{id: "mentions", name: l("Mentions")},
+            target: "#customize_boundary_live"
+          )}
+        phx-value-id="mentions"
+        phx-value-name={l("Mentions")}
+        type="button"
+        {...@set_opts}
+      >
+        <div class="flex items-center gap-2">
+          <div class="flex items-center text-left">
+            <div class="flex-shrink-0">
+              <span class="bg-base-content/10 items-center rounded-full w-9 h-9 flex place-content-center">
+                <#Icon iconify="ph:at-duotone" class="w-4 h-4 text-base-content/90" />
+              </span>
+              <!-- <span class={"text-2xl", "!text-lg": @is_dropdown}>﹫</span> -->
+            </div>
+            <div class="flex flex-col ml-3">
+              <div class="text-sm font-semibold text-base-content/90">{l("Mentions")}</div>
+              <p class="hidden lg:block text-xs text-base-content/70">
+                {l("Anyone mentioned will be able to see, interact, and reply.")}
+              </p>
             </div>
           </div>
-        </button>
-      </div> --}
+        </div>
+      </button>
+    </div>
   {/if}
   <!-- CUSTOM -->
   {#for {acl_id, acl} <- @my_acls}
@@ -172,7 +174,7 @@
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
             value: %{id: acl_id, name: e(acl, :name, nil)},
-            target: "#smart_input_live"
+            target: "#customize_boundary_live"
           )}
         phx-value-id={acl_id}
         phx-value-name={e(acl, :name, nil)}
@@ -217,7 +219,7 @@
             |> JS.toggle(to: "#composer_container")
             |> JS.push("Bonfire.Boundaries:custom_from_preset_template",
               value: %{boundary: acl_id, name: e(acl, :name, nil)},
-              target: "#smart_input_live"
+              target: "#customize_boundary_live"
             )}
             class="btn btn-xs btn-ghost normal-case btn-circle"
             title={l("Customise or add extra boundaries")}
@@ -241,7 +243,7 @@
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
             value: %{id: "custom", name: l("Custom")},
-            target: "#smart_input_live"
+            target: "#customize_boundary_live"
           )}
         type="button"
       >
@@ -268,7 +270,7 @@
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
             value: %{id: "private", name: l("Private")},
-            target: "#smart_input_live"
+            target: "#customize_boundary_live"
           )}
         phx-value-id="private"
         phx-value-name={l("Private")}

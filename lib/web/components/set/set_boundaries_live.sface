@@ -1,140 +1,110 @@
 <div>
+  <!-- DEBUG: is_caretaker={@is_caretaker}, my_circles count={length(@my_circles || [])} -->
   <div
     :if={@is_caretaker}
-    class="w-full h-full multiselect_in_composer gap-4 mt-4 flex flex-col flex-1 grow"
+    class="w-full h-full multiselect_in_composer gap-4 mt-3  flex flex-col flex-1 grow"
   >
-    <!-- Panel -->
-    <section class="p-3 border border-base-content/10 bg-base-100 rounded-lg">
-      <div class="text-sm text-center mb-2 text-base-content/90 font-medium">{l("Grant more permissions")}</div>
-      <div class="gap-2 flex items-center flex-wrap">
-        <button
-          :for={circle <- @my_circles}
-          phx-click="add_circle_to_acl"
-          phx-target="#customize-boundary-live"
-          phx-value-circle_id={circle.id}
-          phx-value-circle_name={Bonfire.Boundaries.LiveHandler.subject_name(circle)}
-          class={
-            "btn btn-sm btn-outline border-base-content/30 rounded-full",
-            "btn-disabled":
-              Enum.any?(@to_circles || [], fn {included_circle, _} -> id(included_circle) == circle.id end)
-          }
-          disabled={Enum.any?(@to_circles || [], fn {included_circle, _} -> id(included_circle) == circle.id end)}
-          type="button"
-          data-role="add-circle-to-acl"
-        >
-          {Bonfire.Boundaries.LiveHandler.subject_name(circle)}
-        </button>
-      </div>
-      <!-- <form
-        class="gap-2 flex items-center"
-        phx-change="multi_select"
-        phx-target="#customize-boundary-live"
-      >
-        <Bonfire.UI.Common.MultiselectLive
-          :if={!@read_only}
-          implementation={:live_select}
-          field={:to_circles}
-          form_input_name={__MODULE__}
-          show_search
-          event_target={@myself}
-          preloaded_options={results_for_multiselect(@my_circles || [])}
-          label={l("Add circles")}
-        />
-      </form> -->
-      <div class="flex h-full flex-1 flex-col gap-2">
-        <div class="mt-4 flex justify-between items-center">
-          <StatelessComponent
-            module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
-            avatar_class="w-9 h-9 rounded-full"
-            wrapper_class="flex items-center justify-between"
-            profile={e(current_user(@__context__), :profile, nil)}
-            character={e(current_user(@__context__), :character, nil)}
-            show_controls={[]}
-          />
-          <div class="btn btn-sm btn-disabled normal-case">{l("Caretaker")}</div>
+    <section class="mt-2">
+      <div class="flex items-center justify-between gap-4">
+        <div :if={!@acl_mode} class="flex flex-col gap-1">
+          <div class="text-xs uppercase text-base-content/80 font-medium">{l("Advanced permissions")}</div>
+          <div class="text-xs font-light text-base-content/70">{l("Further customize who can see and interact with your activity")}</div>
         </div>
-        <form phx-change="Bonfire.Boundaries:select" phx-target="#customize-boundary-live">
-          {#if is_list(@to_circles) and @to_circles != []}
-            <Bonfire.UI.Boundaries.BoundaryItemsLive
-              read_only={@read_only}
-              to_boundaries={@to_boundaries}
-              circles={@to_circles}
-              my_circles={@my_circles}
-              roles_for_dropdown={(@roles_for_dropdown || [])
-              |> Enum.reject(fn
-                {"cannot_" <> _, _} -> true
-                {key, _} -> String.starts_with?(to_string(key), "cannot_")
-              end)}
-            />
-          {#else}
-            <div />
-          {/if}
-        </form>
       </div>
-    </section>
 
-    <section
-      :if={!@read_only or
-        (is_list(@exclude_circles) and @exclude_circles != [])}
-      <section
-      class="p-3 border border-dashed border-error/20 bg-error/5 rounded-lg"
-    >
-      <div class="text-sm text-center mb-2 text-error/90 font-medium">{l("Revoke permissions")}</div>
-      <!-- <form phx-change="multi_select" phx-target="#customize-boundary-live">
-        <Bonfire.UI.Common.MultiselectLive
-          :if={!@read_only}
-          implementation={:live_select}
-          field={:exclude_circles}
-          show_search
-          event_target="#customize-boundary-live"
-          form_input_name={Bonfire.UI.Boundaries.ExcludeBoundaries}
-          preloaded_options={results_for_multiselect(@my_circles, :exclude_circles)}
-          label={l("Select or search for circles or people to exclude")}
-        />
-      </form> -->
-      <div class="gap-2 flex items-center flex-wrap">
-        <button
-          :for={circle <- @my_circles}
-          phx-click="add_circle_to_exclude"
-          phx-target="#customize-boundary-live"
-          phx-value-circle_id={circle.id}
-          phx-value-circle_name={Bonfire.Boundaries.LiveHandler.subject_name(circle)}
-          class={
-            "btn btn-sm btn-soft btn-outline border-base-content/30 rounded-full",
-            "btn-disabled":
-              Enum.any?(@exclude_circles || [], fn {excluded_circle, _} ->
-                id(excluded_circle) == circle.id
-              end)
-          }
-          disabled={Enum.any?(@exclude_circles || [], fn {excluded_circle, _} -> id(excluded_circle) == circle.id end)}
-          type="button"
-          data-role="add-circle-to-exclude"
+      <div class="mt-3">
+        <form
+          id="add_members_to_acl"
+          phx-change="multi_select"
+          phx-target={"##{@parent_id || "customize_boundary_live"}"}
+          class="w-full flex-1"
         >
-          {Bonfire.Boundaries.LiveHandler.subject_name(circle)}
-        </button>
-      </div>
-      {#if is_list(@exclude_circles) && @exclude_circles != []}
-        <form phx-change="Bonfire.Boundaries:select" class="mt-2" phx-target="#customize-boundary-live">
-          <Bonfire.UI.Boundaries.BoundaryItemsLive
-            read_only={@read_only}
-            to_boundaries={[]}
-            circles={@exclude_circles}
-            my_circles={@my_circles}
-            field={:exclude_circles}
-            roles_for_dropdown={(@roles_for_dropdown || [])
-            |> Enum.filter(fn
-              {"cannot_" <> _, _} -> true
-              {key, _} -> String.starts_with?(to_string(key), "cannot_")
-            end)}
-          />
+          <label
+            for="multi_select_Elixir.Bonfire.UI.Boundaries.CustomizeBoundaryLive_text_input"
+            class="sr-only"
+          >{l("Search for users to add")}</label>
+          <div class="relative">
+            <Bonfire.UI.Common.MultiselectLive
+              implementation={:live_select}
+              mode={:tags}
+              form_input_name="Elixir.Bonfire.UI.Boundaries.CustomizeBoundaryLive"
+              field={:add_to_circles}
+              show_search
+              debounce={300}
+              event_target={"##{@parent_id || "customize_boundary_live"}"}
+              label={l("search for someone to define permissions for them")}
+              selected_options={Bonfire.UI.Boundaries.SetBoundariesLive.selected_users_for_tags(@selected_users || [])}
+            />
+          </div>
         </form>
-      {#else}
-        <div class="border-error text-sm mt-3 rounded-lg flex items-center place-content-center p-6 bg-error/10 text-error/90">
-          <span>{l(
-              "You can select one or more users and revoke them specific permissions for limiting their interactions with your activity."
-            )}</span>
+      </div>
+
+      <div class="pt-2">
+        <div class="flex h-full flex-1 mt-3 flex-col gap-2">
+          {#for verb <- e(@available_verbs, [])}
+            <div x-data="{open: false}">
+              <div class="flex items-start gap-4">
+                <div
+                  iconify={e(verb, :icon, "ph:circle-duotone")}
+                  class="w-6 h-6 text-primary"
+                  aria-hidden="true"
+                />
+                <div class="border-b border-base-content/10 flex-1 pb-2">
+                  <div x-on:click="open = !open" class="flex items-center justify-between gap-4 flex-1">
+                    <div class="flex flex-col flex-1">
+                      <div class="text-sm font-medium text-base-content">{e(verb, :name, "")}</div>
+                      <div class="text-xs text-base-content/70">{e(verb, :summary, "")}</div>
+                    </div>
+                    <#Icon iconify="ph:caret-down" class="w-4 h-4 text-base-content/70" />
+                  </div>
+                  <div x-show="open" x-cloak x-collapse class="pt-2 space-y-2">
+                    {#for item <- (@my_circles || []) ++ (@selected_users || [])}
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                          {#case e(item, :user_type, nil)}
+                            {#match "permission_entry"}
+                              <!-- Render user -->
+                              <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                                <#Icon iconify="ph:user-duotone" class="w-4 h-4 text-primary" />
+                              </div>
+                              <div class="flex flex-col">
+                                <span class="text-sm text-base-content">{e(item, :name, "Unnamed User")}</span>
+                                {#if e(item, :character, :username, nil)}
+                                  <span class="text-xs text-base-content/60">@{e(item, :character, :username, nil)}</span>
+                                {/if}
+                              </div>
+                            {#match _}
+                              <!-- Render circle -->
+                              <#Icon iconify="ph:circle-duotone" class="w-7 h-7 text-primary" />
+                              <span class="text-sm text-base-content">{e(item, :named, :name, nil) || e(item, :stereotyped, :named, :name, nil) ||
+                                  e(item, :name, nil)}</span>
+                          {/case}
+                        </div>
+                        <!-- test - {inspect(@verb_permissions)}
+                        test - {inspect(e(verb, :slug, ""))}
+                        test - {inspect(id(item))} -->
+                        <Bonfire.UI.Boundaries.YesMaybeFalseLive
+                          id={"#{e(verb, :slug, "")}_#{id(item)}"}
+                          field_name={"verbs[#{e(verb, :slug, "")}][#{id(item)}]"}
+                          verb={to_string(e(verb, :slug, ""))}
+                          role={id(item)}
+                          value={Bonfire.UI.Boundaries.SetBoundariesLive.get_verb_value_for_display(
+                            @verb_permissions,
+                            e(verb, :slug, ""),
+                            id(item)
+                          )}
+                          read_only={false}
+                          event_target={"##{@parent_id || "customize_boundary_live"}"}
+                        />
+                      </div>
+                    {/for}
+                  </div>
+                </div>
+              </div>
+            </div>
+          {/for}
         </div>
-      {/if}
+      </div>
     </section>
   </div>
 </div>

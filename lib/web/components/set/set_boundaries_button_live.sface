@@ -2,7 +2,41 @@
   {#match false}
     <div class="flex items-center">
       <div class="flex relative z-50 items-center flex-1 gap-2">
-        <div class="" phx-hook="Tooltip" id="popup_boundaries">
+        <div class="flex w-full flex-1 p-0">
+          <Bonfire.UI.Common.OpenModalLive
+            reusable_modal_id="persistent_modal"
+            id="define_boundary"
+            no_actions
+            title_text={l("Define the activity boundary")}
+            without_form
+            open_btn_wrapper_class="flex flex-1 w-full"
+          >
+            <Bonfire.UI.Boundaries.CustomizeBoundaryLive
+              id="customize_boundary_live"
+              boundary_preset={@boundary_preset}
+              is_customizable
+              to_circles={@to_circles}
+              exclude_circles={@exclude_circles}
+              to_boundaries={@to_boundaries}
+              verb_permissions={@verb_permissions}
+              hide_custom={!module_enabled?(Bonfire.UI.Boundaries.SetBoundariesLive, @__context__)}
+            />
+            <!-- my_acls={@my_acls} -->
+            <:open_btn>
+              <label class="tooltip-button border-primary/50 flex items-center gap-2 btn-xs h-[30px] btn btn-primary btn-outline font-normal">
+                <Bonfire.UI.Boundaries.BoundariesPresetNameLive
+                  icon_class="w-5 h-5"
+                  to_circles={@to_circles}
+                  exclude_circles={@exclude_circles}
+                  to_boundaries={@to_boundaries}
+                />
+              </label>
+            </:open_btn>
+          </Bonfire.UI.Common.OpenModalLive>
+        </div>
+      </div>
+
+      <!-- <div class="" phx-hook="Tooltip" id="popup_boundaries">
           <label class="tooltip-button border-primary/30 flex items-center gap-2 btn-xs h-[30px] btn btn-primary btn-outline font-normal">
             <Bonfire.UI.Boundaries.BoundariesPresetNameLive
               icon_class="w-5 h-5"
@@ -10,10 +44,6 @@
               exclude_circles={@exclude_circles}
               to_boundaries={@to_boundaries}
             />
-            <!-- {#if @to_circles != [] || @exclude_circles != []}
-              <#Icon iconify="mingcute:asterisk-fill" class="w-3 h-3 text-accent" />
-            {/if} -->
-            <!-- <#Icon iconify="ph:dots-three-outline-duotone" class="w-4 h-4" /> -->
           </label>
           <ul
             tabindex="0"
@@ -46,6 +76,7 @@
                   to_circles={@to_circles}
                   exclude_circles={@exclude_circles}
                   to_boundaries={@to_boundaries}
+                  verb_permissions={@verb_permissions}
                   hide_custom={true}
                 />
                 <:open_btn>
@@ -91,29 +122,10 @@
               </div>
             </li> --}
           </ul>
-        </div>
-      </div>
+        </div> -->
     </div>
   {#match boundary_name}
     <div class="btn-active btn btn-ghost btn-sm max-w-[120px] cursor-default">
       <span>{boundary_name}</span>
     </div>
 {/case}
-{!-- 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const dialog = document.getElementById('my_modal_5');
-    dialog.addEventListener('click', (event) => {
-      if (event.target === dialog) {
-        dialog.close();
-      }
-    });
-
-    dialog.addEventListener('click', (event) => {
-      console.log(event.target.tagName)
-     if (event.target.closest('button')) {
-        dialog.close();
-      }
-    });
-  });
-</script> --}

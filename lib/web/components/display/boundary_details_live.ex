@@ -22,6 +22,8 @@ defmodule Bonfire.UI.Boundaries.BoundaryDetailsLive do
   prop preset_acls, :list, default: []
   prop custom_acls, :list, default: []
 
+  prop show_general_boundary, :boolean, default: true
+
   def render(%{object_boundary: none} = assigns) when none in [nil, false] do
     assigns
     |> render_sface()

@@ -1,4 +1,5 @@
 defmodule Bonfire.UI.Boundaries.SetBoundariesButtonLive do
+  alias Bonfire.Boundaries.LiveHandler
   use Bonfire.UI.Common.Web, :stateless_component
   use Bonfire.Common.Utils
 
@@ -6,6 +7,8 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesButtonLive do
   prop boundary_preset, :any, default: nil
   prop to_circles, :any, default: []
   prop exclude_circles, :any, default: []
+  prop my_acls, :any, default: nil
+  prop verb_permissions, :any, default: %{}
 
   def clone_context(to_boundaries) do
     case to_boundaries do

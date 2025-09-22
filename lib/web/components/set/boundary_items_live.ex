@@ -14,6 +14,54 @@ defmodule Bonfire.UI.Boundaries.BoundaryItemsLive do
     permissions
   end
 
+  def verbs_text_for_role(role) do
+    case Bonfire.Boundaries.Roles.verbs_for_role(maybe_to_atom(role), %{}) do
+      {:ok, can_verbs, cannot_verbs} ->
+        can_text =
+          case format_verb_list(can_verbs) do
+            "" -> ""
+            verbs -> "can #{verbs}"
+          end
+
+        cannot_text =
+          case format_verb_list(cannot_verbs) do
+            "" -> ""
+            verbs -> "cannot #{verbs}"
+          end
+
+        case {can_text, cannot_text} do
+          {"", ""} -> ""
+          {can, ""} -> can
+          {"", cannot} -> cannot
+          {can, cannot} -> "#{can} and #{cannot}"
+        end
+
+      _ ->
+        ""
+    end
+  end
+
+  defp format_verb_list([]), do: ""
+  defp format_verb_list([verb]), do: to_string(verb)
+
+  defp format_verb_list(verbs) when is_list(verbs) do
+    verb_strings = Enum.map(verbs, &to_string/1)
+
+    case verb_strings do
+      [single] ->
+        single
+
+      [first, second] ->
+        "#{first} and #{second}"
+
+      list ->
+        {last, rest} = List.pop_at(list, -1)
+        Enum.join(rest, ", ") <> " and #{last}"
+    end
+  end
+
+  def name(%{name: name}, _my_circles) when is_binary(name), do: name
+
   def name(data, my_circles) when is_binary(data) and is_list(my_circles) do
     debug(data, "Circle ID")
 

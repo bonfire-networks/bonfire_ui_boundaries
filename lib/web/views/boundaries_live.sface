@@ -6,7 +6,6 @@
       <StatefulComponent
         :if={current_user(@__context__)}
         module={maybe_component(Bonfire.UI.Boundaries.AclLive, @__context__)}
-        setting_boundaries={false}
         selected_tab="acls"
         id="acl"
         scope={@scope}
@@ -108,7 +107,6 @@
       <StatefulComponent
         :if={current_user(@__context__)}
         module={maybe_component(Bonfire.UI.Boundaries.AclLive, @__context__)}
-        setting_boundaries={false}
         title={l("Instance permissions")}
         description={l("Define who can do what on this instance")}
         selected_tab="acls"

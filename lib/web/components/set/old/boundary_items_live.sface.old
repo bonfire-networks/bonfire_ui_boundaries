@@ -91,8 +91,7 @@
           {role}
         {#else}
           <Bonfire.UI.Boundaries.RolesDropdownLive
-            setting_boundaries
-            circle_id={id(data)}
+                        circle_id={id(data)}
             role={role}
             roles={@roles_for_dropdown}
             field={@field}

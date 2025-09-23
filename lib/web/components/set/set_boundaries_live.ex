@@ -16,7 +16,7 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
   prop exclude_circles, :list, default: []
   prop verb_permissions, :map, default: %{}
   prop parent_id, :string, default: nil
-  prop acl_mode, :boolean, default: false
+  prop setting_boundaries, :atom, default: nil
   prop show_general_boundary, :boolean, default: false
   prop selected_users, :list, default: []
   prop my_circles, :list, default: nil

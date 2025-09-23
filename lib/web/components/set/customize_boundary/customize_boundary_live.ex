@@ -20,7 +20,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   prop parent_id, :string, default: nil
 
   # ACL mode props
-  prop acl_mode, :boolean, default: false
+  prop setting_boundaries, :atom, default: nil
   prop acl, :any, default: nil
   prop acl_subject_verb_grants, :any, default: nil
 
@@ -32,38 +32,90 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   prop exclude_verbs, :list, default: nil
 
   # Default verbs to show for common interactions (if no include_verbs specified)
-  @default_verbs [
-    :request,
-    :see,
-    :read,
-    :like,
-    :boost,
-    :reply,
-    :annotate,
-    :message,
-    :mention,
-    :edit,
-    :delete
-  ]
+  def default_verbs_for(key), do: Config.get([:default_verbs_for, key], [])
+
+  # All verbs in preferred order
+  def verb_order, do: Config.get!(:preferred_verb_order)
+
+  def update(assigns, socket) do
+    socket = socket |> assign(assigns)
+
+    {verb_permissions, extracted_users} =
+      determine_verb_permissions_and_users(assigns(socket), socket)
+
+    # Get base circles from DB
+    base_circles =
+      assigns(socket)[:my_circles] || fetch_my_circles_with_global(current_user(socket))
+
+    # Initialize selected_users with extracted users from ACL + any manually selected
+    base_selected_users =
+      assigns(socket)[:selected_users] || assigns(socket)[:selected_users] || []
+
+    # Merge extracted users with any existing selected users, avoiding duplicates
+    selected_users = merge_users_without_duplicates(extracted_users, base_selected_users)
+
+    # Use existing circles or base circles
+    existing_circles = assigns(socket)[:my_circles]
+
+    my_circles =
+      if existing_circles do
+        existing_circles
+      else
+        base_circles
+      end
+
+    debug(extracted_users, "Users extracted from ACL boundaries")
+    debug(selected_users, "Final selected users (ACL + manual)")
+
+    {
+      :ok,
+      socket
+      |> assign(:verb_permissions, verb_permissions)
+      |> assign(
+        :available_verbs,
+        get_available_verbs(
+          assigns(socket)[:setting_boundaries],
+          assigns(socket)[:include_verbs],
+          assigns(socket)[:exclude_verbs]
+        )
+      )
+      |> assign(
+        :preset_boundary,
+        Bonfire.UI.Boundaries.SetBoundariesLive.boundaries_to_preset(
+          assigns(socket)[:to_boundaries]
+        )
+      )
+      |> assign(:my_circles, my_circles)
+      |> assign(:selected_users, selected_users)
+    }
+  end
+
+  defp editing_acl?(setting_boundaries) do
+    !setting_boundaries or setting_boundaries == :edit_object
+  end
 
   @doc """
   Gets the available verbs for the boundaries UI, with optional filtering.
 
   ## Options
-  - `include_verbs`: List of verbs to include (whitelist). If nil, uses default set.
-  - `exclude_verbs`: List of verbs to exclude (blacklist).
+  - `include_verbs`: List of verbs to include (allow-list). If nil, uses default set.
+  - `exclude_verbs`: List of verbs to exclude (deny-list).
   """
-  def get_available_verbs(include_verbs \\ nil, exclude_verbs \\ []) do
-    all_verbs = Bonfire.Boundaries.Verbs.verbs()
+  def get_available_verbs(setting_boundaries \\ nil, include_verbs \\ nil, exclude_verbs \\ []) do
+    # TODO: list verbs appropriate for the each scope/context
+    default_verbs =
+      if setting_boundaries == :create_object, do: default_verbs_for(:objects), else: []
 
     # Start with either the specified include list, default verbs, or all verbs
     base_verbs =
       cond do
         include_verbs && include_verbs != [] -> include_verbs
-        @default_verbs != [] -> @default_verbs
+        default_verbs != [] -> default_verbs
         # Use all available verbs if default is empty
-        true -> Keyword.keys(all_verbs)
+        true -> verb_order()
       end
+
+    all_verbs = Bonfire.Boundaries.Verbs.verbs()
 
     # Filter to only include verbs that exist in the configuration
     available =
@@ -243,49 +295,6 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
     }
   end
 
-  def update(assigns, socket) do
-    {verb_permissions, extracted_users} = determine_verb_permissions_and_users(assigns, socket)
-
-    # Get base circles from DB
-    base_circles = assigns[:my_circles] || fetch_my_circles_with_global(current_user(socket))
-
-    # Initialize selected_users with extracted users from ACL + any manually selected
-    base_selected_users = socket.assigns[:selected_users] || assigns[:selected_users] || []
-
-    # Merge extracted users with any existing selected users, avoiding duplicates
-    selected_users = merge_users_without_duplicates(extracted_users, base_selected_users)
-
-    # Use existing circles or base circles
-    existing_circles = socket.assigns[:my_circles]
-
-    my_circles =
-      if existing_circles do
-        existing_circles
-      else
-        base_circles
-      end
-
-    debug(extracted_users, "Users extracted from ACL boundaries")
-    debug(selected_users, "Final selected users (ACL + manual)")
-
-    {
-      :ok,
-      socket
-      |> assign(assigns)
-      |> assign(:verb_permissions, verb_permissions)
-      |> assign(
-        :available_verbs,
-        get_available_verbs(assigns[:include_verbs], assigns[:exclude_verbs])
-      )
-      |> assign(
-        :preset_boundary,
-        Bonfire.UI.Boundaries.SetBoundariesLive.boundaries_to_preset(assigns[:to_boundaries])
-      )
-      |> assign(:my_circles, my_circles)
-      |> assign(:selected_users, selected_users)
-    }
-  end
-
   # Merge users without duplicates based on ID
   defp merge_users_without_duplicates(extracted_users, base_users) do
     all_users = (extracted_users || []) ++ (base_users || [])
@@ -303,7 +312,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
         {provided, []}
 
       _ ->
-        if e(assigns, :acl_mode, false) do
+        if editing_acl?(e(assigns, :setting_boundaries, nil)) do
           load_acl_verb_permissions_and_users(assigns, socket)
         else
           load_boundary_verb_permissions_and_users(assigns, socket)
@@ -455,8 +464,8 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
         %{"subject_id" => subject_id},
         socket
       ) do
-    # In ACL mode, handle removal directly
-    if e(assigns(socket), :acl_mode, false) do
+    # When editing an ACL, handle removal directly
+    if editing_acl?(e(assigns(socket), :setting_boundaries, nil)) do
       acl_id = e(assigns(socket), :acl, :id, nil)
 
       if acl_id do
@@ -497,7 +506,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
 
     # Handle ACL mode differently
     final_verbs =
-      if e(assigns(socket), :acl_mode, false) do
+      if editing_acl?(e(assigns(socket), :setting_boundaries, nil)) do
         case update_acl_mode_permissions(socket, circle_id, verb, verb_value, updated_verbs) do
           {:ok, permissions} -> permissions
           # Revert on error

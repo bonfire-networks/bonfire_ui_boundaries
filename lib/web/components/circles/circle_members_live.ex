@@ -11,7 +11,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   prop title, :string, default: nil
   prop description, :string, default: nil
   prop parent_back, :any, default: nil
-  prop setting_boundaries, :boolean, default: false
+  prop setting_boundaries, :atom, default: nil
   prop scope, :any, default: nil
   prop showing_within, :atom, default: nil
   prop feedback_title, :string, default: nil

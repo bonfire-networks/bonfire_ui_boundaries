@@ -5,6 +5,7 @@ defmodule Bonfire.UI.Boundaries.BoundariesSelectionLive do
   prop to_boundaries, :any, default: nil
   prop to_circles, :list, default: []
   prop exclude_circles, :list, default: []
+  # prop setting_boundaries, :atom, default: nil
 
   # def input_value(boundaries) do
   #   boundaries

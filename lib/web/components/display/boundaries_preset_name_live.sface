@@ -162,7 +162,7 @@
         <span
           :if={@with_description}
           class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
-        >{e(name, :description, "A custom boundary")}</span>
+        >{e(name, :description, nil)}</span>
       </div>
     </span>
   {#match {id, name} when is_binary(name)}

@@ -42,7 +42,7 @@
               <StatefulComponent
                 module={Bonfire.UI.Boundaries.CustomizeBoundaryLive}
                 id="customize_boundary_for_acl"
-                acl_mode
+                setting_boundaries={@setting_boundaries}
                 show_general_boundary={@show_general_boundary}
                 acl={@acl}
                 acl_subject_verb_grants={@acl_subject_verb_grants}

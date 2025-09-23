@@ -9,7 +9,6 @@
       description={@description}
       circle_type={:silence}
       scope={@scope}
-      setting_boundaries={false}
       showing_within={@block_type}
       read_only
       show_remove={!@read_only}
@@ -71,7 +70,6 @@
       description={@description}
       circle_type={:ghost}
       scope={@scope}
-      setting_boundaries={false}
       showing_within={@block_type}
       read_only
       show_remove={!@read_only}

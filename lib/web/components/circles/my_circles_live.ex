@@ -3,7 +3,7 @@ defmodule Bonfire.UI.Boundaries.MyCirclesLive do
   # alias Bonfire.Boundaries.Integration
   alias Bonfire.Boundaries.LiveHandler
 
-  prop setting_boundaries, :boolean, default: false
+  prop setting_boundaries, :atom, default: nil
   prop section, :any, default: nil
   prop parent_back, :any, default: nil
   prop scope, :any, default: nil

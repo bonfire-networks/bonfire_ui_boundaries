@@ -195,7 +195,7 @@
             </div>
             <div class="flex flex-col ml-3">
               <div class="text-sm font-semibold text-base-content/90">{e(acl, :name, nil)}</div>
-              <p class="hidden lg:block text-xs text-base-content/70">{e(acl, :description, "A custom boundary")}</p>
+              <p class="hidden lg:block text-xs text-base-content/70">{e(acl, :description, nil)}</p>
             </div>
           </div>
         </div>

@@ -6,7 +6,7 @@ defmodule Bonfire.UI.Boundaries.MyAclsLive do
   alias Bonfire.Boundaries.LiveHandler
 
   prop hide_breakdown, :boolean, default: false
-  prop setting_boundaries, :boolean, default: false
+  prop setting_boundaries, :atom, default: nil
   prop click_override, :boolean, default: false
   prop to_boundaries, :any, default: nil
   prop to_boundaries_ids, :list, default: []

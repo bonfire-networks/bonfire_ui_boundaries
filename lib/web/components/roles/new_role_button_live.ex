@@ -4,6 +4,6 @@ defmodule Bonfire.UI.Boundaries.NewRoleButtonLive do
 
   prop scope, :any, default: nil
   prop scope_type, :any, default: nil
-  prop setting_boundaries, :boolean, default: false
+  prop setting_boundaries, :atom, default: nil
   prop event_target, :any, default: nil
 end

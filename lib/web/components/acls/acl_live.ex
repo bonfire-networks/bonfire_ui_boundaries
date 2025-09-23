@@ -12,14 +12,13 @@ defmodule Bonfire.UI.Boundaries.AclLive do
   prop columns, :integer, default: 1
   prop selected_tab, :any, default: nil
   prop section, :any, default: nil
-  prop setting_boundaries, :boolean, default: false
+  prop setting_boundaries, :atom, default: nil
   prop scope, :any, default: nil
   prop usage, :any, default: :all
   prop type, :atom, default: nil
   prop title, :string, default: nil
   prop description, :string, default: nil
   prop show_general_boundary, :boolean, default: false
-  prop acl_mode, :boolean, default: false
   prop to_boundaries, :list, default: []
   prop to_circles, :list, default: []
   prop exclude_circles, :list, default: []

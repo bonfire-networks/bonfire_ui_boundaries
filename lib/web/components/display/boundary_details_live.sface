@@ -24,9 +24,9 @@
         <div :for={acl <- @custom_acls}>
           <Bonfire.UI.Boundaries.AclLive
             id={"set_acl_#{id(acl)}"}
-            setting_boundaries
             acl_id={id(acl)}
             acl={acl}
+            setting_boundaries={:edit_object}
             show_general_boundary={@show_general_boundary}
             to_boundaries={@to_boundaries}
             to_circles={@to_circles}

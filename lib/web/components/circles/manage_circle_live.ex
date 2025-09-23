@@ -14,7 +14,7 @@ defmodule Bonfire.UI.Boundaries.ManageCircleLive do
   prop feedback_message, :string, default: nil
   prop read_only, :any, default: nil
 
-  prop setting_boundaries, :boolean, default: false
+  prop setting_boundaries, :atom, default: nil
   prop boundary_preset, :any, default: nil
   prop to_boundaries, :any, default: nil
 

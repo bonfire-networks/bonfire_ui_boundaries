@@ -19,6 +19,7 @@
               exclude_circles={@exclude_circles}
               to_boundaries={@to_boundaries}
               verb_permissions={@verb_permissions}
+              setting_boundaries={@setting_boundaries}
               hide_custom={!module_enabled?(Bonfire.UI.Boundaries.SetBoundariesLive, @__context__)}
             />
             <!-- my_acls={@my_acls} -->
@@ -36,7 +37,7 @@
         </div>
       </div>
 
-      <!-- <div class="" phx-hook="Tooltip" id="popup_boundaries">
+      {!-- <div class="" phx-hook="Tooltip" id="popup_boundaries">
           <label class="tooltip-button border-primary/30 flex items-center gap-2 btn-xs h-[30px] btn btn-primary btn-outline font-normal">
             <Bonfire.UI.Boundaries.BoundariesPresetNameLive
               icon_class="w-5 h-5"
@@ -58,7 +59,7 @@
               hide_custom={!module_enabled?(Bonfire.UI.Boundaries.SetBoundariesLive, @__context__)}
             />
 
-            {!-- <li class="flex items-center flex-row gap-2 mx-4 mb-2">
+            <!-- <li class="flex items-center flex-row gap-2 mx-4 mb-2">
             <div class="flex flex-1 p-0">
               <Bonfire.UI.Common.OpenModalLive
                 reusable_modal_id="persistent_modal"
@@ -120,9 +121,9 @@
                 </:open_btn>
               </Bonfire.UI.Common.OpenModalLive>
               </div>
-            </li> --}
+            </li> -->
           </ul>
-        </div> -->
+        </div> --}
     </div>
   {#match boundary_name}
     <div class="btn-active btn btn-ghost btn-sm max-w-[120px] cursor-default">

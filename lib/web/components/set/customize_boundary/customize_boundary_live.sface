@@ -1,55 +1,64 @@
 <div id={@id} class="">
-  {#if @acl_mode}
-    <!-- <div class="text-base font-semibold">{l("Edit boundary preset permissions")}</div> -->
-    <!-- <div class="text-xs uppercase font-semibold text-base-content/80 mt-4">
-      {e(@acl, :named, :name, "Boundary")} - {l("Permissions")}
-    </div> -->
-  {#else}
-    <!-- <div class="text-base font-semibold">{l("Define the activity boundary")}</div> -->
-    <div class="text-xs uppercase font-semibold text-base-content/80 mt-4">{l("General permissions")}</div>
-    <div class="flex mt-2 items-center justify-between gap-6 items-start">
-      <div
-        class="w-full"
-        data-position="bottom-start"
-        phx-hook="Tooltip"
-        id="popup_boundaries_in_modal"
-      >
-        <label class="justify-between tooltip-button btn w-full btn-lg rounded-xl h-20 gap-3">
-          <Bonfire.UI.Boundaries.BoundariesPresetNameLive
-            icon_class="w-6 h-6 text-primary"
-            class="flex items-start gap-3"
-            to_boundaries={@to_boundaries}
-            with_description
-            to_circles={@to_circles || []}
-            exclude_circles={@exclude_circles || []}
-          />
-
-          <#Icon iconify="ph:dots-three-outline-duotone" class="w-5 h-5 text-primary" />
-        </label>
-        <ul
-          tabindex="0"
-          class="tooltip z-[9999] menu shadow bg-base-100 border border-base-content/10 rounded-xl p-0 w-full lg:w-[29rem] absolute top-0 left-0 hidden"
-        >
-          <Bonfire.UI.Boundaries.GeneralAccessListLive
-            hide_presets={@hide_presets}
-            boundary_preset={@boundary_preset}
-            set_action={@set_action}
-            set_opts={@set_opts}
-            scope={:user}
-            is_customizable
-            to_boundaries={@to_boundaries}
-            hide_custom={@hide_custom}
-            my_acls={e(@my_acls, nil)}
-          />
-        </ul>
+  {#case @setting_boundaries}
+    {#match :edit_object}
+      <div class="text-xs uppercase font-semibold text-base-content/80 mt-4">{l("General permissions")}</div>
+      <div class="flex mt-2 items-center justify-between gap-6 items-start">
+        <Bonfire.UI.Boundaries.BoundariesPresetNameLive
+          icon_class="w-6 h-6 text-primary"
+          class="flex items-start gap-3"
+          to_boundaries={@to_boundaries}
+          with_description
+          to_circles={@to_circles || []}
+          exclude_circles={@exclude_circles || []}
+        />
       </div>
-    </div>
-  {/if}
+    {#match :create_object}
+      <!-- <div class="text-base font-semibold">{l("Define the activity boundary")}</div> -->
+      <div class="text-xs uppercase font-semibold text-base-content/80 mt-4">{l("General permissions")}</div>
+      <div class="flex mt-2 items-center justify-between gap-6 items-start">
+        <div
+          class="w-full"
+          data-position="bottom-start"
+          phx-hook="Tooltip"
+          id="popup_boundaries_in_modal"
+        >
+          <label class="justify-between tooltip-button btn w-full btn-lg rounded-xl h-20 gap-3">
+            <Bonfire.UI.Boundaries.BoundariesPresetNameLive
+              icon_class="w-6 h-6 text-primary"
+              class="flex items-start gap-3"
+              to_boundaries={@to_boundaries}
+              with_description
+              to_circles={@to_circles || []}
+              exclude_circles={@exclude_circles || []}
+            />
+
+            <#Icon iconify="ph:dots-three-outline-duotone" class="w-5 h-5 text-primary" />
+          </label>
+          <ul
+            tabindex="0"
+            class="tooltip z-[9999] menu shadow bg-base-100 border border-base-content/10 rounded-xl p-0 w-full lg:w-[29rem] absolute top-0 left-0 hidden"
+          >
+            <Bonfire.UI.Boundaries.GeneralAccessListLive
+              hide_presets={@hide_presets}
+              boundary_preset={@boundary_preset}
+              set_action={@set_action}
+              set_opts={@set_opts}
+              scope={:user}
+              is_customizable
+              to_boundaries={@to_boundaries}
+              hide_custom={@hide_custom}
+              my_acls={e(@my_acls, nil)}
+            />
+          </ul>
+        </div>
+      </div>
+    {#match _}
+  {/case}
 
   <StatefulComponent
     module={Bonfire.UI.Boundaries.SetBoundariesLive}
     to_boundaries={@to_boundaries}
-    acl_mode={@acl_mode}
+    setting_boundaries={@setting_boundaries}
     verb_permissions={@verb_permissions}
     boundary_preset={@boundary_preset}
     available_verbs={@available_verbs}

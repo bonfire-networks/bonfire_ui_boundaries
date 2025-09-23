@@ -109,8 +109,6 @@ circles = Bonfire.UI.Boundaries.SetBoundariesLive.list_my_circles(current_user)
 # List circles with global options
 circles_with_global = Bonfire.UI.Boundaries.SetBoundariesLive.list_my_circles_with_global(scope)
 
-# Format circles for multiselect
-options = Bonfire.UI.Boundaries.SetBoundariesLive.circles_for_multiselect(context)
 ```
 
 ### Live Select Integration

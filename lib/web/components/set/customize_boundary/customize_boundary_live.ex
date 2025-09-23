@@ -131,11 +131,15 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
     |> Enum.map(fn verb_slug ->
       verb_config = Keyword.get(all_verbs, verb_slug, %{})
       # Return a simple map that Surface templates can handle
+      name =
+        e(verb_config, :name, nil) ||
+          e(verb_config, :verb, verb_slug |> to_string() |> String.capitalize())
+
       %{
         slug: verb_slug,
         icon: e(verb_config, :icon, "ph:circle-duotone"),
-        name: e(verb_config, :verb, verb_slug |> to_string() |> String.capitalize()),
-        summary: e(verb_config, :summary, "Who can #{verb_slug} the post")
+        name: name,
+        summary: e(verb_config, :summary, l("Who can %{verb} the post", verb: name))
       }
     end)
   end

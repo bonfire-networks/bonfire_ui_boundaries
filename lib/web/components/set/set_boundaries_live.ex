@@ -40,7 +40,7 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
   This is called on-demand from the template.
   """
   def get_verb_value_for_display(verb_permissions, verb_slug, circle_id) do
-    get_in(verb_permissions, [to_string(verb_slug), circle_id])
+    ed(verb_permissions, to_string(verb_slug), circle_id, nil)
   end
 
   def reject_presets(to_boundaries)
@@ -251,5 +251,44 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
 
     # Reduce the results to show in dropdown for clarity to 4 items
     # |> Enum.take(4)
+  end
+
+  @doc """
+  Partition a list of items into two lists of {item, value} tuples:
+  - items where get_verb_value_for_display/3 returns a non-nil value for the given verb
+  - items where it returns nil
+
+  ## Examples
+
+      iex> maybe_partition_nil_permission_items(false,
+      ...>   [%{id: 1}, %{id: 2}],
+      ...>   %{"read" => %{1 => :can}},
+      ...>   "read"
+      ...> )
+      { [ {%{id: 1}, :can} ], [ {%{id: 2}, nil} ] }
+
+  """
+  def maybe_partition_nil_permission_items(setting_boundaries, items, verb_permissions, verb_slug) do
+    if setting_boundaries == :create_object do
+      # don't partition
+      {[],
+       Enum.map(items, fn %{id: id} = item ->
+         {item, get_verb_value_for_display(verb_permissions, verb_slug, id)}
+       end)}
+    else
+      Enum.reduce(items, {[], []}, fn %{id: id} = item, {with_value, without_value} ->
+        value = get_verb_value_for_display(verb_permissions, verb_slug, id)
+
+        if not is_nil(value) do
+          {[{item, value} | with_value], without_value}
+        else
+          {with_value, [{item, nil} | without_value]}
+        end
+      end)
+
+      # |> then(fn {with_value, without_value} ->
+      #   {Enum.reverse(with_value), Enum.reverse(without_value)}
+      # end)
+    end
   end
 end

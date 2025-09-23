@@ -1,0 +1,31 @@
+<div class="flex items-center justify-between ml-8 pt-2">
+  <div class="flex items-center gap-3">
+    {#case e(@item, :user_type, nil)}
+      {#match "permission_entry"}
+        <!-- Render user -->
+        <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+          <#Icon iconify="ph:user-duotone" class="w-4 h-4 text-primary" />
+        </div>
+        <div class="flex flex-col">
+          <span class="text-sm text-base-content">{e(@item, :name, "Unnamed User")}</span>
+          {#if e(@item, :character, :username, nil)}
+            <span class="text-xs text-base-content/60">@{e(@item, :character, :username, nil)}</span>
+          {/if}
+        </div>
+      {#match _}
+        <!-- Render circle -->
+        <#Icon iconify="ph:circle-duotone" class="w-7 h-7 text-primary" />
+        <span class="text-sm text-base-content">{e(@item, :named, :name, nil) || e(@item, :stereotyped, :named, :name, nil) ||
+            e(@item, :name, nil)}</span>
+    {/case}
+  </div>
+  <Bonfire.UI.Boundaries.YesMaybeFalseLive
+    id={"#{@verb_slug}_#{id(@item)}"}
+    field_name={"verbs[#{@verb_slug}][#{id(@item)}]"}
+    verb={e(@verb, :verb, @verb_slug)}
+    role={id(@item)}
+    value={@value}
+    read_only={@read_only}
+    event_target={@event_target}
+  />
+</div>

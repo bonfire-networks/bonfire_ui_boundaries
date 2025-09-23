@@ -53,70 +53,60 @@
 
       <div class="pt-2">
         <div class="flex h-full flex-1 mt-3 flex-col gap-2">
-          {#for verb <- e(@available_verbs, [])}
-            <div x-data="{open: false}">
-              <div class="flex items-start gap-4">
-                <div class="border-b border-base-content/10 flex-1 pb-2">
-                  <div
-                    x-on:click="open = !open"
-                    class="flex items-center justify-between gap-4 flex-1 cursor-pointer"
-                  >
-                    <Iconify.iconify
-                      icon={e(verb, :icon, "ph:circle-duotone")}
-                      class="w-6 h-6 text-primary"
-                      aria-hidden="true"
-                    />
-                    <div class="flex flex-col flex-1">
-                      <div class="text-sm font-medium text-base-content">{e(verb, :name, "")}</div>
-                      <div class="text-xs text-base-content/70">{e(verb, :summary, "")}</div>
-                    </div>
-                    <#Icon iconify="ph:caret-down" class="w-4 h-4 text-base-content/70" />
-                  </div>
-                  <div x-show="open" x-cloak x-collapse class="ml-8 pt-2 space-y-2">
-                    {#for item <- (@my_circles || []) ++ (@selected_users || [])}
-                      <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                          {#case e(item, :user_type, nil)}
-                            {#match "permission_entry"}
-                              <!-- Render user -->
-                              <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
-                                <#Icon iconify="ph:user-duotone" class="w-4 h-4 text-primary" />
-                              </div>
-                              <div class="flex flex-col">
-                                <span class="text-sm text-base-content">{e(item, :name, "Unnamed User")}</span>
-                                {#if e(item, :character, :username, nil)}
-                                  <span class="text-xs text-base-content/60">@{e(item, :character, :username, nil)}</span>
-                                {/if}
-                              </div>
-                            {#match _}
-                              <!-- Render circle -->
-                              <#Icon iconify="ph:circle-duotone" class="w-7 h-7 text-primary" />
-                              <span class="text-sm text-base-content">{e(item, :named, :name, nil) || e(item, :stereotyped, :named, :name, nil) ||
-                                  e(item, :name, nil)}</span>
-                          {/case}
+          {#for %{slug: verb_slug} = verb <- @available_verbs || []}
+            {#case maybe_partition_nil_permission_items(
+                @setting_boundaries,
+                (@my_circles || []) ++ (@selected_users || []),
+                @verb_permissions,
+                verb_slug
+              )}
+              {#match {with_value, without_value}}
+                <div x-data="{open: false}">
+                  <div class="flex items-start gap-4">
+                    <div class="border-b border-base-content/10 flex-1 pb-2">
+                      <div
+                        x-on:click="open = !open"
+                        class="flex items-center justify-between gap-4 flex-1 cursor-pointer"
+                      >
+                        <Iconify.iconify
+                          icon={e(verb, :icon, "ph:circle-duotone")}
+                          class="w-6 h-6 text-primary"
+                          aria-hidden="true"
+                        />
+                        <div class="flex flex-col flex-1">
+                          <div class="text-sm font-medium text-base-content">{e(verb, :name, "")}</div>
+                          <div class="text-xs text-base-content/70">{e(verb, :summary, "")}</div>
                         </div>
-                        <!-- test - {inspect(@verb_permissions)}
-                        test - {inspect(e(verb, :slug, ""))}
-                        test - {inspect(id(item))} -->
-                        <Bonfire.UI.Boundaries.YesMaybeFalseLive
-                          id={"#{e(verb, :slug, "")}_#{id(item)}"}
-                          field_name={"verbs[#{e(verb, :slug, "")}][#{id(item)}]"}
-                          verb={to_string(e(verb, :slug, ""))}
-                          role={id(item)}
-                          value={Bonfire.UI.Boundaries.SetBoundariesLive.get_verb_value_for_display(
-                            @verb_permissions,
-                            e(verb, :slug, ""),
-                            id(item)
-                          )}
+                        <#Icon iconify="ph:caret-down" class="w-4 h-4 text-base-content/70" />
+                      </div>
+                      <!-- Above the fold: items with a defined value -->
+                      {#for {item, value} <- with_value}
+                        <Bonfire.UI.Boundaries.BoundaryItemLive
+                          verb={verb}
+                          verb_slug={verb_slug}
+                          item={item}
+                          value={value}
                           read_only={false}
                           event_target={"##{@parent_id || "customize_boundary_live"}"}
                         />
+                      {/for}
+                      <!-- Collapsible: items with nil value -->
+                      <div x-show="open" x-cloak x-collapse class="">
+                        {#for {item, value} <- without_value}
+                          <Bonfire.UI.Boundaries.BoundaryItemLive
+                            verb={verb}
+                            verb_slug={verb_slug}
+                            item={item}
+                            value={value}
+                            read_only={false}
+                            event_target={"##{@parent_id || "customize_boundary_live"}"}
+                          />
+                        {/for}
                       </div>
-                    {/for}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+            {/case}
           {/for}
         </div>
       </div>

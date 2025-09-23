@@ -563,31 +563,48 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   end
 
   # Handle LiveSelect user selection - dynamic field names
-  def handle_event("change", %{"_target" => ["multi_select", field_name], "multi_select" => multi_select_data} = params, socket)
-      when is_map_key(multi_select_data, field_name) and is_list(:erlang.map_get(field_name, multi_select_data)) do
+  def handle_event(
+        "change",
+        %{"_target" => ["multi_select", field_name], "multi_select" => multi_select_data} =
+          params,
+        socket
+      )
+      when is_map_key(multi_select_data, field_name) and
+             is_list(:erlang.map_get(field_name, multi_select_data)) do
     debug(params, "LiveSelect user selection")
     user_data = multi_select_data[field_name]
     selected_users = decode_selected_users(user_data)
     {:noreply, assign(socket, :selected_users, selected_users)}
   end
 
-
-  def handle_event("change", %{ "_target" => ["multi_select", "customize_boundary_live_empty_selection"],
-  "multi_select" => %{
-    "_unused_customize_boundary_live_text_input" => "",
-    "customize_boundary_live_empty_selection" => "",
-    "customize_boundary_live_text_input" => ""
-  }} = _params, socket) do
+  def handle_event(
+        "change",
+        %{
+          "_target" => ["multi_select", "customize_boundary_live_empty_selection"],
+          "multi_select" => %{
+            "_unused_customize_boundary_live_text_input" => "",
+            "customize_boundary_live_empty_selection" => "",
+            "customize_boundary_live_text_input" => ""
+          }
+        } = _params,
+        socket
+      ) do
     {:noreply, socket}
   end
 
   # Handle LiveSelect clear selection - dynamic field names
-  def handle_event("change", %{"_target" => ["multi_select", field_name], "multi_select" => multi_select_data} = params, socket)
+  def handle_event(
+        "change",
+        %{"_target" => ["multi_select", field_name], "multi_select" => multi_select_data} =
+          params,
+        socket
+      )
       when is_map_key(multi_select_data, field_name) do
     case {String.ends_with?(field_name, "_empty_selection"), multi_select_data[field_name]} do
       {true, ""} ->
         debug(params, "LiveSelect clearing selection")
         {:noreply, handle_clear_users(socket)}
+
       _ ->
         debug(params, "Unhandled clear event")
         {:noreply, socket}
@@ -600,22 +617,21 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   end
 
   # Handle search autocomplete from LiveSelect (via LiveHandlers or directly)
-  def handle_event("live_select_change", %{"id" => live_select_id, "text" => search}, socket) when is_binary(search) do
+  def handle_event("live_select_change", %{"id" => live_select_id, "text" => search}, socket)
+      when is_binary(search) do
     debug(search, "LiveSelect autocomplete search")
     handle_user_search(search, live_select_id, socket)
   end
 
   # Fallback handler for live_select_change without id field
-  def handle_event("live_select_change", %{"text" => search} = params, socket) when is_binary(search) do
+  def handle_event("live_select_change", %{"text" => search} = params, socket)
+      when is_binary(search) do
     debug(params, "LiveSelect autocomplete search (fallback - constructing ID)")
     # Try to construct the component ID as fallback
     parent_id = e(assigns(socket), :parent_id, nil) || "customize_boundary_live"
     live_select_id = "multi_select_#{parent_id}_live_select_component"
     handle_user_search(search, live_select_id, socket)
   end
-
-
-
 
   # Handle search from LiveHandlers delegation with field info
   # def handle_event("live_select_change", %{"field" => _field, "text" => search} = params, socket) when is_binary(search) do
@@ -680,10 +696,13 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
         user_id = id(user)
 
         # Only clear verbs where this user has existing permissions
-        Enum.reduce(current_verb_permissions, acc_socket, fn {verb_string, permissions}, verb_socket ->
+        Enum.reduce(current_verb_permissions, acc_socket, fn {verb_string, permissions},
+                                                             verb_socket ->
           if Map.has_key?(permissions, user_id) do
             # User has a permission for this verb, clear it
-            {:noreply, updated_socket} = handle_verb_update(verb_socket, user_id, verb_string, nil)
+            {:noreply, updated_socket} =
+              handle_verb_update(verb_socket, user_id, verb_string, nil)
+
             updated_socket
           else
             # User has no permission for this verb, skip

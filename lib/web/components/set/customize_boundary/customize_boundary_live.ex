@@ -103,10 +103,12 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   """
   def get_available_verbs(setting_boundaries \\ nil, include_verbs \\ nil, exclude_verbs \\ []) do
     # TODO: list verbs appropriate for the each scope/context
-    default_verbs =
-      if setting_boundaries == :create_object, do: default_verbs_for(:objects), else: []
+    default_verbs = default_verbs_for(:objects)
 
+    # default_verbs = if setting_boundaries == :create_object, do: default_verbs_for(:objects), else: []
     # Start with either the specified include list, default verbs, or all verbs
+    debug(default_verbs, "Default verbs for setting_boundaries")
+
     base_verbs =
       cond do
         include_verbs && include_verbs != [] -> include_verbs

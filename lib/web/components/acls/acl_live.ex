@@ -19,7 +19,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
   prop title, :string, default: nil
   prop description, :string, default: nil
   prop show_general_boundary, :boolean, default: false
-  prop to_boundaries, :list, default: []
+  prop to_boundaries, :any, default: nil
   prop to_circles, :list, default: []
   prop exclude_circles, :list, default: []
 

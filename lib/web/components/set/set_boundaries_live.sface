@@ -79,8 +79,38 @@
                         </div>
                         <#Icon iconify="ph:caret-down" class="w-4 h-4 text-base-content/70" />
                       </div>
+
+                      {#if Enum.count(with_value) > 0}
+                        <div class="mt-2 flex flex-wrap gap-2">
+                          {#for {item, value} <- with_value}
+                            <div class="badge badge-soft">
+                              {#if value == :can}
+                                <#Icon iconify="ph:check-duotone" class="w-5 h-5 text-green-500" />
+                              {#elseif value == :cannot}
+                                <#Icon iconify="ph:x-duotone" class="w-5 h-5 text-red-500" />
+                              {#else}
+                                <#Icon iconify="ph:minus-duotone" class="w-5 h-5 text-yellow-500" />
+                              {/if}
+                              {#case e(item, :user_type, nil)}
+                                {#match "permission_entry"}
+                                  <!-- Render user -->
+                                  <div class="flex flex-col">
+                                    <span class="">{e(item, :name, "Unnamed User")}</span>
+                                    <!-- {#if e(item, :character, :username, nil)}
+                                      <span class="text-xs text-base-content/60">@{e(item, :character, :username, nil)}</span>
+                                    {/if} -->
+                                  </div>
+                                {#match _}
+                                  <!-- Render circle -->
+                                  <span class="">{e(item, :named, :name, nil) || e(item, :stereotyped, :named, :name, nil) ||
+                                      e(item, :name, nil)}</span>
+                              {/case}
+                            </div>
+                          {/for}
+                        </div>
+                      {/if}
                       <!-- Above the fold: items with a defined value -->
-                      {#for {item, value} <- with_value}
+                      <!-- {#for {item, value} <- with_value}
                         <Bonfire.UI.Boundaries.BoundaryItemLive
                           verb={verb}
                           verb_slug={verb_slug}
@@ -89,15 +119,19 @@
                           read_only={false}
                           event_target={"##{@parent_id || "customize_boundary_live"}"}
                         />
-                      {/for}
+                      {/for} -->
                       <!-- Collapsible: items with nil value -->
                       <div x-show="open" x-cloak x-collapse class="">
-                        {#for {item, value} <- without_value}
+                        {#for item <- (@my_circles || []) ++ (@selected_users || [])}
                           <Bonfire.UI.Boundaries.BoundaryItemLive
                             verb={verb}
                             verb_slug={verb_slug}
                             item={item}
-                            value={value}
+                            value={Bonfire.UI.Boundaries.SetBoundariesLive.get_verb_value_for_display(
+                              @verb_permissions,
+                              verb_slug,
+                              id(item)
+                            )}
                             read_only={false}
                             event_target={"##{@parent_id || "customize_boundary_live"}"}
                           />

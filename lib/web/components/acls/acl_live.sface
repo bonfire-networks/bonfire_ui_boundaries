@@ -48,7 +48,7 @@
                 acl_subject_verb_grants={@acl_subject_verb_grants}
                 read_only={@read_only}
                 my_circles={@my_circles}
-                to_boundaries={(@to_boundaries != [] && @to_boundaries) || [{"custom", e(@acl, :named, :name, "Custom")}]}
+                to_boundaries={@to_boundaries || [{"custom", e(@acl, :named, :name, "Custom")}]}
                 to_circles={@to_circles}
                 exclude_circles={@exclude_circles}
                 hide_custom={false}

@@ -228,13 +228,11 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
     {:noreply, socket}
   end
 
-
   #  special case needed for tests that don't go through live_select
   def handle_event("multi_select", %{"data" => data, "text" => text}, socket) do
     debug(data, "multi_select_circle_live")
     LiveHandler.add_member(input_to_atoms(data), socket)
   end
-
 
   def handle_event(
         "multi_select",
@@ -331,7 +329,8 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   end
 
   # Handle member search with current user exclusion for blocking circles
-  defp handle_member_search_with_exclusion(search, live_select_id, socket) when byte_size(search) >= 2 do
+  defp handle_member_search_with_exclusion(search, live_select_id, socket)
+       when byte_size(search) >= 2 do
     current_user_id =
       current_user_id(socket)
       |> debug("avoid blocking myself")

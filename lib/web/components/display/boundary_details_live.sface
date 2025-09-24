@@ -28,7 +28,7 @@
             acl={acl}
             setting_boundaries={:edit_object}
             show_general_boundary={@show_general_boundary}
-            to_boundaries={@to_boundaries}
+            to_boundaries={@boundary_preset || @to_boundaries}
             to_circles={@to_circles}
             exclude_circles={@exclude_circles}
           />

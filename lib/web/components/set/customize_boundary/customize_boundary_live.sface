@@ -2,7 +2,7 @@
   {#case @setting_boundaries}
     {#match :edit_object}
       <div class="text-xs uppercase font-semibold text-base-content/80 mt-4">{l("General permissions")}</div>
-      <div class="flex mt-2 items-center justify-between gap-6 items-start">
+      <div class="flex mt-3 p-3 items-center justify-between gap-6 items-start bg-base-content/5 rounded-lg">
         <Bonfire.UI.Boundaries.BoundariesPresetNameLive
           icon_class="w-6 h-6 text-primary"
           class="flex items-start gap-3"

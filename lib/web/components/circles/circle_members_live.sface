@@ -8,17 +8,17 @@
         </div>
       {/if}
       <div class="menu menu-horizontal items-center justify-between gap-3 w-full">
-        <form id="add_members" phx-change="change" phx-target={"#circle_members"} class="w-full flex-1">
+        <form id="add_members" phx-change="change" phx-target="#circle_members" class="w-full flex-1">
           <label for={"multi_select_#{__MODULE__}_text_input"} class="sr-only">{l("Search for users to add")}</label>
           <div class="relative">
             <Bonfire.UI.Common.MultiselectLive
               implementation={:live_select}
               mode={:single}
-              form_input_name={"circle_members"}
+              form_input_name="circle_members"
               field={:add_to_circles}
               show_search
               debounce={300}
-              event_target={"#circle_members"}
+              event_target="#circle_members"
               label={l("Search for circles or users to add")}
             />
           </div>

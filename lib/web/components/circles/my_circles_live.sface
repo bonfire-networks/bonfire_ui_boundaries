@@ -33,15 +33,17 @@
               />
 
               <:open_btn>
-                <div class="btn btn-sm">
-                  <#Icon iconify="ph:sliders-horizontal-duotone" class="w-5 h-5 mr-2" />
-                  {l("Edit circle")}</div>
+                <div class="btn btn-sm btn-square">
+                  <#Icon iconify="ph:sliders-horizontal-duotone" class="w-5 h-5" />
+                  <span class="sr-only">{l("Edit circle")}</span>
+                </div>
               </:open_btn>
             </Bonfire.UI.Common.OpenModalLive>
           </div>
 
-          <LinkLive class="btn btn-sm" to={"/circle/#{id}/members"}>
-            {l("Manage members")}
+          <LinkLive class="btn btn-sm btn-square" to={"/circle/#{id}/members"}>
+            <#Icon iconify="ph:users-duotone" class="w-5 h-5" />
+            <span class="sr-only">{l("Manage members")}</span>
           </LinkLive>
 
           <LinkLive class="btn btn-primary btn-sm" to={"/circle/#{id}"}>

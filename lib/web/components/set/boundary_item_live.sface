@@ -3,7 +3,7 @@
     {#case e(@item, :user_type, nil)}
       {#match "permission_entry"}
         <!-- Render user -->
-        <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+        <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
           <#Icon iconify="ph:user-duotone" class="w-4 h-4 text-primary" />
         </div>
         <div class="flex flex-col">
@@ -14,7 +14,7 @@
         </div>
       {#match _}
         <!-- Render circle -->
-        <#Icon iconify="ph:circle-duotone" class="w-7 h-7 text-primary" />
+        <#Icon iconify="ph:circle-duotone" class="w-6 h-6 text-primary" />
         <span class="text-sm text-base-content">{e(@item, :named, :name, nil) || e(@item, :stereotyped, :named, :name, nil) ||
             e(@item, :name, nil)}</span>
     {/case}

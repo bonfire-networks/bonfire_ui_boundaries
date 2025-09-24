@@ -269,26 +269,27 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
 
   """
   def maybe_partition_nil_permission_items(setting_boundaries, items, verb_permissions, verb_slug) do
-    if setting_boundaries == :create_object do
-      # don't partition
-      {[],
-       Enum.map(items, fn %{id: id} = item ->
-         {item, get_verb_value_for_display(verb_permissions, verb_slug, id)}
-       end)}
-    else
-      Enum.reduce(items, {[], []}, fn %{id: id} = item, {with_value, without_value} ->
-        value = get_verb_value_for_display(verb_permissions, verb_slug, id)
+    # if setting_boundaries == :create_object do
+    #   # don't partition
+    #   {[],
+    #    Enum.map(items, fn %{id: id} = item ->
+    #      {item, get_verb_value_for_display(verb_permissions, verb_slug, id)}
+    #    end)}
+    # else
+    # Always partition since we use them in any case for giving more info
+    Enum.reduce(items, {[], []}, fn %{id: id} = item, {with_value, without_value} ->
+      value = get_verb_value_for_display(verb_permissions, verb_slug, id)
 
-        if not is_nil(value) do
-          {[{item, value} | with_value], without_value}
-        else
-          {with_value, [{item, nil} | without_value]}
-        end
-      end)
+      if not is_nil(value) do
+        {[{item, value} | with_value], without_value}
+      else
+        {with_value, [{item, nil} | without_value]}
+      end
+    end)
 
-      # |> then(fn {with_value, without_value} ->
-      #   {Enum.reverse(with_value), Enum.reverse(without_value)}
-      # end)
-    end
+    # |> then(fn {with_value, without_value} ->
+    #   {Enum.reverse(with_value), Enum.reverse(without_value)}
+    # end)
+    # end
   end
 end

@@ -182,10 +182,52 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
     end
   end
 
-  def handle_event("multi_select", %{data: data, text: text}, socket) do
-    debug(data, "multi_select_circle_live")
-    LiveHandler.add_member(input_to_atoms(data), socket)
+  # Handle LiveSelect member selection - single mode (expects JSON string)
+  def handle_event(
+        "change",
+        %{"_target" => ["multi_select", field_name], "multi_select" => multi_select_data} =
+          params,
+        socket
+      )
+      when is_map_key(multi_select_data, field_name) and
+             is_binary(:erlang.map_get(field_name, multi_select_data)) and
+             :erlang.map_get(field_name, multi_select_data) != "" do
+    debug(params, "LiveSelect member selection")
+    json_string = multi_select_data[field_name]
+    selected_member = decode_selected_member(json_string)
+
+    if selected_member do
+      LiveHandler.add_member(selected_member, socket)
+    else
+      {:noreply, socket}
+    end
   end
+
+  # Handle LiveSelect clear selection - dynamic field names (like SelectRecipientsLive)
+  def handle_event(
+        "change",
+        %{"_target" => ["multi_select", field_name], "multi_select" => multi_select_data} =
+          params,
+        socket
+      )
+      when is_map_key(multi_select_data, field_name) do
+    case {String.ends_with?(field_name, "_empty_selection"), multi_select_data[field_name]} do
+      {true, ""} ->
+        debug(params, "LiveSelect clearing selection")
+        # Clear operation - no action needed for member selection
+        {:noreply, socket}
+
+      _ ->
+        # Non-empty selection, should be handled by first handler
+        {:noreply, socket}
+    end
+  end
+
+  # Catch-all handler for other change event patterns
+  def handle_event("change", _params, socket) do
+    {:noreply, socket}
+  end
+
 
   #  special case needed for tests that don't go through live_select
   def handle_event("multi_select", %{"data" => data, "text" => text}, socket) do
@@ -193,29 +235,6 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
     LiveHandler.add_member(input_to_atoms(data), socket)
   end
 
-  # def handle_event("multi_select", %{id: id, name: _name}, socket) do
-  #   add_member(input_to_atoms(e(assigns(socket), :suggestions, %{})[id]) || id, socket)
-  # end
-
-  # def handle_event(
-  #       "multi_select",
-  #       %{"_target" => ["add_to_circles", module_name], "add_to_circles" => multi_select_data} =
-  #         params,
-  #       socket
-  #     ) do
-  #   debug(multi_select_data, "multi_select_data")
-  #   debug(module_name, "module_name")
-
-  #   with {:ok, json_str} when is_binary(json_str) <- Map.fetch(multi_select_data, module_name),
-  #        {:ok, data} when is_map(data) <- Jason.decode(json_str) do
-  #     debug(data, "multi_select_decoded")
-  #     LiveHandler.add_member(input_to_atoms(data), socket)
-  #   else
-  #     error ->
-  #       debug(error, "multi_select_decode_error")
-  #       {:noreply, socket}
-  #   end
-  # end
 
   def handle_event(
         "multi_select",
@@ -243,32 +262,20 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
     {:noreply, socket}
   end
 
-  def handle_event(
-        "live_select_change",
-        %{"field" => _field, "id" => live_select_id, "text" => search},
-        socket
-      ) do
-    do_results_for_multiselect(search)
-    |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
-
-    {:noreply, socket}
+  def handle_event("live_select_change", %{"id" => live_select_id, "text" => search}, socket)
+      when is_binary(search) do
+    debug(search, "LiveSelect autocomplete search")
+    handle_member_search(search, live_select_id, socket)
   end
 
   def handle_event(
         "live_select_change",
-        %{"field" => _field, "id" => live_select_id, "text" => search},
+        %{"id" => live_select_id, "text" => search},
         %{assigns: %{circle_type: circle_type}} = socket
       )
-      when circle_type in [:silence, :ghost] do
-    current_user_id =
-      current_user_id(socket)
-      |> debug("avoid blocking myself")
-
-    do_results_for_multiselect(search)
-    |> Enum.reject(fn {_name, %{id: id}} -> id == current_user_id end)
-    |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
-
-    {:noreply, socket}
+      when circle_type in [:silence, :ghost] and is_binary(search) do
+    debug(search, "LiveSelect autocomplete search for blocking circles")
+    handle_member_search_with_exclusion(search, live_select_id, socket)
   end
 
   def handle_event(
@@ -310,6 +317,66 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
     debug(event, "Unmatched event")
     debug(params, "Unmatched event params")
     {:noreply, socket}
+  end
+
+  # Handle member search for autocomplete - use provided live_select_id
+  defp handle_member_search(search, live_select_id, socket) when byte_size(search) >= 2 do
+    search_results = do_results_for_multiselect(search)
+    maybe_send_update(LiveSelect.Component, live_select_id, options: search_results)
+    {:noreply, socket}
+  end
+
+  defp handle_member_search(_search, _live_select_id, socket) do
+    {:noreply, socket}
+  end
+
+  # Handle member search with current user exclusion for blocking circles
+  defp handle_member_search_with_exclusion(search, live_select_id, socket) when byte_size(search) >= 2 do
+    current_user_id =
+      current_user_id(socket)
+      |> debug("avoid blocking myself")
+
+    search_results =
+      do_results_for_multiselect(search)
+      |> Enum.reject(fn {_name, %{id: id}} -> id == current_user_id end)
+
+    maybe_send_update(LiveSelect.Component, live_select_id, options: search_results)
+    {:noreply, socket}
+  end
+
+  defp handle_member_search_with_exclusion(_search, _live_select_id, socket) do
+    {:noreply, socket}
+  end
+
+  # Decode selected member from LiveSelect JSON string (single mode)
+  defp decode_selected_member(json_string) when is_binary(json_string) do
+    decode_single_member(json_string)
+  end
+
+  defp decode_selected_member(_), do: nil
+
+  defp decode_single_member(json_string) when is_binary(json_string) do
+    case Jason.decode(json_string) do
+      {:ok, data} -> format_decoded_member(data)
+      {:error, _} -> nil
+    end
+  end
+
+  defp decode_single_member(data) when is_map(data) do
+    format_decoded_member(data)
+  end
+
+  defp decode_single_member(_), do: nil
+
+  defp format_decoded_member(data) do
+    %{
+      id: data["id"] || data[:id],
+      username: data["username"] || data[:username],
+      name: data["name"] || data[:name] || "Unnamed",
+      icon: data["icon"] || data[:icon],
+      type: data["type"] || data[:type] || "user",
+      field: data["field"] || data[:field]
+    }
   end
 
   def do_results_for_multiselect(search) do

@@ -16,20 +16,6 @@
             debounce={300}
           />
         </form>
-
-        <!-- <form id="test" phx-change="multi_select" phx-target={@myself}>
-          <Bonfire.UI.Common.MultiselectLive
-            implementation={:live_select}
-            mode={:single}
-            selected_options={[]}
-            class="focus:outline-0 border-0 border-b h-10 rounded-none border-base-content/10 text-sm select_recipients_input"
-            label={l("Search for a user to preview")}
-            form_input_name={__MODULE__}
-            field={:preview_boundary_for_id}
-            update_min_len={2}
-          />
-        </form> -->
-        {!-- context_id={@context_id} --}
       </div>
       <div class="" :if={@preview_boundary_for_id}>
         <span class="my-3 block text-base-content/90 tracking-wide uppercase text-xs font-semibold">{l("Previewing boundaries for")} <b>{@preview_boundary_for_username}</b></span>

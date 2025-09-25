@@ -45,8 +45,8 @@ defmodule Bonfire.UI.Boundaries.VerbPermissionsHelper do
               "can" -> true
               :cannot -> false
               "cannot" -> false
-              nil -> nil
-              _ -> true
+              # nil -> nil
+              _ -> nil
             end
 
           # Only include non-nil values in verb_grants

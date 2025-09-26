@@ -10,6 +10,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
 
     {:ok,
      socket
+    |> assign(:is_caretaker, nil)
      |> assign(:circle, nil)}
   end
 

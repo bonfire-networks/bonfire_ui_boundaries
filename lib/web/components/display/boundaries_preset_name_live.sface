@@ -22,7 +22,7 @@
         <span
           :if={@with_description}
           class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
-        >{l("Publicly visible to everyone. Discoverable by search engines.")}</span>
+        >{l("Publicly visible to everyone.")}</span>
       </div>
     </span>
   {#match {"local", _}}

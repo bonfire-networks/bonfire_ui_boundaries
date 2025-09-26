@@ -52,7 +52,6 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         {:ok, session: session}
       end
 
-
       @cookie_key "_bonfire_key"
       def user_browser_session(session) do
         username = System.get_env("ADMIN_USER", "test_user")
@@ -89,12 +88,19 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
 
       def create_circles_and_preset(user) do
         # Create circles
-        {:ok, friends_circle} =  Bonfire.Boundaries.Circles.create(user, %{named: %{name: "friends"}})
-        {:ok, work_circle} =  Bonfire.Boundaries.Circles.create(user, %{named: %{name: "work"}})
+        {:ok, friends_circle} =
+          Bonfire.Boundaries.Circles.create(user, %{named: %{name: "friends"}})
+
+        {:ok, work_circle} = Bonfire.Boundaries.Circles.create(user, %{named: %{name: "work"}})
 
         # Create a preset with specific verb permissions
-        {:ok, preset_acl} =  Bonfire.Boundaries.Acls.create(%{named: %{name: "social"}}, current_user: user)
-        [ok: _] =  Bonfire.Boundaries.Grants.grant(friends_circle, preset_acl, :read, true, current_user: user)
+        {:ok, preset_acl} =
+          Bonfire.Boundaries.Acls.create(%{named: %{name: "social"}}, current_user: user)
+
+        [ok: _] =
+          Bonfire.Boundaries.Grants.grant(friends_circle, preset_acl, :read, true,
+            current_user: user
+          )
 
         %{
           friends_circle: friends_circle,

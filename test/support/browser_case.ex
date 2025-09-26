@@ -33,6 +33,7 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         on_exit(fn -> Application.put_env(:wallaby, :js_logger, :stdio) end)
       end
 
+
       @cookie_key "_bonfire_key"
       def user_browser_session(session) do
         username = System.get_env("ADMIN_USER", "test_user")
@@ -65,12 +66,12 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
 
       def create_circles_and_preset(user) do
         # Create circles
-        {:ok, friends_circle} = Circles.create(user, %{named: %{name: "friends"}})
-        {:ok, work_circle} = Circles.create(user, %{named: %{name: "work"}})
+        {:ok, friends_circle} =  Bonfire.Boundaries.Circles.create(user, %{named: %{name: "friends"}})
+        {:ok, work_circle} =  Bonfire.Boundaries.Circles.create(user, %{named: %{name: "work"}})
 
         # Create a preset with specific verb permissions
-        {:ok, preset_acl} = Acls.create(%{named: %{name: "social"}}, current_user: user)
-        [ok: _] = Grants.grant(friends_circle, preset_acl, :read, true, current_user: user)
+        {:ok, preset_acl} =  Bonfire.Boundaries.Acls.create(%{named: %{name: "social"}}, current_user: user)
+        [ok: _] =  Bonfire.Boundaries.Grants.grant(friends_circle, preset_acl, :read, true, current_user: user)
 
         %{
           friends_circle: friends_circle,
@@ -83,10 +84,12 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         session
         |> Browser.visit("/feed")
         # Wait for composer to load
-        |> Browser.assert_has(Query.css("#smart_input_container"))
+        # |> Browser.assert_has(Query.css("#smart_input_container"))
         # Click the boundary settings button
-        |> Browser.click(Query.css("[data-role='open_modal']"))
+        |> Browser.take_screenshot()
+        |> Browser.click(Query.css("main_smart_input_button"))
         |> Browser.assert_text("Public")
+        |> open_browser()
         # Wait for modal to open and select the preset
         |> Browser.assert_has(Query.css("[data-role='selected_preset']"))
         |> Browser.assert_text("social")

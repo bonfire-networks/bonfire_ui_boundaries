@@ -10,8 +10,19 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
 
     {:ok,
      socket
-    |> assign(:is_caretaker, nil)
-     |> assign(:circle, nil)}
+     |> assign(:circle, nil)
+     |> assign(:circle_id, nil)
+     |> assign(:selected_tab, nil)
+     |> assign(:read_only, false)
+     |> assign(:to_boundaries, nil)
+     |> assign(:boundary_preset, nil)
+     |> assign(:feed_filters, %{})
+     |> assign(:feed_name, nil)
+     |> assign(:feed_title, nil)
+     |> assign(:page_info, nil)
+     |> assign(:members, [])
+     |> assign(:is_caretaker, false)
+     |> assign(:page, nil)}
   end
 
   # def handle_params(%{"tab" => "members"}, _session, socket) do

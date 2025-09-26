@@ -86,7 +86,7 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
       case Bonfire.Boundaries.Grants.get(acl_name) do
         grants when is_map(grants) ->
           Enum.map(grants, fn {circle_slug, role_or_verbs} ->
-            circle = Bonfire.Boundaries.Circles.get(circle_slug)
+            circle = Bonfire.Boundaries.Circles.get_built_in(circle_slug)
             role = if(is_atom(role_or_verbs), do: role_or_verbs, else: :custom)
 
             # Return tuple format expected by BoundaryItemsLive
@@ -113,7 +113,7 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
       case Bonfire.Boundaries.Grants.get(acl_name) do
         grants when is_map(grants) ->
           Enum.map(grants, fn {circle_slug, role_or_verbs} ->
-            circle = Bonfire.Boundaries.Circles.get(circle_slug)
+            circle = Bonfire.Boundaries.Circles.get_built_in(circle_slug)
 
             # Convert role to verbs or use verbs directly
             verbs =

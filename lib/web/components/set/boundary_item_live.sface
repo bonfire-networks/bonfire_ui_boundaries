@@ -14,9 +14,15 @@
         </div>
       {#match _}
         <!-- Render circle -->
-        <#Icon iconify="ph:circle-duotone" class="w-6 h-6 text-primary" />
-        <span class="text-sm text-base-content">{e(@item, :named, :name, nil) || e(@item, :stereotyped, :named, :name, nil) ||
-            e(@item, :name, nil)}</span>
+        {#case e(@item, :extra_info, :icon, nil) || e(@item, :stereotyped, :extra_info, :icon, nil)}
+          {#match nil}
+            <#Icon iconify="ph:circle-duotone" class="w-6 h-6 text-primary" />
+          {#match icon}
+            <Iconify.iconify icon={icon} class="w-6 h-6 text-primary" />
+        {/case}
+
+        <span class="text-sm text-base-content">{e(@item, :named, :name, nil) ||
+            e(@item, :name, nil) || localise_dynamic(e(@item, :stereotyped, :named, :name, nil), __MODULE__)}</span>
     {/case}
   </div>
   <Bonfire.UI.Boundaries.YesMaybeFalseLive

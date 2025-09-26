@@ -1,5 +1,5 @@
 defmodule Bonfire.UI.Boundaries.BoundaryUIBrowserTest do
-  use Bonfire.UI.Boundaries.ConnCase, async: true
+  use Bonfire.UI.Boundaries.BrowserCase, async: true
 
   alias Bonfire.Boundaries.{Circles, Acls, Grants}
 

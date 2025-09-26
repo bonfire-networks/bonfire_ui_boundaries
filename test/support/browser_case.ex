@@ -24,13 +24,32 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
       import Bonfire.UI.Common.Testing.Helpers
       import Bonfire.Social.Fake
       import Untangle
+      import Ecto.Adapters.SQL.Sandbox
+
+      import Bonfire.UI.Boundaries.Test.ConnHelpers
+      import Bonfire.UI.Boundaries.Test.FakeHelpers
+
+      alias Bonfire.UI.Boundaries.Fake
+      import Bonfire.UI.Boundaries.Fake
 
       @moduletag :e2e
 
       @endpoint Application.compile_env!(:bonfire, :endpoint_module)
 
-      setup _ do
-        on_exit(fn -> Application.put_env(:wallaby, :js_logger, :stdio) end)
+      setup tags do
+        # Manually checkout sandbox since we're in :manual mode, handle already checked out case
+        case Ecto.Adapters.SQL.Sandbox.checkout(Bonfire.Common.Repo) do
+          :ok -> :ok
+          {:already, :owner} -> :ok
+        end
+
+        # Set to shared mode so browser can access same transaction
+        Ecto.Adapters.SQL.Sandbox.mode(Bonfire.Common.Repo, {:shared, self()})
+
+        # Start Wallaby session with metadata
+        metadata = Phoenix.Ecto.SQL.Sandbox.metadata_for(Bonfire.Common.Repo, self())
+        {:ok, session} = Wallaby.start_session(metadata: metadata)
+        {:ok, session: session}
       end
 
 
@@ -60,8 +79,12 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
           |> fill_in(Query.fillable_field("login_fields[password]"), with: pw)
           # |> Browser.send_keys([:enter])
           |> click(Query.button("Log in"))
+          # Wait for login to complete and redirect
+          |> Browser.assert_has(Query.css("body"))
+          # Ensure we're redirected away from login page
+          |> Browser.refute_has(Query.css("input[name='login_fields[email_or_username]']"))
 
-        # |> Browser.set_cookie(@cookie_key, token)
+        {user_session, user}
       end
 
       def create_circles_and_preset(user) do
@@ -89,7 +112,7 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         |> Browser.take_screenshot()
         |> Browser.click(Query.css("main_smart_input_button"))
         |> Browser.assert_text("Public")
-        |> open_browser()
+        # |> open_browser()
         # Wait for modal to open and select the preset
         |> Browser.assert_has(Query.css("[data-role='selected_preset']"))
         |> Browser.assert_text("social")

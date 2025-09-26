@@ -59,6 +59,17 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
     |> List.first()
   end
 
+  def boundaries_to_preset_name(to_boundaries) do
+    List.wrap(to_boundaries)
+    |> Enum.map(fn
+      {x, _} when x in @presets -> x
+      x when x in @presets -> x
+      _ -> nil
+    end)
+    |> Enum.reject(&is_nil/1)
+    |> List.first()
+  end
+
   # def set_clean_boundaries(to_boundaries, "custom", _name) do
   #   Keyword.drop(to_boundaries, ["public", "local", "mentions"])
   # end

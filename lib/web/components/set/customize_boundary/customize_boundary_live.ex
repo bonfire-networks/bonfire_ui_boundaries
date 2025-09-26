@@ -154,152 +154,142 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
     )
   end
 
-  # Helper to detect and load custom ACL from to_boundaries
-  defp detect_custom_acl_from_to_boundaries(assigns, socket) do
-    to_boundaries = e(assigns, :to_boundaries, [])
-    current_user = current_user(socket)
+  # # Helper to detect and load custom ACL from to_boundaries
+  # defp detect_custom_acl_from_to_boundaries(assigns, socket) do
+  #   to_boundaries = e(assigns, :to_boundaries, [])
+  #   current_user = current_user_required!(socket)
 
-    with {:ok, acl_id} <- extract_acl_id_from_boundaries(to_boundaries),
-         {:ok, current_user} <- validate_current_user(current_user),
-         {:ok, verb_permissions, extracted_users} <- load_and_transform_acl(acl_id, current_user) do
-      {:ok, verb_permissions, extracted_users}
-    else
-      error ->
-        debug(error, "Custom ACL detection failed")
-        :error
-    end
-  end
+  #   with {:ok, acl_id} <- extract_acl_id_from_boundaries(to_boundaries),
+  #        {:ok, verb_permissions, extracted_users} <- load_and_transform_acl(acl_id, current_user) do
+  #     {:ok, verb_permissions, extracted_users}
+  #   else
+  #     error ->
+  #       debug(error, "Custom ACL detection failed")
+  #       :error
+  #   end
+  # end
 
-  # Extract ACL ID from to_boundaries if it contains a valid ULID
-  defp extract_acl_id_from_boundaries(to_boundaries) do
-    acl_id =
-      case to_boundaries do
-        [{acl_id, _name}] when is_binary(acl_id) ->
-          if Needle.ULID.valid?(acl_id), do: acl_id, else: nil
+  # # Extract ACL ID from to_boundaries if it contains a valid ULID
+  # defp extract_acl_id_from_boundaries(to_boundaries) do
+  #   acl_id =
+  #     case to_boundaries do
+  #       [{acl_id, _name}] when is_binary(acl_id) ->
+  #         if Needle.ULID.valid?(acl_id), do: acl_id, else: nil
 
-        [acl_id] when is_binary(acl_id) ->
-          if Needle.ULID.valid?(acl_id), do: acl_id, else: nil
+  #       [acl_id] when is_binary(acl_id) ->
+  #         if Needle.ULID.valid?(acl_id), do: acl_id, else: nil
 
-        _ ->
-          nil
-      end
+  #       _ ->
+  #         nil
+  #     end
 
-    case acl_id do
-      nil -> {:error, :no_acl_id}
-      valid_id -> {:ok, valid_id}
-    end
-  end
+  #   case acl_id do
+  #     nil -> {:error, :no_acl_id}
+  #     valid_id -> {:ok, valid_id}
+  #   end
+  # end
 
-  # Validate that current user exists
-  defp validate_current_user(current_user) do
-    if is_nil(current_user) do
-      {:error, :no_current_user}
-    else
-      {:ok, current_user}
-    end
-  end
+  # # Load ACL and transform to verb permissions format, also extracting users
+  # defp load_and_transform_acl(acl_id, current_user) do
+  #   case Bonfire.Boundaries.Acls.get_for_caretaker(acl_id, current_user) do
+  #     {:ok, acl} ->
+  #       transform_acl_to_verb_permissions(acl)
 
-  # Load ACL and transform to verb permissions format, also extracting users
-  defp load_and_transform_acl(acl_id, current_user) do
-    case Bonfire.Boundaries.Acls.get_for_caretaker(acl_id, current_user) do
-      {:ok, acl} ->
-        transform_acl_to_verb_permissions(acl)
+  #     error ->
+  #       debug(error, "Failed to load ACL for caretaker")
+  #       {:error, :acl_load_failed}
+  #   end
+  # end
 
-      error ->
-        debug(error, "Failed to load ACL for caretaker")
-        {:error, :acl_load_failed}
-    end
-  end
+  # # Transform ACL to verb permissions format with preloading and extract users
+  # defp transform_acl_to_verb_permissions(acl) do
+  #   # Preload grants
+  #   acl_with_grants =
+  #     acl
+  #     |> repo().maybe_preload(
+  #       [
+  #         grants: [:verb, subject: [:named, :profile, :character, stereotyped: [:named]]]
+  #       ],
+  #       force: true
+  #     )
 
-  # Transform ACL to verb permissions format with preloading and extract users
-  defp transform_acl_to_verb_permissions(acl) do
-    # Preload grants
-    acl_with_grants =
-      acl
-      |> repo().maybe_preload(
-        [
-          grants: [:verb, subject: [:named, :profile, :character, stereotyped: [:named]]]
-        ],
-        force: true
-      )
+  #   # Get grants for processing
+  #   grants = e(acl_with_grants, :grants, [])
 
-    # Get grants for processing
-    grants = e(acl_with_grants, :grants, [])
+  #   # Extract users who are subjects in the grants (not circles/stereotypes)
+  #   extracted_users = extract_users_from_grants(grants)
 
-    # Extract users who are subjects in the grants (not circles/stereotypes)
-    extracted_users = extract_users_from_grants(grants)
+  #   # Transform to verb_permissions format
+  #   acl_subject_verb_grants = Bonfire.Boundaries.Grants.subject_verb_grants(grants)
 
-    # Transform to verb_permissions format
-    acl_subject_verb_grants = Bonfire.Boundaries.Grants.subject_verb_grants(grants)
+  #   {verb_permissions, _} =
+  #     VerbPermissionsHelper.transform_acl_to_verb_format(acl_subject_verb_grants)
 
-    {verb_permissions, _} =
-      VerbPermissionsHelper.transform_acl_to_verb_format(acl_subject_verb_grants)
+  #   {:ok, verb_permissions, extracted_users}
+  # end
 
-    {:ok, verb_permissions, extracted_users}
-  end
+  # # Extract individual users from ACL grants (filtering out circles and stereotypes)
+  # defp extract_users_from_grants(grants) do
+  #   debug(grants, "Raw grants for user extraction")
 
-  # Extract individual users from ACL grants (filtering out circles and stereotypes)
-  defp extract_users_from_grants(grants) do
-    debug(grants, "Raw grants for user extraction")
+  #   subjects =
+  #     grants
+  #     |> Enum.map(fn grant -> e(grant, :subject, nil) end)
+  #     |> Enum.reject(&is_nil/1)
 
-    subjects =
-      grants
-      |> Enum.map(fn grant -> e(grant, :subject, nil) end)
-      |> Enum.reject(&is_nil/1)
+  #   debug(subjects, "All subjects from grants")
 
-    debug(subjects, "All subjects from grants")
+  #   user_subjects =
+  #     subjects
+  #     |> Enum.filter(&is_user_subject?/1)
 
-    user_subjects =
-      subjects
-      |> Enum.filter(&is_user_subject?/1)
+  #   debug(user_subjects, "Filtered user subjects")
 
-    debug(user_subjects, "Filtered user subjects")
+  #   unique_users =
+  #     user_subjects
+  #     |> Enum.uniq_by(&id/1)
 
-    unique_users =
-      user_subjects
-      |> Enum.uniq_by(&id/1)
+  #   debug(unique_users, "Unique user subjects")
 
-    debug(unique_users, "Unique user subjects")
+  #   formatted_users =
+  #     unique_users
+  #     |> Enum.map(&format_user_for_selected_list/1)
 
-    formatted_users =
-      unique_users
-      |> Enum.map(&format_user_for_selected_list/1)
+  #   debug(formatted_users, "Final formatted users")
 
-    debug(formatted_users, "Final formatted users")
+  #   formatted_users
+  # end
 
-    formatted_users
-  end
+  # # Check if a subject is an individual user (not a circle or stereotype)
+  # defp is_user_subject?(subject) do
+  #   # Users have profile and character, but are not stereotyped circles
+  #   has_profile = not is_nil(e(subject, :profile, nil))
+  #   has_character = not is_nil(e(subject, :character, nil))
+  #   is_not_stereotyped = is_nil(e(subject, :stereotyped, nil))
 
-  # Check if a subject is an individual user (not a circle or stereotype)
-  defp is_user_subject?(subject) do
-    # Users have profile and character, but are not stereotyped circles
-    has_profile = not is_nil(e(subject, :profile, nil))
-    has_character = not is_nil(e(subject, :character, nil))
-    is_not_stereotyped = is_nil(e(subject, :stereotyped, nil))
+  #   debug(
+  #     "Subject check - ID: #{id(subject)}, has_profile: #{has_profile}, has_character: #{has_character}, is_not_stereotyped: #{is_not_stereotyped}"
+  #   )
 
-    debug(
-      "Subject check - ID: #{id(subject)}, has_profile: #{has_profile}, has_character: #{has_character}, is_not_stereotyped: #{is_not_stereotyped}"
-    )
+  #   result = has_profile and has_character and is_not_stereotyped
 
-    result = has_profile and has_character and is_not_stereotyped
+  #   if not result do
+  #     debug(subject, "Subject rejected as not a user")
+  #   end
 
-    if not result do
-      debug(subject, "Subject rejected as not a user")
-    end
+  #   result
+  # end
 
-    result
-  end
-
-  # Format user from ACL subject to match selected_users format
-  defp format_user_for_selected_list(user) do
-    %{
-      id: id(user),
-      name: e(user, :profile, :name, nil) || e(user, :named, :name, nil) || "Unnamed User",
-      character: %{username: e(user, :character, :username, nil)},
-      user_type: "permission_entry",
-      username: e(user, :character, :username, nil)
-    }
-  end
+  # # Format user from ACL subject to match selected_users format
+  # defp format_user_for_selected_list(user) do
+  #   %{
+  #     id: id(user),
+  #     name: e(user, :profile, :name, nil) || e(user, :named, :name, nil) || "Unnamed User",
+  #     character: %{username: e(user, :character, :username, nil)},
+  #     user_type: "permission_entry",
+  #     username: e(user, :character, :username, nil)
+  #   }
+  # end
 
   # Merge users without duplicates based on ID
   defp merge_users_without_duplicates(extracted_users, base_users) do
@@ -314,22 +304,18 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   defp determine_verb_permissions_and_users(assigns, socket) do
     case e(assigns, :verb_permissions, nil) do
       provided when not is_nil(provided) and provided != %{} ->
-        # If verb_permissions are provided, no extracted users from ACL
+        # If verb_permissions are already there, no need to extract users from ACL
         {provided, []}
 
       _ ->
         if editing_acl?(e(assigns, :setting_boundaries, nil)) do
           load_acl_verb_permissions_and_users(assigns, socket)
         else
-          load_boundary_verb_permissions_and_users(assigns, socket)
+          # NOTE: For now we don't display permissions derived from the preset
+          # load_boundary_verb_permissions_and_users(assigns, socket) || 
+          {%{}, []}
         end
     end
-  end
-
-  # Backwards compatibility - old function for verb permissions only
-  defp determine_verb_permissions(assigns, socket) do
-    {verb_permissions, _} = determine_verb_permissions_and_users(assigns, socket)
-    verb_permissions
   end
 
   # Load ACL verb permissions and extract users
@@ -341,67 +327,51 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
       # TODO: Extract users from acl_subject_verb_grants if needed
       {perms, []}
     else
-      case detect_custom_acl_from_to_boundaries(assigns, socket) do
-        {:ok, verb_permissions, extracted_users} -> {verb_permissions, extracted_users}
-        _ -> {%{}, []}
-      end
+      # case detect_custom_acl_from_to_boundaries(assigns, socket) do
+      #   {:ok, verb_permissions, extracted_users} -> {verb_permissions, extracted_users}
+      #   _ -> 
+      {%{}, []}
+      # end
     end
   end
 
-  # Backwards compatibility - old function for verb permissions only
-  defp load_acl_verb_permissions(assigns, socket) do
-    {verb_permissions, _} = load_acl_verb_permissions_and_users(assigns, socket)
-    verb_permissions
-  end
+  # # Load boundary verb permissions and extract users
+  # defp load_boundary_verb_permissions_and_users(assigns, socket) do
+  #   if preset_boundary = Bonfire.UI.Boundaries.SetBoundariesLive.boundaries_to_preset_name(assigns[:to_boundaries]) do
+  #       # Preset boundaries don't have individual users, only circles
+  #       verb_permissions = load_preset_verb_permissions(preset_boundary, assigns, socket)
+  #       {verb_permissions, []}
+  #    else
+  #       case detect_custom_acl_from_to_boundaries(assigns, socket) do
+  #         {:ok, verb_permissions, extracted_users} -> {verb_permissions, extracted_users}
+  #         _ -> {reconstruct_from_circles(assigns), []}
+  #       end
+  #   end
+  # end
 
-  # Load boundary verb permissions and extract users
-  defp load_boundary_verb_permissions_and_users(assigns, socket) do
-    preset_boundary =
-      Bonfire.UI.Boundaries.SetBoundariesLive.boundaries_to_preset(assigns[:to_boundaries])
+  # defp load_preset_verb_permissions(preset_boundary, assigns, socket) do
+  #   # Load preset's default circles and permissions
+  #   preset_circles =
+  #     Bonfire.UI.Boundaries.SetBoundariesLive.get_preset_circles_info(preset_boundary)
 
-    cond do
-      preset_boundary ->
-        # Preset boundaries don't have individual users, only circles
-        verb_permissions = load_preset_verb_permissions(preset_boundary, assigns, socket)
-        {verb_permissions, []}
+  #   # Expand roles to individual verbs
+  #   preset_circles_with_verbs = expand_preset_roles_to_verbs(preset_circles)
 
-      true ->
-        case detect_custom_acl_from_to_boundaries(assigns, socket) do
-          {:ok, verb_permissions, extracted_users} -> {verb_permissions, extracted_users}
-          _ -> {reconstruct_from_circles(assigns), []}
-        end
-    end
-  end
+  #   # Convert to verb permissions format
+  #   preset_verb_permissions =
+  #     VerbPermissionsHelper.reconstruct_verb_permissions(preset_circles_with_verbs, [])
 
-  # Backwards compatibility - old function for verb permissions only
-  defp load_boundary_verb_permissions(assigns, socket) do
-    {verb_permissions, _} = load_boundary_verb_permissions_and_users(assigns, socket)
-    verb_permissions
-  end
+  #   # Check if preset has changed - if so, start fresh
+  #   current_preset = e(assigns(socket), :preset_boundary, nil)
+  #   current_verb_permissions = e(assigns(socket), :verb_permissions, %{})
 
-  defp load_preset_verb_permissions(preset_boundary, assigns, socket) do
-    # Load preset's default circles and permissions
-    preset_circles =
-      Bonfire.UI.Boundaries.SetBoundariesLive.get_preset_circles_info(preset_boundary)
-
-    # Expand roles to individual verbs
-    preset_circles_with_verbs = expand_preset_roles_to_verbs(preset_circles)
-
-    # Convert to verb permissions format
-    preset_verb_permissions =
-      VerbPermissionsHelper.reconstruct_verb_permissions(preset_circles_with_verbs, [])
-
-    # Check if preset has changed - if so, start fresh
-    current_preset = e(assigns(socket), :preset_boundary, nil)
-    current_verb_permissions = e(assigns(socket), :verb_permissions, %{})
-
-    if preset_changed?(current_preset, preset_boundary) do
-      preset_verb_permissions
-    else
-      # Merge preset defaults with custom overrides
-      merge_verb_permissions(preset_verb_permissions, current_verb_permissions)
-    end
-  end
+  #   if preset_changed?(current_preset, preset_boundary) do
+  #     preset_verb_permissions
+  #   else
+  #     # Merge preset defaults with custom overrides
+  #     merge_verb_permissions(preset_verb_permissions, current_verb_permissions)
+  #   end
+  # end
 
   # Detect if the preset boundary has changed
   defp preset_changed?(current_preset, new_preset) do
@@ -556,7 +526,6 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   # Handle boundary mode permission updates
   defp update_boundary_mode_permissions(socket, updated_verbs) do
     # In non-ACL mode, send only the verb permissions to parent
-    # The backend will handle transformation via verb_permissions_json
     maybe_send_update(
       Bonfire.UI.Common.SmartInputContainerLive,
       :smart_input,

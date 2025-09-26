@@ -21,44 +21,30 @@ defmodule Bonfire.UI.Boundaries.VerbPermissionsHelper do
   {[{%{id: "circle_1"}, nil}, {%{id: "circle_2"}, nil}], [{"circle_1", :like, true}, {"circle_1", :boost, true}, {"circle_2", :like, false}, {"circle_2", :boost, false}]}
   """
   def transform_to_verb_grants_format(verb_permissions) do
-    # Collect all unique circles
-    all_circles =
-      verb_permissions
-      |> Enum.flat_map(fn {_verb, circle_perms} -> Map.keys(circle_perms) end)
-      |> Enum.uniq()
-
-    # Create to_circles without roles (just circles)
-    to_circles =
-      all_circles
-      |> Enum.map(fn circle_id -> {%{id: circle_id}, nil} end)
-
     # Create verb_grants for direct processing
-    verb_grants =
-      verb_permissions
-      |> Enum.flat_map(fn {verb, circle_perms} ->
-        verb_atom = maybe_to_atom(verb)
+    verb_permissions
+    |> Enum.flat_map(fn {verb, circle_perms} ->
+      verb_atom = maybe_to_atom(verb)
 
-        Enum.flat_map(circle_perms, fn {circle_id, permission} ->
-          value =
-            case permission do
-              :can -> true
-              "can" -> true
-              :cannot -> false
-              "cannot" -> false
-              # nil -> nil
-              _ -> nil
-            end
-
-          # Only include non-nil values in verb_grants
-          if value != nil do
-            [{circle_id, verb_atom, value}]
-          else
-            []
+      Enum.flat_map(circle_perms, fn {circle_id, permission} ->
+        value =
+          case permission do
+            :can -> true
+            "can" -> true
+            :cannot -> false
+            "cannot" -> false
+            # nil -> nil
+            _ -> nil
           end
-        end)
-      end)
 
-    {to_circles, verb_grants}
+        # Only include non-nil values in verb_grants
+        if value != nil do
+          [{circle_id, verb_atom, value}]
+        else
+          []
+        end
+      end)
+    end)
   end
 
   @doc """

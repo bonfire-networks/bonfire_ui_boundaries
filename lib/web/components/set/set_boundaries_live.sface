@@ -103,7 +103,7 @@
                                 {#match _}
                                   <!-- Render circle -->
                                   <span class="">{e(item, :named, :name, nil) ||
-                                      e(item, :name, nil) || localise_dynamic(e(@item, :stereotyped, :named, :name, nil), __MODULE__)}</span>
+                                      e(item, :name, nil) || localise_dynamic(e(item, :stereotyped, :named, :name, nil), __MODULE__)}</span>
                               {/case}
                             </div>
                           {/for}

@@ -105,12 +105,7 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
 
       def create_post_with_boundaries(session, circles, text \\ "Testing boundary assignment") do
         session
-        |> Browser.visit("/feed")
-        # Wait for composer to load
-        # |> Browser.assert_has(Query.css("#smart_input_container"))
-        # Click the boundary settings button
-        |> Browser.take_screenshot()
-        |> Browser.click(Query.css("main_smart_input_button"))
+        |> Browser.click(Query.css("#main_smart_input_button"))
         |> Browser.assert_text("Public")
         # |> open_browser()
         # Wait for modal to open and select the preset

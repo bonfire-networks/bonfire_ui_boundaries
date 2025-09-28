@@ -61,13 +61,14 @@
                 verb_slug
               )}
               {#match {with_value, without_value}}
-                <div x-data="{open: false}">
+                <div x-data="{open: false}" class="border-b border-base-content/10 flex-1 pb-2">
                   <div class="flex items-start gap-4">
-                    <div class="border-b border-base-content/10 flex-1 pb-2">
+                    <div class="w-full">
+                      
                       <div
                         x-on:click="open = !open"
                         class="flex items-center justify-between gap-4 flex-1 cursor-pointer"
-                      >
+                        >
                         <Iconify.iconify
                           icon={e(verb, :icon, "ph:circle-duotone")}
                           class="w-6 h-6 text-primary"
@@ -79,36 +80,9 @@
                         </div>
                         <#Icon iconify="ph:caret-down" class="w-4 h-4 text-base-content/70" />
                       </div>
+                      
 
-                      {#if Enum.count(with_value) > 0}
-                        <div class="mt-2 flex flex-wrap gap-2">
-                          {#for {item, value} <- with_value}
-                            <div class="badge badge-soft">
-                              {#if value == :can}
-                                <#Icon iconify="ph:check-duotone" class="w-5 h-5 text-green-500" />
-                              {#elseif value == :cannot}
-                                <#Icon iconify="ph:x-duotone" class="w-5 h-5 text-red-500" />
-                              {#else}
-                                <#Icon iconify="ph:minus-duotone" class="w-5 h-5 text-yellow-500" />
-                              {/if}
-                              {#case e(item, :user_type, nil)}
-                                {#match "permission_entry"}
-                                  <!-- Render user -->
-                                  <div class="flex flex-col">
-                                    <span class="">{e(item, :name, "Unnamed User")}</span>
-                                    <!-- {#if e(item, :character, :username, nil)}
-                                      <span class="text-xs text-base-content/60">@{e(item, :character, :username, nil)}</span>
-                                    {/if} -->
-                                  </div>
-                                {#match _}
-                                  <!-- Render circle -->
-                                  <span class="">{e(item, :named, :name, nil) ||
-                                      e(item, :name, nil) || localise_dynamic(e(item, :stereotyped, :named, :name, nil), __MODULE__)}</span>
-                              {/case}
-                            </div>
-                          {/for}
-                        </div>
-                      {/if}
+                      
                       <!-- Above the fold: items with a defined value -->
                       <!-- {#for {item, value} <- with_value}
                         <Bonfire.UI.Boundaries.BoundaryItemLive
@@ -121,7 +95,9 @@
                         />
                       {/for} -->
                       <!-- Collapsible: items with nil value -->
-                      <div x-show="open" x-cloak x-collapse class="">
+
+                      
+                      <div x-show="open" x-collapse class="">
                         {#for item <- (@my_circles || []) ++ (@selected_users || [])}
                           <Bonfire.UI.Boundaries.BoundaryItemLive
                             verb={verb}
@@ -137,8 +113,39 @@
                           />
                         {/for}
                       </div>
+
                     </div>
                   </div>
+
+
+                  <div :if={Enum.count(with_value) > 0} class="mt-2 flex flex-wrap gap-2">
+                    {#for {item, value} <- with_value}
+                      <div class="badge badge-soft">
+                        {#if value == :can}
+                          <#Icon iconify="ph:check-duotone" class="w-5 h-5 text-green-500" />
+                        {#elseif value == :cannot}
+                          <#Icon iconify="ph:x-duotone" class="w-5 h-5 text-red-500" />
+                        {#else}
+                          <#Icon iconify="ph:minus-duotone" class="w-5 h-5 text-yellow-500" />
+                        {/if}
+                        {#case e(item, :user_type, nil)}
+                          {#match "permission_entry"}
+                            <!-- Render user -->
+                            <div class="flex flex-col">
+                              <span class="">{e(item, :name, "Unnamed User")}</span>
+                              <!-- {#if e(item, :character, :username, nil)}
+                                <span class="text-xs text-base-content/60">@{e(item, :character, :username, nil)}</span>
+                              {/if} -->
+                            </div>
+                          {#match _}
+                            <!-- Render circle -->
+                            <span class="">{e(item, :named, :name, nil) ||
+                                e(item, :name, nil) || localise_dynamic(e(item, :stereotyped, :named, :name, nil), __MODULE__)}</span>
+                        {/case}
+                      </div>
+                    {/for}
+                  </div>
+
                 </div>
             {/case}
           {/for}

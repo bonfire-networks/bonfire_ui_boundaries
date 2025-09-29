@@ -66,6 +66,7 @@
                     <div class="w-full">
                       
                       <div
+                        data-id={e(verb, :name, nil) <> "_toggle"}
                         x-on:click="open = !open"
                         class="flex items-center justify-between gap-4 flex-1 cursor-pointer"
                         >

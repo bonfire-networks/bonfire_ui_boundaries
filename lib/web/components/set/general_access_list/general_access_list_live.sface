@@ -240,6 +240,7 @@
     }>
       <button
         class="text-base-content flex items-center gap-2 justify-between w-full"
+        data-id="custom_boundary"
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
             value: %{id: "custom", name: l("Custom")},

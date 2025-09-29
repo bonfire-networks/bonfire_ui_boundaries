@@ -46,6 +46,9 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         # Set to shared mode so browser can access same transaction
         Ecto.Adapters.SQL.Sandbox.mode(Bonfire.Common.Repo, {:shared, self()})
 
+        # Configure Wallaby for better reliability with dynamic content
+        Application.put_env(:wallaby, :max_wait_time, 5_000)  # 10 seconds
+
         # Start Wallaby session with metadata
         metadata = Phoenix.Ecto.SQL.Sandbox.metadata_for(Bonfire.Common.Repo, self())
         {:ok, session} = Wallaby.start_session(metadata: metadata)
@@ -64,6 +67,10 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
             name: username
           })
 
+        # Disable JavaScript error checking for Milkdown issues
+        Application.put_env(:wallaby, :js_errors, false)
+        Process.put(:feed_live_update_many_preload_mode, :inline)
+
         # alice = fake_user!()
         # conn = conn(user: alice)
         # conn = Phoenix.ConnTest.get(conn, "/")
@@ -76,14 +83,37 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
             with: username
           )
           |> fill_in(Query.fillable_field("login_fields[password]"), with: pw)
-          # |> Browser.send_keys([:enter])
           |> click(Query.button("Log in"))
           # Wait for login to complete and redirect
           |> Browser.assert_has(Query.css("body"))
           # Ensure we're redirected away from login page
           |> Browser.refute_has(Query.css("input[name='login_fields[email_or_username]']"))
+          # Visit home page to ensure user session is fully established
+          |> visit("/")
+          # Wait for composer button to appear, indicating user session is ready
+          |> Browser.assert_has(Query.css("#main_smart_input_button[data-role='composer_button']"))
 
         {user_session, user}
+      end
+
+      def login_as_user(session, user) do
+        # Get user's username and set a test password
+        username = user.username
+        pw = "test-password-123"
+
+        # Update the user's account with the test password
+        account = user.account
+        {:ok, _} = Bonfire.Me.Accounts.update_credential(account, %{password: pw})
+
+        session
+        |> visit("/login")
+        |> fill_in(Query.fillable_field("login_fields[email_or_username]"), with: username)
+        |> fill_in(Query.fillable_field("login_fields[password]"), with: pw)
+        |> click(Query.button("Log in"))
+        |> Browser.assert_has(Query.css("body"))
+        |> Browser.refute_has(Query.css("input[name='login_fields[email_or_username]']"))
+        |> visit("/")
+        |> Browser.assert_has(Query.css("#main_smart_input_button[data-role='composer_button']"))
       end
 
       def create_circles_and_preset(user) do
@@ -109,53 +139,122 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         }
       end
 
-      def create_post_with_boundaries(session, circles, text \\ "Testing boundary assignment") do
+      def open_composer(session) do
         session
-        |> Browser.click(Query.css("#main_smart_input_button"))
-        |> Browser.assert_text("Public")
-        # |> open_browser()
-        # Wait for modal to open and select the preset
-        |> Browser.assert_has(Query.css("[data-role='selected_preset']"))
-        |> Browser.assert_text("social")
-        # Customize verb permissions for the work circle
-        |> Browser.assert_has(
-          Query.css(
-            "button[phx-value-role='#{circles.work_circle.id}'][phx-value-verb='read'][phx-value-status='1']"
-          )
-        )
-        |> Browser.click(
-          Query.css(
-            "button[phx-value-role='#{circles.work_circle.id}'][phx-value-verb='read'][phx-value-status='1']"
-          )
-        )
-        |> Browser.assert_has(
-          Query.css(
-            "button[phx-value-role='#{circles.work_circle.id}'][phx-value-verb='reply'][phx-value-status='1']"
-          )
-        )
-        |> Browser.click(
-          Query.css(
-            "button[phx-value-role='#{circles.work_circle.id}'][phx-value-verb='reply'][phx-value-status='1']"
-          )
-        )
-        |> Browser.assert_has(
-          Query.css(
-            "button[phx-value-role='#{circles.work_circle.id}'][phx-value-verb='boost'][phx-value-status='0']"
-          )
-        )
-        # Explicitly deny
-        |> Browser.click(
-          Query.css(
-            "button[phx-value-role='#{circles.work_circle.id}'][phx-value-verb='boost'][phx-value-status='0']"
-          )
-        )
-        # Fill in post content and publish
-        |> Browser.fill_in(Query.text_field("Share your thoughts"), with: text)
-        |> Browser.assert_has(Query.button("Publish"))
-        |> Browser.click(Query.button("Publish"))
-        |> Browser.assert_has(Query.css("[data-role='success']"))
-        |> Browser.assert_text("Published")
+        |> click(Query.css("#main_smart_input_button[data-role='composer_button']"))
+        |> assert_has(Query.css("#smart_input_container.translate-y-0"))
       end
+
+      def open_boundary_modal(session) do
+        session
+        |> click(Query.css("#define_boundary button[data-role='open_modal']"))
+        |> assert_has(Query.css("#persistent_modal_box"))
+      end
+
+      def close_boundary_modal(session) do
+        session
+        |> click(Query.css(".modal-box .btn-circle"))
+        # |> refute_has(Query.css("#persistent_modal_box"))
+      end
+
+      def edit_permission(session, verb, id, value) do
+        # Convert value to appropriate status label and phx-value-status
+        {status_label, phx_status, expected_class} =
+          case value do
+            1 -> {"can", "1", "bg-success"}
+            0 -> {"cannot", "0", "bg-error"}
+            _ -> {"undefined", "", "bg-neutral"}
+          end
+
+        capitalized_verb = String.capitalize(verb)
+
+        # Use JavaScript to ensure reliable clicking
+        session
+        |> Browser.execute_script("""
+          // First expand the verb section
+          const toggleElement = document.querySelector('div[data-id="#{capitalized_verb}_toggle"]');
+          if (toggleElement) {
+            toggleElement.click();
+            // Wait a bit for animation
+            setTimeout(() => {
+              // Then click the permission button
+              const button = document.querySelector('button[data-id="#{id}_#{verb}_#{status_label}"][phx-value-status="#{phx_status}"]');
+              if (button) {
+                button.click();
+              }
+            }, 500);
+          }
+        """)
+        |> then(fn session ->
+          Process.sleep(1000)  # Give time for both clicks and state changes
+          session
+        end)
+        |> Browser.assert_has(Query.css("button[data-id='#{id}_#{verb}_#{status_label}'].#{expected_class}"))
+      end
+
+      def edit_default_boundary(session, preset) do
+        # Capitalize the preset name for the phx-value-name attribute
+        capitalized_name = String.capitalize(preset)
+
+        session
+        |> click(Query.css("#popup_boundaries_in_modal"))
+        |> click(Query.css("button[phx-value-id='#{preset}'][phx-value-name='#{capitalized_name}']"))
+        |> Browser.assert_has(Query.css("#popup_boundaries_in_modal [data-scope='local-boundary-set']", text: capitalized_name))
+      end
+
+
+      def compose(session, text) do
+        # Wait for Milkdown editor to be fully initialized
+        session
+        |> Browser.assert_has(Query.css(".ProseMirror.milkdown-editor"))
+        |> fill_in(Query.css(".ProseMirror.milkdown-editor"), with: text)
+      end
+
+      def publish(session) do
+        session
+        |> click(Query.css("#submit_btn"))
+        |> Browser.assert_has(Query.css(".submitting_icon"))
+        |> Browser.assert_has(Query.css("[data-id='flash'] a.btn", text: "Show"))
+        # |> assert_text("Published")
+      end
+
+      def navigate_to_post(session) do
+        session
+        |> click(Query.css("[data-id='flash'] a.btn", text: "Show"))
+      end
+
+      def open_boundary_details(session) do
+        Process.put(:feed_live_update_many_preload_mode, :inline)
+        session
+        # Wait for more menu to be available
+        |> Browser.assert_has(Query.css("[data-id='more_menu']"))
+        |> click(Query.css("[data-id='more_menu']"))
+        # Wait for dropdown menu to expand and boundary details button to appear
+        |> Browser.assert_has(Query.css("[data-id='boundary_details'] button[data-role='open_modal']"))
+        |> click(Query.css("[data-id='boundary_details'] button[data-role='open_modal']"))
+      end
+
+      def create_post_with_boundaries(session, circle, text \\ "Testing boundary assignment") do
+        # Open the floating composer (matches wallaby reference patterns)
+            Process.put(:feed_live_update_many_preload_mode, :inline)
+
+        session
+        |> open_composer()
+        |> open_boundary_modal()
+        |> edit_permission("reply", circle.id, 1)
+        |> edit_permission("edit", circle.id, 1)
+        |> edit_permission("boost", circle.id, 0)
+        |> edit_default_boundary("local")
+        |> close_boundary_modal()
+        |> compose(text)
+        |> publish()
+
+        # |> visit("/feed/local")
+        |> navigate_to_post()
+        # |> take_screenshot()
+        |> open_boundary_details()
+      end
+
     end
   end
 

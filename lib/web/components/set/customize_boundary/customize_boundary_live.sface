@@ -22,7 +22,7 @@
           phx-hook="Tooltip"
           id="popup_boundaries_in_modal"
         >
-          <label class="justify-between tooltip-button btn w-full btn-lg rounded-xl h-20 gap-3">
+          <label class="btn-soft justify-between tooltip-button btn w-full btn-lg rounded-xl h-20 gap-3">
             <Bonfire.UI.Boundaries.BoundariesPresetNameLive
               icon_class="w-6 h-6 text-primary"
               class="flex items-start gap-3"

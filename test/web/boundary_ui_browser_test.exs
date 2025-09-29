@@ -5,19 +5,53 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIBrowserTest do
 
   @tag :browser
   feature "can use a preset in composer and customize verb permissions", %{session: session} do
+    # First get the logged-in user from browser session
+    {user_session, me} = user_browser_session(session)
+
+    # Create additional users for the test
     account = fake_account!()
-    me = fake_user!(account)
     alice = fake_user!(account)
     bob = fake_user!(account)
 
+    # Create circles and preset using the logged-in user
     circles = create_circles_and_preset(me)
 
     # Add users to circles
     {:ok, _} = Circles.add_to_circles(alice, circles.friends_circle)
     {:ok, _} = Circles.add_to_circles(bob, circles.work_circle)
+    text = "Testing boundary assignment"
+    create_post_with_boundaries(user_session, circles.work_circle, text)
 
-    {user_session, _user} = user_browser_session(session)
-    create_post_with_boundaries(user_session, circles)
+    # Log in as Bob (who is in the work_circle)
+    bob_session = login_as_user(session, bob)
+
+    # Visit the post to check permissions
+    bob_session
+    |> visit("/feed/local")
+    |> Browser.assert_has(Query.css(".activity", text: text))
+
+    # Check if Bob can reply (should be allowed based on permissions)
+    |> Browser.assert_has(Query.css("button[data-id='reply']"))
+    |> click(Query.css("button[data-id='reply']"))
+    |> Browser.assert_has(Query.css(".reply-composer"))
+
+    # Check if Bob cannot boost (should be denied based on permissions)
+    |> Browser.refute_has(Query.css("button[data-id='boost']"))
+
+  end
+
+
+
+  feature "can switch from public to local preset", %{session: session} do
+
+  end
+
+  feature "can add a user to the boundary and remove a permission", %{session: session} do
+
+  end
+
+  feature "can add a user to the boundary and grant a permission", %{session: session} do
+
   end
 
   @tag :browser

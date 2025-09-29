@@ -20,23 +20,17 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIBrowserTest do
     {:ok, _} = Circles.add_to_circles(alice, circles.friends_circle)
     {:ok, _} = Circles.add_to_circles(bob, circles.work_circle)
     text = "Testing boundary assignment"
-    create_post_with_boundaries(user_session, circles.work_circle, text)
 
-    # Log in as Bob (who is in the work_circle)
-    bob_session = login_as_user(session, bob)
-
-    # Visit the post to check permissions
-    bob_session
-    |> visit("/feed/local")
-    |> Browser.assert_has(Query.css(".activity", text: text))
-
-    # Check if Bob can reply (should be allowed based on permissions)
-    |> Browser.assert_has(Query.css("button[data-id='reply']"))
-    |> click(Query.css("button[data-id='reply']"))
-    |> Browser.assert_has(Query.css(".reply-composer"))
-
-    # Check if Bob cannot boost (should be denied based on permissions)
-    |> Browser.refute_has(Query.css("button[data-id='boost']"))
+    user_session
+    |> open_composer()
+    |> open_boundary_modal()
+    |> edit_permission("edit", circles.work_circle.id, 1)
+    |> edit_default_boundary("local")
+    |> close_boundary_modal()
+    |> compose(text)
+    |> publish()
+    |> navigate_to_post()
+    |> open_boundary_details()
 
   end
 

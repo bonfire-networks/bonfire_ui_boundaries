@@ -64,12 +64,11 @@
                 <div x-data="{open: false}" class="border-b border-base-content/10 flex-1 pb-2">
                   <div class="flex items-start gap-4">
                     <div class="w-full">
-                      
                       <div
                         data-id={e(verb, :name, nil) <> "_toggle"}
                         x-on:click="open = !open"
                         class="flex items-center justify-between gap-4 flex-1 cursor-pointer"
-                        >
+                      >
                         <Iconify.iconify
                           icon={e(verb, :icon, "ph:circle-duotone")}
                           class="w-6 h-6 text-primary"
@@ -81,9 +80,7 @@
                         </div>
                         <#Icon iconify="ph:caret-down" class="w-4 h-4 text-base-content/70" />
                       </div>
-                      
 
-                      
                       <!-- Above the fold: items with a defined value -->
                       <!-- {#for {item, value} <- with_value}
                         <Bonfire.UI.Boundaries.BoundaryItemLive
@@ -97,7 +94,6 @@
                       {/for} -->
                       <!-- Collapsible: items with nil value -->
 
-                      
                       <div x-show="open" x-collapse class="">
                         {#for item <- (@my_circles || []) ++ (@selected_users || [])}
                           <Bonfire.UI.Boundaries.BoundaryItemLive
@@ -114,10 +110,8 @@
                           />
                         {/for}
                       </div>
-
                     </div>
                   </div>
-
 
                   <div :if={Enum.count(with_value) > 0} class="mt-2 flex flex-wrap gap-2">
                     {#for {item, value} <- with_value}
@@ -146,7 +140,6 @@
                       </div>
                     {/for}
                   </div>
-
                 </div>
             {/case}
           {/for}

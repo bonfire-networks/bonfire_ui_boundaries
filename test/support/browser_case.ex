@@ -47,7 +47,8 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         Ecto.Adapters.SQL.Sandbox.mode(Bonfire.Common.Repo, {:shared, self()})
 
         # Configure Wallaby for better reliability with dynamic content
-        Application.put_env(:wallaby, :max_wait_time, 10_000)  # 10 seconds
+        # 10 seconds
+        Application.put_env(:wallaby, :max_wait_time, 10_000)
 
         # Start Wallaby session with metadata
         metadata = Phoenix.Ecto.SQL.Sandbox.metadata_for(Bonfire.Common.Repo, self())
@@ -91,7 +92,9 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
           # Visit home page to ensure user session is fully established
           |> visit("/")
           # Wait for composer button to appear, indicating user session is ready
-          |> Browser.assert_has(Query.css("#main_smart_input_button[data-role='composer_button']"))
+          |> Browser.assert_has(
+            Query.css("#main_smart_input_button[data-role='composer_button']")
+          )
 
         {user_session, user}
       end
@@ -154,6 +157,7 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
       def close_boundary_modal(session) do
         session
         |> click(Query.css(".modal-box .btn-circle"))
+
         # |> refute_has(Query.css("#persistent_modal_box"))
       end
 
@@ -165,15 +169,25 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
             0 -> {"cannot", "0"}
             _ -> {"undefined", ""}
           end
+
         capitalized_verb = String.capitalize(verb)
 
         session
         # Click the toggle to expand the verb section
         |> click(Query.css("div[data-id='#{capitalized_verb}_toggle']"))
         # Wait for the specific permission button to become visible (this implicitly waits for the section to expand)
-        |> Browser.assert_has(Query.css("button[data-id='#{id}_#{verb}_#{status_label}'][phx-value-status='#{phx_status}']", visible: true))
+        |> Browser.assert_has(
+          Query.css(
+            "button[data-id='#{id}_#{verb}_#{status_label}'][phx-value-status='#{phx_status}']",
+            visible: true
+          )
+        )
         # Click the permission button
-        |> click(Query.css("button[data-id='#{id}_#{verb}_#{status_label}'][phx-value-status='#{phx_status}']"))
+        |> click(
+          Query.css(
+            "button[data-id='#{id}_#{verb}_#{status_label}'][phx-value-status='#{phx_status}']"
+          )
+        )
         # Just verify the button exists after clicking (skip visual state check for now)
         |> Browser.assert_has(Query.css("button[data-id='#{id}_#{verb}_#{status_label}']"))
       end
@@ -186,11 +200,16 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         # Click the boundary preset button to open the preset selector
         |> click(Query.css("#popup_boundaries_in_modal"))
         # Click the specific preset button
-        |> click(Query.css("button[phx-value-id='#{preset}'][phx-value-name='#{capitalized_name}']"))
+        |> click(
+          Query.css("button[phx-value-id='#{preset}'][phx-value-name='#{capitalized_name}']")
+        )
         # Verify the preset has been selected by checking the display within the modal context
-        |> Browser.assert_has(Query.css("#popup_boundaries_in_modal [data-scope='#{preset}-boundary-set']", text: capitalized_name))
+        |> Browser.assert_has(
+          Query.css("#popup_boundaries_in_modal [data-scope='#{preset}-boundary-set']",
+            text: capitalized_name
+          )
+        )
       end
-
 
       def compose(session, text) do
         # Wait for Milkdown editor to be fully initialized
@@ -204,6 +223,7 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         |> click(Query.css("#submit_btn"))
         |> Browser.assert_has(Query.css(".submitting_icon"))
         |> Browser.assert_has(Query.css("[data-id='flash'] a.btn", text: "Show"))
+
         # |> assert_text("Published")
       end
 
@@ -218,7 +238,9 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         |> Browser.assert_has(Query.css("[data-id='more_menu']"))
         |> click(Query.css("[data-id='more_menu']"))
         # Wait for dropdown menu to expand and boundary details button to appear
-        |> Browser.assert_has(Query.css("[data-id='boundary_details'] button[data-role='open_modal']"))
+        |> Browser.assert_has(
+          Query.css("[data-id='boundary_details'] button[data-role='open_modal']")
+        )
         |> click(Query.css("[data-id='boundary_details'] button[data-role='open_modal']"))
       end
 
@@ -240,7 +262,6 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         # |> take_screenshot()
         |> open_boundary_details()
       end
-
     end
   end
 

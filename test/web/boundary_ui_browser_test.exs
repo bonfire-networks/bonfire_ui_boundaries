@@ -31,21 +31,15 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIBrowserTest do
     |> publish()
     |> navigate_to_post()
     |> open_boundary_details()
-
   end
 
-
-
   feature "can switch from public to local preset", %{session: session} do
-
   end
 
   feature "can add a user to the boundary and remove a permission", %{session: session} do
-
   end
 
   feature "can add a user to the boundary and grant a permission", %{session: session} do
-
   end
 
   @tag :browser

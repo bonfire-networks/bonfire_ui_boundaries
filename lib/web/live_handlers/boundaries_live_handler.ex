@@ -871,20 +871,41 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
   def prepare_assigns(socket) do
     current_user = current_user(socket)
-    my_acls = e(assigns(socket)[:__context__], :my_acls, nil) || my_acls(id(current_user))
+
+    cached_my_acls =
+      e(assigns(socket), :my_acls, nil) || e(assigns(socket)[:__context__], :my_acls, nil)
+
+    my_acls =
+      if cached_my_acls do
+        cached_my_acls
+      else
+        my_acls(id(current_user))
+      end
+
+    existing_to_boundaries =
+      (e(assigns(socket), :to_boundaries, nil) || e(assigns(socket)[:__context__], :to_boundaries, nil))
+      # |> debug("existing_to_boundaries from cache")
 
     to_boundaries =
-      e(assigns(socket), :to_boundaries, nil)
-      |> debug("existing")
-      |> Bonfire.Boundaries.boundaries_or_default(current_user: current_user, my_acls: my_acls)
-      |> debug()
+      if filter_empty(existing_to_boundaries, nil) do
+        existing_to_boundaries
+      else
+        Bonfire.Boundaries.boundaries_or_default(nil, current_user: current_user, my_acls: my_acls)
+      end
+      |> debug("final to_boundaries")
+
+    # Only send to parent if values were freshly computed (not from cache)
+    if !cached_my_acls or !filter_empty(existing_to_boundaries, nil) do
+      send_self_global(socket, my_acls: my_acls, to_boundaries: to_boundaries)
+    end
 
     socket
     |> assign_global(
-      :my_acls,
-      my_acls
+      my_acls: my_acls,
+      to_boundaries: to_boundaries
     )
     |> assign(
+      my_acls: my_acls,
       to_boundaries: to_boundaries,
       boundary_preset: Bonfire.UI.Boundaries.SetBoundariesLive.boundaries_to_preset(to_boundaries)
     )

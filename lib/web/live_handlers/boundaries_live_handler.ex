@@ -506,7 +506,6 @@ defmodule Bonfire.Boundaries.LiveHandler do
   end
 
   def handle_event("role_create", %{"name" => name} = attrs, socket) do
-    debug(attrs, "TETETETETe")
     current_user = current_user_required!(socket)
 
     scope =

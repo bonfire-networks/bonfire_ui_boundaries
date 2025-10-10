@@ -883,14 +883,19 @@ defmodule Bonfire.Boundaries.LiveHandler do
       end
 
     existing_to_boundaries =
-      (e(assigns(socket), :to_boundaries, nil) || e(assigns(socket)[:__context__], :to_boundaries, nil))
-      # |> debug("existing_to_boundaries from cache")
+      e(assigns(socket), :to_boundaries, nil) ||
+        e(assigns(socket)[:__context__], :to_boundaries, nil)
+
+    # |> debug("existing_to_boundaries from cache")
 
     to_boundaries =
       if filter_empty(existing_to_boundaries, nil) do
         existing_to_boundaries
       else
-        Bonfire.Boundaries.boundaries_or_default(nil, current_user: current_user, my_acls: my_acls)
+        Bonfire.Boundaries.boundaries_or_default(nil,
+          current_user: current_user,
+          my_acls: my_acls
+        )
       end
       |> debug("final to_boundaries")
 

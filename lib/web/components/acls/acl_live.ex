@@ -33,11 +33,15 @@ defmodule Bonfire.UI.Boundaries.AclLive do
   end
 
   def update(assigns, socket) do
-    current_user = current_user(assigns) || current_user(socket)
-    params = e(assigns, :__context__, :current_params, %{})
+    socket =
+      socket
+      |> assign(assigns)
 
-    acl_id = e(assigns, :acl_id, nil) || e(assigns(socket), :acl_id, nil) || e(params, "id", nil)
-    scope = e(assigns, :scope, nil) || e(assigns(socket), :scope, nil)
+    current_user = current_user(assigns(socket))
+    params = e(assigns(socket), :__context__, :current_params, %{})
+
+    acl_id = e(assigns(socket), :acl_id, nil) || e(params, "id", nil)
+    scope = e(assigns(socket), :scope, nil)
 
     scope_type = Types.object_type(scope) || scope
 
@@ -62,15 +66,16 @@ defmodule Bonfire.UI.Boundaries.AclLive do
 
     {:ok,
      socket
-     |> assign(assigns)
      |> assign(
        scope_type: scope_type,
        section: e(params, "section", "permissions"),
        acl_id: acl_id,
        my_circles:
-         Bonfire.UI.Boundaries.CustomizeBoundaryLive.fetch_my_circles_with_global(
-           current_user(socket)
-         ),
+         assigns(socket)[:my_circles] ||
+           (err("my_circles should be preloaded at top level") &&
+              Bonfire.UI.Boundaries.CustomizeBoundaryLive.fetch_my_circles_with_global(
+                current_user
+              )),
        settings_section_title: "View boundary preset",
        settings_section_description: l("Create and manage your boundary preset."),
        selected_tab: "acls"

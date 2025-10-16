@@ -45,7 +45,9 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
 
     # Get base circles from DB
     base_circles =
-      assigns(socket)[:my_circles] || fetch_my_circles_with_global(current_user(socket))
+      assigns(socket)[:my_circles] ||
+        (err("my_circles should be preloaded at top level") &&
+           fetch_my_circles_with_global(current_user(socket)))
 
     # Initialize selected_users with extracted users from ACL + any manually selected
     base_selected_users =

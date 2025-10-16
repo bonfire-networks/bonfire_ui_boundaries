@@ -15,17 +15,25 @@ defmodule Bonfire.UI.Boundaries.SidebarCirclesLive do
   end
 
   def update(assigns, socket) do
+    socket =
+      socket
+      |> assign(assigns)
+
     # scope = LiveHandler.scope_origin(assigns, socket)
     # |> IO.inspect
-    %{page_info: page_info, edges: edges} =
-      Bonfire.Boundaries.Circles.LiveHandler.my_circles_paginated(current_user(socket))
+    %{page_info: page_info, edges: circles} =
+      if circles = assigns(socket)[:my_circles] do
+        err("my_circles should be preloaded at top level")
+        %{page_info: nil, edges: circles}
+      else
+        Bonfire.Boundaries.Circles.LiveHandler.my_circles_paginated(current_user(socket))
+      end
 
     {:ok,
      socket
-     |> assign(assigns)
      |> assign(
        loaded: true,
-       circles: edges,
+       circles: circles,
        page_info: page_info
        #  settings_section_title: "Create and manage your circles",
        #  settings_section_description: "Create and manage your circles."

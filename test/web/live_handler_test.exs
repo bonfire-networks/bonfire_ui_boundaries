@@ -1,5 +1,5 @@
 defmodule Bonfire.UI.Boundaries.FeatureTest do
-  use Bonfire.UI.Boundaries.ConnCase, async: true
+  use Bonfire.UI.Boundaries.ConnCase, async: System.get_env("TEST_UI_ASYNC") != "no"
 
   alias Bonfire.Social.Fake
   alias Bonfire.Posts

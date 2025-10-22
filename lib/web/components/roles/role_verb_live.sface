@@ -38,22 +38,22 @@
     {#match nil}
       <li
         title={e(@verb, :summary, nil)}
-        class={
+        class={[
           "badge",
           "badge-success": @value,
           "badge-error": !@value
-        }
+        ]}
       >
         {@verb}
       </li>
     {#match verb}
       <li
         title={e(verb, :summary, nil)}
-        class={
+        class={[
           "badge",
           "badge-success": @value,
           "badge-error": !@value
-        }
+        ]}
       >
         {e(verb, :verb, nil) || verb}
       </li>

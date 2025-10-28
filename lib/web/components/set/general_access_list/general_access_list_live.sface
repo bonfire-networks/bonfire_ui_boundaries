@@ -1,10 +1,10 @@
 <div>
   {#if !@hide_presets}
     <!-- PUBLIC -->
-    <div class={
+    <div class={[
       "flex items-center gap-3 rounded-lg justify-between hover:bg-base-content/5",
       "bg-base-content/5": matches?(@boundary_preset, "public")
-    }>
+    ]}>
       <button
         class="text-base-content flex items-center p-2 gap-2 justify-between w-full"
         phx-click={@set_action ||
@@ -63,10 +63,10 @@
     </div>
 
     <!-- LOCAL -->
-    <div class={
+    <div class={[
       "flex items-center gap-3  rounded-lg justify-between hover:bg-base-content/5",
       "bg-base-content/5": matches?(@boundary_preset, "local")
-    }>
+    ]}>
       <button
         data-scope="local_boundary"
         class="text-base-content flex items-center p-2 gap-2 justify-between w-full"
@@ -125,10 +125,10 @@
     </div>
 
     <!-- MENTIONS-ONLY -->
-    <div class={
+    <div class={[
       "flex items-center gap-3 rounded-lg justify-between hover:bg-base-content/5",
       "bg-base-content/5": matches?(@boundary_preset, "mentions")
-    }>
+    ]}>
       <button
         class="text-base-content flex items-center p-2 gap-2 justify-between w-full"
         phx-click={@set_action ||
@@ -164,10 +164,10 @@
   {#for {acl_id, acl} <- @my_acls}
     <div
       data-role="custom_boundary"
-      class={
+      class={[
         "flex items-center gap-3 justify-between rounded-lg hover:bg-base-content/5",
         "bg-base-content/5": matches?(@to_boundaries, acl_id)
-      }
+      ]}
     >
       <button
         class="text-base-content w-full flex items-center p-2 gap-2 justify-between"
@@ -234,10 +234,10 @@
   {!-- CREATE A NEW ONE --}
 
   {#if !@hide_custom}
-    <div class={
+    <div class={[
       "flex items-center gap-3 p-2 justify-between rounded-lg hover:bg-base-content/5",
       "bg-base-content/5": matches?(@boundary_preset, "custom")
-    }>
+    ]}>
       <button
         class="text-base-content flex items-center gap-2 justify-between w-full"
         data-id="custom_boundary"
@@ -262,10 +262,10 @@
   {/if}
 
   {#if !@hide_private}
-    <div class={
+    <div class={[
       "flex items-center gap-3 p-2 justify-between rounded-lg hover:bg-base-content/5",
       "bg-base-content/5": matches?(@boundary_preset, "private")
-    }>
+    ]}>
       <button
         class="text-base-content flex items-center gap-2 justify-between w-full"
         phx-click={@set_action ||

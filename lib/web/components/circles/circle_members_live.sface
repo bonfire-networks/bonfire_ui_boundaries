@@ -124,6 +124,7 @@
           module={maybe_component(Bonfire.UI.Me.WidgetUsersLive, @__context__)}
           users={@members}
           widget_title={e(@circle, :named, :name, nil)}
+          parent_id={"circle_members"}
         />
       </div>
      --}

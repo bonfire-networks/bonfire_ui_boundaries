@@ -241,7 +241,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
   end
 
   defp maybe_filter_current_user(results, %{assigns: %{circle_type: circle_type}} = socket)
-       when circle_type in [:silence, :ghost] do
+       when circle_type in [:silence, :ghost, :block] do
     current_user_id = current_user_id(socket)
     Enum.reject(results, fn {_name, id} -> id == current_user_id end)
   end
@@ -259,7 +259,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
   defp prepare_results_for_multiselect(_), do: []
 
   def add_member(subject, %{assigns: %{scope: scope, circle_type: circle_type}} = socket)
-      when circle_type in [:silence, :ghost] do
+      when circle_type in [:silence, :ghost, :block] do
     with id when is_binary(id) <- uid(subject),
          current_user_id when not is_nil(current_user_id) <- current_user_id(socket),
          false <- id == current_user_id,

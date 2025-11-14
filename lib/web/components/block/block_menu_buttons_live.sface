@@ -2,7 +2,7 @@
   <li>
     <a
       href={"/remote_interaction?type=block&name=#{l("this user or instance")}&url=#{@permalink || URIs.canonical_url(@object)}"}
-      class="flex items-center w-full gap-2 text-sm text-base-content"
+      class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
     >
       <#Icon :if={@with_icon} iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" />
       <span class="truncate ellipsis">{l("Block")}</span>
@@ -14,17 +14,18 @@
     {#match {true, _, _}}
       <div />
     {#match {_, block_peer, is_local_user}}
-      <li>
+      <!-- <li>
         <details>
           <summary class="text-base-content/70">
-            <div class="flex items-center w-full gap-2 text-sm text-base-content">
+            <div class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error">
               <#Icon :if={@with_icon} iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" />
               <span class="truncate ellipsis">{l("Block")}</span>
             </div>
           </summary>
-          <ul>
+          <ul> -->
+          <li class="m-1 border-t border-base-content/10" />
             {#if @hide_object}
-              <li data-role="hide_modal" class="hover:bg-neutral/20">
+              <li data-role="hide_modal" class=" ">
                 {!-- WIP - TODO: add the boundary to the extra object's custom object ACL --}
                 <Bonfire.UI.Boundaries.BlockButtonLive
                   object={@hide_object}
@@ -35,13 +36,13 @@
                   parent_id={deterministic_dom_id(__MODULE__, nil, "hide", @parent_id)}
                   with_icon={@with_icon}
                   label={@extra_object_label}
-                  class="flex items-center w-full gap-2 text-sm text-base-content"
+                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-warning"
                 />
               </li>
             {/if}
 
             {#if @object}
-              <li data-role="ghost_modal" class="hover:bg-neutral/20">
+              <li data-role="ghost_modal" class=" ">
                 {!-- TODO: pass the silenced/ghosted/blocked booleans so it isn't re-queried by BlockButtonLive --}
                 <Bonfire.UI.Boundaries.BlockButtonLive
                   object={@object}
@@ -52,11 +53,11 @@
                   parent_id={deterministic_dom_id(__MODULE__, nil, "user-ghost", @parent_id)}
                   with_icon={@with_icon}
                   label={e(@object, :profile, :name, l("this user"))}
-                  class="flex items-center w-full gap-2 text-sm text-base-content"
+                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
                 />
               </li>
 
-              <li data-role="silence_modal" class="hover:bg-neutral/20">
+              <li data-role="silence_modal" class=" ">
                 <Bonfire.UI.Boundaries.BlockButtonLive
                   object={@object}
                   is_local_user={is_local_user}
@@ -66,11 +67,11 @@
                   parent_id={deterministic_dom_id(__MODULE__, nil, "user-silence", @parent_id)}
                   with_icon={@with_icon}
                   label={e(@object, :profile, :name, l("this user"))}
-                  class="flex items-center w-full gap-2 text-sm text-base-content"
+                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
                 />
               </li>
 
-              <li data-role="block_modal" class="hover:bg-neutral/20">
+              <li data-role="block_modal" class=" ">
                 <Bonfire.UI.Boundaries.BlockButtonLive
                   object={@object}
                   is_local_user={is_local_user}
@@ -80,7 +81,7 @@
                   parent_id={deterministic_dom_id(__MODULE__, nil, "user-block", @parent_id)}
                   with_icon={@with_icon}
                   label={e(@object, :profile, :name, l("this user"))}
-                  class="flex items-center w-full gap-2 text-sm text-base-content"
+                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
                 />
               </li>
             {/if}
@@ -96,7 +97,7 @@
                   scope={@scope}
                   parent_id={deterministic_dom_id(__MODULE__, nil, "instance-ghost", @parent_id)}
                   label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
-                  class="flex items-center w-full gap-2 text-sm text-base-content"
+                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
                 />
               </li>
               <li class="">
@@ -108,7 +109,7 @@
                   scope={@scope}
                   parent_id={deterministic_dom_id(__MODULE__, nil, "instance-silence", @parent_id)}
                   label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
-                  class="flex items-center w-full gap-2 text-sm text-base-content"
+                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
                 />
               </li>
               <li class="">
@@ -120,12 +121,12 @@
                   scope={@scope}
                   parent_id={deterministic_dom_id(__MODULE__, nil, "instance-block", @parent_id)}
                   label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
-                  class="flex items-center w-full gap-2 text-sm text-base-content"
+                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
                 />
               </li>
             {/if}
-          </ul>
+          <!-- </ul>
         </details>
-      </li>
+      </li> -->
   {/case}
 {/if}

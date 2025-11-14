@@ -7,6 +7,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   prop circle_id, :any, default: nil
   prop circle, :any, default: nil
   prop circle_type, :atom, default: nil
+  prop blocked_intersection_ids, :list, default: nil
   prop name, :string, default: nil
   prop title, :string, default: nil
   prop description, :string, default: nil
@@ -86,6 +87,15 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
           current_user: current_user
         )
         |> debug("paginated_members")
+
+      # Filter to intersection if blocked tab
+      {members, page_info} =
+        if intersection_ids = e(assigns, :blocked_intersection_ids, nil) do
+          filtered = Enum.filter(members, fn member -> member.subject_id in intersection_ids end)
+          {filtered, %{}}
+        else
+          {members, page_info}
+        end
 
       # TODO: handle pagination
       # followed =
@@ -271,7 +281,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
         %{"id" => live_select_id, "text" => search},
         %{assigns: %{circle_type: circle_type}} = socket
       )
-      when circle_type in [:silence, :ghost] and is_binary(search) do
+      when circle_type in [:silence, :ghost, :block] and is_binary(search) do
     debug(search, "LiveSelect autocomplete search for blocking circles")
     handle_member_search_with_exclusion(search, live_select_id, socket)
   end
@@ -281,7 +291,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
         %{"subject" => id} = _attrs,
         %{assigns: %{scope: scope, circle_type: circle_type}} = socket
       )
-      when is_binary(id) and circle_type in [:silence, :ghost] do
+      when is_binary(id) and circle_type in [:silence, :ghost, :block] do
     with {:ok, _} <-
            Blocks.unblock(id, circle_type, scope || current_user(socket)) do
       {:noreply,

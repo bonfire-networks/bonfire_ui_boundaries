@@ -91,6 +91,35 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
     |> refute_has("#circle_members", text: alice.profile.name)
   end
 
+  test "I can see a list of blocked users", %{
+    conn: conn,
+    me: me,
+    alice: alice,
+    bob: bob,
+    carl: carl
+  } do
+    assert {:ok, _blocked} = Bonfire.Boundaries.Blocks.block(alice, :block, current_user: me)
+    assert {:ok, _blocked} = Bonfire.Boundaries.Blocks.block(bob, :block, current_user: me)
+    assert {:ok, _silenced} = Bonfire.Boundaries.Blocks.block(carl, :silence, current_user: me)
+
+    conn
+    |> visit("/boundaries/blocked")
+    |> assert_has("#circle_members", text: alice.profile.name)
+    |> assert_has("#circle_members", text: bob.profile.name)
+    |> assert_has("#circle_members", text: carl.profile.name)
+  end
+
+  test "I can unblock a previously blocked user", %{conn: conn, me: me, alice: alice} do
+    assert {:ok, _blocked} = Bonfire.Boundaries.Blocks.block(alice, :block, current_user: me)
+
+    conn
+    |> visit("/boundaries/blocked")
+    |> assert_has("#circle_members", text: alice.profile.name)
+    |> click_button("[data-role=remove_user]", "Remove")
+    |> assert_has("[role=alert]", text: "Unblocked!")
+    |> refute_has("#circle_members", text: alice.profile.name)
+  end
+
   test "I can see if I silenced a user from their profile page", %{
     conn: conn,
     me: me,
@@ -427,6 +456,43 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
 
       conn
       |> visit("/boundaries/instance_silenced")
+      |> assert_has("#circle_members", text: alice.profile.name)
+      |> click_button("[data-role=remove_user]", "Remove")
+      |> assert_has("[role=alert]", text: "Unblocked!")
+      |> refute_has("#circle_members", text: alice.profile.name)
+    end
+
+    test "As an admin I can see a list of instance-wide blocked users", %{
+      conn: conn,
+      me: me,
+      alice: alice,
+      bob: bob,
+      carl: carl
+    } do
+      Bonfire.Me.Users.make_admin(me)
+      assert {:ok, _blocked} = Bonfire.Boundaries.Blocks.block(alice, :block, :instance_wide)
+      assert {:ok, _blocked} = Bonfire.Boundaries.Blocks.block(bob, :block, :instance_wide)
+      assert {:ok, _silenced} = Bonfire.Boundaries.Blocks.block(carl, :silence, :instance_wide)
+
+      conn
+      |> visit("/boundaries/instance_blocked")
+      |> assert_has("#circle_members", text: alice.profile.name)
+      |> assert_has("#circle_members", text: bob.profile.name)
+      |> assert_has("#circle_members", text: carl.profile.name)
+    end
+
+    test "As an admin I can unblock a previously blocked user instance-wide", %{
+      conn: conn,
+      me: me,
+      alice: alice,
+      bob: bob,
+      carl: carl
+    } do
+      assert {:ok, _blocked} = Bonfire.Boundaries.Blocks.block(alice, :block, :instance_wide)
+      {:ok, me} = Bonfire.Me.Users.make_admin(me)
+
+      conn
+      |> visit("/boundaries/instance_blocked")
       |> assert_has("#circle_members", text: alice.profile.name)
       |> click_button("[data-role=remove_user]", "Remove")
       |> assert_has("[role=alert]", text: "Unblocked!")

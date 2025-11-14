@@ -58,6 +58,75 @@
         </div>
       </div>
     </Bonfire.UI.Boundaries.CircleMembersLive>
+{#elseif @selected_tab == "blocked"}
+    {!-- blocked (both silenced AND ghosted) --}
+
+    <Bonfire.UI.Boundaries.CircleMembersLive
+      id={@circle_id || @id}
+      circle_id={@circle_id}
+      circle={@circle}
+      name={@name}
+      title={@title}
+      description={@description}
+      circle_type={:block}
+      scope={@scope}
+      showing_within={@block_type}
+      blocked_intersection_ids={@blocked_intersection_ids}
+      read_only
+      show_remove={!@read_only}
+      feedback_title={l("This list is empty")}
+      feedback_message=""
+    >
+      <div class="flex flex-col flex-1 gap-1 text-left prose prose-sm max-w-full">
+        <p :if={@scope == :instance_wide} class="px-4 mb-0 pt-4">
+          {l(
+            "Users or instances on this list are completely blocked. They cannot see or interact with anyone on this instance, and nobody on this instance will see their content."
+          )}
+        </p>
+        <p :if={@scope != :instance_wide} class="px-4 mb-0 pt-4">
+          {l(
+            "Users or instances on this list are completely blocked. This is a bidirectional block - you won't see their content and they won't see yours."
+          )}
+        </p>
+        <div x-data="{active_info: false}" role="region" class="mb-4">
+          <button
+            type="button"
+            x-on:click="active_info = ! active_info"
+            :aria-expanded="active_info"
+            class="flex px-4 place-content-center font-medium text-sm"
+          >
+            <span x-cloak x-show="!active_info" class="underline">{l("Read more")}</span>
+            <span x-cloak x-show="active_info" class="underline">{l("Read less")}</span>
+            <span x-cloak x-show="active_info" aria-hidden="true" class="ml-2">&minus;</span>
+            <span x-cloak x-show="!active_info" aria-hidden="true" class="ml-2">&plus;</span>
+          </button>
+          <div x-cloak x-show="active_info" x-collapse>
+            <div class="block text-left px-3">
+              <ul class="block pl-4 mt-1 prose-sm list-disc">
+                <li>
+                  {l("You won't see anything they write/create in feeds.")}
+                </li>
+                <li>
+                  {l("They won't see anything you write/create in feeds.")}
+                </li>
+                <li>
+                  {l("You won't see any @ mentions or messages they send you.")}
+                </li>
+                <li>
+                  {l("They won't see any @ mentions or messages you send them.")}
+                </li>
+                <li>
+                  {l("You won't be able to follow them and they won't be able to follow you.")}
+                </li>
+                <li>
+                  {l("You will be able to undo this later but both parties may not be able to see any activities they missed.")}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Bonfire.UI.Boundaries.CircleMembersLive>
   {#else}
     {!-- ghost --}
 

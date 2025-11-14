@@ -23,15 +23,43 @@ defmodule Bonfire.UI.Boundaries.BlocksLive do
          Bonfire.Boundaries.can?(context, :block, :instance) != true)
       |> debug("read_only?")
 
-    block_type = if tab == "ghosted", do: :ghost, else: :silence
-
-    circle =
-      if scope == :instance_wide do
-        Bonfire.Boundaries.Blocks.instance_wide_circles(block_type)
-      else
-        Bonfire.Boundaries.Blocks.user_block_circles(scope || current_user, block_type)
+    block_type =
+      cond do
+        tab == "ghosted" -> :ghost
+        tab == "blocked" -> :block
+        true -> :silence
       end
-      |> List.first()
+
+    {circle, blocked_intersection_ids} =
+      if tab == "blocked" do
+        # For blocked tab: users must be in BOTH silence_them AND ghost_them circles
+        opts = if scope == :instance_wide, do: :instance_wide, else: [current_user: current_user]
+        circles = Bonfire.Boundaries.Blocks.list(:block, opts)
+
+        # Compute intersection of user IDs across both circles
+        [silence_ids, ghost_ids] =
+          circles
+          |> Enum.map(fn circle ->
+            e(circle, :encircles, [])
+            |> Enum.map(&e(&1, :subject_id, nil))
+            |> Enum.reject(&is_nil/1)
+            |> MapSet.new()
+          end)
+
+        intersection_ids = MapSet.intersection(silence_ids, ghost_ids) |> MapSet.to_list()
+
+        {List.first(circles), intersection_ids}
+      else
+        circle =
+          if scope == :instance_wide do
+            Bonfire.Boundaries.Blocks.instance_wide_circles(block_type)
+          else
+            Bonfire.Boundaries.Blocks.user_block_circles(scope || current_user, block_type)
+          end
+          |> List.first()
+
+        {circle, nil}
+      end
 
     # |> debug("ccircle")
 
@@ -60,9 +88,12 @@ defmodule Bonfire.UI.Boundaries.BlocksLive do
        block_type: block_type,
        # Keep title so it can be passed to child components
        title: e(assigns, :title, nil),
+       description: e(assigns, :description, nil),
        #  current_user: current_user,
        circle: if(is_map(circle), do: circle),
-       circle_id: id(circle)
+       circle_id: id(circle),
+       # For blocked tab: pass intersection IDs computed at DB level
+       blocked_intersection_ids: blocked_intersection_ids
        #  circle: circle
        #  blocks: blocks
 

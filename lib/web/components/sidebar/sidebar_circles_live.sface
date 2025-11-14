@@ -15,7 +15,7 @@
             data-position="top-end"
             phx-hook="Tooltip"
             id="circles_nav_settings" -->
-          <div class="normal-case font-normal absolute right-0">
+          <div class="normal-case font-normal absolute right-6">
             <Bonfire.UI.Common.OpenModalLive id="new_circle" title_text={l("Create a new circle")} no_actions>
               <form
                 id="new_circle_form"

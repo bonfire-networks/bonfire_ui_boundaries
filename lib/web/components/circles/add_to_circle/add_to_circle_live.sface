@@ -1,4 +1,4 @@
-<div class="" data-role="add_to_circle">
+<div class="flex" data-role="add_to_circle">
   <Bonfire.UI.Common.OpenModalLive
     id={deterministic_dom_id(__MODULE__, @user_id, "add_to_circle_modal", @parent_id)}
     no_actions
@@ -16,16 +16,17 @@
           data-tip={l("Add to circles")}
           class="tooltip btn btn-outline btn-sm border-base-content/10 btn-circle"
         >
-          <#Icon iconify="ph:circle-duotone" class="w-4 h-4 shrink-0" />
           <span class="sr-only">{@label || l("Add to circles")}</span>
+          <#Icon iconify="ph:circle-duotone" class="w-4 h-4 shrink-0" />
         </div>
       {#elseif e(@hide_icon, false)}
         <div class="btn w-full flex-1 btn-sm">
           <span>{@label || l("Add to circles")}</span>
         </div>
       {#else}
-        <div class="flex items-center w-full gap-2 text-sm text-base-content">
-          <span class="">{@label || l("Add to circles")}</span>
+        <div class="flex items-center w-full gap-2 justify-between text-sm text-base-content">
+          <span class="text-sm text-left font-medium">{@label || l("Add to circles")}</span>
+          <#Icon iconify="ph:circle-duotone" class="w-5 h-5 shrink-0" />
         </div>
       {/if}
     </:open_btn>

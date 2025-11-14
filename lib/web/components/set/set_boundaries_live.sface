@@ -11,12 +11,12 @@
           <div class="text-xs font-light text-base-content/70">{case @setting_boundaries do
               :create_object ->
                 l(
-                  "You can customise who can see and interact with this activity, by defining permission for certain circles or specific people, as exceptions to the general permissions selected above."
+                  "You can customise who can see and interact with this activity, by defining permission for certain circles or specific people."
                 )
 
               :edit_object ->
                 l(
-                  "You can customise who can see and interact with this activity, by defining permission for certain circles or specific people, as exceptions to the general boundary."
+                  "You can customise who can see and interact with this activity, by defining permission for certain circles or specific people."
                 )
 
               _ ->

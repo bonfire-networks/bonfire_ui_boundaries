@@ -23,109 +23,109 @@
             </div>
           </summary>
           <ul> -->
-          <li class="m-1 border-t border-base-content/10" />
-            {#if @hide_object}
-              <li data-role="hide_modal" class=" ">
-                {!-- WIP - TODO: add the boundary to the extra object's custom object ACL --}
-                <Bonfire.UI.Boundaries.BlockButtonLive
-                  object={@hide_object}
-                  is_local_user={nil}
-                  scope={@scope}
-                  type={:hide}
-                  open_btn_label={@open_btn_label}
-                  parent_id={deterministic_dom_id(__MODULE__, nil, "hide", @parent_id)}
-                  with_icon={@with_icon}
-                  label={@extra_object_label}
-                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-warning"
-                />
-              </li>
-            {/if}
+      <li class="m-1 border-t border-base-content/10" />
+      {#if @hide_object}
+        <li data-role="hide_modal" class="">
+          {!-- WIP - TODO: add the boundary to the extra object's custom object ACL --}
+          <Bonfire.UI.Boundaries.BlockButtonLive
+            object={@hide_object}
+            is_local_user={nil}
+            scope={@scope}
+            type={:hide}
+            open_btn_label={@open_btn_label}
+            parent_id={deterministic_dom_id(__MODULE__, nil, "hide", @parent_id)}
+            with_icon={@with_icon}
+            label={@extra_object_label}
+            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-warning"
+          />
+        </li>
+      {/if}
 
-            {#if @object}
-              <li data-role="ghost_modal" class=" ">
-                {!-- TODO: pass the silenced/ghosted/blocked booleans so it isn't re-queried by BlockButtonLive --}
-                <Bonfire.UI.Boundaries.BlockButtonLive
-                  object={@object}
-                  is_local_user={is_local_user}
-                  scope={@scope}
-                  type={:ghost}
-                  open_btn_label={@open_btn_label}
-                  parent_id={deterministic_dom_id(__MODULE__, nil, "user-ghost", @parent_id)}
-                  with_icon={@with_icon}
-                  label={e(@object, :profile, :name, l("this user"))}
-                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
-                />
-              </li>
+      {#if @object}
+        <li data-role="ghost_modal" class="">
+          {!-- TODO: pass the silenced/ghosted/blocked booleans so it isn't re-queried by BlockButtonLive --}
+          <Bonfire.UI.Boundaries.BlockButtonLive
+            object={@object}
+            is_local_user={is_local_user}
+            scope={@scope}
+            type={:ghost}
+            open_btn_label={@open_btn_label}
+            parent_id={deterministic_dom_id(__MODULE__, nil, "user-ghost", @parent_id)}
+            with_icon={@with_icon}
+            label={e(@object, :profile, :name, l("this user"))}
+            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+          />
+        </li>
 
-              <li data-role="silence_modal" class=" ">
-                <Bonfire.UI.Boundaries.BlockButtonLive
-                  object={@object}
-                  is_local_user={is_local_user}
-                  scope={@scope}
-                  type={:silence}
-                  open_btn_label={@open_btn_label}
-                  parent_id={deterministic_dom_id(__MODULE__, nil, "user-silence", @parent_id)}
-                  with_icon={@with_icon}
-                  label={e(@object, :profile, :name, l("this user"))}
-                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
-                />
-              </li>
+        <li data-role="silence_modal" class="">
+          <Bonfire.UI.Boundaries.BlockButtonLive
+            object={@object}
+            is_local_user={is_local_user}
+            scope={@scope}
+            type={:silence}
+            open_btn_label={@open_btn_label}
+            parent_id={deterministic_dom_id(__MODULE__, nil, "user-silence", @parent_id)}
+            with_icon={@with_icon}
+            label={e(@object, :profile, :name, l("this user"))}
+            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+          />
+        </li>
 
-              <li data-role="block_modal" class=" ">
-                <Bonfire.UI.Boundaries.BlockButtonLive
-                  object={@object}
-                  is_local_user={is_local_user}
-                  scope={@scope}
-                  type={:block}
-                  open_btn_label={@open_btn_label}
-                  parent_id={deterministic_dom_id(__MODULE__, nil, "user-block", @parent_id)}
-                  with_icon={@with_icon}
-                  label={e(@object, :profile, :name, l("this user"))}
-                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
-                />
-              </li>
-            {/if}
+        <li data-role="block_modal" class="">
+          <Bonfire.UI.Boundaries.BlockButtonLive
+            object={@object}
+            is_local_user={is_local_user}
+            scope={@scope}
+            type={:block}
+            open_btn_label={@open_btn_label}
+            parent_id={deterministic_dom_id(__MODULE__, nil, "user-block", @parent_id)}
+            with_icon={@with_icon}
+            label={e(@object, :profile, :name, l("this user"))}
+            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+          />
+        </li>
+      {/if}
 
-            {#if block_peer}
-              <!-- Block user's instance -->
-              <li class="">
-                <Bonfire.UI.Boundaries.BlockButtonLive
-                  with_icon={@with_icon}
-                  type={:ghost}
-                  object={e(block_peer, :peer_id, nil)}
-                  is_local_user={false}
-                  scope={@scope}
-                  parent_id={deterministic_dom_id(__MODULE__, nil, "instance-ghost", @parent_id)}
-                  label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
-                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
-                />
-              </li>
-              <li class="">
-                <Bonfire.UI.Boundaries.BlockButtonLive
-                  with_icon={@with_icon}
-                  type={:silence}
-                  object={e(block_peer, :peer_id, nil)}
-                  is_local_user={false}
-                  scope={@scope}
-                  parent_id={deterministic_dom_id(__MODULE__, nil, "instance-silence", @parent_id)}
-                  label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
-                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
-                />
-              </li>
-              <li class="">
-                <Bonfire.UI.Boundaries.BlockButtonLive
-                  with_icon={@with_icon}
-                  type={:block}
-                  object={e(block_peer, :peer_id, nil)}
-                  is_local_user={false}
-                  scope={@scope}
-                  parent_id={deterministic_dom_id(__MODULE__, nil, "instance-block", @parent_id)}
-                  label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
-                  class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
-                />
-              </li>
-            {/if}
-          <!-- </ul>
+      {#if block_peer}
+        <!-- Block user's instance -->
+        <li class="">
+          <Bonfire.UI.Boundaries.BlockButtonLive
+            with_icon={@with_icon}
+            type={:ghost}
+            object={e(block_peer, :peer_id, nil)}
+            is_local_user={false}
+            scope={@scope}
+            parent_id={deterministic_dom_id(__MODULE__, nil, "instance-ghost", @parent_id)}
+            label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
+            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+          />
+        </li>
+        <li class="">
+          <Bonfire.UI.Boundaries.BlockButtonLive
+            with_icon={@with_icon}
+            type={:silence}
+            object={e(block_peer, :peer_id, nil)}
+            is_local_user={false}
+            scope={@scope}
+            parent_id={deterministic_dom_id(__MODULE__, nil, "instance-silence", @parent_id)}
+            label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
+            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+          />
+        </li>
+        <li class="">
+          <Bonfire.UI.Boundaries.BlockButtonLive
+            with_icon={@with_icon}
+            type={:block}
+            object={e(block_peer, :peer_id, nil)}
+            is_local_user={false}
+            scope={@scope}
+            parent_id={deterministic_dom_id(__MODULE__, nil, "instance-block", @parent_id)}
+            label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
+            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+          />
+        </li>
+      {/if}
+      <!-- </ul>
         </details>
       </li> -->
   {/case}

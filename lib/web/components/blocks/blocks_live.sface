@@ -58,7 +58,7 @@
         </div>
       </div>
     </Bonfire.UI.Boundaries.CircleMembersLive>
-{#elseif @selected_tab == "blocked"}
+  {#elseif @selected_tab == "blocked"}
     {!-- blocked (both silenced AND ghosted) --}
 
     <Bonfire.UI.Boundaries.CircleMembersLive
@@ -119,7 +119,9 @@
                   {l("You won't be able to follow them and they won't be able to follow you.")}
                 </li>
                 <li>
-                  {l("You will be able to undo this later but both parties may not be able to see any activities they missed.")}
+                  {l(
+                    "You will be able to undo this later but both parties may not be able to see any activities they missed."
+                  )}
                 </li>
               </ul>
             </div>

@@ -377,11 +377,7 @@
         {@open_btn_label ||
           l("%{type} %{user_or_instance_name}", type: @type_display, user_or_instance_name: @label)}
       </span>
-        <#Icon
-        :if={@with_icon && @type == :ghost}
-        iconify="ph:ghost-duotone"
-        class="w-5 h-5 stroke-1"
-      />
+      <#Icon :if={@with_icon && @type == :ghost} iconify="ph:ghost-duotone" class="w-5 h-5 stroke-1" />
       <#Icon
         :if={@with_icon && @type == :silence}
         iconify="ph:speaker-simple-x-duotone"

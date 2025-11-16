@@ -62,19 +62,27 @@
       <Bonfire.UI.Boundaries.BlocksLive
         id="blocks"
         selected_tab="silenced"
-        title={l("Silenced Users")}
+        title={l("Silenced People & Instances")}
       />
     {#match "ghosted"}
-      <Bonfire.UI.Boundaries.BlocksLive id="blocks" selected_tab="ghosted" title={l("Ghosted Users")} />
+      <Bonfire.UI.Boundaries.BlocksLive
+        id="blocks"
+        selected_tab="ghosted"
+        title={l("Ghosted People & Instances")}
+      />
     {#match "blocked"}
-      <Bonfire.UI.Boundaries.BlocksLive id="blocks" selected_tab="blocked" title={l("Blocked Users")} />
+      <Bonfire.UI.Boundaries.BlocksLive
+        id="blocks"
+        selected_tab="blocked"
+        title={l("Blocked People & Instances")}
+      />
     {#match "instance_silenced"}
       <Bonfire.UI.Boundaries.BlocksLive
         scope={:instance_wide}
         id="blocks"
         selected_tab="silenced"
         name={l("Silenced instance-wide")}
-        title={l("Silenced Users instance-wide")}
+        title={l("People & instances silenced instance-wide")}
         description={l(
           "Silenced users and instances are hidden from feeds and notifications on this instance. They won't appear in posts, mentions, or messages, but can still see public content."
         )}
@@ -85,7 +93,7 @@
         id="blocks"
         selected_tab="ghosted"
         name={l("Ghosted instance-wide")}
-        title={l("Ghosted Users instance-wide")}
+        title={l("People & instances ghosted instance-wide")}
         description={l(
           "Ghosted users and instances cannot see or interact with anyone on this instance. This is a stronger form of blocking where they are completely invisible to each other."
         )}
@@ -96,7 +104,7 @@
         id="blocks"
         selected_tab="blocked"
         name={l("Blocked instance-wide")}
-        title={l("Blocked Users instance-wide")}
+        title={l("People & instances blocked instance-wide")}
         description={l(
           "Blocked users and instances are completely blocked from this instance. This combines both silencing (they won't appear in feeds) and ghosting (mutual invisibility). This is the strongest form of blocking available."
         )}

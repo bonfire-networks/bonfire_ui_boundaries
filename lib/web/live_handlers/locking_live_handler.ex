@@ -33,13 +33,6 @@ defmodule Bonfire.Boundaries.Locking.LiveHandler do
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
 
-      # ComponentID.send_assigns(
-      #   Bonfire.UI.Common.BlockButtonLive,
-      #   id,
-      #   [silenced?: true, skip_preload: true],
-      #   socket
-      # )
-
       {:noreply, assign_flash(socket, :info, l("You have successfully unlocked this discussion"))}
     else
       # This block will be executed if either of the unblock operations fails

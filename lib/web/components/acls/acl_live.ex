@@ -89,7 +89,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
 
     case load_acl(socket, acl_id, current_user, force?) do
       {:ok, acl} ->
-        read_only = determine_read_only_status(acl, socket)
+        read_only = should_be_read_only?(acl, socket)
         maybe_send_page_updates(socket, acl, acl_id, read_only)
 
         acl_subject_verb_grants = Grants.subject_verb_grants(e(acl, :grants, []))
@@ -99,7 +99,14 @@ defmodule Bonfire.UI.Boundaries.AclLive do
 
       {:error, reason} ->
         error(reason, "Failed to load ACL")
-        assign_error(socket, l("Could not load boundary"))
+
+        socket
+        |> assign(
+          acl: nil,
+          acl_subject_verb_grants: [],
+          read_only: true
+        )
+        |> assign_error(l("Could not load boundary"))
     end
   end
 
@@ -137,12 +144,32 @@ defmodule Bonfire.UI.Boundaries.AclLive do
   end
 
   # Determine if ACL should be read-only
-  defp determine_read_only_status(acl, socket) do
-    (Acls.is_built_in?(acl) and
-       id(acl) == Bonfire.Boundaries.Scaffold.Instance.instance_acl()) or
-      (!Acls.is_object_custom?(acl) and
-         (Acls.is_stereotyped?(acl) and
-            !Bonfire.Boundaries.can?(assigns(socket)[:__context__], :grant, :instance)))
+  defp should_be_read_only?(acl, socket) do
+    can_grant_instance? =
+      Bonfire.Boundaries.can?(assigns(socket)[:__context__], :grant, :instance)
+
+    is_stereotyped? = Acls.is_stereotyped?(acl)
+
+    #  (!Acls.is_object_custom?(acl) and
+    cond do
+      can_grant_instance? and id(acl) == Bonfire.Boundaries.Scaffold.Instance.instance_acl() ->
+        false
+
+      Acls.is_built_in?(acl) ->
+        true
+
+      can_grant_instance? and is_stereotyped? ->
+        false
+
+      is_stereotyped? ->
+        true
+
+      # Bonfire.Boundaries.can?(assigns(socket)[:__context__], :grant, acl) -> false
+      # TODO: should not default to editable
+      true ->
+        false
+        # true -> true
+    end
   end
 
   # Send page updates if conditions are met

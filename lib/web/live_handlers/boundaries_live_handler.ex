@@ -675,7 +675,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
   def acl_create(attrs, socket) do
     current_user = current_user_required!(socket)
-    scope = maybe_to_atom(e(attrs, :scope, nil))
+    scope = maybe_to_atom(e(attrs, :scope, nil)) || assigns(socket)[:scope]
 
     with {:ok, %{id: id} = acl} <-
            Acls.create(attrs,

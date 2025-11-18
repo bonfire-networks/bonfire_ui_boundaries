@@ -7,10 +7,12 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
 
   prop to_boundaries, :any, default: nil
   prop hide_presets, :boolean, default: false
+  prop read_only, :boolean, default: false
   prop boundary_preset, :any, default: nil
   prop set_action, :any, default: nil
   prop set_opts, :any, default: %{}
   prop my_acls, :any, default: nil
+  prop scope, :any, default: nil
   prop verb_permissions, :any, default: %{}
   prop is_customizable, :boolean, default: false
   prop hide_custom, :boolean, default: false
@@ -76,6 +78,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
       |> assign(
         :available_verbs,
         get_available_verbs(
+          assigns(socket)[:scope],
           assigns(socket)[:setting_boundaries],
           assigns(socket)[:include_verbs],
           assigns(socket)[:exclude_verbs]
@@ -103,11 +106,18 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   - `include_verbs`: List of verbs to include (allow-list). If nil, uses default set.
   - `exclude_verbs`: List of verbs to exclude (deny-list).
   """
-  def get_available_verbs(setting_boundaries \\ nil, include_verbs \\ nil, exclude_verbs \\ []) do
-    # TODO: list verbs appropriate for the each scope/context
-    default_verbs = default_verbs_for(:objects)
+  def get_available_verbs(
+        scope \\ nil,
+        setting_boundaries \\ nil,
+        include_verbs \\ nil,
+        exclude_verbs \\ []
+      ) do
+    # WIP: list verbs appropriate for the each scope/context
+    default_verbs =
+      if setting_boundaries == :instance_acl or scope == :instance,
+        do: [],
+        else: default_verbs_for(:objects)
 
-    # default_verbs = if setting_boundaries == :create_object, do: default_verbs_for(:objects), else: []
     # Start with either the specified include list, default verbs, or all verbs
     debug(default_verbs, "Default verbs for setting_boundaries")
 

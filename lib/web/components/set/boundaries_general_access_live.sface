@@ -31,6 +31,7 @@
               set_action={@set_action}
               set_opts={@set_opts}
               my_acls={@my_acls}
+              scope={@scope}
               is_customizable
               to_circles={@to_circles}
               exclude_circles={@exclude_circles}

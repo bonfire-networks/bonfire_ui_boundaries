@@ -11,6 +11,8 @@
           class="relative font-bold uppercase text-xs text-base-content/50"
         >
           <span>{l("Circles")}</span>
+          <!-- <#Icon iconify="ph:sliders-duotone" class="hidden" /> -->
+
           <!-- data-trigger="hover"
             data-position="top-end"
             phx-hook="Tooltip"
@@ -34,7 +36,7 @@
         </summary>
         {#for circle <- e(@circles, [])}
           <li>
-            <LinkLive to={~p"/circle/#{id(circle)}"} class={"gap-3", "bg-primary/10": id(circle) == @page}>
+            <LinkLive to={~p"/circle/#{id(circle)}"} class={["gap-3", "bg-primary/10": id(circle) == @page]}>
               <div>
                 <Iconify.iconify icon="ph:circle-duotone" class="w-6 h-6 text-primary/80" />
               </div>

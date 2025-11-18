@@ -45,8 +45,9 @@
                 setting_boundaries={@setting_boundaries}
                 show_general_boundary={@show_general_boundary}
                 acl={@acl}
+                scope={@scope}
                 acl_subject_verb_grants={@acl_subject_verb_grants}
-                read_only={@read_only}
+                read_only={flood(@read_only, "read_only")}
                 my_circles={@my_circles}
                 to_boundaries={@to_boundaries || [{"custom", e(@acl, :named, :name, "Custom")}]}
                 to_circles={@to_circles}

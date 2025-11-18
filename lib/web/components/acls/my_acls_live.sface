@@ -30,7 +30,7 @@
               <div class="flex items-center gap-2 mt-1">
                 {#case Grants.subjects(e(acl, :grants, []))}
                   {#match subjects when is_list(subjects)}
-                    <span class="text-xs text-base-content/70">
+                    <span :if={subjects != []} class="text-xs text-base-content/70">
                       {length(subjects)} {l("items")}
                     </span>
                     <div class="flex gap-1 avatar-group">
@@ -59,9 +59,9 @@
                       {/for}
                     </div>
                   {#match _}
-                    <span class="text-xs text-base-content/70">
+                    <!-- <span  class="text-xs text-base-content/70">
                       0 {l("items")}
-                    </span>
+                    </span> -->
                 {/case}
               </div>
               {!-- {/if} --}

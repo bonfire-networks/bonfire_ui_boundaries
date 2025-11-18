@@ -43,7 +43,7 @@
               boundary_preset={@boundary_preset}
               set_action={@set_action}
               set_opts={@set_opts}
-              scope={:user}
+              scope={@scope}
               is_customizable
               to_boundaries={@to_boundaries}
               hide_custom={@hide_custom}
@@ -59,6 +59,7 @@
     module={Bonfire.UI.Boundaries.SetBoundariesLive}
     to_boundaries={@to_boundaries}
     setting_boundaries={@setting_boundaries}
+    read_only={@read_only}
     verb_permissions={@verb_permissions}
     boundary_preset={@boundary_preset}
     available_verbs={@available_verbs}

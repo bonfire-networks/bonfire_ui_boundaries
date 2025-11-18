@@ -136,6 +136,7 @@
         usage={:ops}
         acl_id={Bonfire.Boundaries.Scaffold.Instance.instance_acl()}
       />
+      <!-- setting_boundaries={:instance_acl} -->
     {#match "roles"}
       <StatefulComponent
         :if={current_user(@__context__)}

@@ -21,6 +21,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   prop show_add, :boolean, default: nil
   prop show_remove, :boolean, default: nil
   prop with_batch_follow, :boolean, default: false
+  prop local_only, :boolean, default: false
 
   slot default, required: false
 
@@ -329,7 +330,9 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
 
   # Handle member search for autocomplete - use provided live_select_id
   defp handle_member_search(search, live_select_id, socket) when byte_size(search) >= 2 do
-    search_results = do_results_for_multiselect(search)
+    search_results =
+      do_results_for_multiselect(search, local_only: e(assigns(socket), :local_only, false))
+
     maybe_send_update(LiveSelect.Component, live_select_id, options: search_results)
     {:noreply, socket}
   end
@@ -346,7 +349,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
       |> debug("avoid blocking myself")
 
     search_results =
-      do_results_for_multiselect(search)
+      do_results_for_multiselect(search, local_only: e(assigns(socket), :local_only, false))
       |> Enum.reject(fn {_name, %{id: id}} -> id == current_user_id end)
 
     maybe_send_update(LiveSelect.Component, live_select_id, options: search_results)
@@ -388,11 +391,11 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
     }
   end
 
-  def do_results_for_multiselect(search) do
+  def do_results_for_multiselect(search, opts \\ []) do
     Bonfire.Common.Utils.maybe_apply(
       Bonfire.Me.Users,
       :search,
-      [search]
+      [search, opts]
     )
     |> Enum.map(fn
       %Needle.Pointer{activity: %{object: user}} -> user

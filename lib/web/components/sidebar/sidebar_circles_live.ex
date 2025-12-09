@@ -29,11 +29,14 @@ defmodule Bonfire.UI.Boundaries.SidebarCirclesLive do
         Bonfire.Boundaries.Circles.LiveHandler.my_circles_paginated(current_user(socket))
       end
 
+    # Always append the suggested profiles circle if not already present # TODO: add a way to hide in settings?
+    suggested = Bonfire.Boundaries.Circles.get_built_in(:suggested_profiles)
+
     {:ok,
      socket
      |> assign(
        loaded: true,
-       circles: circles,
+       circles: circles ++ [suggested],
        page_info: page_info
        #  settings_section_title: "Create and manage your circles",
        #  settings_section_description: "Create and manage your circles."

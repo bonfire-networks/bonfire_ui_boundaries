@@ -13,7 +13,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
      |> assign(:circle, nil)
      |> assign(:circle_id, nil)
      |> assign(:selected_tab, nil)
-     |> assign(:read_only, false)
+     |> assign(:read_only, true)
      |> assign(:to_boundaries, nil)
      |> assign(:boundary_preset, nil)
      |> assign(:feed_filters, %{})
@@ -62,8 +62,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
     with {:ok, data} <-
            load_circle(
              id,
-             current_user,
-             current_user: current_user
+             current_user
            )
            |> debug("load_circle") do
       name = e(data, :name, nil)
@@ -85,16 +84,22 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
     else
       {:error, :not_found} ->
         if current_user do
+          scope =
+            e(params, "scope", nil) ||
+              (id in Bonfire.Boundaries.Scaffold.Instance.global_circles() && "instance") ||
+              "user"
+
           {ok_atom,
            socket
            |> redirect_to(
              if(id,
-               do: "/boundaries/scope/#{e(params, "scope", "user")}/circle/#{id}",
+               do: "/boundaries/scope/#{scope}/circle/#{id}",
                else: "boundaries/circles"
              )
            )}
         else
           error(id, "Not found or permitted")
+
           raise(Bonfire.Fail, :not_found)
         end
 
@@ -104,16 +109,16 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
     end
   end
 
-  def load_circle(id, current_user, opts) do
+  def load_circle(id, current_user) do
     with {:ok, %{id: id} = circle} <-
-           Circles.get(id, opts)
+           Circles.get(id, current_user: current_user)
            |> repo().maybe_preload(caretaker: [caretaker: [:profile, :character]])
            |> repo().maybe_preload(:extra_info) do
-      creator_name =
-        e(circle, :caretaker, :caretaker, :profile, :name, nil) ||
-          e(circle, :caretaker, :caretaker, :character, :username, "Unknown")
+      creator_username = e(circle, :caretaker, :caretaker, :character, :username, nil)
 
-      creator_username = e(circle, :caretaker, :caretaker, :character, :username, "Unknown")
+      creator_name =
+        e(circle, :caretaker, :caretaker, :profile, :name, nil) || creator_username
+
       creator_id = e(circle, :caretaker, :caretaker, :character, :id, nil)
 
       # object_acls = Bonfire.Boundaries.list_object_boundaries(id)

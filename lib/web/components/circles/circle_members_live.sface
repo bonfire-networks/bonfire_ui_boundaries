@@ -1,5 +1,5 @@
 <div id="circle_members" class="">
-  <div class="p-2 pb-0">
+  <div class="p-2 border-b border-base-content/10 bg-base-content/5">
     <#slot />
     <div :if={@show_add || !@read_only} class="flex flex-col gap-3">
       {#if description = @description || e(@circle, :extra_info, :summary, nil)}

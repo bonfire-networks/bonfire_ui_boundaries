@@ -15,25 +15,14 @@
       feedback_title={l("This list is empty")}
       feedback_message=""
     >
-      <div class="flex flex-col flex-1 gap-1 text-left prose prose-sm max-w-full">
-        <p :if={@scope == :instance_wide} class="px-4 mb-0 pt-4">
+      <div class="flex flex-col flex-1 gap-1 text-left text-sm max-w-full">
+        <p :if={@scope == :instance_wide} class="">
           {l("Nobody on this instance will receive any updates from the users or instances on this list")}
         </p>
-        <p :if={@scope != :instance_wide} class="px-4 mb-0 pt-4">
+        <p :if={@scope != :instance_wide} class="">
           {l("You will not receive any updates from the users or instances on this list")}
         </p>
         <div x-data="{active_info: false}" role="region" class="">
-          <button
-            type="button"
-            x-on:click="active_info = ! active_info"
-            :aria-expanded="active_info"
-            class="px-4 font-medium text-sm"
-          >
-            <span x-show="!active_info" class="underline">{l("Read more")}</span>
-            <span x-show="active_info" class="underline">{l("Read less")}</span>
-            <span x-show="active_info" aria-hidden="true" class="ml-2">&minus;</span>
-            <span x-show="!active_info" aria-hidden="true" class="ml-2">&plus;</span>
-          </button>
           <div x-cloak x-show="active_info" x-collapse>
             <div class="block mt-3 text-left px-3">
               <ul class="block pl-4 mt-1 prose-sm list-disc">
@@ -55,6 +44,18 @@
               </ul>
             </div>
           </div>
+
+          <button
+            type="button"
+            x-on:click="active_info = ! active_info"
+            :aria-expanded="active_info"
+            class="font-medium text-sm link link-primary"
+          >
+            <span x-show="!active_info">{l("Read more")}</span>
+            <span x-show="active_info">{l("Read less")}</span>
+            <span x-show="active_info" aria-hidden="true" class="ml-2">&minus;</span>
+            <span x-show="!active_info" aria-hidden="true" class="ml-2">&plus;</span>
+          </button>
         </div>
       </div>
     </Bonfire.UI.Boundaries.CircleMembersLive>
@@ -77,29 +78,18 @@
       feedback_title={l("This list is empty")}
       feedback_message=""
     >
-      <div class="flex flex-col flex-1 gap-1 text-left prose prose-sm max-w-full">
-        <p :if={@scope == :instance_wide} class="px-4 mb-0 pt-4">
+      <div class="flex flex-col flex-1 gap-1 text-left text-sm max-w-full">
+        <p :if={@scope == :instance_wide} class="">
           {l(
             "Users or instances on this list are completely blocked. They cannot see or interact with anyone on this instance, and nobody on this instance will see their content."
           )}
         </p>
-        <p :if={@scope != :instance_wide} class="px-4 mb-0 pt-4">
+        <p :if={@scope != :instance_wide} class="">
           {l(
             "Users or instances on this list are completely blocked. This is a bidirectional block - you won't see their content and they won't see yours."
           )}
         </p>
-        <div x-data="{active_info: false}" role="region" class="mb-4">
-          <button
-            type="button"
-            x-on:click="active_info = ! active_info"
-            :aria-expanded="active_info"
-            class="flex px-4 place-content-center font-medium text-sm"
-          >
-            <span x-cloak x-show="!active_info" class="underline">{l("Read more")}</span>
-            <span x-cloak x-show="active_info" class="underline">{l("Read less")}</span>
-            <span x-cloak x-show="active_info" aria-hidden="true" class="ml-2">&minus;</span>
-            <span x-cloak x-show="!active_info" aria-hidden="true" class="ml-2">&plus;</span>
-          </button>
+        <div x-data="{active_info: false}" role="region" class="">
           <div x-cloak x-show="active_info" x-collapse>
             <div class="block text-left px-3">
               <ul class="block pl-4 mt-1 prose-sm list-disc">
@@ -126,6 +116,17 @@
               </ul>
             </div>
           </div>
+          <button
+            type="button"
+            x-on:click="active_info = ! active_info"
+            :aria-expanded="active_info"
+            class="font-medium text-sm link link-primary"
+          >
+            <span x-cloak x-show="!active_info">{l("Read more")}</span>
+            <span x-cloak x-show="active_info">{l("Read less")}</span>
+            <span x-cloak x-show="active_info" aria-hidden="true" class="ml-2">&minus;</span>
+            <span x-cloak x-show="!active_info" aria-hidden="true" class="ml-2">&plus;</span>
+          </button>
         </div>
       </div>
     </Bonfire.UI.Boundaries.CircleMembersLive>
@@ -147,27 +148,16 @@
       feedback_title={l("This list is empty")}
       feedback_message=""
     >
-      <div class="flex flex-col flex-1 gap-1 text-left prose prose-sm max-w-full">
-        <p :if={@scope == :instance_wide} class="px-4 mb-0 pt-4">
+      <div class="flex flex-col flex-1 gap-1 text-left text-sm max-w-full">
+        <p :if={@scope == :instance_wide} class="">
           {l(
             "Users or instances on this list will not be able to see or interact with anyone on this instance"
           )}
         </p>
-        <p :if={@scope != :instance_wide} class="mb-0 px-4 pt-4">
+        <p :if={@scope != :instance_wide} class="">
           {l("Users or instances on this list will not be able to see or interact with you or your content")}
         </p>
-        <div x-data="{active_info: false}" role="region" class="mb-4">
-          <button
-            type="button"
-            x-on:click="active_info = ! active_info"
-            :aria-expanded="active_info"
-            class="flex px-4 place-content-center font-medium text-sm"
-          >
-            <span x-cloak x-show="!active_info" class="underline">{l("Read more")}</span>
-            <span x-cloak x-show="active_info" class="underline">{l("Read less")}</span>
-            <span x-cloak x-show="active_info" aria-hidden="true" class="ml-2">&minus;</span>
-            <span x-cloak x-show="!active_info" aria-hidden="true" class="ml-2">&plus;</span>
-          </button>
+        <div x-data="{active_info: false}" role="region" class="">
           <div x-cloak x-show="active_info" x-collapse>
             <div class="block text-left px-3">
               <ul class="block pl-4 mt-1 prose-sm list-disc">
@@ -191,6 +181,17 @@
               </ul>
             </div>
           </div>
+          <button
+            type="button"
+            x-on:click="active_info = ! active_info"
+            :aria-expanded="active_info"
+            class="font-medium text-sm link link-primary"
+          >
+            <span x-cloak x-show="!active_info">{l("Read more")}</span>
+            <span x-cloak x-show="active_info">{l("Read less")}</span>
+            <span x-cloak x-show="active_info" aria-hidden="true" class="ml-2">&minus;</span>
+            <span x-cloak x-show="!active_info" aria-hidden="true" class="ml-2">&plus;</span>
+          </button>
         </div>
       </div>
     </Bonfire.UI.Boundaries.CircleMembersLive>

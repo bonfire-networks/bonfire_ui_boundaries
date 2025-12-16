@@ -869,7 +869,9 @@ defmodule Bonfire.Boundaries.LiveHandler do
   end
 
   def prepare_assigns(socket) do
-    current_user = current_user(socket)
+    current_user =
+      current_user(socket)
+      |> flood("uuu in prepare_assigns")
 
     cached_my_acls =
       e(assigns(socket), :my_acls, nil) || e(assigns(socket)[:__context__], :my_acls, nil)
@@ -896,7 +898,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
           my_acls: my_acls
         )
       end
-      |> debug("final to_boundaries")
+      |> flood("final to_boundaries")
 
     # Only send to parent if values were freshly computed (not from cache)
     if !cached_my_acls or !filter_empty(existing_to_boundaries, nil) do

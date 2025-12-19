@@ -645,15 +645,15 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     |> debug("after_removal")
   end
 
-  def my_circles_paginated(scope, attrs \\ nil) do
-    Bonfire.Boundaries.Circles.list_my_with_counts(scope,
-      exclude_stereotypes: true,
-      exclude_built_ins: true,
-      paginate?: true,
-      paginate: attrs
-    )
+  def my_circles_paginated(scope, _attrs \\ nil) do
+    circles =
+      Bonfire.Boundaries.Circles.list_my_for_sidebar(scope,
+        exclude_stereotypes: true,
+        exclude_built_ins: true
+      )
 
-    # |> repo().maybe_preload(encircles: [subject: [:profile]])
+    # Return in expected format (no pagination needed for sidebar - users have few circles)
+    %{page_info: nil, edges: circles}
   end
 
   def maybe_redirect_to(socket, _, %{"no_redirect" => r}) when r != "" do

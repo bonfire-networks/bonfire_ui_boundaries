@@ -22,7 +22,8 @@ defmodule Bonfire.UI.Boundaries.SidebarCirclesLive do
     # scope = LiveHandler.scope_origin(assigns, socket)
     # |> IO.inspect
     %{page_info: page_info, edges: circles} =
-      if circles = e(assigns(socket), :__context__, :my_circles, nil) || assigns(socket)[:my_circles] do
+      if circles =
+           e(assigns(socket), :__context__, :my_circles, nil) || assigns(socket)[:my_circles] do
         debug("my_circles was preloaded at top level")
         %{page_info: nil, edges: circles}
       else

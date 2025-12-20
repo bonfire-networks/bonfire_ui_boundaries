@@ -58,7 +58,7 @@
                 <StatelessComponent
                   module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
                   profile={profile}
-                  wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-col lg:flex-row justify-between"
+                  wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-row justify-between"
                   avatar_class="w-10 h-10 rounded-box"
                   character={e(member, :subject, :character, nil)}
                   class="btn btn-sm"
@@ -80,7 +80,7 @@
                   profile={%{name: name, icon: icon}}
                   avatar_class="w-10 h-10 rounded-box"
                   character={%{username: username}}
-                  wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-col lg:flex-row justify-between"
+                  wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-row justify-between"
                   show_summary
                   class="btn btn-sm"
                   show_controls={[:follows_me, :follow]}

@@ -182,8 +182,7 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
   end
 
   def list_my_circles(scope) do
-    # TODO: load using LivePlug to avoid re-loading on render?
-    Bonfire.Boundaries.Circles.list_my(scope,
+    Bonfire.Boundaries.Circles.list_my_for_sidebar(scope,
       exclude_block_stereotypes: true
     )
   end

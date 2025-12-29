@@ -45,6 +45,20 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
     {verb_permissions, extracted_users} =
       determine_verb_permissions_and_users(assigns(socket), socket)
 
+    # Get my_acls from props, context, or fetch if needed (once only in update, not render)
+    # Handles both :user and :instance scope
+    scope = assigns(socket)[:scope]
+
+    my_acls =
+      assigns(socket)[:my_acls] ||
+        e(assigns(socket)[:__context__], :my_acls, nil) ||
+        (err("my_acls should be preloaded at top level") &&
+           if scope == :user or is_nil(scope) do
+             Bonfire.Boundaries.LiveHandler.my_acls(current_user_id(socket))
+           else
+             Bonfire.Boundaries.LiveHandler.my_acls(scope)
+           end)
+
     # Get base circles from DB
     base_circles =
       assigns(socket)[:my_circles] ||
@@ -91,6 +105,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
         )
       )
       |> assign(:my_circles, my_circles)
+      |> assign(:my_acls, my_acls)
       |> assign(:selected_users, selected_users)
     }
   end

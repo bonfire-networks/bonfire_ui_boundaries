@@ -14,23 +14,16 @@ defmodule Bonfire.UI.Boundaries.GeneralAccessListLive do
   prop scope, :any, default: :user
 
   def render(%{my_acls: nil} = assigns) do
-    # debug(assigns)
-    # should be loading this only once per persistent session, or when we open the composer
+    # Data should be preloaded by parent (CustomizeBoundaryLive) - fallback to empty list
+    err("my_acls should be preloaded by parent component, not fetched in render")
+
     assigns
-    |> assign(
-      my_acls:
-        if assigns[:scope] == :user do
-          e(assigns[:__context__], :my_acls, nil) || LiveHandler.my_acls(current_user_id(assigns))
-        else
-          LiveHandler.my_acls(:instance)
-        end
-    )
+    |> assign(my_acls: [])
     |> render_sface()
   end
 
   def render(assigns) do
-    assigns
-    |> render_sface()
+    render_sface(assigns)
   end
 
   def matches?({preset, _}, preset), do: true

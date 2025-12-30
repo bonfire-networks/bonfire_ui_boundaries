@@ -20,7 +20,9 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
   test "Ghost a user works (PhoenixTest)", %{conn: conn, alice: alice} do
     conn
     |> visit("/@#{alice.character.username}")
-    |> click_button("Ghost #{alice.profile.name}")
+    |> within("[data-id='hero_more_actions-profile_hero_full']", fn session ->
+      click_button(session, "Ghost #{alice.profile.name}")
+    end)
     |> click_button("[data-role=ghost]", "Ghost")
     |> assert_has("[role=alert]", text: "ghosted")
   end
@@ -28,7 +30,9 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
   test "Silence a user works (PhoenixTest)", %{conn: conn, alice: alice} do
     conn
     |> visit("/@#{alice.character.username}")
-    |> click_button("Silence #{alice.profile.name}")
+    |> within("[data-id='hero_more_actions-profile_hero_full']", fn session ->
+      click_button(session, "Silence #{alice.profile.name}")
+    end)
     |> click_button("[data-role=silence]", "Silence")
     |> assert_has("[role=alert]", text: "silenced")
   end
@@ -106,7 +110,8 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
     |> visit("/boundaries/blocked")
     |> assert_has("#circle_members", text: alice.profile.name)
     |> assert_has("#circle_members", text: bob.profile.name)
-    |> assert_has("#circle_members", text: carl.profile.name)
+    # carl was only silenced, not blocked (which requires both silence AND ghost)
+    |> refute_has("#circle_members", text: carl.profile.name)
   end
 
   test "I can unblock a previously blocked user", %{conn: conn, me: me, alice: alice} do
@@ -129,7 +134,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
 
     conn
     |> visit("/@#{alice.character.username}")
-    |> assert_has("[data-id=hero_data]", text: "silenced")
+    |> assert_has("[data-id=hero_background]", text: "silenced")
   end
 
   test "I can see if I ghosted a user from their profile page", %{
@@ -141,7 +146,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
 
     conn
     |> visit("/@#{alice.character.username}")
-    |> assert_has("[data-id=hero_data]", text: "ghosted")
+    |> assert_has("[data-id=hero_background]", text: "ghosted")
   end
 
   describe "if I silenced a user i will not receive any update from it" do
@@ -429,9 +434,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
     test "As an admin I can unghost a previously ghosted user instance-wide", %{
       conn: conn,
       me: me,
-      alice: alice,
-      bob: bob,
-      carl: carl
+      alice: alice
     } do
       {:ok, me} = Bonfire.Me.Users.make_admin(me)
       assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(alice, :ghost, :instance_wide)
@@ -439,7 +442,9 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       conn
       |> visit("/boundaries/instance_ghosted")
       |> assert_has("#circle_members", text: alice.profile.name)
-      |> click_button("[data-role=remove_user]", "Remove")
+      |> within("#member-#{alice.id}", fn session ->
+        click_button(session, "[data-role=remove_user]", "Remove")
+      end)
       |> assert_has("[role=alert]", text: "Unblocked!")
       |> refute_has("#circle_members", text: alice.profile.name)
     end
@@ -447,9 +452,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
     test "As an admin I can unsilence a previously silenced user instance-wide", %{
       conn: conn,
       me: me,
-      alice: alice,
-      bob: bob,
-      carl: carl
+      alice: alice
     } do
       assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(alice, :silence, :instance_wide)
       {:ok, me} = Bonfire.Me.Users.make_admin(me)
@@ -457,7 +460,9 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       conn
       |> visit("/boundaries/instance_silenced")
       |> assert_has("#circle_members", text: alice.profile.name)
-      |> click_button("[data-role=remove_user]", "Remove")
+      |> within("#member-#{alice.id}", fn session ->
+        click_button(session, "[data-role=remove_user]", "Remove")
+      end)
       |> assert_has("[role=alert]", text: "Unblocked!")
       |> refute_has("#circle_members", text: alice.profile.name)
     end
@@ -478,15 +483,14 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       |> visit("/boundaries/instance_blocked")
       |> assert_has("#circle_members", text: alice.profile.name)
       |> assert_has("#circle_members", text: bob.profile.name)
-      |> assert_has("#circle_members", text: carl.profile.name)
+      # carl was only silenced, not blocked (which requires both silence AND ghost)
+      |> refute_has("#circle_members", text: carl.profile.name)
     end
 
     test "As an admin I can unblock a previously blocked user instance-wide", %{
       conn: conn,
       me: me,
-      alice: alice,
-      bob: bob,
-      carl: carl
+      alice: alice
     } do
       assert {:ok, _blocked} = Bonfire.Boundaries.Blocks.block(alice, :block, :instance_wide)
       {:ok, me} = Bonfire.Me.Users.make_admin(me)
@@ -494,7 +498,9 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       conn
       |> visit("/boundaries/instance_blocked")
       |> assert_has("#circle_members", text: alice.profile.name)
-      |> click_button("[data-role=remove_user]", "Remove")
+      |> within("#member-#{alice.id}", fn session ->
+        click_button(session, "[data-role=remove_user]", "Remove")
+      end)
       |> assert_has("[role=alert]", text: "Unblocked!")
       |> refute_has("#circle_members", text: alice.profile.name)
     end

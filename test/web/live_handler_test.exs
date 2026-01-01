@@ -73,6 +73,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       |> visit("/circle/#{circle.id}")
       |> click_button("[data-role=open_modal]", "Edit circle")
       |> PhoenixTest.open_browser()
+
       # |> within("#edit_circle_general", fn conn ->
       #   conn
       #   |> fill_in("Circle name", with: "friends")

@@ -1,0 +1,135 @@
+<div
+  id={"role-card-#{@role_name}"}
+  class="bg-base-100 border border-base-content/10 rounded-lg overflow-hidden"
+  x-data="{expanded: false}"
+>
+  {!-- Card Header --}
+  <div
+    class="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-base-content/5 transition-colors"
+    x-on:click="expanded = !expanded"
+  >
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center bg-info/20">
+        <#Icon iconify="mingcute:hat-fill" class="w-5 h-5 text-info" />
+      </div>
+      <div>
+        <h3 class="font-semibold">{Recase.to_title(to_string(@role_name))}</h3>
+        <div class="flex items-center gap-1.5">
+          <span :if={@read_only} class="badge badge-sm badge-secondary badge-ghost">{l("Built-in")}</span>
+          <span class="text-sm text-base-content/70">{permission_summary(@role_verbs)}</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <#Icon iconify="ph:list-duotone" class="w-5 h-5" />
+    </div>
+  </div>
+
+  {!-- Expandable Content --}
+  <div x-cloak x-show="expanded" x-collapse class="border-t border-base-content/10">
+    <div class="">
+      {#if @read_only}
+        {!-- Read-only: Flat list of only defined permissions --}
+        {#if Enum.empty?(@defined_verbs)}
+          <div class="text-center py-3 text-base-content/60">
+            <Iconify.iconify icon="ph:empty-duotone" class="w-6 h-6 mx-auto mb-2" />
+            <p class="text-sm">{l("No permissions defined for this role")}</p>
+          </div>
+        {#else}
+          <div class="flex flex-wrap gap-1 p-3">
+            {#for verb_data <- @defined_verbs}
+              {#case e(verb_data, :status, nil)}
+                {#match :can}
+                  <span class="badge badge-sm badge-success gap-1 py-1.5">
+                    <Iconify.iconify icon={e(verb_data, :icon, "ph:circle-duotone")} class="w-3 h-3" />
+                    {e(verb_data, :display_name, nil)}
+                  </span>
+                {#match :cannot}
+                  <span class="badge badge-sm badge-error gap-1 py-1.5">
+                    <Iconify.iconify icon={e(verb_data, :icon, "ph:circle-duotone")} class="w-3 h-3" />
+                    {e(verb_data, :display_name, nil)}
+                  </span>
+                {#match _}
+              {/case}
+            {/for}
+          </div>
+        {/if}
+      {#else}
+        {!-- Editable: Verb groups with toggles --}
+        <div class="divide-y divide-base-content/10">
+          {#if Enum.empty?(@grouped_verbs)}
+            <div class="text-center py-3 text-base-content/60">
+              <#Icon iconify="ph:empty-duotone" class="w-6 h-6 mx-auto mb-1.5 opacity-50" />
+              <p class="text-xs">{l("No permissions defined for this role")}</p>
+            </div>
+          {#else}
+            <Bonfire.UI.Boundaries.VerbGroupLive
+              :for={{group_key, group} <- @grouped_verbs}
+              id={"verb-group-#{@role_name}-#{group_key}"}
+              group_key={group_key}
+              group={group}
+              role_name={@role_name}
+              read_only={@read_only}
+              event_target={@myself}
+            />
+          {/if}
+        </div>
+      {/if}
+    </div>
+
+    {!-- Card Footer Actions (only for editable roles) --}
+    <div
+      :if={not @read_only}
+      class="flex items-center justify-end gap-2 p-3 bg-base-200"
+    >
+    <div class="flex items-center gap-2">
+      {!-- Edit Role --}
+      <Bonfire.UI.Common.OpenModalLive
+        id={"edit-role-#{@role_name}"}
+        title_text={l("Edit Role")}
+      >
+        <form id={"edit_role_form_#{@role_name}"} phx-submit="Bonfire.Boundaries:role_edit_details">
+          <input type="hidden" name="old_name" value={@role_name}>
+          <div class="form-control mt-4">
+            <label class="label sr-only" for={"edit_role_name_#{@role_name}"}>
+              <span class="label-text">{l("Edit the role name")}</span>
+            </label>
+            <input
+              id={"edit_role_name_#{@role_name}"}
+              type="text"
+              name="new_name"
+              value={Recase.to_title(to_string(@role_name))}
+              class="input w-full"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary w-full mt-4">{l("Save")}</button>
+        </form>
+        <:open_btn>
+          <span class="btn btn-sm btn-ghost">
+            <!-- <#Icon iconify="ph:pencil-simple-duotone" class="w-5 h-5" /> -->
+            {l("Edit role")}
+          </span>
+        </:open_btn>
+      </Bonfire.UI.Common.OpenModalLive>
+
+      {!-- Delete Role --}
+      <Bonfire.UI.Common.OpenModalLive
+        id={"delete-role-#{@role_name}"}
+        title_text={l("Delete Role")}
+      >
+        <p class="text-sm">{l("Are you sure you want to delete the '%{role}' role? This action cannot be undone.", role: Recase.to_title(to_string(@role_name)))}</p>
+        <form phx-submit="Bonfire.Boundaries:role_delete">
+          <input type="hidden" name="name" value={@role_name}>
+          <button type="submit" class="btn btn-error w-full mt-4">{l("Delete Role")}</button>
+        </form>
+        <:open_btn>
+          <span class="btn btn-sm btn-error">
+            <#Icon iconify="ph:trash-duotone" class="w-5 h-5" />
+            {l("Delete")}
+          </span>
+        </:open_btn>
+      </Bonfire.UI.Common.OpenModalLive>
+      </div>
+    </div>
+  </div>
+</div>

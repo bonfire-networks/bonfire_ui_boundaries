@@ -37,16 +37,28 @@ defmodule Bonfire.UI.Boundaries.BlocksLive do
         circles = Bonfire.Boundaries.Blocks.list(:block, opts)
 
         # Compute intersection of user IDs across both circles
-        [silence_ids, ghost_ids] =
-          circles
-          |> Enum.map(fn circle ->
-            e(circle, :encircles, [])
-            |> Enum.map(&e(&1, :subject_id, nil))
-            |> Enum.reject(&is_nil/1)
-            |> MapSet.new()
-          end)
+        intersection_ids =
+          case circles do
+            [silence_circle, ghost_circle] ->
+              silence_ids =
+                e(silence_circle, :encircles, [])
+                |> Enum.map(&e(&1, :subject_id, nil))
+                |> Enum.reject(&is_nil/1)
+                |> MapSet.new()
 
-        intersection_ids = MapSet.intersection(silence_ids, ghost_ids) |> MapSet.to_list()
+              ghost_ids =
+                e(ghost_circle, :encircles, [])
+                |> Enum.map(&e(&1, :subject_id, nil))
+                |> Enum.reject(&is_nil/1)
+                |> MapSet.new()
+
+              MapSet.intersection(silence_ids, ghost_ids) |> MapSet.to_list()
+
+            other ->
+              warn(other, "Expected exactly 2 circles for blocked tab, got #{length(other || [])}")
+              []
+          end
+          |> debug("blocked_intersection_ids")
 
         {List.first(circles), intersection_ids}
       else

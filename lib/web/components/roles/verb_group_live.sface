@@ -1,0 +1,64 @@
+<div x-data="{open: false}" class="">
+  {!-- Group Header --}
+  <button
+    type="button"
+    x-on:click="open = !open"
+    class="flex items-center justify-between w-full p-3 text-left hover:bg-base-content/5 rounded transition-colors"
+  >
+    <div class="flex flex-col gap-1.5 flex-wrap">
+      <div class="flex flex-col gap-0">
+        <span class="font-medium text-sm">{@group[:name]}</span>
+        <p class="text-sm text-base-content/70">{@group[:description]}</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+      {#case permission_summary(@group[:role_verbs])}
+        {#match nil}
+          <span class="text-xs text-base-content/40 italic">{l("all default")}</span>
+        {#match permissions}
+          {#for {name, status} <- permissions}
+            <span :if={status == :can} class="badge badge-xs badge-success gap-0.5">{name} <#Icon iconify="ph:check-bold" class="w-2.5 h-2.5" /></span>
+            <span :if={status == :cannot} class="badge badge-xs badge-error gap-0.5">{name} <#Icon iconify="ph:x-bold" class="w-2.5 h-2.5" /></span>
+          {/for}
+          <span :if={defined_count(@group[:role_verbs]) > 3} class="text-xs text-base-content/50">+{defined_count(@group[:role_verbs]) - 3}</span>
+      {/case}
+      </div>
+    </div>
+    <#Icon iconify="ph:caret-down" class="w-5 h-5" x-bind:class="open ? '' : 'rotate-180'" />
+  </button>
+
+  {!-- Verbs List --}
+  <div x-cloak x-show="open" x-collapse class="px-2 pb-2 pt-1 border-t border-base-content/5">
+    <div :if={!@read_only} class="flex items-center justify-end gap-3 text-xs text-base-content/70 mb-2">
+      <span class="flex items-center gap-1"><#Icon iconify="ph:check-duotone" class="w-4 h-4 text-success" />{l("Grant")}</span>
+      <span class="flex items-center gap-1"><#Icon iconify="ph:minus-duotone" class="w-4 h-4 text-base-content/50" />{l("Default")}</span>
+      <span class="flex items-center gap-1"><#Icon iconify="ph:x-duotone" class="w-4 h-4 text-error" />{l("Deny")}</span>
+    </div>
+    <div class="space-y-0.5">
+      {#for {verb, status} <- @group[:role_verbs] || []}
+        {#case Bonfire.UI.Boundaries.RolesLive.verb_with_meta({verb, status})}
+          {#match verb_data}
+            <div class={"flex items-center justify-between py-1 px-1.5 rounded text-sm", "bg-base-100/50 hover:bg-base-100": !@read_only}>
+              <div class="flex items-center gap-1.5">
+                <Iconify.iconify icon={verb_data.icon} class="w-5 h-5 text-base-content/50" />
+                <span class="text-sm">{verb_data.display_name}</span>
+              </div>
+              {#if @read_only}
+                <span :if={verb_data.status == :can} class="badge badge-sm badge-success badge-soft font-bold"><#Icon iconify="ph:check-duotone" class="w-4 h-4" /></span>
+                <span :if={verb_data.status == :cannot} class="badge badge-sm badge-error badge-soft font-bold"><#Icon iconify="ph:x-duotone" class="w-4 h-4" /></span>
+                <span :if={verb_data.status not in [:can, :cannot]} class="badge badge-sm badge-neutral badge-soft font-bold"><#Icon iconify="ph:minus-duotone" class="w-4 h-4" /></span>
+              {#else}
+                <Bonfire.UI.Boundaries.YesMaybeFalseLive
+                  id={"#{@id}-#{verb}"}
+                  value={status}
+                  read_only={@read_only}
+                  event_target={@event_target}
+                  role={@role_name}
+                  verb={verb}
+                />
+              {/if}
+            </div>
+        {/case}
+      {/for}
+    </div>
+  </div>
+</div>

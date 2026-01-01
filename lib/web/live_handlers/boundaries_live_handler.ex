@@ -540,20 +540,41 @@ defmodule Bonfire.Boundaries.LiveHandler do
         scope -> scope
       end
 
-    with {:ok, _} <-
-           Roles.edit_details(
-             e(attrs, "old_name", nil),
-             e(attrs, "new_name", nil),
-             e(attrs, "usage", nil),
-             scope: scope,
-             current_user: current_user
-           ) do
-      Bonfire.UI.Common.OpenModalLive.close()
+    # Convert old_name to atom (for matching existing role key) or keep as string for user roles
+    old_name = e(attrs, "old_name", nil) |> Bonfire.Common.Text.maybe_to_snake() |> Types.maybe_to_atom()
+    # Keep new_name as snake_case string (safer for user-defined role names)
+    new_name = e(attrs, "new_name", nil) |> Bonfire.Common.Text.maybe_to_snake()
 
-      {:noreply,
-       socket
-       |> assign_flash(:info, "Role edited!")
-       |> redirect_to(current_url(socket))}
+    try do
+      with {:ok, _} <-
+             Roles.edit_details(
+               old_name,
+               new_name,
+               e(attrs, "usage", nil),
+               scope: scope,
+               current_user: current_user
+             ) do
+        Bonfire.UI.Common.OpenModalLive.close()
+
+        {:noreply,
+         socket
+         |> assign_flash(:info, l("Role edited!"))
+         |> redirect_to(current_url(socket))}
+      else
+        error ->
+          error(error, l("Could not edit role"))
+
+          {:noreply,
+           socket
+           |> assign_error(l("Could not edit role. Please check the role name and try again."))}
+      end
+    rescue
+      e ->
+        error(e, l("Could not edit role"))
+
+        {:noreply,
+         socket
+         |> assign_error(l("Could not edit role due to a configuration issue."))}
     end
   end
 
@@ -566,18 +587,37 @@ defmodule Bonfire.Boundaries.LiveHandler do
         scope -> scope
       end
 
-    with {:ok, _} <-
-           Roles.delete(
-             e(attrs, "name", nil),
-             scope: scope,
-             current_user: current_user
-           ) do
-      Bonfire.UI.Common.OpenModalLive.close()
+    # Convert name to atom (for matching existing role key) or keep as string for user roles
+    name = e(attrs, "name", nil) |> Bonfire.Common.Text.maybe_to_snake() |> Types.maybe_to_atom()
 
-      {:noreply,
-       socket
-       |> assign_flash(:info, "Role deleted.")
-       |> redirect_to(current_url(socket))}
+    try do
+      with {:ok, _} <-
+             Roles.delete(
+               name,
+               scope: scope,
+               current_user: current_user
+             ) do
+        Bonfire.UI.Common.OpenModalLive.close()
+
+        {:noreply,
+         socket
+         |> assign_flash(:info, l("Role deleted."))
+         |> redirect_to(current_url(socket))}
+      else
+        error ->
+          error(error, l("Could not delete role"))
+
+          {:noreply,
+           socket
+           |> assign_error(l("Could not delete role."))}
+      end
+    rescue
+      e ->
+        error(e, l("Could not delete role"))
+
+        {:noreply,
+         socket
+         |> assign_error(l("Could not delete role due to a configuration issue."))}
     end
   end
 

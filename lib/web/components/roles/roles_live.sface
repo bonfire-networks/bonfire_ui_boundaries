@@ -1,11 +1,80 @@
 <div class="">
   <div>
     <div class="flex flex-col">
-      <div class="p-4 border-b border-base-content/10">
+      <div class="px-4 py-3">
         <span class="text-sm text-base-content/70">
           {l("Roles define sets of permissions which you can assign to users and circles")}</span>
       </div>
     </div>
+
+    <div class="flex flex-col divide-y divide-base-content/10">
+      {!-- Built-in Roles Section (hidden when empty, collapsed by default) --}
+      <div :if={not Enum.empty?(@builtin_roles)} x-data="{showBuiltIn: false}" class="p-4">
+        <button
+          type="button"
+          x-on:click="showBuiltIn = !showBuiltIn"
+          class="flex w-full flex-1 justify-between items-center text-base-content/70 hover:text-base-content transition-colors"
+        >
+        <div class="flex items-center gap-3">
+          <div class="text-sm font-bold">{l("Built-in Roles")}</div>
+          <span class="badge badge-sm badge-neutral badge-ghost">{@builtin_roles_count}</span>
+        </div>
+        <span x-cloak x-show="showBuiltIn">
+          <#Icon iconify="ph:caret-down" class="w-5 h-5" />
+        </span>
+        <span x-cloak x-show="!showBuiltIn">
+          <#Icon iconify="ph:caret-up" class="w-5 h-5" />
+        </span>
+      </button>
+
+        <div x-cloak x-show="showBuiltIn" x-collapse class="space-y-2 mt-3">
+          <Bonfire.UI.Boundaries.RoleCardLive
+            :for={{role, verbs} <- @builtin_roles}
+            id={"builtin-role-#{role}"}
+            role_name={role}
+            role_verbs={verbs}
+            read_only={true}
+            scope={@scope}
+            verb_groups={@verb_groups}
+          />
+        </div>
+      </div>
+
+      {!-- Custom Roles Section --}
+      <div class="p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-medium text-sm">{l("Custom Roles")}</h3>
+          <!-- <Bonfire.UI.Boundaries.NewRoleButtonLive
+            scope={@scope}
+            scope_type={@scope_type}
+            setting_boundaries={false}
+          /> -->
+        </div>
+
+        {#if Enum.empty?(@custom_roles)}
+          <div class="text-center py-6 text-base-content/60 border border-dashed border-base-content/20 rounded-lg">
+            <Iconify.iconify icon="ph:plus-circle-duotone" class="w-8 h-8 mx-auto mb-1.5 opacity-50" />
+            <p class="text-sm">{l("No custom roles yet")}</p>
+            <p class="text-xs">{l("Create a role to customize permissions")}</p>
+          </div>
+        {#else}
+          <div class="space-y-2">
+            <Bonfire.UI.Boundaries.RoleCardLive
+              :for={{role, verbs} <- @custom_roles}
+              id={"custom-role-#{role}"}
+              role_name={role}
+              role_verbs={verbs}
+              read_only={false}
+              scope={@scope}
+              verb_groups={@verb_groups}
+            />
+          </div>
+        {/if}
+      </div>
+    </div>
+
+    {!-- Old table view (commented out for comparison) --}
+    {!--
     <div class="m-4 max-w-[var(--inner-main-width)]">
       <Bonfire.UI.Boundaries.TabledRolesLive
         id="test_tabled_roles"
@@ -13,5 +82,6 @@
         read_only={@read_only}
       />
     </div>
+    --}
   </div>
 </div>

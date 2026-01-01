@@ -541,7 +541,9 @@ defmodule Bonfire.Boundaries.LiveHandler do
       end
 
     # Convert old_name to atom (for matching existing role key) or keep as string for user roles
-    old_name = e(attrs, "old_name", nil) |> Bonfire.Common.Text.maybe_to_snake() |> Types.maybe_to_atom()
+    old_name =
+      e(attrs, "old_name", nil) |> Bonfire.Common.Text.maybe_to_snake() |> Types.maybe_to_atom()
+
     # Keep new_name as snake_case string (safer for user-defined role names)
     new_name = e(attrs, "new_name", nil) |> Bonfire.Common.Text.maybe_to_snake()
 

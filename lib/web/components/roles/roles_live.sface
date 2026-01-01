@@ -15,17 +15,17 @@
           x-on:click="showBuiltIn = !showBuiltIn"
           class="flex w-full flex-1 justify-between items-center text-base-content/70 hover:text-base-content transition-colors"
         >
-        <div class="flex items-center gap-3">
-          <div class="text-sm font-bold">{l("Built-in Roles")}</div>
-          <span class="badge badge-sm badge-neutral badge-ghost">{@builtin_roles_count}</span>
-        </div>
-        <span x-cloak x-show="showBuiltIn">
-          <#Icon iconify="ph:caret-down" class="w-5 h-5" />
-        </span>
-        <span x-cloak x-show="!showBuiltIn">
-          <#Icon iconify="ph:caret-up" class="w-5 h-5" />
-        </span>
-      </button>
+          <div class="flex items-center gap-3">
+            <div class="text-sm font-bold">{l("Built-in Roles")}</div>
+            <span class="badge badge-sm badge-neutral badge-ghost">{@builtin_roles_count}</span>
+          </div>
+          <span x-cloak x-show="showBuiltIn">
+            <#Icon iconify="ph:caret-down" class="w-5 h-5" />
+          </span>
+          <span x-cloak x-show="!showBuiltIn">
+            <#Icon iconify="ph:caret-up" class="w-5 h-5" />
+          </span>
+        </button>
 
         <div x-cloak x-show="showBuiltIn" x-collapse class="space-y-2 mt-3">
           <Bonfire.UI.Boundaries.RoleCardLive
@@ -33,7 +33,7 @@
             id={"builtin-role-#{role}"}
             role_name={role}
             role_verbs={verbs}
-            read_only={true}
+            read_only
             scope={@scope}
             verb_groups={@verb_groups}
           />

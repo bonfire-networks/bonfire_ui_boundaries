@@ -78,57 +78,50 @@
     </div>
 
     {!-- Card Footer Actions (only for editable roles) --}
-    <div
-      :if={not @read_only}
-      class="flex items-center justify-end gap-2 p-3 bg-base-200"
-    >
-    <div class="flex items-center gap-2">
-      {!-- Edit Role --}
-      <Bonfire.UI.Common.OpenModalLive
-        id={"edit-role-#{@role_name}"}
-        title_text={l("Edit Role")}
-      >
-        <form id={"edit_role_form_#{@role_name}"} phx-submit="Bonfire.Boundaries:role_edit_details">
-          <input type="hidden" name="old_name" value={@role_name}>
-          <div class="form-control mt-4">
-            <label class="label sr-only" for={"edit_role_name_#{@role_name}"}>
-              <span class="label-text">{l("Edit the role name")}</span>
-            </label>
-            <input
-              id={"edit_role_name_#{@role_name}"}
-              type="text"
-              name="new_name"
-              value={Recase.to_title(to_string(@role_name))}
-              class="input w-full"
-            />
-          </div>
-          <button type="submit" class="btn btn-primary w-full mt-4">{l("Save")}</button>
-        </form>
-        <:open_btn>
-          <span class="btn btn-sm btn-ghost">
-            <!-- <#Icon iconify="ph:pencil-simple-duotone" class="w-5 h-5" /> -->
-            {l("Edit role")}
-          </span>
-        </:open_btn>
-      </Bonfire.UI.Common.OpenModalLive>
+    <div :if={not @read_only} class="flex items-center justify-end gap-2 p-3 bg-base-200">
+      <div class="flex items-center gap-2">
+        {!-- Edit Role --}
+        <Bonfire.UI.Common.OpenModalLive id={"edit-role-#{@role_name}"} title_text={l("Edit Role")}>
+          <form id={"edit_role_form_#{@role_name}"} phx-submit="Bonfire.Boundaries:role_edit_details">
+            <input type="hidden" name="old_name" value={@role_name}>
+            <div class="form-control mt-4">
+              <label class="label sr-only" for={"edit_role_name_#{@role_name}"}>
+                <span class="label-text">{l("Edit the role name")}</span>
+              </label>
+              <input
+                id={"edit_role_name_#{@role_name}"}
+                type="text"
+                name="new_name"
+                value={Recase.to_title(to_string(@role_name))}
+                class="input w-full"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary w-full mt-4">{l("Save")}</button>
+          </form>
+          <:open_btn>
+            <span class="btn btn-sm btn-ghost">
+              <!-- <#Icon iconify="ph:pencil-simple-duotone" class="w-5 h-5" /> -->
+              {l("Edit role")}
+            </span>
+          </:open_btn>
+        </Bonfire.UI.Common.OpenModalLive>
 
-      {!-- Delete Role --}
-      <Bonfire.UI.Common.OpenModalLive
-        id={"delete-role-#{@role_name}"}
-        title_text={l("Delete Role")}
-      >
-        <p class="text-sm">{l("Are you sure you want to delete the '%{role}' role? This action cannot be undone.", role: Recase.to_title(to_string(@role_name)))}</p>
-        <form phx-submit="Bonfire.Boundaries:role_delete">
-          <input type="hidden" name="name" value={@role_name}>
-          <button type="submit" class="btn btn-error w-full mt-4">{l("Delete Role")}</button>
-        </form>
-        <:open_btn>
-          <span class="btn btn-sm btn-error">
-            <#Icon iconify="ph:trash-duotone" class="w-5 h-5" />
-            {l("Delete")}
-          </span>
-        </:open_btn>
-      </Bonfire.UI.Common.OpenModalLive>
+        {!-- Delete Role --}
+        <Bonfire.UI.Common.OpenModalLive id={"delete-role-#{@role_name}"} title_text={l("Delete Role")}>
+          <p class="text-sm">{l("Are you sure you want to delete the '%{role}' role? This action cannot be undone.",
+              role: Recase.to_title(to_string(@role_name))
+            )}</p>
+          <form phx-submit="Bonfire.Boundaries:role_delete">
+            <input type="hidden" name="name" value={@role_name}>
+            <button type="submit" class="btn btn-error w-full mt-4">{l("Delete Role")}</button>
+          </form>
+          <:open_btn>
+            <span class="btn btn-sm btn-error">
+              <#Icon iconify="ph:trash-duotone" class="w-5 h-5" />
+              {l("Delete")}
+            </span>
+          </:open_btn>
+        </Bonfire.UI.Common.OpenModalLive>
       </div>
     </div>
   </div>

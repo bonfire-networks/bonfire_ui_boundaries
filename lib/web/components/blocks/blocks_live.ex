@@ -55,7 +55,11 @@ defmodule Bonfire.UI.Boundaries.BlocksLive do
               MapSet.intersection(silence_ids, ghost_ids) |> MapSet.to_list()
 
             other ->
-              warn(other, "Expected exactly 2 circles for blocked tab, got #{length(other || [])}")
+              warn(
+                other,
+                "Expected exactly 2 circles for blocked tab, got #{length(other || [])}"
+              )
+
               []
           end
           |> debug("blocked_intersection_ids")

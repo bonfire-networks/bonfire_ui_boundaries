@@ -4,11 +4,11 @@
     :if={@is_caretaker}
     class="w-full h-full multiselect_in_composer gap-4 mt-3  flex flex-col flex-1 grow"
   >
-    <section class="mt-2">
+    <section class="">
       <div class="flex items-center justify-between gap-4">
         <div class="flex flex-col gap-1">
           <div class="text-xs uppercase text-base-content/80 font-medium" :if={@setting_boundaries}>{l("Advanced permissions")}</div>
-          <div class="text-xs font-light text-base-content/70">{case @setting_boundaries do
+          <div class="text-sm font-light text-base-content/70">{case @setting_boundaries do
               :create_object ->
                 l(
                   "You can customise who can see and interact with this activity, by defining permission for certain circles or specific people, as exceptions to the general permissions selected above."

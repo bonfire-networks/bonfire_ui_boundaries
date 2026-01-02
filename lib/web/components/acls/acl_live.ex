@@ -174,7 +174,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
 
   # Send page updates if conditions are met
   defp maybe_send_page_updates(socket, acl, acl_id, read_only) do
-    if (socket_connected?(socket) && !e(assigns(socket), :setting_boundaries, nil)) and
+    if !e(assigns(socket), :setting_boundaries, nil) and
          e(assigns(socket), :scope_type, nil) not in [:group, Bonfire.Classify.Category] do
       send_self(
         back: true,

@@ -40,7 +40,7 @@
               <div>
                 <Iconify.iconify icon="ph:circle-duotone" class="w-5 h-5 text-primary/80" />
               </div>
-              <span class="font-bold text-base opacity-80">{LiveHandler.subject_name(circle)}</span>
+              <span class="font-semibold text-base opacity-80">{LiveHandler.subject_name(circle)}</span>
             </LinkLive>
           </li>
         {/for}

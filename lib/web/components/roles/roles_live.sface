@@ -7,7 +7,7 @@
       </div>
     </div>
 
-    <div class="flex flex-col divide-y divide-base-content/10">
+    <div class="flex flex-col divide-y divide-base-content/20">
       {!-- Built-in Roles Section (hidden when empty, collapsed by default) --}
       <div :if={not Enum.empty?(@builtin_roles)} x-data="{showBuiltIn: false}" class="p-4">
         <button

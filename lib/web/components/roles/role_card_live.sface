@@ -56,7 +56,7 @@
         {/if}
       {#else}
         {!-- Editable: Verb groups with toggles --}
-        <div class="divide-y divide-base-content/10">
+        <div class="divide-y divide-base-content/20">
           {#if Enum.empty?(@grouped_verbs)}
             <div class="text-center py-3 text-base-content/60">
               <#Icon iconify="ph:empty-duotone" class="w-6 h-6 mx-auto mb-1.5 opacity-50" />

@@ -67,7 +67,7 @@
     </div>
   </header>
 
-  <section class="flex flex-col gap-2 divide-y divide-base-content/10">
+  <section class="flex flex-col gap-2 divide-y divide-base-content/20">
     {#if @selected_tab == "members"}
       <div class="pull-right">
         <Bonfire.UI.Boundaries.CircleMembersLive

@@ -67,7 +67,7 @@
                 verb_slug
               )}
               {#match {with_value, without_value}}
-                <div x-data="{open: false}" class="border-b border-base-content/10 flex-1 pb-2">
+                <div x-data="{open: false}" class="border-b border-base-content/20 flex-1 pb-2">
                   <div class="flex items-start gap-4">
                     <div class="w-full">
                       <div

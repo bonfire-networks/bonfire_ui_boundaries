@@ -1,5 +1,5 @@
 <div class="flex items-center boundaries-switches">
-  <div class="border p-1 flex items-center gap-1 border-base-content/10 rounded-xl">
+  <div class="border p-1 flex items-center gap-1 border-base-content/20 rounded-xl">
     <button
       data-id={"#{@role}_#{@verb}_can"}
       data-value={"#{@role}_#{@verb}_#{@value}"}

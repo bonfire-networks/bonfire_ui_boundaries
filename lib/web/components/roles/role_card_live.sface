@@ -1,6 +1,6 @@
 <div
   id={"role-card-#{@role_name}"}
-  class="bg-base-100 border border-base-content/10 rounded-lg overflow-hidden"
+  class="bg-base-100 border border-base-content/20 rounded-lg overflow-hidden"
   x-data="{expanded: false}"
 >
   {!-- Card Header --}
@@ -26,7 +26,7 @@
   </div>
 
   {!-- Expandable Content --}
-  <div x-cloak x-show="expanded" x-collapse class="border-t border-base-content/10">
+  <div x-cloak x-show="expanded" x-collapse class="border-t border-base-content/20">
     <div class="">
       {#if @read_only}
         {!-- Read-only: Flat list of only defined permissions --}

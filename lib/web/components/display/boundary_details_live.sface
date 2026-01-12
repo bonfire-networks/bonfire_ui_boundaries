@@ -1,6 +1,6 @@
 <div x-data="{edit: false}">
   <div class="mb-3" x-show="!edit">
-    <div class="border border-base-content/10 mb-3 rounded-box w-full">
+    <div class="border border-base-content/20 mb-3 rounded-box w-full">
       <div class="flex items-center w-full p-4 gap-3">
         <Bonfire.UI.Boundaries.BoundariesPresetNameLive
           boundary_preset={@boundary_preset}

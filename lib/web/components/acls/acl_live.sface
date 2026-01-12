@@ -15,7 +15,7 @@
       <div>
         <div
           :if={!@setting_boundaries && (e(@description, nil) || e(@acl, :extra_info, :summary, nil))}
-          class="p-4 border-b border-base-content/10"
+          class="p-4 border-b border-base-content/20"
         >
           <span class="text-base-content/70">
             {e(@description, nil) ||

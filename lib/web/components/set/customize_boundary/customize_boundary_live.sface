@@ -37,6 +37,8 @@
           <ul
             tabindex="0"
             class="tooltip z-[9999] menu shadow bg-base-100 border border-base-content/20 rounded-xl p-0 w-full lg:w-[29rem] absolute top-0 left-0 hidden"
+            id="popup_boundaries_in_modal_content"
+            phx-update="ignore"
           >
             <Bonfire.UI.Boundaries.GeneralAccessListLive
               hide_presets={@hide_presets}

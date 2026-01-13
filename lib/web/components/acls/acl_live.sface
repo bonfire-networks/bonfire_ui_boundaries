@@ -1,4 +1,11 @@
 <div id="boundaries_acl" class={"px-4": not @show_general_boundary}>
+  <h1
+    :if={!@setting_boundaries && e(@acl, :named, :name, nil)}
+    data-role="acl_name"
+    class="sr-only"
+  >
+    {e(@acl, :named, :name, nil)}
+  </h1>
   {#case e(@type, nil)}
     {#match :group}
       <section class="bg-base-content/5 rounded-lg p-4">

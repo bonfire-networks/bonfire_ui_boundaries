@@ -41,7 +41,7 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIManagementTest do
       |> click_button("New preset")
       |> PhoenixTest.fill_in("Enter a name for the boundary preset", with: "close friends")
       |> click_button("Create")
-      |> PhoenixTest.assert_has("div", text: "close friends")
+      |> PhoenixTest.assert_has("[data-role=acl_name]", text: "close friends")
 
       # Configure Read permission for friends circle (enable it)
       # |> PhoenixTest.open_browser()

@@ -28,10 +28,10 @@
               </form>
 
               <:open_btn>
-                <span class="z-9999 btn btn-circle btn-ghost btn-xs"><#Icon iconify="ph:plus-duotone" class="w-5 h-5" /></span>
+                <span class=" btn btn-circle btn-ghost btn-xs"><#Icon iconify="ph:plus-duotone" class="w-5 h-5" /></span>
               </:open_btn>
             </Bonfire.UI.Common.OpenModalLive>
-            <!-- <span class="w-auto tooltip z-[9999999999999999] bg-base-300 rounded-md px-2 py-1.5 text-base-content/90 text-[13px] font-medium border border-base-content/20 shadow hidden absolute top-0">{l "New circle"}</span> -->
+            <!-- <span class="w-auto tooltip bg-base-300 rounded-md px-2 py-1.5 text-base-content/90 text-[13px] font-medium border border-base-content/20 shadow hidden absolute top-0">{l "New circle"}</span> -->
           </div>
         </summary>
         {#for circle <- e(@circles, [])}

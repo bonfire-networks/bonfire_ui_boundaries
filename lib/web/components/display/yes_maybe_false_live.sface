@@ -62,7 +62,7 @@
       phx-target={@event_target}
       title={if @read_only, do: l("This permission is defined by the preset boundary"), else: nil}
     >
-      <#Icon solid="X" class="w-4 h-4" />
+      <#Icon iconify="ph:x-duotone" class="w-4 h-4" />
       <span class="sr-only">{l("Cannot")}</span>
     </button>
   </div>

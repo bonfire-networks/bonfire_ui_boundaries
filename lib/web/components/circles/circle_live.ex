@@ -70,7 +70,6 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
       {ok_atom,
        socket
        |> assign(
-         nav_items: Bonfire.Common.ExtensionModule.default_nav(),
          # TODO
          read_only: true,
          page_title: name,

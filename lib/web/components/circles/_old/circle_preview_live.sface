@@ -4,6 +4,7 @@
       :for={member <- @members |> Enum.take(2)}
       parent_id={parent_id = {deterministic_dom_id(__MODULE__, id(member), nil, @parent_id)}}
       user_id={id(e(member, :subject, nil)) || id(member)}
+      title={e(member, :subject, :profile, :name, "Anon")}
       src={Media.avatar_url(e(member, :subject, member))}
       class={"w-#{@size} h-#{@size} "}
       bg_class="fill-base-content/5 rounded-full h-full"

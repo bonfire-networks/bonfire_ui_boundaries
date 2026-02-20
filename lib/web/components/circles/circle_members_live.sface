@@ -1,7 +1,12 @@
 <div id="circle_members" class="">
   <div class="p-2 border-b border-base-content/20 bg-base-content/5">
     <#slot />
-    <div :if={@show_add || !@read_only} class="flex flex-col gap-3">
+    {#if @is_admin_circle}
+      <div class="p-4 text-sm text-base-content/70">
+        {l("To add or remove admins, use the \"Make admin\" option on a user's profile page.")}
+      </div>
+    {/if}
+    <div :if={!@is_admin_circle && (@show_add || !@read_only)} class="flex flex-col gap-3">
       {#if description = @description || e(@circle, :extra_info, :summary, nil)}
         <div class="p-4 border-b border-base-content/20">
           <span class="text-base-content/80">{description}</span>
@@ -66,7 +71,7 @@
                 >
                   <button
                     data-role="remove_user"
-                    :if={@show_remove || !@read_only}
+                    :if={!@is_admin_circle && (@show_remove || !@read_only)}
                     phx-value-subject={id}
                     :on-click="remove"
                     class="btn btn-error btn-soft btn-sm"
@@ -87,7 +92,7 @@
                 >
                   <button
                     data-role="remove_user"
-                    :if={@show_remove || !@read_only}
+                    :if={!@is_admin_circle && (@show_remove || !@read_only)}
                     phx-value-subject={id}
                     :on-click="remove"
                     class="btn btn-error btn-soft btn-sm"

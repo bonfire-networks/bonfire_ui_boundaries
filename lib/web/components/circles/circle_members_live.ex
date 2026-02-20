@@ -128,14 +128,17 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
 
       follow_stereotypes = Circles.stereotypes(:follow)
 
+      is_admin_circle =
+        uid(circle) == Bonfire.Boundaries.Scaffold.Instance.admin_circle()
+
       read_only = e(assigns, :read_only, nil) || e(assigns(socket), :read_only, nil)
 
       read_only =
         if is_nil(read_only) do
-          Circles.is_built_in?(circle) ||
+          is_admin_circle || Circles.is_built_in?(circle) ||
             stereotype_id in follow_stereotypes
         else
-          read_only
+          read_only || is_admin_circle
         end
 
       if socket_connected?(socket),
@@ -173,6 +176,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
          #  suggestions: suggestions,
          #  stereotype_id: stereotype_id,
          read_only: read_only,
+         is_admin_circle: is_admin_circle,
          #  settings_section_title: "Manage " <> e(circle, :named, :name, "") <> " circle",
          page_info: page_info,
          total_count: total_members_count

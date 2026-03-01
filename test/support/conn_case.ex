@@ -25,7 +25,7 @@ defmodule Bonfire.UI.Boundaries.ConnCase do
 
       import Bonfire.UI.Common.Testing.Helpers
 
-      import Phoenix.LiveViewTest, except: [open_browser: 1]
+      import Phoenix.LiveViewTest, except: [open_browser: 1, open_browser: 2]
       # import Bonfire.UI.Boundaries.ConnCase, async: true
       import PhoenixTest
 

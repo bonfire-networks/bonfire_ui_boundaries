@@ -1,11 +1,6 @@
 defmodule Bonfire.UI.Boundaries.FeatureTest do
   use Bonfire.UI.Boundaries.ConnCase, async: System.get_env("TEST_UI_ASYNC") != "no"
 
-  alias Bonfire.Social.Fake
-  alias Bonfire.Posts
-  alias Bonfire.Social.Boosts
-  alias Bonfire.Social.Graph.Follows
-  import Bonfire.Common.Enums
   alias Bonfire.Boundaries.{Circles, Acls, Grants}
 
   setup do
@@ -44,7 +39,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
                "data" => %{
                  "field" => "to_circles",
                  "icon" => "/images/avatar.png",
-                 "id" => id(alice),
+                 "id" => Bonfire.Common.Enums.id(alice),
                  "name" => "alice",
                  "type" => "user",
                  "username" => "alice"
@@ -64,6 +59,9 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       |> assert_has("[role=alert]", text: "Removed from circle!")
     end
 
+    @tag :skip
+    # FIXME: Opens the edit modal but never fills in a new name, clicks save, or asserts anything.
+    # The edit modal UI flow needs to be completed for this test to be meaningful.
     test "I can edit circle name", %{conn: conn, me: me, account: account} do
       alice = fake_user!(account)
       {:ok, circle} = Circles.create(me, %{named: %{name: "family"}})
@@ -72,14 +70,6 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       conn
       |> visit("/circle/#{circle.id}")
       |> click_button("[data-role=open_modal]", "Edit circle")
-      |> PhoenixTest.open_browser()
-
-      # |> within("#edit_circle_general", fn conn ->
-      #   conn
-      #   |> fill_in("Circle name", with: "friends")
-      #   |> click_button("Save")
-      # end)
-      # |> assert_has("[role=alert]", text: "Edited!")
     end
 
     test "I can delete a circle", %{conn: conn, me: me} do
@@ -184,38 +174,10 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       conn
       |> visit("/boundaries/acl/#{acl.id}")
       |> wait_async()
-      # Verify we're on the correct boundary page
+      # Verify we're on the correct boundary page with the ACL name visible
       |> assert_path("/boundaries/acl/#{acl.id}")
+      |> assert_has("[data-role=acl_name]", text: "meme")
     end
-
-    # test "I can add a circle and assign a role to a boundary", %{
-    #   conn: conn,
-    #   me: me,
-    #   account: account
-    # } do
-    #   {:ok, circle} = Circles.create(me, %{named: %{name: "family"}})
-    #   {:ok, acl} = Acls.create(%{named: %{name: "meme"}}, current_user: me)
-
-    #   conn
-    #   |> visit("/boundaries/acl/#{acl.id}")
-    #   |> fill_in("Search for a user or circle", with: circle.id)
-    #   |> submit()
-    #   |> assert_has("[date-role=edit-acl]", text: "meme")
-    #   |> choose("Administer")
-    #   |> assert_has(text: "Role assigned")
-    # end
-
-    # test "I can remove a circle from a boundary", %{conn: conn, me: me} do
-    #   {:ok, circle} = Circles.create(me, %{named: %{name: "family"}})
-    #   {:ok, acl} = Acls.create(%{named: %{name: "meme"}}, current_user: me)
-    #   Grants.grant_role(circle.id, acl.id, "contribute", current_user: me)
-
-    #   conn
-    #   |> visit("/boundaries/acl/#{acl.id}")
-    #   |> click_button("[data-role=open_modal]", "Remove from boundary")
-    #   |> click_button("[data-role=remove_from_boundary_btn]", "Remove")
-    #   |> assert_has(text: "Removed from boundary")
-    # end
 
     @tag :skip
     # FIXME: EditAclButtonLive is sent via async send_self to page_header_aside,

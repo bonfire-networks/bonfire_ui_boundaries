@@ -72,7 +72,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
        acl_id: acl_id,
        my_circles:
          assigns(socket)[:my_circles] ||
-           (err("my_circles should be preloaded at top level") &&
+           (warn("my_circles should be preloaded at top level") &&
               Bonfire.UI.Boundaries.CustomizeBoundaryLive.fetch_my_circles_with_global(
                 current_user
               )),

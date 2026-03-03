@@ -52,7 +52,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
     my_acls =
       assigns(socket)[:my_acls] ||
         e(assigns(socket)[:__context__], :my_acls, nil) ||
-        (err("my_acls should be preloaded at top level") &&
+        (warn("my_acls should be preloaded at top level") &&
            if scope == :user or is_nil(scope) do
              Bonfire.Boundaries.LiveHandler.my_acls(current_user_id(socket))
            else
@@ -62,7 +62,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
     # Get base circles from DB
     base_circles =
       assigns(socket)[:my_circles] ||
-        (err("my_circles should be preloaded at top level") &&
+        (warn("my_circles should be preloaded at top level") &&
            fetch_my_circles_with_global(current_user(socket)))
 
     # Initialize selected_users with extracted users from ACL + any manually selected

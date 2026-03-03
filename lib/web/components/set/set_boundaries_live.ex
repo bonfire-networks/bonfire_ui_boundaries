@@ -196,7 +196,7 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
 
       current_user ->
         (e(context, :my_circles, nil) ||
-           (err("my_circles should be preloaded at top level") && list_my_circles(current_user)))
+           (warn("my_circles should be preloaded at top level") && list_my_circles(current_user)))
         |> results_for_multiselect(circle_field)
     end
   end

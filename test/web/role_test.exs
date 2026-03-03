@@ -2,19 +2,12 @@ defmodule Bonfire.UI.Boundaries.RoleTest do
   use Bonfire.UI.Boundaries.ConnCase, async: System.get_env("TEST_UI_ASYNC") != "no"
   @moduletag :ui
 
-  alias Bonfire.Social.Fake
-  alias Bonfire.Posts
-  alias Bonfire.Files.Test
-
   setup do
     account = fake_account!()
     me = fake_user!(account)
-    alice = fake_user!(account)
-    bob = fake_user!(account)
-    carl = fake_user!(account)
     conn = conn(user: me, account: account)
 
-    {:ok, conn: conn, account: account, me: me, alice: alice, bob: bob, carl: carl}
+    {:ok, conn: conn, account: account, me: me}
   end
 
   test "I can create a new role and define some permissions", %{conn: conn} do

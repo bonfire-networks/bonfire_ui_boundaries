@@ -2,9 +2,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
   use Bonfire.UI.Boundaries.ConnCase, async: System.get_env("TEST_UI_ASYNC") != "no"
   @moduletag :ui
 
-  alias Bonfire.Social.Fake
   alias Bonfire.Posts
-  alias Bonfire.Files.Test
 
   setup do
     account = fake_account!()
@@ -155,7 +153,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       html_body = "epic html message"
       attrs = %{post_content: %{html_body: html_body}}
 
-      {:ok, post} =
+      {:ok, _post} =
         Posts.publish(
           current_user: alice,
           post_attrs: attrs,
@@ -169,15 +167,6 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
 
     test "i'll still be able to view their profile", %{conn: conn, alice: alice, me: me} do
       assert {:ok, _silenced} = Bonfire.Boundaries.Blocks.block(alice, :silence, current_user: me)
-      html_body = "epic html message"
-      attrs = %{post_content: %{html_body: html_body}}
-
-      {:ok, post} =
-        Posts.publish(
-          current_user: alice,
-          post_attrs: attrs,
-          boundary: "local"
-        )
 
       conn
       |> visit("/@#{alice.character.username}")
@@ -207,7 +196,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       html_body = "@#{me.character.username} epic html message"
       attrs = %{post_content: %{html_body: html_body}}
 
-      {:ok, post} =
+      {:ok, _post} =
         Posts.publish(
           current_user: alice,
           post_attrs: attrs,
@@ -228,7 +217,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       html_body = "epic html message"
       attrs = %{post_content: %{html_body: html_body}}
 
-      {:ok, post} =
+      {:ok, _post} =
         Posts.publish(
           current_user: alice,
           post_attrs: attrs,
@@ -252,7 +241,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       html_body = "epic html message"
       attrs = %{post_content: %{html_body: html_body}}
 
-      {:ok, post} =
+      {:ok, _post} =
         Posts.publish(
           current_user: me,
           post_attrs: attrs,
@@ -276,7 +265,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       html_body = "epic html message"
       attrs = %{post_content: %{html_body: html_body}}
 
-      {:ok, post} =
+      {:ok, _post} =
         Posts.publish(
           current_user: me,
           post_attrs: attrs,
@@ -296,7 +285,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       html_body = "@#{alice.character.username} epic html message"
       attrs = %{post_content: %{html_body: html_body}}
 
-      {:ok, post} =
+      {:ok, _post} =
         Posts.publish(
           current_user: me,
           post_attrs: attrs,
@@ -320,7 +309,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       html_body = "epic html message"
       attrs = %{post_content: %{html_body: html_body}}
 
-      {:ok, post} =
+      {:ok, _post} =
         Posts.publish(
           current_user: me,
           post_attrs: attrs,
@@ -349,7 +338,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       html_body = "epic html message"
       attrs = %{post_content: %{html_body: html_body}}
 
-      {:ok, post} =
+      {:ok, _post} =
         Posts.publish(
           current_user: bob,
           post_attrs: attrs,
@@ -362,8 +351,6 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       conn
       |> visit("/feed/local")
       |> refute_has("article", text: html_body)
-
-      {:ok, view, _html} = live(conn, "/feed/local")
     end
 
     test "As an admin I can silence a user instance-wide", %{
@@ -373,20 +360,23 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       account: account
     } do
       Bonfire.Me.Users.make_admin(me)
-      assert {:ok, _ghosted} = Bonfire.Boundaries.Blocks.block(alice.id, :ghost, :instance_wide)
-      # write a post
-      html_body = "epic html message"
+
+      assert {:ok, _silenced} =
+               Bonfire.Boundaries.Blocks.block(alice.id, :silence, :instance_wide)
+
+      # silenced user publishes a post
+      html_body = "silenced user post"
       attrs = %{post_content: %{html_body: html_body}}
 
-      {:ok, post} =
+      {:ok, _post} =
         Posts.publish(
-          current_user: bob,
+          current_user: alice,
           post_attrs: attrs,
           boundary: "local"
         )
 
-      # login as bob
-      conn = conn(user: alice, account: account)
+      # login as bob and verify silenced user's post is hidden
+      conn = conn(user: bob, account: account)
 
       conn
       |> visit("/feed/local")
@@ -436,7 +426,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       me: me,
       alice: alice
     } do
-      {:ok, me} = Bonfire.Me.Users.make_admin(me)
+      Bonfire.Me.Users.make_admin(me)
       assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(alice, :ghost, :instance_wide)
 
       conn
@@ -455,7 +445,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       alice: alice
     } do
       assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(alice, :silence, :instance_wide)
-      {:ok, me} = Bonfire.Me.Users.make_admin(me)
+      Bonfire.Me.Users.make_admin(me)
 
       conn
       |> visit("/boundaries/instance_silenced")
@@ -493,7 +483,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       alice: alice
     } do
       assert {:ok, _blocked} = Bonfire.Boundaries.Blocks.block(alice, :block, :instance_wide)
-      {:ok, me} = Bonfire.Me.Users.make_admin(me)
+      Bonfire.Me.Users.make_admin(me)
 
       conn
       |> visit("/boundaries/instance_blocked")

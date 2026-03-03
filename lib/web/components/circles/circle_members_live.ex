@@ -82,19 +82,23 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
       # |> debug("total_members_count")
 
       # Load members with cursor-based pagination
-      %{edges: members, page_info: page_info} =
-        Circles.list_members(
-          id,
-          current_user: current_user
-        )
-        |> debug("paginated_members")
+      # For blocked tab, disable pagination so intersection filtering sees all members
+      intersection_ids = e(assigns, :blocked_intersection_ids, nil)
 
-      # Filter to intersection if blocked tab
       {members, page_info} =
-        if intersection_ids = e(assigns, :blocked_intersection_ids, nil) do
-          filtered = Enum.filter(members, fn member -> member.subject_id in intersection_ids end)
+        if intersection_ids do
+          all_members =
+            Circles.list_members(id, current_user: current_user, paginate: false)
+
+          filtered =
+            Enum.filter(all_members, fn member -> member.subject_id in intersection_ids end)
+
           {filtered, %{}}
         else
+          %{edges: members, page_info: page_info} =
+            Circles.list_members(id, current_user: current_user)
+            |> debug("paginated_members")
+
           {members, page_info}
         end
 

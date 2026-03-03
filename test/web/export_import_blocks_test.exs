@@ -253,13 +253,9 @@ defmodule Bonfire.UI.Boundaries.ExportImportBlocksTest do
 
     assert %{success: 2} = Oban.drain_queue(queue: :import)
 
-    assert Blocks.is_blocked?(blocked_user1, block_type,
-             current_user: import_user
-           )
+    assert Blocks.is_blocked?(blocked_user1, block_type, current_user: import_user)
 
-    assert Blocks.is_blocked?(blocked_user2, block_type,
-             current_user: import_user
-           )
+    assert Blocks.is_blocked?(blocked_user2, block_type, current_user: import_user)
 
     File.rm(csv_path)
   end

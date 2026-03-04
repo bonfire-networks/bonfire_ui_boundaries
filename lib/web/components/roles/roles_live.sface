@@ -7,7 +7,7 @@
       </div>
     </div>
 
-    <div class="flex flex-col divide-y divide-base-content/20">
+    <div class="flex flex-col divide-y divide-base-content/10">
       {!-- Built-in Roles Section (hidden when empty, collapsed by default) --}
       <div :if={not Enum.empty?(@builtin_roles)} x-data="{showBuiltIn: false}" class="p-4">
         <button
@@ -52,7 +52,7 @@
         </div>
 
         {#if Enum.empty?(@custom_roles)}
-          <div class="text-center py-6 text-base-content/60 border border-dashed border-base-content/20 rounded-lg">
+          <div class="text-center py-6 text-base-content/60 border border-dashed border-base-content/10 rounded-lg">
             <Iconify.iconify icon="ph:plus-circle-duotone" class="w-8 h-8 mx-auto mb-1.5 opacity-50" />
             <p class="text-sm">{l("No custom roles yet")}</p>
             <p class="text-xs">{l("Create a role to customize permissions")}</p>

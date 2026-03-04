@@ -1,5 +1,5 @@
 <div id="circle_members" class="">
-  <div class="p-2 border-b border-base-content/20 bg-base-content/5">
+  <div class="p-2 border-b border-base-content/10 bg-base-content/5">
     <#slot />
     {#if @is_admin_circle}
       <div class="p-4 text-sm text-base-content/70">
@@ -8,7 +8,7 @@
     {/if}
     <div :if={!@is_admin_circle && (@show_add || !@read_only)} class="flex flex-col gap-3">
       {#if description = @description || e(@circle, :extra_info, :summary, nil)}
-        <div class="p-4 border-b border-base-content/20">
+        <div class="p-4 border-b border-base-content/10">
           <span class="text-base-content/80">{description}</span>
         </div>
       {/if}
@@ -54,7 +54,7 @@
       </div>
       <ul role="list" class="list">
         {#for {id, member} <- @members}
-          <li id={"member-#{id}"} class="border-b border-base-content/20 p-3">
+          <li id={"member-#{id}"} class="border-b border-base-content/10 p-3">
             <input type="hidden" name={"circle[encircle][#{id}][circle_id]"} value={e(@circle, :id, nil)}>
             <input type="hidden" name={"circle[encircle][#{id}][subject_id]"} value={id}>
 

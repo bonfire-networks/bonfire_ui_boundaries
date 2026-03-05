@@ -30,63 +30,26 @@ defmodule Bonfire.UI.Boundaries.BlocksLive do
         true -> :silence
       end
 
-    {circle, blocked_intersection_ids} =
-      if tab == "blocked" do
-        # For blocked tab: users must be in BOTH silence_them AND ghost_them circles
-        opts = if scope == :instance_wide, do: :instance_wide, else: [current_user: current_user]
-        circles = Bonfire.Boundaries.Blocks.list(:block, opts)
-
-        # Compute intersection of user IDs across both circles
-        {circle, intersection_ids} =
-          case circles do
-            circles when is_list(circles) and length(circles) == 2 ->
-              silence_id = Bonfire.Boundaries.Circles.get_id(:silence_them)
-
-              # Identify circles by stereotype (user circles) or by ID (instance-wide built-in circles)
-              silence_circle =
-                Enum.find(circles, fn c ->
-                  e(c, :stereotyped, :stereotype_id, nil) == silence_id || id(c) == silence_id
-                end)
-
-              ghost_circle =
-                Enum.find(circles, fn c -> id(c) != id(silence_circle) end)
-
-              silence_ids =
-                e(silence_circle, :encircles, [])
-                |> Enum.map(&e(&1, :subject_id, nil))
-                |> Enum.reject(&is_nil/1)
-                |> MapSet.new()
-
-              ghost_ids =
-                e(ghost_circle, :encircles, [])
-                |> Enum.map(&e(&1, :subject_id, nil))
-                |> Enum.reject(&is_nil/1)
-                |> MapSet.new()
-
-              ids = MapSet.intersection(silence_ids, ghost_ids) |> MapSet.to_list()
-
-              # Use silence_circle for display (either works since blocked_intersection_ids filters the members)
-              {silence_circle, ids}
-
-            other ->
-              warn(
-                other,
-                "Expected exactly 2 circles for blocked tab, got #{length(other || [])}"
-              )
-
-              {List.first(circles), []}
-          end
-          |> debug("blocked_intersection_ids")
+    # Get circles without preloading encircles (lighter than Blocks.list/2)
+    circles =
+      if scope == :instance_wide do
+        Bonfire.Boundaries.Blocks.instance_wide_circles(block_type)
       else
-        circle =
-          if scope == :instance_wide do
-            Bonfire.Boundaries.Blocks.instance_wide_circles(block_type)
-          else
-            Bonfire.Boundaries.Blocks.user_block_circles(scope || current_user, block_type)
-          end
-          |> List.first()
+        Bonfire.Boundaries.Blocks.user_block_circles(scope || current_user, block_type)
+      end
 
-        {circle, nil}
+    {circle, blocked_circle_ids} =
+      if tab == "blocked" do
+        # For blocked tab: pass both circle IDs for server-side intersection query
+        circle_ids =
+          circles
+          |> Enum.map(&id/1)
+          |> Enum.reject(&is_nil/1)
+          |> debug("blocked_circle_ids")
+
+        {List.first(circles), circle_ids}
+      else
+        {List.first(circles), nil}
       end
 
     # |> debug("ccircle")
@@ -120,8 +83,8 @@ defmodule Bonfire.UI.Boundaries.BlocksLive do
        #  current_user: current_user,
        circle: if(is_map(circle), do: circle),
        circle_id: id(circle),
-       # For blocked tab: pass intersection IDs computed at DB level
-       blocked_intersection_ids: blocked_intersection_ids
+       # For blocked tab: pass circle IDs for server-side intersection query
+       blocked_circle_ids: blocked_circle_ids
        #  circle: circle
        #  blocks: blocks
 

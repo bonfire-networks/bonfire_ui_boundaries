@@ -33,8 +33,14 @@
   </div>
   {#case Enum.count(@members)}
     {#match count when count > 0}
-      <div class="p-4 py-2 flex items-center justify-between">
-        <span class="text-xs font-semibold uppercase flex-1">{l("Members")}</span>
+      <div class="p-4 py-2 flex items-center justify-between border-b border-base-content/10">
+        <span class="text-xs font-semibold uppercase tracking-wider text-base-content/60">
+          {#if @total_count && @total_count > 0}
+            {l("%{count} entries", count: @total_count)}
+          {#else}
+            {l("%{count} entries", count: count)}
+          {/if}
+        </span>
 
         {#if @with_batch_follow && current_user_id(@__context__)}
           <a
@@ -46,15 +52,17 @@
           >
             <div class="flex items-center gap-2">
               <div iconify="heroicons-solid:user-add" class="w-4 h-4 shrink-0" aria-hidden="true" />
-              <span class="">
-                {l("Follow all members")}</span>
+              <span>{l("Follow all members")}</span>
             </div>
           </a>
         {/if}
       </div>
       <ul role="list" class="list">
         {#for {id, member} <- @members}
-          <li id={"member-#{id}"} class="border-b border-base-content/10 p-3">
+          <li
+            id={"member-#{id}"}
+            class="border-b border-base-content/10 p-3 hover:bg-base-content/5 transition-colors"
+          >
             <input type="hidden" name={"circle[encircle][#{id}][circle_id]"} value={e(@circle, :id, nil)}>
             <input type="hidden" name={"circle[encircle][#{id}][subject_id]"} value={id}>
 
@@ -101,10 +109,35 @@
                   </button>
                 </StatelessComponent>
               {#match member}
-                <LinkLive class="text-base font-bold text-base-content">
-                  {e(member, :subject, :named, :name, nil) || e(member, :named, :name, nil) ||
-                    e(member, :name, "Unknown")}
-                </LinkLive>
+                {!-- Instance or unknown entity --}
+                <div class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-row justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-box bg-base-content/10 flex items-center justify-center shrink-0">
+                      <div iconify="ph:globe-duotone" class="w-5 h-5 text-base-content/50" aria-hidden="true" />
+                    </div>
+                    <div>
+                      <span class="font-medium text-base-content text-sm">
+                        {e(member, :subject, :named, :name, nil) || e(member, :named, :name, nil) ||
+                          e(member, :name, l("Unknown"))}
+                      </span>
+                      <div class="flex items-center gap-1 mt-0.5">
+                        <span class="badge badge-sm badge-soft badge-info">
+                          <!-- <div iconify="ph:database-duotone" class="w-4 h-4" aria-hidden="true" /> -->
+                          {l("Instance")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    data-role="remove_instance"
+                    :if={!@is_admin_circle && (@show_remove || !@read_only)}
+                    phx-value-subject={id}
+                    :on-click="remove"
+                    class="btn btn-error btn-soft btn-sm"
+                  >
+                    {l("Remove")}
+                  </button>
+                </div>
             {/case}
           </li>
         {/for}
@@ -113,26 +146,15 @@
       <Bonfire.UI.Common.LoadMoreLive
         live_handler="Bonfire.Boundaries.Circles"
         page_info={@page_info}
-        infinite_scroll={false}
+        infinite_scroll
         hide_if_no_more
         hide_guest_fallback
         target={@myself}
       >
         <:if_no_more>
-          <p>{l("That's all the members...")}</p>
+          <p class="text-center text-sm text-base-content/50 py-4">{l("That's all the entries")}</p>
         </:if_no_more>
       </Bonfire.UI.Common.LoadMoreLive>
-
-      {!-- 
-      <div class="mb-2">
-        <StatelessComponent
-          module={maybe_component(Bonfire.UI.Me.WidgetUsersLive, @__context__)}
-          users={@members}
-          widget_title={e(@circle, :named, :name, nil)}
-          parent_id={"circle_members"}
-        />
-      </div>
-     --}
     {#match _}
       <li id="no-members" class="flex items-center place-content-center">
         <Bonfire.UI.Common.EmptyFeed

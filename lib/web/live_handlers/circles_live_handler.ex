@@ -2,65 +2,54 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
   use Bonfire.UI.Common.Web, :live_handler
   alias Bonfire.Boundaries.{Circles, Blocks}
 
-  def handle_params(%{"after" => cursor} = params, _uri, socket) do
-    current_user = current_user(socket)
-    # Get the current circle
-    circle_id = e(assigns(socket), :circle_id, nil) || Enums.id(e(assigns(socket), :circle, nil))
-
-    if circle_id do
-      # Load the next page of members
-      %{edges: members, page_info: page_info} =
-        Circles.list_members(
-          circle_id,
-          current_user: current_user,
-          pagination: input_to_atoms(params)
-        )
-        |> debug("more_paginated_members")
-
-      {:noreply,
-       socket
-       |> assign(
-         members:
-           Enum.map(members, &{&1.subject_id, &1})
-           |> Map.new(),
-         page_info: page_info
-       )}
-    else
-      debug(assigns(socket), "Dunno what circle to paginate for")
-      {:noreply, socket}
-    end
+  def handle_params(%{"after" => _cursor} = params, _uri, socket) do
+    load_more_members(params, socket)
   end
 
   # Add handler for the load_more event
   def handle_event("load_more", %{} = params, socket) do
-    current_user = current_user_required!(socket)
-    # Get the current circle
+    load_more_members(params, socket)
+  end
+
+  defp load_more_members(params, socket) do
+    current_user = current_user(socket)
     circle_id = e(assigns(socket), :circle_id, nil) || Enums.id(e(assigns(socket), :circle, nil))
+    blocked_circle_ids = e(assigns(socket), :blocked_circle_ids, nil)
 
-    if circle_id do
-      # Load the next page of members
-      %{edges: members, page_info: page_info} =
-        Circles.list_members(
-          circle_id,
-          current_user: current_user,
-          pagination: input_to_atoms(params)
-        )
-        |> debug("more_paginated_members")
+    result =
+      cond do
+        match?([_, _ | _], blocked_circle_ids) ->
+          Circles.list_members_in_all_circles(blocked_circle_ids,
+            current_user: current_user,
+            pagination: input_to_atoms(params)
+          )
 
-      {:noreply,
-       socket
-       |> assign(
-         members:
-           Map.merge(
-             e(assigns(socket), :members, %{}),
-             Enum.map(members, &{&1.subject_id, &1})
-             |> Map.new()
-           ),
-         page_info: page_info
-       )}
-    else
-      debug(assigns(socket), "Dunno what circle to paginate for")
-      {:noreply, socket}
+        circle_id ->
+          Circles.list_members(circle_id,
+            current_user: current_user,
+            pagination: input_to_atoms(params)
+          )
+
+        true ->
+          nil
+      end
+
+    case result do
+      %{edges: members, page_info: page_info} ->
+        {:noreply,
+         socket
+         |> assign(
+           members:
+             Map.merge(
+               e(assigns(socket), :members, %{}),
+               Enum.map(members, &{&1.subject_id, &1}) |> Map.new()
+             ),
+           page_info: page_info
+         )}
+
+      _ ->
+        debug(assigns(socket), "Dunno what circle to paginate for")
+        {:noreply, socket}
     end
   end
 

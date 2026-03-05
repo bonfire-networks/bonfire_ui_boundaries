@@ -72,7 +72,7 @@
       circle_type={:block}
       scope={@scope}
       showing_within={@block_type}
-      blocked_intersection_ids={@blocked_intersection_ids}
+      blocked_circle_ids={@blocked_circle_ids}
       read_only
       show_remove={!@read_only}
       feedback_title={l("This list is empty")}

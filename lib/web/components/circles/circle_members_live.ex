@@ -7,7 +7,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   prop circle_id, :any, default: nil
   prop circle, :any, default: nil
   prop circle_type, :atom, default: nil
-  prop blocked_intersection_ids, :list, default: nil
+  prop blocked_circle_ids, :list, default: nil
   prop name, :string, default: nil
   prop title, :string, default: nil
   prop description, :string, default: nil
@@ -76,30 +76,31 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
               Circles.get_for_caretaker(id, current_user, scope: e(assigns(socket), :scope, nil)))
            |> repo().maybe_preload(:extra_info)
            |> from_ok() do
-      # Get the total count for display purposes
-      total_members_count = nil
-      # Circles.count_members(id)
-      # |> debug("total_members_count")
-
       # Load members with cursor-based pagination
-      # For blocked tab, disable pagination so intersection filtering sees all members
-      intersection_ids = e(assigns, :blocked_intersection_ids, nil)
+      blocked_circle_ids = e(assigns, :blocked_circle_ids, nil)
 
       {members, page_info} =
-        if intersection_ids do
-          all_members =
-            Circles.list_members(id, current_user: current_user, paginate: false)
+        if match?([_, _ | _], blocked_circle_ids) do
+          # For blocked tab: server-side intersection query across both circles
+          %{edges: members, page_info: page_info} =
+            Circles.list_members_in_all_circles(blocked_circle_ids, current_user: current_user)
+            |> debug("blocked_intersection_members")
 
-          filtered =
-            Enum.filter(all_members, fn member -> member.subject_id in intersection_ids end)
-
-          {filtered, %{}}
+          {members, page_info}
         else
           %{edges: members, page_info: page_info} =
             Circles.list_members(id, current_user: current_user)
             |> debug("paginated_members")
 
           {members, page_info}
+        end
+
+      # Get the total count for display purposes
+      total_members_count =
+        if match?([_, _ | _], blocked_circle_ids) do
+          Circles.count_members_in_all_circles(blocked_circle_ids)
+        else
+          Circles.count_members(id)
         end
 
       # TODO: handle pagination
@@ -183,7 +184,8 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
          is_admin_circle: is_admin_circle,
          #  settings_section_title: "Manage " <> e(circle, :named, :name, "") <> " circle",
          page_info: page_info,
-         total_count: total_members_count
+         total_count: total_members_count,
+         blocked_circle_ids: blocked_circle_ids
        )}
 
       # else other ->

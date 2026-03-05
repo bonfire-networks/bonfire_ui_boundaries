@@ -326,6 +326,58 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
     end
   end
 
+  describe "Instance blocking" do
+    test "A ghosted instance shows with Instance badge and remove button", %{
+      conn: conn,
+      me: me
+    } do
+      {:ok, peer} =
+        Bonfire.Federate.ActivityPub.Instances.get_or_create(
+          "https://testinstance.example.com/actor"
+        )
+
+      assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(peer, :ghost, current_user: me)
+
+      conn
+      |> visit("/boundaries/ghosted")
+      |> assert_has("#circle_members", text: "testinstance.example.com")
+      |> assert_has("#circle_members", text: "Instance")
+      |> assert_has("[data-role=remove_instance]", text: "Remove")
+    end
+
+    test "I can unblock a ghosted instance", %{conn: conn, me: me} do
+      {:ok, peer} =
+        Bonfire.Federate.ActivityPub.Instances.get_or_create(
+          "https://removableinstance.example.com/actor"
+        )
+
+      assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(peer, :ghost, current_user: me)
+
+      conn
+      |> visit("/boundaries/ghosted")
+      |> assert_has("#circle_members", text: "removableinstance.example.com")
+      |> click_button("[data-role=remove_instance]", "Remove")
+      |> assert_has("[role=alert]", text: "Unblocked!")
+      |> refute_has("#circle_members", text: "removableinstance.example.com")
+    end
+  end
+
+  test "Ghosted list shows total entry count", %{
+    conn: conn,
+    me: me,
+    alice: alice,
+    bob: bob
+  } do
+    assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(alice, :ghost, current_user: me)
+    assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(bob, :ghost, current_user: me)
+
+    conn
+    |> visit("/boundaries/ghosted")
+    |> assert_has("#circle_members", text: alice.profile.name)
+    |> assert_has("#circle_members", text: bob.profile.name)
+    |> assert_has("#circle_members", text: "2 entries")
+  end
+
   describe "Admin" do
     test "As an admin I can ghost a user instance-wide", %{
       me: me,

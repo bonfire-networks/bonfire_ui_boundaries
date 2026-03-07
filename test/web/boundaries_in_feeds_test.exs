@@ -15,7 +15,10 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
     {:ok, account: account, me: me, alice: alice, bob: bob}
   end
 
-  test "read role allows seeing a post but not interacting with it", %{
+  # With optimistic UI, action buttons render as enabled by default.
+  # Boundaries are enforced server-side on click.
+
+  test "read role allows seeing a post but liking fails", %{
     me: me,
     alice: alice,
     bob: bob,
@@ -32,13 +35,12 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
         to_circles: %{alice.id => "read", bob.id => "interact"}
       )
 
-    # alice has read role — can see but not like
+    # alice has read role — button renders but clicking fails
     conn(user: alice, account: account)
-    |> visit("/feed/explore")
-    |> within("[data-object_id='#{post.id}']", fn session ->
-      session
-      |> refute_has("button[data-role=like_enabled]")
-    end)
+    |> visit("/post/#{post.id}")
+    |> assert_has("article button[data-role=like_enabled]")
+    |> click_button("[data-role=like_enabled]", "Like")
+    |> assert_has("[role=alert]")
 
     # bob has interact role — can like
     conn(user: bob, account: account)
@@ -65,7 +67,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
     |> assert_has("article button[data-role=reply_enabled]")
   end
 
-  test "interact role allows like and boost but not reply", %{
+  test "interact role allows like and boost, reply button renders but server enforces", %{
     me: me,
     alice: alice,
     bob: bob,
@@ -82,7 +84,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
         to_circles: %{alice.id => "interact", bob.id => "participate"}
       )
 
-    # alice has interact — can like and boost, cannot reply
+    # alice has interact — buttons render as enabled (optimistic UI)
     conn(user: alice, account: account)
     |> visit("/feed/explore")
     |> within("[data-object_id='#{post.id}']", fn session ->
@@ -90,7 +92,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
       |> assert_has("[data-id=object_body]", text: html_body)
       |> assert_has("button[data-role=like_enabled]")
       |> assert_has("button[data-role=boost_enabled]")
-      |> refute_has("button[data-role=reply_enabled]")
+      |> assert_has("button[data-role=reply_enabled]")
     end)
 
     # bob has participate — can like, boost, and reply
@@ -105,7 +107,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
     end)
   end
 
-  test "custom ACL preset with circle grants enforces permissions on a post", %{
+  test "custom ACL preset with circle grants shows buttons but server enforces on click", %{
     me: me,
     alice: alice,
     bob: bob,
@@ -124,13 +126,13 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
     attrs = %{post_content: %{html_body: html_body}}
     {:ok, post} = Posts.publish(current_user: me, post_attrs: attrs, boundary: acl.id)
 
-    # alice (in circle) can see and interact but not reply
+    # alice (in circle) can see and interact — buttons render as enabled (optimistic UI)
     conn(user: alice, account: account)
     |> visit("/post/#{post.id}")
     |> assert_has("[data-id=object_body]", text: html_body)
     |> assert_has("article button[data-role=like_enabled]")
     |> assert_has("article button[data-role=boost_enabled]")
-    |> refute_has("article button[data-role=reply_enabled]")
+    |> assert_has("article button[data-role=reply_enabled]")
 
     # bob (not in circle) cannot see the post
     conn(user: bob, account: account)

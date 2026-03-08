@@ -751,22 +751,23 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
     # |> debug("current_user")
 
-    list_of_objects =
+    list_of_assigns =
       assigns_sockets
-      # |> debug("assigns_sockets")
+      # |> debug("list_of_assigns")
       # only check when explicitly asked
       |> Enum.reject(&(e(&1, :check_object_boundary, nil) != true))
+    # |> debug("list_of_assigns to (re)check boundaries for")
+
+    if list_of_assigns !=[] do
+
+    if list_of_ids =
+      list_of_assigns
       |> Enum.map(&the_object/1)
-
-    # |> debug("list_of_objects")
-
-    list_of_ids =
-      list_of_objects
+    # |> debug("list_of_objects to (re)check boundaries for")
       |> Enum.map(&Acls.acl_id/1)
       |> Enum.uniq()
-      |> filter_empty(nil)
-
-    if list_of_ids do
+      |> filter_empty(nil) do
+        
       debug(list_of_ids, "list_of_ids (check via #{opts[:caller_module]})")
 
       my_visible_ids =
@@ -814,10 +815,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
            )
          end, socket}
       end)
-    else
-      debug("skip")
-      assigns_sockets
     end
+    end || assigns_sockets
   end
 
   # @decorate time()

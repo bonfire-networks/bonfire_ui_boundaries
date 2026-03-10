@@ -1,4 +1,4 @@
-<div id="circle_members" class="bg-base-100 outline outline-base-content/10 lg:rounded-2xl">
+<div id="circle_members" class="bg-base-200 lg:bg-base-100 outline outline-base-content/10 lg:rounded-2xl">
   <div class="p-2">
     <#slot />
     {#if @is_admin_circle}
@@ -57,11 +57,11 @@
           </a>
         {/if}
       </div>
-      <ul role="list" class="list">
+      <ul role="list" class="list divide-y divide-base-content/10">
         {#for {id, member} <- @members}
           <li
             id={"member-#{id}"}
-            class="border-b border-base-content/10 p-3 hover:bg-base-content/5 transition-colors"
+            class=" p-3 hover:bg-base-content/5 transition-colors"
           >
             <input type="hidden" name={"circle[encircle][#{id}][circle_id]"} value={e(@circle, :id, nil)}>
             <input type="hidden" name={"circle[encircle][#{id}][subject_id]"} value={id}>

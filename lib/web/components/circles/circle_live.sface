@@ -1,5 +1,5 @@
 <div id="circle_view" class="w-full max-w-full flex flex-col feed w-full max-w-full">
-  <header class="flex flex-col p-4  outline outline-base-content/10 rounded-2xl bg-base-100 mt-2 pb-0">
+  <header class="flex flex-col p-4  outline outline-base-content/10 lg:rounded-2xl bg-base-100 mt-2 pb-0">
     <div class="flex items-start gap-4">
       <#Icon iconify="ph:circle-duotone" class="w-12 h-12 rotate-15 text-secondary stroke-1" />
       <div class="flex justify-center justify-between w-full items-start flex-1">
@@ -78,7 +78,6 @@
           with_batch_follow
         />
       </div>
-     
     {#else}
       <StatefulComponent
         module={maybe_component(Bonfire.UI.Social.FeedLive, @__context__)}

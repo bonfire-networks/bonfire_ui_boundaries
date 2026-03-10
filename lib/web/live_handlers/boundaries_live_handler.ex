@@ -756,66 +756,65 @@ defmodule Bonfire.Boundaries.LiveHandler do
       # |> debug("list_of_assigns")
       # only check when explicitly asked
       |> Enum.reject(&(e(&1, :check_object_boundary, nil) != true))
+
     # |> debug("list_of_assigns to (re)check boundaries for")
 
-    if list_of_assigns !=[] do
+    if list_of_assigns != [] do
+      if list_of_ids =
+           list_of_assigns
+           |> Enum.map(&the_object/1)
+           # |> debug("list_of_objects to (re)check boundaries for")
+           |> Enum.map(&Acls.acl_id/1)
+           |> Enum.uniq()
+           |> filter_empty(nil) do
+        debug(list_of_ids, "list_of_ids (check via #{opts[:caller_module]})")
 
-    if list_of_ids =
-      list_of_assigns
-      |> Enum.map(&the_object/1)
-    # |> debug("list_of_objects to (re)check boundaries for")
-      |> Enum.map(&Acls.acl_id/1)
-      |> Enum.uniq()
-      |> filter_empty(nil) do
-        
-      debug(list_of_ids, "list_of_ids (check via #{opts[:caller_module]})")
+        my_visible_ids =
+          if current_user,
+            do:
+              Bonfire.Boundaries.load_pointers(list_of_ids,
+                current_user: current_user,
+                verbs: e(opts, :verbs, [:read]),
+                ids_only: true
+              )
+              |> Enums.ids(),
+            else: []
 
-      my_visible_ids =
-        if current_user,
-          do:
-            Bonfire.Boundaries.load_pointers(list_of_ids,
-              current_user: current_user,
-              verbs: e(opts, :verbs, [:read]),
-              ids_only: true
-            )
-            |> Enums.ids(),
-          else: []
+        debug(my_visible_ids, "my_visible_ids")
 
-      debug(my_visible_ids, "my_visible_ids")
+        Enum.map(assigns_sockets, fn {assigns, socket} ->
+          object_id = uid(the_object(assigns))
 
-      Enum.map(assigns_sockets, fn {assigns, socket} ->
-        object_id = uid(the_object(assigns))
-
-        {if object_id in list_of_ids and object_id not in my_visible_ids do
-           # not allowed
-           assigns
-           |> Map.put(
-             :activity,
-             nil
-           )
-           |> Map.put(
-             :object,
-             nil
-           )
-           |> Map.put(
-             :object_boundary,
-             :not_visible
-           )
-         else
-           # allowed
-           assigns
-           |> Map.put(
-             :boundary_can,
-             true
-           )
-           # to avoid checking again
-           |> Map.put(
-             :check_object_boundary,
-             false
-           )
-         end, socket}
-      end)
-    end
+          {if object_id in list_of_ids and object_id not in my_visible_ids do
+             # not allowed
+             assigns
+             |> Map.put(
+               :activity,
+               nil
+             )
+             |> Map.put(
+               :object,
+               nil
+             )
+             |> Map.put(
+               :object_boundary,
+               :not_visible
+             )
+           else
+             # allowed
+             assigns
+             |> Map.put(
+               :boundary_can,
+               true
+             )
+             # to avoid checking again
+             |> Map.put(
+               :check_object_boundary,
+               false
+             )
+           end, socket}
+        end)
+      end
     end || assigns_sockets
   end
 

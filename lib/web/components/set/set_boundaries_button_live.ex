@@ -15,6 +15,11 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesButtonLive do
     case to_boundaries do
       [{:clone_context, boundary_name}] -> boundary_name
       [{"clone_context", boundary_name}] -> boundary_name
+      # After JSON round-trip, tuples become flat lists
+      ["clone_context", boundary_name] -> boundary_name
+      # Surface converts keyword-like lists to maps
+      [%{clone_context: boundary_name}] -> boundary_name
+      [%{"clone_context" => boundary_name}] -> boundary_name
       _ -> false
     end
   end

@@ -206,6 +206,52 @@ defmodule Bonfire.UI.Boundaries.AclLive do
     )
   end
 
+  def handle_event("live_select_change", %{"id" => live_select_id, "text" => search}, socket)
+      when is_binary(search) and byte_size(search) >= 2 do
+    search_results =
+      Utils.maybe_apply(Bonfire.Me.Users, :search, [search])
+      |> Enum.map(fn result ->
+        user =
+          case result do
+            %Needle.Pointer{activity: %{object: user}} -> user
+            other -> other
+          end
+
+        name = e(user, :profile, :name, nil) || e(user, :character, :username, l("Unnamed"))
+        username = e(user, :character, :username, nil)
+        display = if username, do: "#{name} (@#{username})", else: name
+        {display, %{id: id(user), name: name}}
+      end)
+
+    maybe_send_update(LiveSelect.Component, live_select_id, options: search_results)
+    {:noreply, socket}
+  end
+
+  def handle_event("live_select_change", _params, socket), do: {:noreply, socket}
+
+  def handle_event(
+        "change",
+        %{
+          "_target" => ["multi_select", "group_acl"],
+          "multi_select" => %{"group_acl" => selected}
+        },
+        socket
+      )
+      when is_binary(selected) and selected != "" do
+    case Jason.decode(selected) do
+      {:ok, %{"id" => id, "name" => name}} ->
+        add_to_acl(%{id: id, name: name}, socket)
+
+      {:ok, %{"id" => id}} ->
+        add_to_acl(id, socket)
+
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("change", _params, socket), do: {:noreply, socket}
+
   def handle_event("add_to_acl", %{"id" => id, "name" => name} = _attrs, socket) do
     subject = %{
       id: id,

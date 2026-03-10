@@ -1,3 +1,20 @@
+{#if !@read_only}
+  <div class="p-4 border-b border-base-content/10">
+    <form id="add_members_to_group_acl" phx-change="change" phx-target={@myself} class="w-full">
+      <label for="multi_select_group_acl_text_input" class="sr-only">{l("Search for users to add")}</label>
+      <Bonfire.UI.Common.MultiselectLive
+        implementation={:live_select}
+        mode={:single}
+        form_input_name="group_acl"
+        field={:add_to_acl}
+        show_search
+        debounce={300}
+        event_target={@myself}
+        label={l("Search for users or circles to add")}
+      />
+    </form>
+  </div>
+{/if}
 <form id="edit_grants" :on-change="edit_grant_role">
   <ul class="flex flex-col divide-y divide-base-content/10">
     <li

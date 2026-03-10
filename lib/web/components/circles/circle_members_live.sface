@@ -1,5 +1,5 @@
-<div id="circle_members" class="">
-  <div class="p-2 border-b border-base-content/10 bg-base-content/5">
+<div id="circle_members" class="bg-base-100 outline outline-base-content/10 rounded-2xl">
+  <div class="p-2">
     <#slot />
     {#if @is_admin_circle}
       <div class="p-4 text-sm text-base-content/70">

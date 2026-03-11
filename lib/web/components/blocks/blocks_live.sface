@@ -78,7 +78,7 @@
       feedback_title={l("This list is empty")}
       feedback_message=""
     >
-      <div class="flex p-2flex-col flex-1 gap-1 text-left text-sm max-w-full">
+      <div class="flex p-2 flex-col flex-1 gap-1 text-left text-sm max-w-full">
         <p :if={@scope == :instance_wide} class="">
           {l(
             "Users or instances on this list are completely blocked. They cannot see or interact with anyone on this instance, and nobody on this instance will see their content."

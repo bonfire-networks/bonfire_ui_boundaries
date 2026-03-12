@@ -1,11 +1,14 @@
 <div>
   <ul class="menu relative p-0 w-full mt-2">
-    <li>
-      <details open={Bonfire.Common.Settings.get(
-        [Bonfire.UI.Boundaries.MyCirclesLive, :show_circles_nav_open],
-        true,
-        @__context__
-      )}>
+    <li class="w-full">
+      <details
+        open={Bonfire.Common.Settings.get(
+          [Bonfire.UI.Boundaries.MyCirclesLive, :show_circles_nav_open],
+          true,
+          @__context__
+        )}
+        class="w-full overflow-hidden"
+      >
         <summary
           phx-click="Bonfire.Boundaries.Circles:toggle_circles_nav_visibility"
           class="relative font-bold uppercase text-xs text-base-content/50"
@@ -19,11 +22,8 @@
             id="circles_nav_settings" -->
           <div class="normal-case font-normal absolute right-6">
             <Bonfire.UI.Common.OpenModalLive id="new_circle" title_text={l("Create a new circle")} no_actions>
-              <form
-                id="new_circle_form"
-                phx-submit="Bonfire.Boundaries.Circles:create"
-                phx-change="Bonfire.Boundaries.Circles:validate_for_create"
-              >
+              <form id="new_circle_form" phx-submit="Bonfire.Boundaries.Circles:create">
+                {!-- phx-change="Bonfire.Boundaries.Circles:validate_for_create" --}
                 <Bonfire.UI.Boundaries.NewCircleLive scope={current_user_id(@__context__)} />
               </form>
 

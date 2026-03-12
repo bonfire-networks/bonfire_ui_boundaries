@@ -35,6 +35,7 @@ defmodule Bonfire.UI.Boundaries.BoundariesLive do
               fallback_return: []
             )
           ),
+        without_sidebar: :minimal,
         id: nil,
         back: true,
         page: "boundaries",

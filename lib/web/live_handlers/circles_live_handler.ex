@@ -203,7 +203,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
              scope || current_user,
              attrs
            ) do
-      # Bonfire.UI.Common.OpenModalLive.close()
+      Bonfire.UI.Common.OpenModalLive.close()
 
       socket
       |> assign_flash(:info, "Circle created!")

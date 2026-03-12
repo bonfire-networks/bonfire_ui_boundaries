@@ -895,7 +895,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
   def scope_origin(assigns \\ nil, socket) do
     context = e(assigns, :__context__, nil) || assigns(socket)[:__context__]
-    current_user = current_user(context)
+    current_user = current_user_or_id(context)
     scope = e(assigns, :scope, nil) || e(assigns(socket), :scope, nil)
 
     if scope == :instance and
@@ -910,7 +910,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
   def prepare_assigns(socket) do
     current_user =
-      current_user(socket)
+      current_user_or_id(socket)
       |> debug("uuu in prepare_assigns")
 
     cached_my_acls =

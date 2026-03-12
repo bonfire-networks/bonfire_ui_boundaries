@@ -37,7 +37,7 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
   def update(assigns, socket) do
     debug("load circles")
     context = assigns[:__context__] || assigns(socket)[:__context__]
-    current_user = current_user(context)
+    current_user = current_user_or_id(context)
 
     %{page_info: page_info, edges: circles} =
       Bonfire.Boundaries.Circles.LiveHandler.my_circles_paginated(current_user)

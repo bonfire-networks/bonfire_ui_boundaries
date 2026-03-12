@@ -190,7 +190,7 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
   def circles_for_multiselect(context, circle_field \\ :to_circles)
 
   def circles_for_multiselect(context, circle_field) do
-    case current_user(context) do
+    case current_user_or_id(context) do
       nil ->
         []
 

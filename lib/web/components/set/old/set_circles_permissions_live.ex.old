@@ -33,7 +33,7 @@ defmodule Bonfire.UI.Boundaries.SetCirclesPermissionsLive do
     |> assign(
       :my_circles,
       e(assigns[:__context__], :my_circles, nil) ||
-        list_my_circles(current_user(assigns[:__context__]))
+        list_my_circles(current_user_or_id(assigns[:__context__]))
     )
     |> assign_new(:roles_for_dropdown, fn ->
       Bonfire.Boundaries.Roles.roles_for_dropdown(nil, scope: nil, context: assigns[:__context__])
@@ -151,7 +151,7 @@ defmodule Bonfire.UI.Boundaries.SetCirclesPermissionsLive do
   end
 
   def handle_event("multi_select", %{"add_circles" => circle_id}, socket) do
-    circles_list = list_my_circles(current_user(socket))
+    circles_list = list_my_circles(current_user_or_id(socket))
 
     # Find the circle by ID
     circle = Enum.find(circles_list, fn c -> c.id == circle_id end)

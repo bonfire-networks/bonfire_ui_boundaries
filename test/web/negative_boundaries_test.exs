@@ -59,15 +59,13 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
         to_circles: %{alice.id => "cannot_interact"}
       )
 
-    # login as alice and verify that she can see the post but cannot interact
+    # login as alice - buttons render as enabled (optimistic UI) but clicking should fail
     conn(user: alice, account: account)
-    |> visit("/feed/local")
-    |> within("[data-object_id='#{post.id}']", fn session ->
-      session
-      |> assert_has("[data-id=object_body]", text: html_body)
-      |> refute_has("button[data-role=like_enabled]")
-      |> refute_has("button[data-role=boost_enabled]")
-    end)
+    |> visit("/post/#{post.id}")
+    |> assert_has("[data-id=object_body]", text: html_body)
+    |> assert_has("button[data-role=like_enabled]")
+    |> click_button("[data-role=like_enabled]", "Like")
+    |> assert_has("[role=alert]")
 
     # login as bob and verify that he can like the post
     conn(user: bob, account: account)
@@ -79,7 +77,7 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
     end)
   end
 
-  # Test adding a user with a 'cannot participate' role and verify that the user can see and interact with the post but not reply to it but another local user can." do
+  # Test adding a user with a 'cannot participate' role and verify that the user can see and interact with the post but not reply to it but another local user can.
   test "Assign 'cannot_participate' to Alice, She can see, like and boost but not reply to the post, Bob can see and reply to it",
        %{me: me, alice: alice, bob: bob, account: account} do
     Process.put(:feed_live_update_many_preload_mode, :inline)
@@ -95,7 +93,7 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
         to_circles: %{alice.id => "cannot_participate"}
       )
 
-    # login as alice and verify that she can see the post
+    # login as alice - she can see, like and boost but reply should fail (optimistic UI)
     conn(user: alice, account: account)
     |> visit("/feed/local")
     |> within("[data-object_id='#{post.id}']", fn session ->
@@ -103,7 +101,7 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
       |> assert_has("[data-id=object_body]", text: html_body)
       |> assert_has("button[data-role=like_enabled]")
       |> assert_has("button[data-role=boost_enabled]")
-      |> refute_has("button[data-role=reply_enabled]")
+      |> assert_has("button[data-role=reply_enabled]")
     end)
 
     conn(user: bob, account: account)

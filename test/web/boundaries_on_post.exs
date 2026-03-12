@@ -87,11 +87,9 @@ defmodule Bonfire.UI.Boundaries.OnPostTest do
     |> assert_has("article button[data-role=boost_enabled]")
     |> assert_has("article button[data-role=reply_enabled]")
 
-    # login as bob and verify that he cannot like, boost and reply
+    # login as bob and verify that he cannot see the post (no access)
     conn(user: bob, account: account)
     |> visit("/post/#{post.id}")
-    |> refute_has("article button[data-role=like_enabled]")
-    |> refute_has("article button[data-role=boost_enabled]")
-    |> refute_has("article button[data-role=reply_enabled]")
+    |> refute_has("article", text: html_body)
   end
 end

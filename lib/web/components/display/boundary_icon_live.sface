@@ -1,12 +1,28 @@
 <span>
-  <Bonfire.UI.Boundaries.BoundaryIconStatelessLive
-    object_id={id(@object)}
-    object_boundary={@object_boundary}
-    scope={@scope}
-    parent_id={@id}
-    with_icon={@with_icon}
-    with_label={@with_label}
-    class={@class}
-    object_type={@object_type || Types.object_type(@object)}
-  />
+  {#if @details_only}
+    {#if @object_boundary}
+      <Bonfire.UI.Boundaries.BoundaryDetailsLive
+        scope={@scope}
+        object_id={id(@object)}
+        object_type={@object_type || Types.object_type(@object)}
+        object_boundary={@object_boundary}
+        boundary_preset={@boundary_preset}
+      />
+    {#else}
+      <div class="flex items-center justify-center py-8">
+        <span class="loading loading-spinner loading-md" />
+      </div>
+    {/if}
+  {#else}
+    <Bonfire.UI.Boundaries.BoundaryIconStatelessLive
+      object_id={id(@object)}
+      object_boundary={@object_boundary}
+      scope={@scope}
+      parent_id={@id}
+      with_icon={@with_icon}
+      with_label={@with_label}
+      class={@class}
+      object_type={@object_type || Types.object_type(@object)}
+    />
+  {/if}
 </span>

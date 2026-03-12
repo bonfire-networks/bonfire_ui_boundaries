@@ -15,6 +15,8 @@ defmodule Bonfire.UI.Boundaries.BoundaryIconLive do
   prop with_icon, :boolean, default: false
   prop with_label, :boolean, default: false
 
+  prop details_only, :boolean, default: false
+
   prop class, :css_class, default: nil
 
   def update_many(assigns_sockets) do
@@ -29,5 +31,23 @@ defmodule Bonfire.UI.Boundaries.BoundaryIconLive do
       socket ->
         socket
     end)
+  end
+
+  def render(assigns) do
+    assigns =
+      if assigns[:object_boundary] && !assigns[:boundary_preset] do
+        preset =
+          Bonfire.Boundaries.preset_boundary_tuple_from_acl(
+            assigns[:object_boundary],
+            e(assigns, :object_type, nil),
+            custom_tuple: {"custom", l("Custom")}
+          ) || {"custom", l("Custom")}
+
+        assign(assigns, :boundary_preset, preset)
+      else
+        assigns
+      end
+
+    render_sface(assigns)
   end
 end

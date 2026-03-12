@@ -21,7 +21,7 @@
             phx-hook="Tooltip"
             id="circles_nav_settings" -->
           <div class="normal-case font-normal absolute right-6">
-            <Bonfire.UI.Common.OpenModalLive id="new_circle" title_text={l("Create a new circle")} no_actions>
+            <Bonfire.UI.Common.OpenModalLive id="sidebar_new_circle" title_text={l("Create a new circle")} no_actions>
               <form id="new_circle_form" phx-submit="Bonfire.Boundaries.Circles:create">
                 {!-- phx-change="Bonfire.Boundaries.Circles:validate_for_create" --}
                 <Bonfire.UI.Boundaries.NewCircleLive scope={current_user_id(@__context__)} />

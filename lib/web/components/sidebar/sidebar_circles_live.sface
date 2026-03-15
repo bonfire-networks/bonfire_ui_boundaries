@@ -11,7 +11,7 @@
       >
         <summary
           phx-click="Bonfire.Boundaries.Circles:toggle_circles_nav_visibility"
-          class="relative font-bold uppercase text-xs text-base-content/50"
+          class="relative font-medium uppercase text-xs pl-5 text-base-content/50"
         >
           <span>{l("Circles")}</span>
           <!-- <#Icon iconify="ph:sliders-duotone" class="hidden" /> -->
@@ -42,12 +42,12 @@
           <li>
             <LinkLive
               to={~p"/circle/#{id(circle)}"}
-              class={["gap-3 py-1", "bg-primary/10": id(circle) == @page]}
+              class={["gap-2 py-1", "bg-primary/10": id(circle) == @page]}
             >
-              <div class="w-8 h-8 flex items-center place-content-center">
+              <div class="w-7 h-7 flex items-center place-content-center">
                 <Iconify.iconify icon="ph:circle-duotone" class="w-6 h-6 text-primary" />
               </div>
-              <span class="font-semibold text-base opacity-80">{LiveHandler.subject_name(circle)}</span>
+              <span class="font-normal text-base">{LiveHandler.subject_name(circle)}</span>
             </LinkLive>
           </li>
         {/for}

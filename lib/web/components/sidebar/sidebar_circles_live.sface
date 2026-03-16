@@ -42,9 +42,9 @@
           <li>
             <LinkLive
               to={~p"/circle/#{id(circle)}"}
-              class={["gap-2 py-1", "bg-primary/10": id(circle) == @page]}
+              class={["gap-3 py-1", "bg-primary/10": id(circle) == @page]}
             >
-              <div class="w-7 h-7 flex items-center place-content-center">
+              <div class="w-8 h-8 flex items-center place-content-center">
                 <Iconify.iconify icon="ph:circle-duotone" class="w-6 h-6 text-primary" />
               </div>
               <span class="font-normal text-base">{LiveHandler.subject_name(circle)}</span>

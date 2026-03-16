@@ -16,8 +16,14 @@ defmodule Bonfire.UI.Boundaries.Routes do
         )
 
         live("/circle/:id/:tab", Bonfire.UI.Boundaries.CircleLive)
+      end
 
-        # live("/list/:id", live_view_for_component(Bonfire.UI.Boundaries.CircleLive), as: Bonfire.Data.AccessControl.Circle) #WIP
+      # circles page
+      scope "/" do
+        pipe_through(:browser)
+        pipe_through(:user_required)
+
+        live("/circles", Bonfire.UI.Boundaries.MyCirclesPageLive)
       end
 
       if extension_enabled?(:bonfire_ui_me) do

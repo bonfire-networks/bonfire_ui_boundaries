@@ -6,6 +6,10 @@ defmodule Bonfire.UI.Boundaries.SidebarCirclesLive do
     exclude_from_nav: false
   )
 
+  declare_module_optional(l("Circles list in sidebar nav"),
+    default: :disabled
+  )
+
   def update(assigns, %{assigns: %{circles: _}} = socket) do
     debug("already loaded")
 

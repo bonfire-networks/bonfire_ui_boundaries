@@ -1,0 +1,8 @@
+<section class="w-full flex flex-col feed bg-base-200 lg:bg-base-100 mx-auto lg:rounded-2xl shadow outline outline-base-content/10">
+  <StatefulComponent
+    :if={current_user(@__context__)}
+    module={maybe_component(Bonfire.UI.Boundaries.MyCirclesLive, @__context__)}
+    id="circles"
+    scope={@scope}
+  />
+</section>

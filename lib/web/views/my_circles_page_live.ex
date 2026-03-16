@@ -3,7 +3,7 @@ defmodule Bonfire.UI.Boundaries.MyCirclesPageLive do
 
   declare_nav_link(l("Circles"),
     page: "circles",
-    icon: "ph:circle-duotone",
+    icon: "ph:circle-duotone"
   )
 
   declare_module_optional(l("Circles page link in sidebar nav"),

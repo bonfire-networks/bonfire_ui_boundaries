@@ -40,7 +40,7 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
     current_user = current_user_or_id(context)
 
     %{page_info: page_info, edges: circles} =
-      Bonfire.Boundaries.Circles.LiveHandler.my_circles_paginated(current_user)
+      my_circles(current_user)
 
     circles =
       Circles.list_subject_in_circles(e(assigns, :user_id, nil), circles)
@@ -50,6 +50,17 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
      |> assign(assigns)
      |> assign(page_info: page_info)
      |> assign(circles: circles)}
+  end
+
+  def my_circles(scope, _attrs \\ nil) do
+    circles =
+      Bonfire.Boundaries.Circles.list_my_for_sidebar(scope,
+        exclude_stereotypes: true,
+        exclude_built_ins: true
+      )
+
+    # Return in expected format (no pagination needed for sidebar - users have few circles)
+    %{page_info: nil, edges: circles}
   end
 
   def handle_event("circle_create_from_modal", %{"name" => name} = attrs, socket) do

@@ -433,21 +433,6 @@ defmodule Bonfire.Boundaries.LiveHandler do
     {:noreply, assign(socket, field, updated_circles)}
   end
 
-  def handle_event("load_more", attrs, socket) do
-    scope = scope_origin(socket)
-
-    %{page_info: page_info, edges: edges} =
-      Bonfire.Boundaries.Circles.LiveHandler.my_circles_paginated(scope, input_to_atoms(attrs))
-
-    {:noreply,
-     socket
-     |> assign(
-       loaded: true,
-       circles: e(assigns(socket), :circles, []) ++ edges,
-       page_info: page_info
-     )}
-  end
-
   # TODO
   # def handle_event("circle_soft_delete", _, socket) do
   #   id = uid!(e(assigns(socket), :circle, nil))

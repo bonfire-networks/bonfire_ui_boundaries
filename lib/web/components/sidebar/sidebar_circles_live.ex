@@ -31,7 +31,7 @@ defmodule Bonfire.UI.Boundaries.SidebarCirclesLive do
         debug("my_circles was preloaded at top level")
         %{page_info: nil, edges: circles}
       else
-        Bonfire.Boundaries.Circles.LiveHandler.my_circles_paginated(current_user_or_id(socket))
+        my_circles(current_user_or_id(socket))
       end
 
     # Always append the suggested profiles circle if not already present # TODO: add a way to hide in settings?
@@ -47,5 +47,16 @@ defmodule Bonfire.UI.Boundaries.SidebarCirclesLive do
        #  settings_section_title: "Create and manage your circles",
        #  settings_section_description: "Create and manage your circles."
      )}
+  end
+
+  def my_circles(scope, _attrs \\ nil) do
+    circles =
+      Bonfire.Boundaries.Circles.list_my_for_sidebar(scope,
+        exclude_stereotypes: true,
+        exclude_built_ins: true
+      )
+
+    # Return in expected format (no pagination needed for sidebar - users have few circles)
+    %{page_info: nil, edges: circles}
   end
 end

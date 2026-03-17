@@ -194,6 +194,29 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     end
   end
 
+  def handle_event("load_more", attrs, socket) do
+    scope = Bonfire.Boundaries.LiveHandler.scope_origin(socket)
+
+    %{page_info: page_info, edges: edges} =
+      my_circles_paginated(scope, input_to_atoms(attrs))
+
+    {:noreply,
+     socket
+     |> assign(
+       loaded: true,
+       circles: e(assigns(socket), :circles, []) ++ edges,
+       page_info: page_info
+     )}
+  end
+
+  def my_circles_paginated(scope, attrs \\ nil) do
+    Bonfire.Boundaries.Circles.list_my_with_counts(scope,
+      exclude_stereotypes: true,
+      exclude_built_ins: true,
+      paginate: attrs
+    )
+  end
+
   def circle_create(attrs, socket) do
     current_user = current_user_required!(socket)
     scope = maybe_to_atom(e(attrs, "scope", nil))
@@ -632,17 +655,6 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
         false
     end)
     |> debug("after_removal")
-  end
-
-  def my_circles_paginated(scope, _attrs \\ nil) do
-    circles =
-      Bonfire.Boundaries.Circles.list_my_for_sidebar(scope,
-        exclude_stereotypes: true,
-        exclude_built_ins: true
-      )
-
-    # Return in expected format (no pagination needed for sidebar - users have few circles)
-    %{page_info: nil, edges: circles}
   end
 
   def maybe_redirect_to(socket, _, %{"no_redirect" => r}) when r != "" do

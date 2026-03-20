@@ -14,7 +14,7 @@
       role_name={@role_name}
       scope={@scope}
       role_permissions={@role_permissions}
-      label={l("Your role")}
+      label={l("Your permissions")}
     />
   </div>
 
@@ -116,7 +116,7 @@
         type="button"
         x-on:click="edit = !edit"
         type="button"
-        class="btn btn-warning w-full"
+        class="btn btn-warning btn-sm"
       >
         {l("Edit boundaries")}
       </button>

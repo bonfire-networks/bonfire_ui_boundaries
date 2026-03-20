@@ -49,7 +49,7 @@
             <div class="">
               <StatefulComponent
                 module={Bonfire.UI.Boundaries.CustomizeBoundaryLive}
-                id="customize_boundary_for_acl"
+                id={deterministic_dom_id("customize_boundary", id(@acl), nil, @id)}
                 setting_boundaries={@setting_boundaries}
                 show_general_boundary={@show_general_boundary}
                 acl={@acl}

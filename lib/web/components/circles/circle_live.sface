@@ -2,7 +2,10 @@
   <header class="flex flex-col p-4 bonfire-wrapper pb-0">
     {!-- Title row: icon + name + settings --}
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center shrink-0" aria-hidden="true">
+      <div
+        class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center shrink-0"
+        aria-hidden="true"
+      >
         <#Icon iconify="ph:circle-duotone" class="w-6 h-6 text-secondary" />
       </div>
       <h2 class="text-2xl font-extrabold tracking-tight flex-1 min-w-0 truncate">{e(@circle, :named, :name, nil)}</h2>
@@ -54,11 +57,19 @@
         </span>
       {/if}
       {#if @created_ago}
-        <span :if={e(@circle, :creator_username, nil) || @member_count > 0} class="text-base-content/30" aria-hidden="true">·</span>
+        <span
+          :if={e(@circle, :creator_username, nil) || @member_count > 0}
+          class="text-base-content/30"
+          aria-hidden="true"
+        >·</span>
         <span>{l("created %{ago}", ago: @created_ago)}</span>
       {/if}
       {#if @boundary_preset}
-        <span :if={e(@circle, :creator_username, nil) || @member_count > 0 || @created_ago} class="text-base-content/30" aria-hidden="true">·</span>
+        <span
+          :if={e(@circle, :creator_username, nil) || @member_count > 0 || @created_ago}
+          class="text-base-content/30"
+          aria-hidden="true"
+        >·</span>
         <StatelessComponent
           module={maybe_component(Bonfire.UI.Boundaries.BoundariesPresetNameLive, @__context__)}
           boundary_preset={@boundary_preset}
@@ -126,7 +137,11 @@
       </div>
     {#else}
       <div class="flex items-center gap-2 px-4 py-2">
-        <#Icon iconify="ph:users-three-duotone" class="w-4 h-4 text-base-content/40 shrink-0" aria-hidden="true" />
+        <#Icon
+          iconify="ph:users-three-duotone"
+          class="w-4 h-4 text-base-content/40 shrink-0"
+          aria-hidden="true"
+        />
         <span class="text-sm text-base-content/50">{l("Showing posts from members of this circle")}</span>
       </div>
       <StatefulComponent

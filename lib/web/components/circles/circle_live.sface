@@ -1,68 +1,114 @@
-<div id="circle_view" class="w-full max-w-full flex flex-col feed w-full max-w-full">
-  <header class="flex flex-col p-4  bonfire-wrapper pb-0">
-    <div class="flex items-start gap-4">
-      <#Icon iconify="ph:circle-duotone" class="w-12 h-12 rotate-15 text-secondary stroke-1" />
-      <div class="flex justify-center justify-between w-full items-start flex-1">
-        <div class="flex flex-1 flex-col">
-          <div class="text-xl font-bold">{e(@circle, :named, :name, nil)}</div>
-          <div :if={e(@circle, :creator_username, nil)} class="text-sm text-base-content/70">{l("Circle created by ")} <LinkLive class="link text-base-content" to={"/@#{e(@circle, :creator_username, nil)}"}>{e(@circle, :creator_name, "")}</LinkLive></div>
-
-          {#if description = e(@circle, :extra_info, :summary, nil)}
-            <div class="text-base-content/70 mt-4">{description}</div>
-          {/if}
-        </div>
-
-        <div class="flex items-center gap-2">
-          <!-- <div>
-            <StatelessComponent
-              module={maybe_component(Bonfire.UI.Boundaries.BoundaryIconStatelessLive)}
-              object={@circle}
-              class="btn btn-sm btn-circle"
-              object_type={Bonfire.Data.AccessControl.Circle}
-              object_boundaries={@to_boundaries}
+<div id="circle_view" class="w-full max-w-full flex flex-col feed">
+  <header class="flex flex-col p-4 bonfire-wrapper pb-0">
+    {!-- Title row: icon + name + settings --}
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center shrink-0" aria-hidden="true">
+        <#Icon iconify="ph:circle-duotone" class="w-6 h-6 text-secondary" />
+      </div>
+      <h2 class="text-2xl font-extrabold tracking-tight flex-1 min-w-0 truncate">{e(@circle, :named, :name, nil)}</h2>
+      {#if @is_caretaker}
+        <div data-role="edit_circle_name">
+          <Bonfire.UI.Common.OpenModalLive
+            id="edit_name"
+            title_text={l("Edit circle")}
+            no_actions
+            open_btn_wrapper_class="flex flex-1 w-full"
+          >
+            <Bonfire.UI.Boundaries.ManageCircleLive
+              id={"members_#{@circle_id || id(@circle)}"}
+              circle_id={@circle_id || id(@circle)}
+              circle={@circle}
+              read_only={@read_only}
+              to_boundaries={@to_boundaries}
               boundary_preset={@boundary_preset}
             />
-          </div> -->
 
-          {#if @is_caretaker}
-            <div data-role="edit_circle_name" class="edit_name">
-              <Bonfire.UI.Common.OpenModalLive
-                id="edit_name"
-                title_text={l("Edit circle")}
-                no_actions
-                open_btn_wrapper_class="flex flex-1 w-full"
-              >
-                <Bonfire.UI.Boundaries.ManageCircleLive
-                  id={"members_#{@circle_id || id(@circle)}"}
-                  circle_id={@circle_id || id(@circle)}
-                  circle={@circle}
-                  read_only={@read_only}
-                  to_boundaries={@to_boundaries}
-                  boundary_preset={@boundary_preset}
-                />
-
-                <:open_btn>
-                  <div class="btn btn-sm btn-primary btn-soft btn-circle">
-                    <#Icon iconify="ph:sliders-horizontal-duotone" class="w-5 h-5" />
-                    <span class="sr-only">{l("Edit circle")}</span>
-                  </div>
-                </:open_btn>
-              </Bonfire.UI.Common.OpenModalLive>
-            </div>
-          {/if}
+            <:open_btn>
+              <div class="btn btn-sm btn-ghost btn-circle hover:bg-primary/10 hover:text-primary transition-colors duration-150">
+                <#Icon iconify="ph:sliders-horizontal-duotone" class="w-5 h-5" />
+                <span class="sr-only">{l("Edit circle")}</span>
+              </div>
+            </:open_btn>
+          </Bonfire.UI.Common.OpenModalLive>
         </div>
-      </div>
+      {/if}
     </div>
-    <div role="tablist" class="tabs pt-8 justify-evenly w-full tabs-border">
+
+    {!-- Metadata --}
+    <div class="flex items-center gap-2 mt-2 flex-wrap text-sm text-base-content/50">
+      <span :if={e(@circle, :creator_username, nil)}>
+        {l("by ")}
+        <LinkLive
+          class="text-base-content/70 hover:text-base-content transition-colors duration-150"
+          to={"/@#{e(@circle, :creator_username, nil)}"}
+        >{e(@circle, :creator_name, "")}</LinkLive>
+      </span>
+      {#if @member_count > 0}
+        <span :if={e(@circle, :creator_username, nil)} class="text-base-content/30" aria-hidden="true">·</span>
+        <span>
+          {#if @member_count == 1}
+            {l("1 member")}
+          {#else}
+            {l("%{count} members", count: @member_count)}
+          {/if}
+        </span>
+      {/if}
+      {#if @created_ago}
+        <span :if={e(@circle, :creator_username, nil) || @member_count > 0} class="text-base-content/30" aria-hidden="true">·</span>
+        <span>{l("created %{ago}", ago: @created_ago)}</span>
+      {/if}
+      {#if @boundary_preset}
+        <span :if={e(@circle, :creator_username, nil) || @member_count > 0 || @created_ago} class="text-base-content/30" aria-hidden="true">·</span>
+        <StatelessComponent
+          module={maybe_component(Bonfire.UI.Boundaries.BoundariesPresetNameLive, @__context__)}
+          boundary_preset={@boundary_preset}
+          with_icon
+          with_label
+          icon_class="w-4 h-4 text-base-content/50"
+          class="text-base-content/50"
+        />
+      {/if}
+    </div>
+
+    <div :if={@is_member} class="flex items-center gap-1.5 mt-1.5">
+      <#Icon iconify="ph:check-circle-duotone" class="w-4 h-4 text-success" aria-hidden="true" />
+      <span class="text-xs font-medium text-success">{l("You're in this circle")}</span>
+    </div>
+
+    {#if description = e(@circle, :extra_info, :summary, nil)}
+      <p class="text-sm text-base-content/70 mt-2 leading-relaxed">{description}</p>
+    {/if}
+
+    <div :if={@preview_members != []} class="flex items-center mt-3 gap-3">
+      <div class="flex -space-x-2">
+        {#for member <- @preview_members}
+          <Bonfire.UI.Common.AvatarLive
+            class="w-8 h-8 rounded-full ring-2 ring-base-100 hover:ring-primary/50 hover:z-10 transition-shadow duration-150"
+            src={Media.avatar_url(e(member, :subject, nil))}
+            user_id={e(member, :subject_id, nil)}
+            title={e(member, :subject, :profile, :name, "")}
+          />
+        {/for}
+      </div>
+      <LinkLive
+        :if={@member_count > Enum.count(@preview_members)}
+        to={"/circle/#{id(@circle)}/members"}
+        class="text-xs font-medium text-base-content/50 hover:text-base-content transition-colors duration-150"
+        aria-label={l("View all %{count} members", count: @member_count)}
+      >
+        {l("+%{count} more", count: @member_count - Enum.count(@preview_members))}
+      </LinkLive>
+    </div>
+    <div role="tablist" class="tabs pt-6 justify-center gap-8 w-full tabs-border">
       <LinkLive
         to={"/circle/#{id(@circle)}"}
         role="tab"
-        class={"tab", "tab-active": @selected_tab != "members"}
+        class={"tab font-medium transition-colors duration-150", "tab-active": @selected_tab != "members"}
       >{l("Feed")}</LinkLive>
       <LinkLive
         to={"/circle/#{id(@circle)}/members"}
         role="tab"
-        class={"tab", "tab-active": @selected_tab == "members"}
+        class={"tab font-medium transition-colors duration-150", "tab-active": @selected_tab == "members"}
       >{l("Members")}</LinkLive>
     </div>
   </header>
@@ -79,6 +125,10 @@
         />
       </div>
     {#else}
+      <div class="flex items-center gap-2 px-4 py-2">
+        <#Icon iconify="ph:users-three-duotone" class="w-4 h-4 text-base-content/40 shrink-0" aria-hidden="true" />
+        <span class="text-sm text-base-content/50">{l("Showing posts from members of this circle")}</span>
+      </div>
       <StatefulComponent
         module={maybe_component(Bonfire.UI.Social.FeedLive, @__context__)}
         id={ComponentID.new(Bonfire.UI.Social.FeedLive, @feed_name, __MODULE__)}

@@ -4,10 +4,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
 
   on_mount {LivePlugs, [Bonfire.UI.Me.LivePlugs.LoadCurrentUser]}
 
-  def mount(params, _session, socket) do
-    # id = e(params, "id", nil)
-    # assign_circle(socket, id, params, :ok)
-
+  def mount(_params, _session, socket) do
     {:ok,
      socket
      |> assign(:circle, nil)
@@ -21,21 +18,13 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
      |> assign(:feed_title, nil)
      |> assign(:page_info, nil)
      |> assign(:members, [])
+     |> assign(:member_count, 0)
+     |> assign(:preview_members, [])
+     |> assign(:is_member, false)
+     |> assign(:created_ago, nil)
      |> assign(:is_caretaker, false)
      |> assign(:page, nil)}
   end
-
-  # def handle_params(%{"tab" => "members"}, _session, socket) do
-  #   # with {:ok, data} <-
-  #   #        load_members(
-  #   #          e(assigns(socket), :circle_id, nil) || e(assigns(socket), :circle, :id, nil)
-  #   #        ) do
-  #     {:noreply, socket
-  #     |> assign(:selected_tab, "members")
-  #     #|> assign(data)
-  #     }
-  #   # end
-  # end
 
   def handle_params(params, _session, socket) do
     id = e(params, "id", nil)
@@ -70,14 +59,14 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
       {ok_atom,
        socket
        |> assign(
-         # TODO
          read_only: true,
-         page_title: name,
+         page_title: l("Circle"),
          feed_name: :custom,
          feed_title: name,
          feed_filters: %{subject_circles: [e(data, :circle, :id, nil)]},
          page_info: nil,
-         show_remove: true
+         show_remove: true,
+         sidebar_widgets: []
        )
        |> assign(data)}
     else
@@ -120,7 +109,6 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
 
       creator_id = e(circle, :caretaker, :caretaker, :character, :id, nil)
 
-      # object_acls = Bonfire.Boundaries.list_object_boundaries(id)
       preset_acl = Bonfire.Boundaries.Controlleds.get_preset_on_object(id)
 
       object_boundary =
@@ -130,6 +118,22 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
       is_caretaker =
         creator_id == id(current_user) or
           Bonfire.Boundaries.can?(current_user, :configure, object_boundary)
+
+      member_count = Circles.count_members(id)
+
+      preview_members =
+        case Circles.list_members(id, limit: 5) do
+          %{edges: edges} when is_list(edges) -> edges
+          list when is_list(list) -> list
+          _ -> []
+        end
+
+      is_member =
+        if current_user,
+          do: Circles.is_encircled_by?(current_user, id),
+          else: false
+
+      created_ago = DatesTimes.date_from_now(id)
 
       {:ok,
        %{
@@ -144,12 +148,19 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
          loaded: true,
          to_boundaries: object_boundary,
          boundary_preset:
-           Bonfire.Boundaries.preset_boundary_tuple_from_acl(
-             preset_acl,
-             Bonfire.Data.AccessControl.Circle,
-             custom_tuple: {"custom", l("Custom")}
+           if(preset_acl,
+             do:
+               Bonfire.Boundaries.preset_boundary_tuple_from_acl(
+                 preset_acl,
+                 Bonfire.Data.AccessControl.Circle
+               ),
+             else: {"private", l("Private")}
            )
            |> debug("boundary_preset"),
+         member_count: member_count,
+         preview_members: preview_members,
+         is_member: is_member,
+         created_ago: created_ago,
          is_caretaker: is_caretaker,
          read_only:
            is_nil(current_user) or
@@ -159,26 +170,4 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
        }}
     end
   end
-
-  # def load_members(circle, opts \\ []) do
-  #   # Get the total count for display purposes
-  #   total_members_count = nil
-  #   # Circles.count_members(id)
-  #   # |> debug("total_members_count")
-
-  #   # Load members with cursor-based pagination
-  #   %{edges: members, page_info: page_info} =
-  #     Circles.list_members(
-  #       Enums.id(circle),
-  #       opts
-  #     )
-  #     |> debug("paginated_members")
-
-  #   {:ok,
-  #    %{
-  #      total_members_count: total_members_count,
-  #      page_info: page_info,
-  #      members: members || []
-  #    }}
-  # end
 end

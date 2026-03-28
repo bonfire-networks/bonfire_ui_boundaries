@@ -26,6 +26,7 @@
             id={"set_acl_#{id(acl)}"}
             acl_id={id(acl)}
             acl={acl}
+            object_id={@object_id}
             setting_boundaries={:edit_object}
             show_general_boundary={@show_general_boundary}
             to_boundaries={@boundary_preset || @to_boundaries}

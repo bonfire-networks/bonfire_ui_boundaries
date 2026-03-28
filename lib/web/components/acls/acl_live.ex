@@ -19,6 +19,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
   prop title, :string, default: nil
   prop description, :string, default: nil
   prop show_general_boundary, :boolean, default: false
+  prop object_id, :string, default: nil
   prop to_boundaries, :any, default: nil
   prop to_circles, :list, default: []
   prop exclude_circles, :list, default: []
@@ -335,14 +336,33 @@ defmodule Bonfire.UI.Boundaries.AclLive do
      )}
   end
 
-  # Handle preset changes from CustomizeBoundaryLive
-  def handle_event("change_acl_preset", %{"id" => preset_id}, socket) do
-    # TODO: Apply preset template to current ACL when function is available
+  def handle_event("change_acl_preset", %{"id" => preset_id} = params, socket) do
     debug(preset_id, "preset_id to apply")
+    object_id = e(assigns(socket), :object_id, nil)
 
-    {:noreply,
-     socket
-     |> assign_flash(:info, l("Preset change not yet implemented"))}
+    if is_binary(object_id) do
+      Bonfire.Boundaries.Controlleds.list_preset_acl_ids_on_object(object_id)
+      |> MapSet.to_list()
+      |> then(&Bonfire.Boundaries.Controlleds.remove_acls(object_id, &1))
+
+      new_acl_ids =
+        Bonfire.Boundaries.acls_from_preset_boundary_names(preset_id)
+        |> Enum.map(&Acls.get_id!/1)
+
+      if new_acl_ids != [] do
+        Bonfire.Boundaries.Controlleds.add_acls(object_id, new_acl_ids)
+      end
+
+      {:noreply,
+       socket
+       |> assign(to_boundaries: [{preset_id, e(params, "name", preset_id)}])
+       |> assign_flash(:info, l("Boundary updated!"))
+       |> assign_updated(true)}
+    else
+      {:noreply,
+       socket
+       |> assign_error(l("Could not update boundary: object not found"))}
+    end
   end
 
   def add_to_acl(id, socket) when is_binary(id) do

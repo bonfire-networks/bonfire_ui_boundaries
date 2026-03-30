@@ -84,6 +84,12 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
     with true <- Bonfire.Boundaries.can?(assigns(socket)[:__context__], :block, :instance_wide),
          {:ok, _} <- Bonfire.Boundaries.Blocks.block(id, :ghost, :instance_wide),
          {:ok, _} <- Bonfire.Boundaries.Blocks.block(id, :silence, :instance_wide) do
+      # Force-logout all sessions for the blocked user's account
+      with %{account_id: account_id} <-
+             Bonfire.Common.Repo.get_by(Bonfire.Data.Identity.Accounted, id: id) do
+        Bonfire.Me.Users.LiveHandler.force_logout_account(account_id)
+      end
+
       Bonfire.UI.Common.OpenModalLive.close()
 
       # ComponentID.send_assigns(

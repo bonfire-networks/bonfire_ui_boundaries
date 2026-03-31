@@ -126,7 +126,7 @@
         </div> --}
     </div>
   {#match boundary_name}
-    <div class="btn-active btn btn-ghost btn-sm max-w-[120px] cursor-default">
+    <div class="btn-active btn btn-ghost btn-sm cursor-default">
       <span>{boundary_name}</span>
     </div>
 {/case}

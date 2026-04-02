@@ -1,57 +1,91 @@
 <div>
   <ul class="menu relative p-0 w-full mt-2">
     <li class="w-full">
-      <details
-        open={Bonfire.Common.Settings.get(
-          [Bonfire.UI.Boundaries.MyCirclesLive, :show_circles_nav_open],
-          true,
-          @__context__
+      {#if Bonfire.Common.Settings.get(
+          [:ui, :sidebar, :disable_collapsible],
+          false,
+          @__context__[:instance_settings] || :instance
         )}
-        class="w-full overflow-hidden"
-      >
-        <summary
-          phx-click="Bonfire.Boundaries.Circles:toggle_circles_nav_visibility"
-          class="relative font-medium uppercase text-xs pl-5 text-base-content/50"
-        >
-          <span>{l("Circles")}</span>
-          <!-- <#Icon iconify="ph:sliders-duotone" class="hidden" /> -->
+        <details open class="details-static w-full overflow-hidden">
+          <summary class="relative font-medium uppercase text-xs pl-5 text-base-content/50">
+            <span>{l("Circles")}</span>
+            <div class="normal-case font-normal absolute right-6 pointer-events-auto">
+              <Bonfire.UI.Common.OpenModalLive
+                id="sidebar_new_circle"
+                title_text={l("Create a new circle")}
+                no_actions
+              >
+                <form id="new_circle_form" phx-submit="Bonfire.Boundaries.Circles:create">
+                  <Bonfire.UI.Boundaries.NewCircleLive scope={current_user_id(@__context__)} />
+                </form>
 
-          <!-- data-trigger="hover"
-            data-position="top-end"
-            phx-hook="Tooltip"
-            id="circles_nav_settings" -->
-          <div class="normal-case font-normal absolute right-6">
-            <Bonfire.UI.Common.OpenModalLive
-              id="sidebar_new_circle"
-              title_text={l("Create a new circle")}
-              no_actions
-            >
-              <form id="new_circle_form" phx-submit="Bonfire.Boundaries.Circles:create">
-                {!-- phx-change="Bonfire.Boundaries.Circles:validate_for_create" --}
-                <Bonfire.UI.Boundaries.NewCircleLive scope={current_user_id(@__context__)} />
-              </form>
-
-              <:open_btn>
-                <span class="btn btn-circle btn-ghost btn-xs"><#Icon iconify="ph:plus-duotone" class="w-5 h-5" /></span>
-              </:open_btn>
-            </Bonfire.UI.Common.OpenModalLive>
-            <!-- <span class="w-auto tooltip bg-base-300 rounded-md px-2 py-1.5 text-base-content/90 text-[13px] font-medium border border-base-content/10 shadow hidden absolute top-0">{l "New circle"}</span> -->
+                <:open_btn>
+                  <span class="btn btn-circle btn-ghost btn-xs"><#Icon iconify="ph:plus-duotone" class="w-5 h-5" /></span>
+                </:open_btn>
+              </Bonfire.UI.Common.OpenModalLive>
+            </div>
+          </summary>
+          <div class="pointer-events-auto">
+            {#for circle <- e(@circles, [])}
+              <li>
+                <LinkLive
+                  to={~p"/circle/#{id(circle)}"}
+                  class={["gap-3 py-1", "bg-primary/10": id(circle) == @page]}
+                >
+                  <div class="w-8 h-8 flex items-center place-content-center">
+                    <Iconify.iconify icon="ph:circle-duotone" class="w-6 h-6 text-primary" />
+                  </div>
+                  <span class="font-normal text-base">{LiveHandler.subject_name(circle)}</span>
+                </LinkLive>
+              </li>
+            {/for}
           </div>
-        </summary>
-        {#for circle <- e(@circles, [])}
-          <li>
-            <LinkLive
-              to={~p"/circle/#{id(circle)}"}
-              class={["gap-3 py-1", "bg-primary/10": id(circle) == @page]}
-            >
-              <div class="w-8 h-8 flex items-center place-content-center">
-                <Iconify.iconify icon="ph:circle-duotone" class="w-6 h-6 text-primary" />
-              </div>
-              <span class="font-normal text-base">{LiveHandler.subject_name(circle)}</span>
-            </LinkLive>
-          </li>
-        {/for}
-      </details>
+        </details>
+      {#else}
+        <details
+          open={Bonfire.Common.Settings.get(
+            [Bonfire.UI.Boundaries.MyCirclesLive, :show_circles_nav_open],
+            true,
+            @__context__
+          )}
+          class="w-full overflow-hidden"
+        >
+          <summary
+            phx-click="Bonfire.Boundaries.Circles:toggle_circles_nav_visibility"
+            class="relative font-medium uppercase text-xs pl-5 text-base-content/50"
+          >
+            <span>{l("Circles")}</span>
+            <div class="normal-case font-normal absolute right-6">
+              <Bonfire.UI.Common.OpenModalLive
+                id="sidebar_new_circle"
+                title_text={l("Create a new circle")}
+                no_actions
+              >
+                <form id="new_circle_form" phx-submit="Bonfire.Boundaries.Circles:create">
+                  <Bonfire.UI.Boundaries.NewCircleLive scope={current_user_id(@__context__)} />
+                </form>
+
+                <:open_btn>
+                  <span class="btn btn-circle btn-ghost btn-xs"><#Icon iconify="ph:plus-duotone" class="w-5 h-5" /></span>
+                </:open_btn>
+              </Bonfire.UI.Common.OpenModalLive>
+            </div>
+          </summary>
+          {#for circle <- e(@circles, [])}
+            <li>
+              <LinkLive
+                to={~p"/circle/#{id(circle)}"}
+                class={["gap-3 py-1", "bg-primary/10": id(circle) == @page]}
+              >
+                <div class="w-8 h-8 flex items-center place-content-center">
+                  <Iconify.iconify icon="ph:circle-duotone" class="w-6 h-6 text-primary" />
+                </div>
+                <span class="font-normal text-base">{LiveHandler.subject_name(circle)}</span>
+              </LinkLive>
+            </li>
+          {/for}
+        </details>
+      {/if}
     </li>
   </ul>
 </div>

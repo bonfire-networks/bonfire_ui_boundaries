@@ -4,12 +4,12 @@
   {!-- {#if description = e(@circle, :extra_info, :summary, nil)}
         <div class="text-base-content/70 p-2 pb-0">{description}</div>
       {/if} --}
-  <div class="menu menu-horizontal items-center justify-between gap-3 w-full">
+  <div class="menu menu-horizontal items-center justify-between gap-3 w-full p-0">
     {#if !e(@circle, :stereotyped, :stereotype_id, nil) and !@read_only}
       <form
         id="edit_circle_general"
         phx-submit="Bonfire.Boundaries.Circles:edit"
-        class="w-full mt-4 form-control"
+        class="w-full mt-2 form-control"
       >
         <input type="hidden" name="circle_id" value={e(@circle, :id, nil)}>
         <fieldset class="fieldset">

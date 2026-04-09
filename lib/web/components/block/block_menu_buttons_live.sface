@@ -9,7 +9,7 @@
       )}
       class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
     >
-      <#Icon :if={@with_icon} iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" />
+      {!-- <#Icon :if={@with_icon} iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" /> --}
       <span class="truncate ellipsis">{l("Block")}</span>
     </LinkLive>
   </li>

@@ -1,5 +1,51 @@
 <div>
   {#if !@hide_presets}
+    {!-- Preset buttons driven by config :bonfire_boundaries, :preset_order --}
+    {#for slug <-
+        Bonfire.Common.Config.get(:preset_order, ["public", "local", "mentions"], :bonfire_boundaries)}
+      {!-- {:ok, meta} = {:ok, Bonfire.Boundaries.Presets.for_preset(slug) || %{}} --}
+      <div class={[
+        "flex items-center gap-3 rounded-lg justify-between hover:bg-base-content/5",
+        "bg-base-content/5": matches?(@boundary_preset, slug)
+      ]}>
+        <button
+          data-scope={"#{slug}_boundary"}
+          class="text-base-content flex items-center p-2 gap-2 justify-between w-full"
+          phx-click={@set_action ||
+            JS.push("Bonfire.Boundaries:replace_boundary",
+              value: %{id: slug, name: e(Bonfire.Boundaries.Presets.for_preset(slug), :label, slug)},
+              target: "#customize_boundary_live"
+            )}
+          phx-value-id={slug}
+          phx-value-name={e(Bonfire.Boundaries.Presets.for_preset(slug), :label, slug)}
+          type="button"
+          {...@set_opts}
+        >
+          <div class="flex items-center gap-2">
+            <div class="pr-2 flex items-center text-left">
+              <div class="flex-shrink-0">
+                <span class="bg-base-content/10 items-center rounded-full w-9 h-9 flex place-content-center">
+                  <Iconify.iconify
+                    icon={e(Bonfire.Boundaries.Presets.for_preset(slug), :icon, "ph:gear-six-duotone")}
+                    class="w-4 h-4 text-base-content/90"
+                  />
+                </span>
+              </div>
+              <div class="flex flex-col ml-3">
+                <div class="text-sm font-semibold text-base-content/90">
+                  {e(Bonfire.Boundaries.Presets.for_preset(slug), :label, slug)}
+                </div>
+                <p class="hidden lg:block text-xs text-base-content/70">
+                  {e(Bonfire.Boundaries.Presets.for_preset(slug), :description, nil)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+    {/for}
+
+    {!-- OLD hardcoded preset blocks (kept for reference):
     <!-- PUBLIC -->
     <div class={[
       "flex items-center gap-3 rounded-lg justify-between hover:bg-base-content/5",
@@ -33,15 +79,15 @@
           </div>
         </div>
 
-        {!-- <input
+        <!-- <input
       :if={@is_customizable}
       type="radio"
       name="radio-1"
       class="radio"
       checked={matches?(@boundary_preset, "public")}
-    /> --}
+    /> -->
       </button>
-      {!-- <div
+      <!-- <div
     :if={!@is_dropdown and !@hide_custom}
     class="flex items-center gap-3 border-l border-base-content/30 pl-1 pr-2"
     >
@@ -59,7 +105,7 @@
       <#Icon iconify="ri:settings-4-line" class="w-4 h-4 text-base-content/70" />
       <span class="sr-only">{l("Customise")}</span>
     </button>
-  </div> --}
+  </div> -->
     </div>
 
     <!-- LOCAL -->
@@ -95,15 +141,15 @@
             </div>
           </div>
         </div>
-        {!-- <input
+        <!-- <input
             :if={@is_customizable}
             type="radio"
             name="radio-1"
             class="radio"
             checked={matches?(@boundary_preset, "local")}
-          /> --}
+          /> -->
       </button>
-      {!-- <div
+      <!-- <div
           :if={!@is_dropdown and !@hide_custom}
           class="flex items-center gap-3 border-l border-base-content/30 pl-1 pr-2"
           >
@@ -121,7 +167,7 @@
             <#Icon iconify="ri:settings-4-line" class="w-4 h-4 text-base-content/70" />
             <span class="sr-only">{l("Customise")}</span>
           </button>
-        </div> --}
+        </div> -->
     </div>
 
     <!-- MENTIONS-ONLY -->
@@ -159,8 +205,11 @@
         </div>
       </button>
     </div>
+
+  END OF OLD HARDCODED LIST --}
   {/if}
-  <!-- CUSTOM -->
+
+  <!-- CUSTOM ACLs -->
   {#for {acl_id, acl} <- @my_acls}
     <div
       data-role="custom_boundary"
@@ -199,39 +248,9 @@
             </div>
           </div>
         </div>
-
-        {!-- <input
-            :if={@is_customizable}
-            type="radio"
-            name="radio-1"
-            class="radio"
-            checked={matches?(@to_boundaries, acl_id)}
-          /> --}
       </button>
-
-      {!-- <div
-          :if={!@hide_custom}
-          class="flex items-center gap-3 border-l border-base-content/30 pl-1 pr-2"
-        >
-          <button
-            type="button"
-            phx-click={@set_action ||JS.toggle(to: "#extra_boundaries")
-            |> JS.toggle(to: "#composer_container")
-            |> JS.push("Bonfire.Boundaries:custom_from_preset_template",
-              value: %{boundary: acl_id, name: e(acl, :name, nil)},
-              target: "#customize_boundary_live"
-            )}
-            class="btn btn-xs btn-ghost normal-case btn-circle"
-            title={l("Customise or add extra boundaries")}
-          >
-            <#Icon iconify="ri:settings-4-line" class="w-4 h-4 text-base-content/70" />
-            <span class="sr-only">{l("Customise")}</span>
-          </button>
-        </div> --}
     </div>
   {/for}
-
-  {!-- CREATE A NEW ONE --}
 
   {#if !@hide_custom}
     <div class={[
@@ -270,25 +289,34 @@
         class="text-base-content flex items-center gap-2 justify-between w-full"
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
-            value: %{id: "private", name: l("Private")},
+            value: %{
+              id: "private",
+              name: e(Bonfire.Boundaries.Presets.for_preset("private"), :label, l("Private"))
+            },
             target: "#customize_boundary_live"
           )}
         phx-value-id="private"
-        phx-value-name={l("Private")}
+        phx-value-name={e(Bonfire.Boundaries.Presets.for_preset("private"), :label, l("Private"))}
         type="button"
         {...@set_opts}
       >
         <div class="flex items-center text-left">
           <div class="flex-shrink-0 bg-base-content/10 items-center rounded-full w-9 h-9 flex place-content-center">
-            <#Icon iconify="heroicons-solid:eye-off" class="w-4 h-4 text-base-content/90" />
-            {!-- 
-                <#Icon iconify="ri:at-line" class={"w-4 h-4 text-base-content/90", "!w-4 !h-4": @is_dropdown} />
-                <span class={"text-2xl", "!text-lg": @is_dropdown}>﹫</span> --}
+            <Iconify.iconify
+              icon={e(Bonfire.Boundaries.Presets.for_preset("private"), :icon, "heroicons-solid:eye-off")}
+              class="w-4 h-4 text-base-content/90"
+            />
           </div>
           <div class="flex flex-col ml-3">
-            <div class="text-sm font-semibold text-base-content/90">{l("Private")}</div>
+            <div class="text-sm font-semibold text-base-content/90">
+              {e(Bonfire.Boundaries.Presets.for_preset("private"), :label, l("Private"))}
+            </div>
             <p class="hidden lg:block text-xs text-base-content/70">
-              {l("Only visible to the creator and/or caretaker.")}
+              {e(
+                Bonfire.Boundaries.Presets.for_preset("private"),
+                :description,
+                l("Only visible to the creator and/or caretaker.")
+              )}
             </p>
           </div>
         </div>

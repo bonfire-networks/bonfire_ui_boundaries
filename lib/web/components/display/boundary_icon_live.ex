@@ -37,7 +37,7 @@ defmodule Bonfire.UI.Boundaries.BoundaryIconLive do
     assigns =
       if assigns[:object_boundary] && !assigns[:boundary_preset] do
         preset =
-          Bonfire.Boundaries.preset_boundary_tuple_from_acl(
+          Bonfire.Boundaries.Presets.preset_boundary_tuple_from_acl(
             assigns[:object_boundary],
             e(assigns, :object_type, nil),
             custom_tuple: {"custom", l("Custom")}

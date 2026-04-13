@@ -144,7 +144,7 @@ defmodule Bonfire.UI.Boundaries.ManageCircleLive do
        to_boundaries: object_acls |> debug("custom_acls"),
        boundary_preset:
          (boundary_preset ||
-            Bonfire.Boundaries.preset_boundary_tuple_from_acl(
+            Bonfire.Boundaries.Presets.preset_boundary_tuple_from_acl(
               object_acls,
               Bonfire.Data.AccessControl.Circle
             ))

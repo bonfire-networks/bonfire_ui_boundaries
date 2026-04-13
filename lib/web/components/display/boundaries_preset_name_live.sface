@@ -1,3 +1,117 @@
+{#case {List.last(List.wrap(@boundary_preset || @to_boundaries)),
+   Bonfire.Boundaries.Presets.for_preset(List.last(List.wrap(@boundary_preset || @to_boundaries)))}}
+  {#match {preset_identifier, %{} = meta}}
+    {!-- Any slug with a config entry (public, local, mentions, follows, private, global, members_only, on_request, etc.) --}
+    <span
+      title={meta[:tooltip] || (meta[:label] && meta[:label] <> ": " <> (meta[:description] || ""))}
+      class={
+        @class,
+        "flex items-center gap-2": @with_label && @with_icon
+      }
+    >
+      <span :if={@with_icon} class={@icon_wrapper}>
+        <Iconify.iconify icon={meta[:icon] || "ph:gear-six-duotone"} class={@icon_class} />
+      </span>
+      <div class="flex flex-col gap-0 items-start">
+        <span
+          data-scope={"#{if is_tuple(preset_identifier), do: elem(preset_identifier, 0), else: preset_identifier}-boundary-set"}
+          class={
+            "text-sm normal-case",
+            "sr-only": !@with_label,
+            "btn btn-sm btn-outline": @with_icon != true
+          }
+        >{meta[:label]}</span>
+        <span
+          :if={@with_description}
+          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+        >{meta[:description]}</span>
+      </div>
+    </span>
+  {#match {{id, name}, nil} when id != "custom"}
+    {!-- Circle or ACL with its own name/icon data (e.g. custom ACLs, "Follows" circle) --}
+    <span
+      data-id="preset"
+      title={e(name, :named, nil) || e(name, :name, nil) || name || l("Preset Boundary")}
+      class={
+        @class,
+        "flex items-center gap-2": @with_label && @with_icon
+      }
+    >
+      <span :if={@with_icon} class={@icon_wrapper}>
+        {#case e(name, :icon, nil)}
+          {#match nil}
+            {#case e(name, :named, nil) || e(name, :name, nil) || name}
+              {#match "Mentions"}
+                <span class="text-base">@</span>
+              {#match _}
+                <#Icon iconify="fluent:door-tag-20-filled" class={@icon_class} />
+            {/case}
+          {#match icon}
+            <Iconify.iconify icon={icon} class={@icon_class} />
+        {/case}
+      </span>
+      <div class="flex flex-col gap-0 items-start">
+        <span class={
+          "text-sm normal-case",
+          "sr-only": !@with_label,
+          "btn btn-sm btn-outline": @with_icon != true
+        }>{e(name, :name, nil) || name || l("Preset Boundary")}</span>
+        <span
+          :if={@with_description}
+          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+        >{e(name, :description, nil)}</span>
+      </div>
+    </span>
+
+    {!-- Custom ACL with a plain string name --}
+  {#match {{id, name}, nil} when is_binary(name)}
+    <span
+      data-id={id}
+      data-role="custom"
+      title={name}
+      class={
+        @class,
+        "flex items-center gap-2": @with_label && @with_icon
+      }
+    >
+      <span :if={@with_icon} class={@icon_wrapper}>
+        <#Icon iconify="ph:gear-six-duotone" class={@icon_class} />
+      </span>
+      <div class="flex flex-col gap-0 items-start">
+        <span class={
+          "text-sm normal-case",
+          "sr-only": !@with_label,
+          "btn btn-sm btn-outline": @with_icon != true
+        }>{name}</span>
+        <span
+          :if={@with_description}
+          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+        >{l("A custom boundary")}</span>
+      </div>
+    </span>
+
+    {!-- Fallback --}
+  {#match {other, nil}}
+    <span
+      data-id="other"
+      title={l("Custom Boundaries")}
+      class={
+        @class,
+        "flex items-center gap-2": @with_label && @with_icon
+      }
+    >
+      <span :if={@with_icon} class={@icon_wrapper}>
+        <#Icon iconify="ph:gear-six-duotone" class={@icon_class} />
+      </span>
+      <span class={
+        "text-sm normal-case",
+        "sr-only": !@with_label,
+        "btn btn-sm btn-outline": @with_icon != true
+      }>{e(@__context__, :my_acls, other, nil) || l("Custom Boundaries")}</span>
+    </span>
+{/case}
+
+{!-- OLD hardcoded cases (kept for reference):
 {#case List.last(List.wrap(@boundary_preset || @to_boundaries))}
   {#match {"public", _}}
     <span
@@ -209,3 +323,4 @@
       }>{e(@__context__, :my_acls, other, nil) || l("Custom Boundaries")}</span>
     </span>
 {/case}
+--}

@@ -150,7 +150,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
          boundary_preset:
            if(preset_acl,
              do:
-               Bonfire.Boundaries.preset_boundary_tuple_from_acl(
+               Bonfire.Boundaries.Presets.preset_boundary_tuple_from_acl(
                  preset_acl,
                  Bonfire.Data.AccessControl.Circle
                ),

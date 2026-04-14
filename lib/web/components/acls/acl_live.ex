@@ -346,7 +346,7 @@ defmodule Bonfire.UI.Boundaries.AclLive do
       |> then(&Bonfire.Boundaries.Controlleds.remove_acls(object_id, &1))
 
       new_acl_ids =
-        Bonfire.Boundaries.acls_from_preset_boundary_names(preset_id)
+        Bonfire.Boundaries.Presets.acls_from_preset_boundary_names(preset_id)
         |> Enum.map(&Acls.get_id!/1)
 
       if new_acl_ids != [] do

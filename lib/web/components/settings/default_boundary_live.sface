@@ -1,7 +1,7 @@
 <div data-scope="safety_boundary_default" phx-hook="Tooltip" id="popup_settings_boundaries">
   <label class="tooltip-button flex items-center justify-between gap-2 btn-secondary btn-soft btn">
     {Settings.get(
-      [:ui, :boundary_preset],
+      [:bonfire_boundaries, :default_boundary_preset],
       "public",
       Bonfire.Common.Settings.LiveHandler.scoped(@scope, @__context__)
       # |> debug("scopped")
@@ -22,7 +22,7 @@
       set_opts={%{"phx-value-scope" => @scope}}
       parent_id="boundaries_in_settings"
       boundary_preset={Settings.get(
-        [:ui, :boundary_preset],
+        [:bonfire_boundaries, :default_boundary_preset],
         "public",
         Bonfire.Common.Settings.LiveHandler.scoped(@scope, @__context__)
         |> debug("scopped")

@@ -38,7 +38,7 @@ defmodule Bonfire.UI.Boundaries.ChangeObjectBoundaryTest do
       updated_preset_acls = Controlleds.list_preset_acl_ids_on_object(post.id)
 
       local_acl_ids =
-        Boundaries.acls_from_preset_boundary_names("local")
+        Boundaries.Presets.acls_from_preset_boundary_names("local")
         |> Enum.map(&Acls.get_id!/1)
         |> MapSet.new()
 
@@ -88,7 +88,7 @@ defmodule Bonfire.UI.Boundaries.ChangeObjectBoundaryTest do
       |> then(&Controlleds.remove_acls(post.id, &1))
 
       new_acl_ids =
-        Boundaries.acls_from_preset_boundary_names("local")
+        Boundaries.Presets.acls_from_preset_boundary_names("local")
         |> Enum.map(&Acls.get_id!/1)
 
       if new_acl_ids != [], do: Controlleds.add_acls(post.id, new_acl_ids)

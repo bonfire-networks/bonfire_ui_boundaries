@@ -79,7 +79,7 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
 
   def get_preset_circles_info(boundary_preset) when is_binary(boundary_preset) do
     # Get ACL names for this preset
-    acl_names = Bonfire.Boundaries.acls_from_preset_boundary_names(boundary_preset)
+    acl_names = Bonfire.Boundaries.Presets.acls_from_preset_boundary_names(boundary_preset)
 
     # Get grants for each ACL from configuration and return as tuples for BoundaryItemsLive
     acl_names
@@ -106,7 +106,7 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
   def get_preset_verb_permissions(boundary_preset, verb)
       when is_binary(boundary_preset) and is_atom(verb) do
     # Get ACL names for this preset
-    acl_names = Bonfire.Boundaries.acls_from_preset_boundary_names(boundary_preset)
+    acl_names = Bonfire.Boundaries.Presets.acls_from_preset_boundary_names(boundary_preset)
 
     # Get grants for each ACL and extract verb permissions
     acl_names

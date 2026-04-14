@@ -918,7 +918,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
       if filter_empty(existing_to_boundaries, nil) do
         existing_to_boundaries
       else
-        Bonfire.Boundaries.boundaries_or_default(nil,
+        Bonfire.Boundaries.Presets.boundaries_or_default(nil,
           current_user: current_user,
           my_acls: my_acls
         )

@@ -1,7 +1,7 @@
 <ul role="navigation" class={@class}>
   <li>
     <LinkLive
-      to={~p"/boundaries/circles"}
+      to={~p"/settings/boundaries/circles"}
       class={
         " ",
         "bg-base-content/10 ": @selected_tab == "circles"
@@ -13,7 +13,7 @@
 
   <li>
     <LinkLive
-      to={~p"/boundaries/roles"}
+      to={~p"/settings/boundaries/roles"}
       class={
         " ",
         "bg-base-content/10 ": @selected_tab == "roles"
@@ -25,10 +25,10 @@
 
   <li>
     <LinkLive
-      to={~p"/boundaries/instance_roles"}
+      to={~p"/settings/instance/boundaries/roles"}
       class={
         " ",
-        "bg-base-content/10 ": @selected_tab == "instance_roles"
+        "bg-base-content/10 ": @selected_tab == "roles"
       }
     >
       {!-- <#Icon
@@ -50,7 +50,7 @@
 
   <li>
     <LinkLive
-      to={~p"/boundaries/acls"}
+      to={~p"/settings/boundaries/acls"}
       class={
         " ",
         "bg-base-content/10 ": @selected_tab == "acls"

@@ -1,6 +1,6 @@
 {!-- <Bonfire.UI.Common.PageTitleLive page_title={@page_title} /> --}
 
-<section class="bg-base-100">
+<section class="">
   {#case @selected_tab}
     {#match "acl"}
       <StatefulComponent

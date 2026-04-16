@@ -81,7 +81,7 @@
       {/if}
     </div>
 
-    <div :if={@is_member} class="flex items-center gap-1.5 mt-1.5">
+    <div :if={@is_member} class="flex items-center gap-1.5 mt-3">
       <#Icon iconify="ph:check-circle-duotone" class="w-4 h-4 text-success" aria-hidden="true" />
       <span class="text-xs font-medium text-success">{l("You're in this circle")}</span>
     </div>
@@ -90,26 +90,29 @@
       <p class="text-sm text-base-content/70 mt-2 leading-relaxed">{description}</p>
     {/if}
 
-    <div :if={@preview_members != []} class="flex items-center mt-3 gap-3">
-      <div class="flex -space-x-2">
-        {#for member <- @preview_members}
-          <Bonfire.UI.Common.AvatarLive
-            class="w-8 h-8 rounded-full ring-2 ring-base-100 hover:ring-primary/50 hover:z-10 transition-shadow duration-150"
-            src={Media.avatar_url(e(member, :subject, nil))}
-            user_id={e(member, :subject_id, nil)}
-            title={e(member, :subject, :profile, :name, "")}
-          />
-        {/for}
+    {#if @selected_tab != "members" and @preview_members != []}
+      <div class="flex items-center mt-3 gap-3">
+        <div class="flex -space-x-2">
+          {#for member <- @preview_members}
+            <Bonfire.UI.Common.AvatarLive
+              class="w-8 h-8 rounded-full ring-2 ring-base-100 hover:ring-primary/50 hover:z-10 transition-shadow duration-150"
+              src={Media.avatar_url(e(member, :subject, nil))}
+              user_id={e(member, :subject_id, nil)}
+              title={e(member, :subject, :profile, :name, "")}
+            />
+          {/for}
+        </div>
+        <LinkLive
+          :if={@member_count > Enum.count(@preview_members)}
+          to={"/circle/#{id(@circle)}/members"}
+          class="text-xs font-medium text-base-content/50 hover:text-base-content transition-colors duration-150"
+          aria-label={l("View all %{count} members", count: @member_count)}
+        >
+          {l("+%{count} more", count: @member_count - Enum.count(@preview_members))}
+        </LinkLive>
       </div>
-      <LinkLive
-        :if={@member_count > Enum.count(@preview_members)}
-        to={"/circle/#{id(@circle)}/members"}
-        class="text-xs font-medium text-base-content/50 hover:text-base-content transition-colors duration-150"
-        aria-label={l("View all %{count} members", count: @member_count)}
-      >
-        {l("+%{count} more", count: @member_count - Enum.count(@preview_members))}
-      </LinkLive>
-    </div>
+    {/if}
+
     <div role="tablist" class="tabs pt-6 justify-center gap-8 w-full tabs-border">
       <LinkLive
         to={"/circle/#{id(@circle)}"}
@@ -131,6 +134,7 @@
           id={"members_#{@circle_id || id(@circle)}"}
           circle_id={@circle_id || id(@circle)}
           circle={@circle}
+          preview_members={@preview_members}
           read_only={@read_only}
           with_batch_follow
         />
@@ -142,7 +146,7 @@
           class="w-4 h-4 text-base-content/40 shrink-0"
           aria-hidden="true"
         />
-        <span class="text-sm text-base-content/50">{l("Showing posts from members of this circle")}</span>
+        <span class="text-sm text-base-content/50">{l("Showing activities from people in this circle")}</span>
       </div>
       <StatefulComponent
         module={maybe_component(Bonfire.UI.Social.FeedLive, @__context__)}

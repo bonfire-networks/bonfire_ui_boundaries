@@ -28,19 +28,19 @@ defmodule Bonfire.UI.Boundaries.Routes do
 
       if extension_enabled?(:bonfire_ui_me) do
         # pages only guests can view
-        scope "/boundaries", Bonfire.UI.Boundaries do
+        scope "/settings/boundaries", Bonfire.UI.Boundaries do
           pipe_through(:browser)
           pipe_through(:guest_only)
         end
 
         # pages you need an account to view
-        scope "/boundaries", Bonfire.UI.Boundaries do
+        scope "/settings/boundaries", Bonfire.UI.Boundaries do
           pipe_through(:browser)
           pipe_through(:account_required)
         end
 
         # pages you need to view as a user
-        scope "/boundaries", Bonfire.UI.Boundaries do
+        scope "/settings/boundaries", Bonfire.UI.Boundaries do
           pipe_through(:browser)
           pipe_through(:user_required)
 
@@ -55,33 +55,33 @@ defmodule Bonfire.UI.Boundaries.Routes do
           live("/:tab/:id/:section", BoundariesLive, as: :boundaries)
         end
 
-        # nested under /settings so the persistent layout treats these as settings pages
-        # (current_view will be SettingsLive / InstanceSettingsLive, which the layout's
-        # sidebar guard recognises). The actual tab rendering is delegated to the
-        # SettingsLive / InstanceSettingsLive .sface match cases.
-        scope "/settings/boundaries", Bonfire.UI.Me do
-          pipe_through(:browser)
-          pipe_through(:user_required)
+        # # nested under /settings so the persistent layout treats these as settings pages
+        # # (current_view will be SettingsLive / InstanceSettingsLive, which the layout's
+        # # sidebar guard recognises). The actual tab rendering is delegated to the
+        # # SettingsLive / InstanceSettingsLive .sface match cases.
+        # scope "/settings/boundaries", Bonfire.UI.Me do
+        #   pipe_through(:browser)
+        #   pipe_through(:user_required)
 
-          live("/:tab", SettingsLive, :user, as: :settings_boundaries)
-          live("/:tab/:id", SettingsLive, :user, as: :settings_boundaries)
-          live("/:tab/:id/:section", SettingsLive, :user, as: :settings_boundaries)
-        end
+        #   live("/:tab", SettingsLive, :user, as: :settings_boundaries)
+        #   live("/:tab/:id", SettingsLive, :user, as: :settings_boundaries)
+        #   live("/:tab/:id/:section", SettingsLive, :user, as: :settings_boundaries)
+        # end
 
-        scope "/settings/instance/boundaries", Bonfire.UI.Me do
-          pipe_through(:browser)
-          pipe_through(:user_required)
+        # scope "/settings/instance/boundaries", Bonfire.UI.Me do
+        #   pipe_through(:browser)
+        #   pipe_through(:user_required)
 
-          live("/:tab", InstanceSettingsLive, :instance, as: :settings_instance_boundaries)
-          live("/:tab/:id", InstanceSettingsLive, :instance, as: :settings_instance_boundaries)
+        #   live("/:tab", InstanceSettingsLive, :instance, as: :settings_instance_boundaries)
+        #   live("/:tab/:id", InstanceSettingsLive, :instance, as: :settings_instance_boundaries)
 
-          live("/:tab/:id/:section", InstanceSettingsLive, :instance,
-            as: :settings_instance_boundaries
-          )
-        end
+        #   live("/:tab/:id/:section", InstanceSettingsLive, :instance,
+        #     as: :settings_instance_boundaries
+        #   )
+        # end
 
         # pages only admins can view
-        scope "/boundaries", Bonfire.UI.Boundaries do
+        scope "/settings/boundaries", Bonfire.UI.Boundaries do
           pipe_through(:browser)
           pipe_through(:admin_required)
 

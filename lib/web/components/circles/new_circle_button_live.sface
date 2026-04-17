@@ -6,9 +6,10 @@
     </form>
 
     <:open_btn>
-      <div class="btn btn-sm btn-circle lg:btn-wide btn-ghost border-base-content/10">
-        <#Icon iconify="ph:plus-duotone" class="w-4 h-4 lg:hidden" />
-        <span class="hidden lg:block">{l("New circle")}</span>
+      <div class="tooltip tooltip-left" data-tip={l("New circle")}>
+        <div class="btn btn-sm btn-circle btn-ghost border-base-content/10">
+          <#Icon iconify="ph:plus-duotone" class="w-4 h-4" />
+        </div>
       </div>
     </:open_btn>
   </Bonfire.UI.Common.OpenModalLive>

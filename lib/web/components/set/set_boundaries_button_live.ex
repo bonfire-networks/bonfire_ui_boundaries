@@ -10,6 +10,12 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesButtonLive do
   prop my_acls, :any, default: nil
   prop verb_permissions, :any, default: %{}
   prop setting_boundaries, :atom, default: nil
+  prop context_id, :any, default: nil
+  prop context_group, :any, default: nil
+  prop event_target, :any, default: nil
+
+  def topic_name(topic),
+    do: Bonfire.Classify.Web.Preview.CategoryLive.name(topic, l("Topic"))
 
   def clone_context(to_boundaries) do
     case to_boundaries do

@@ -126,7 +126,68 @@
         </div> --}
     </div>
   {#match boundary_name}
-    <div class="btn-active btn btn-ghost btn-sm cursor-default">
-      <span>{boundary_name}</span>
-    </div>
+    {#if e(@context_group, :topics, []) != [] and @context_group}
+      <div class="dropdown dropdown-bottom" data-tip={l("Choose a topic in this group")}>
+        <label
+          tabindex="0"
+          id="topic_btn"
+          class="btn-primary btn btn-sm gap-1"
+        >
+          <span class="truncate max-w-[10rem]">{boundary_name}</span>
+          <#Icon iconify="ph:caret-down" class="size-4" />
+        </label>
+        <ul
+          tabindex="0"
+          class="dropdown-content z-dropdown menu flex-col flex-nowrap p-2 shadow-lg bg-base-100 rounded-box border border-base-content/10 w-56 max-h-60 overflow-y-auto"
+        >
+          <li>
+            <button
+              type="button"
+              data-role="select-topic"
+              class={
+                "flex items-center gap-2 w-full text-left",
+                "font-semibold": @context_id == e(@context_group, :id, nil)
+              }
+              :on-click={Bonfire.UI.Common.SmartInput.LiveHandler.open(%JS{}, %{
+                context_id: e(@context_group, :id, nil),
+                mentions: e(@context_group, :mentions, []),
+                to_boundaries: e(@context_group, :to_boundaries, nil),
+                to_circles: e(@context_group, :to_circles, [])
+              })}
+              phx-target={@event_target || "#smart_input"}
+            >
+              <#Icon iconify="ph:users-three-duotone" class="w-4 h-4 text-base-content/70" />
+              <span class="truncate">{l("Whole group")}</span>
+            </button>
+          </li>
+          <li class="menu-title pt-2 pb-1 text-xs uppercase opacity-60">{l("Topics")}</li>
+          {#for topic <- e(@context_group, :topics, [])}
+            <li>
+              <button
+                type="button"
+                data-role="select-topic"
+                class={
+                  "flex items-center gap-2 w-full text-left",
+                  "font-semibold": @context_id == id(topic)
+                }
+                :on-click={Bonfire.UI.Common.SmartInput.LiveHandler.open(%JS{}, %{
+                  context_id: id(topic),
+                  mentions: [id(topic)],
+                  to_boundaries: [{:clone_context, topic_name(topic)}],
+                  to_circles: [{id(topic), topic_name(topic)}]
+                })}
+                phx-target={@event_target || "#smart_input"}
+              >
+                <#Icon iconify="ph:hash-duotone" class="w-4 h-4 text-base-content/70" />
+                <span class="truncate">{topic_name(topic)}</span>
+              </button>
+            </li>
+          {/for}
+        </ul>
+      </div>
+    {#else}
+      <div class="btn-active btn btn-ghost btn-sm cursor-default">
+        <span>{boundary_name}</span>
+      </div>
+    {/if}
 {/case}

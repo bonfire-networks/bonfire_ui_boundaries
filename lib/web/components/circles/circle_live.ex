@@ -122,7 +122,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
       member_count = Circles.count_members(id)
 
       preview_members =
-        case Circles.list_members(id, limit: 5) do
+        case Circles.list_members(id, limit: preview_members_limit()) do
           %{edges: edges} when is_list(edges) -> edges
           list when is_list(list) -> list
           _ -> []
@@ -170,4 +170,6 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
        }}
     end
   end
+
+  def preview_members_limit, do: 5
 end

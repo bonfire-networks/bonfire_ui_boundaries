@@ -22,6 +22,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   prop show_remove, :boolean, default: nil
   prop with_batch_follow, :boolean, default: false
   prop local_only, :boolean, default: false
+  prop preview_members, :list, default: []
 
   slot default, required: false
 
@@ -79,20 +80,27 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
       # Load members with cursor-based pagination
       blocked_circle_ids = e(assigns, :blocked_circle_ids, nil)
 
+      preview_members = assigns(socket)[:preview_members]
+
       {members, page_info} =
-        if match?([_, _ | _], blocked_circle_ids) do
-          # For blocked tab: server-side intersection query across both circles
-          %{edges: members, page_info: page_info} =
-            Circles.list_members_in_all_circles(blocked_circle_ids, current_user: current_user)
-            |> debug("blocked_intersection_members")
-
-          {members, page_info}
+        if is_list(preview_members) and preview_members != [] and
+             length(preview_members) < Bonfire.UI.Boundaries.CircleLive.preview_members_limit() do
+          {preview_members, nil}
         else
-          %{edges: members, page_info: page_info} =
-            Circles.list_members(id, current_user: current_user)
-            |> debug("paginated_members")
+          if match?([_, _ | _], blocked_circle_ids) do
+            # For blocked tab: server-side intersection query across both circles
+            %{edges: members, page_info: page_info} =
+              Circles.list_members_in_all_circles(blocked_circle_ids, current_user: current_user)
+              |> debug("blocked_intersection_members")
 
-          {members, page_info}
+            {members, page_info}
+          else
+            %{edges: members, page_info: page_info} =
+              Circles.list_members(id, current_user: current_user)
+              |> debug("paginated_members")
+
+            {members, page_info}
+          end
         end
 
       # Get the total count for display purposes

@@ -128,11 +128,7 @@
   {#match boundary_name}
     {#if e(@context_group, :topics, []) != [] and @context_group}
       <div class="dropdown dropdown-bottom" data-tip={l("Choose a topic in this group")}>
-        <label
-          tabindex="0"
-          id="topic_btn"
-          class="btn-primary btn btn-sm gap-1"
-        >
+        <label tabindex="0" id="topic_btn" class="btn-primary btn btn-sm gap-1">
           <span class="truncate max-w-[10rem]">{boundary_name}</span>
           <#Icon iconify="ph:caret-down" class="size-4" />
         </label>

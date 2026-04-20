@@ -1,94 +1,89 @@
 <div>
-  <!-- DEBUG: is_caretaker={@is_caretaker}, my_circles count={length(@my_circles || [])} -->
   <div
     :if={@is_caretaker}
-    class="w-full h-full multiselect_in_composer gap-4 mt-3  flex flex-col flex-1 grow"
+    class="mt-3 rounded-lg p-[1.5px] bg-gradient-to-br from-primary/70 via-warning/60 to-primary/70"
   >
-    <section class="">
-      <div class="flex items-center justify-between gap-4">
-        <div class="flex flex-col gap-1">
-          <div class="text-xs uppercase text-base-content/80 font-medium" :if={@setting_boundaries}>{l("Advanced permissions")}</div>
-          <div class="text-sm font-light text-base-content/70">{case @setting_boundaries do
-              :create_object ->
-                l(
-                  "You can customise who can see and interact with this activity, by defining permission for certain circles or specific people, as exceptions to the general permissions selected above."
-                )
-
-              :edit_object ->
-                l(
-                  "You can customise who can see and interact with this activity, by defining permission for certain circles or specific people, as exceptions to the general permissions selected above."
-                )
-
-              :instance_acl ->
-                l(
-                  "You can customise who can manage or interact with the instance, by defining permission for certain circles or specific people."
-                )
-
-              _ ->
-                l(
-                  "You can customise who can see and interact with activities to which you apply this boundary preset, by defining permission for certain circles or specific people."
-                )
-            end}</div>
-        </div>
-      </div>
-
-      <div class="mt-3">
-        <form
-          :if={!@read_only}
-          id={"add_members_to_acl_#{@parent_id || "customize_boundary_live"}"}
-          phx-change="change"
-          phx-target={"##{@parent_id || "customize_boundary_live"}"}
-          class="w-full flex-1"
+    <div class="w-full h-full multiselect_in_composer gap-4 flex flex-col flex-1 grow bg-base-100 rounded-[calc(0.5rem-1.5px)] p-4">
+      <section x-data="{open: false}" class="">
+        <button
+          type="button"
+          data-role="toggle_advanced_permissions"
+          x-on:click="open = !open"
+          :aria-expanded="open.toString()"
+          class="w-full flex items-center justify-between gap-4 text-left cursor-pointer"
         >
-          <label for={"multi_select_#{@parent_id || "customize_boundary_live"}_text_input"} class="sr-only">{l("Search for users to add")}</label>
-          <div class="relative">
-            <Bonfire.UI.Common.MultiselectLive
-              implementation={:live_select}
-              mode={:tags}
-              form_input_name={@parent_id || "customize_boundary_live"}
-              field={:selected_users}
-              show_search
-              debounce={300}
-              event_target={"##{@parent_id || "customize_boundary_live"}"}
-              label={l("Search for someone to add custom permissions")}
-              selected_options={Bonfire.UI.Boundaries.SetBoundariesLive.selected_users_for_tags(@selected_users || [])}
-            />
+          <div class="flex items-center gap-3">
+            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-warning/20 flex items-center justify-center">
+              <#Icon iconify="ph:sliders-horizontal-duotone" class="w-4 h-4 text-warning" />
+            </span>
+            <div class="flex flex-col gap-0.5 min-w-0">
+              <div class="text-sm capitalize font-medium text-base-content" :if={@setting_boundaries}>{l("Advanced permissions")}</div>
+              <div class="text-xs text-base-content/60">{l("Customise per person or circle")}</div>
+            </div>
           </div>
-        </form>
-      </div>
+          <#Icon
+            iconify="ph:caret-down"
+            class="w-4 h-4 text-base-content/70 transition-transform duration-150"
+            x-bind:class="open && 'rotate-180'"
+          />
+        </button>
 
-      <div class="pt-2">
-        <div class="flex h-full flex-1 mt-3 flex-col gap-2">
-          {#for %{slug: verb_slug} = verb <- @available_verbs || []}
-            {#case maybe_partition_nil_permission_items(
-                @setting_boundaries,
-                (@my_circles || []) ++ (@selected_users || []),
-                @verb_permissions,
-                verb_slug
-              )}
-              {#match {with_value, without_value}}
-                <div x-data="{open: false}" class="border-b border-base-content/10 flex-1 pb-2">
-                  <div class="flex items-start gap-4">
-                    <div class="w-full">
-                      <div
-                        data-id={e(verb, :name, nil) <> "_toggle"}
-                        x-on:click="open = !open"
-                        class="flex items-center justify-between gap-4 flex-1 cursor-pointer"
-                      >
-                        <Iconify.iconify
-                          icon={e(verb, :icon, "ph:circle-duotone")}
-                          class="w-6 h-6 text-primary"
-                          aria-hidden="true"
-                        />
-                        <div class="flex flex-col flex-1">
-                          <div class="text-sm font-medium text-base-content">{localise_dynamic(e(verb, :name, nil), __MODULE__)}</div>
-                          <div class="text-xs text-base-content/70">{localise_dynamic(e(verb, :summary, nil), __MODULE__)}</div>
-                        </div>
-                        <#Icon iconify="ph:caret-down" class="w-4 h-4 text-base-content/70" />
-                      </div>
+        <div x-show="open" x-collapse class="mt-3">
+          <form
+            :if={!@read_only}
+            id={"add_members_to_acl_#{@parent_id || "customize_boundary_live"}"}
+            phx-change="change"
+            phx-target={"##{@parent_id || "customize_boundary_live"}"}
+            class="w-full flex-1"
+          >
+            <label for={"multi_select_#{@parent_id || "customize_boundary_live"}_text_input"} class="sr-only">{l("Search for users to add")}</label>
+            <div class="relative">
+              <Bonfire.UI.Common.MultiselectLive
+                implementation={:live_select}
+                mode={:tags}
+                form_input_name={@parent_id || "customize_boundary_live"}
+                field={:selected_users}
+                show_search
+                debounce={300}
+                event_target={"##{@parent_id || "customize_boundary_live"}"}
+                label={l("Search for someone to add custom permissions")}
+                selected_options={Bonfire.UI.Boundaries.SetBoundariesLive.selected_users_for_tags(@selected_users || [])}
+              />
+            </div>
+          </form>
 
-                      <!-- Above the fold: items with a defined value -->
-                      <!-- {#for {item, value} <- with_value}
+          <div class="pt-2">
+            <div class="flex h-full flex-1 mt-3 flex-col gap-2">
+              {#for %{slug: verb_slug} = verb <- @available_verbs || []}
+                {#case maybe_partition_nil_permission_items(
+                    @setting_boundaries,
+                    (@my_circles || []) ++ (@selected_users || []),
+                    @verb_permissions,
+                    verb_slug
+                  )}
+                  {#match {with_value, without_value}}
+                    <div x-data="{open: false}" class="border-b border-base-content/10 flex-1 pb-2">
+                      <div class="flex items-start gap-4">
+                        <div class="w-full">
+                          <div
+                            data-id={e(verb, :name, nil) <> "_toggle"}
+                            x-on:click="open = !open"
+                            class="flex items-center justify-between gap-4 flex-1 cursor-pointer"
+                          >
+                            <Iconify.iconify
+                              icon={e(verb, :icon, "ph:circle-duotone")}
+                              class="w-6 h-6 text-primary"
+                              aria-hidden="true"
+                            />
+                            <div class="flex flex-col flex-1">
+                              <div class="text-sm font-medium text-base-content">{localise_dynamic(e(verb, :name, nil), __MODULE__)}</div>
+                              <div class="text-xs text-base-content/70">{localise_dynamic(e(verb, :summary, nil), __MODULE__)}</div>
+                            </div>
+                            <#Icon iconify="ph:caret-down" class="w-4 h-4 text-base-content/70" />
+                          </div>
+
+                          <!-- Above the fold: items with a defined value -->
+                          <!-- {#for {item, value} <- with_value}
                         <Bonfire.UI.Boundaries.BoundaryItemLive
                           verb={verb}
                           verb_slug={verb_slug}
@@ -98,59 +93,61 @@
                           event_target={"##{@parent_id || "customize_boundary_live"}"}
                         />
                       {/for} -->
-                      <!-- Collapsible: items with nil value -->
+                          <!-- Collapsible: items with nil value -->
 
-                      <div x-show="open" x-collapse class="">
-                        {#for item <- (@my_circles || []) ++ (@selected_users || [])}
-                          <Bonfire.UI.Boundaries.BoundaryItemLive
-                            verb={verb}
-                            verb_slug={verb_slug}
-                            item={item}
-                            value={Bonfire.UI.Boundaries.SetBoundariesLive.get_verb_value_for_display(
-                              @verb_permissions,
-                              verb_slug,
-                              id(item)
-                            )}
-                            read_only={@read_only}
-                            event_target={"##{@parent_id || "customize_boundary_live"}"}
-                          />
+                          <div x-show="open" x-collapse class="">
+                            {#for item <- (@my_circles || []) ++ (@selected_users || [])}
+                              <Bonfire.UI.Boundaries.BoundaryItemLive
+                                verb={verb}
+                                verb_slug={verb_slug}
+                                item={item}
+                                value={Bonfire.UI.Boundaries.SetBoundariesLive.get_verb_value_for_display(
+                                  @verb_permissions,
+                                  verb_slug,
+                                  id(item)
+                                )}
+                                read_only={@read_only}
+                                event_target={"##{@parent_id || "customize_boundary_live"}"}
+                              />
+                            {/for}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div :if={Enum.count(with_value) > 0} class="mt-2 flex flex-wrap gap-2">
+                        {#for {item, value} <- with_value}
+                          <div class="badge badge-soft">
+                            {#if value == :can}
+                              <#Icon iconify="ph:check-duotone" class="w-5 h-5 text-green-500" />
+                            {#elseif value == :cannot}
+                              <#Icon iconify="ph:x-duotone" class="w-5 h-5 text-red-500" />
+                            {#else}
+                              <#Icon iconify="ph:minus-duotone" class="w-5 h-5 text-yellow-500" />
+                            {/if}
+                            {#case e(item, :user_type, nil)}
+                              {#match "permission_entry"}
+                                <!-- Render user -->
+                                <div class="flex flex-col">
+                                  <span class="">{e(item, :name, "Unnamed User")}</span>
+                                  <!-- {#if e(item, :character, :username, nil)}
+                                <span class="text-xs text-base-content/60">@{e(item, :character, :username, nil)}</span>
+                              {/if} -->
+                                </div>
+                              {#match _}
+                                <!-- Render circle -->
+                                <span class="">{e(item, :named, :name, nil) ||
+                                    e(item, :name, nil) || localise_dynamic(e(item, :stereotyped, :named, :name, nil), __MODULE__)}</span>
+                            {/case}
+                          </div>
                         {/for}
                       </div>
                     </div>
-                  </div>
-
-                  <div :if={Enum.count(with_value) > 0} class="mt-2 flex flex-wrap gap-2">
-                    {#for {item, value} <- with_value}
-                      <div class="badge badge-soft">
-                        {#if value == :can}
-                          <#Icon iconify="ph:check-duotone" class="w-5 h-5 text-green-500" />
-                        {#elseif value == :cannot}
-                          <#Icon iconify="ph:x-duotone" class="w-5 h-5 text-red-500" />
-                        {#else}
-                          <#Icon iconify="ph:minus-duotone" class="w-5 h-5 text-yellow-500" />
-                        {/if}
-                        {#case e(item, :user_type, nil)}
-                          {#match "permission_entry"}
-                            <!-- Render user -->
-                            <div class="flex flex-col">
-                              <span class="">{e(item, :name, "Unnamed User")}</span>
-                              <!-- {#if e(item, :character, :username, nil)}
-                                <span class="text-xs text-base-content/60">@{e(item, :character, :username, nil)}</span>
-                              {/if} -->
-                            </div>
-                          {#match _}
-                            <!-- Render circle -->
-                            <span class="">{e(item, :named, :name, nil) ||
-                                e(item, :name, nil) || localise_dynamic(e(item, :stereotyped, :named, :name, nil), __MODULE__)}</span>
-                        {/case}
-                      </div>
-                    {/for}
-                  </div>
-                </div>
-            {/case}
-          {/for}
+                {/case}
+              {/for}
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </div>
 </div>

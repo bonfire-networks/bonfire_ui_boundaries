@@ -1,0 +1,71 @@
+<div class="flex flex-col gap-1">
+  <div class="text-sm font-medium text-base-content/80 mt-4">{l("Override the audience for specific actions.")}</div>
+  <div class="flex flex-col divide-y divide-base-content/10 rounded-lg bg-base-content/5 overflow-hidden">
+    {#for action_state <- @state.action_states}
+      <section class="flex flex-col">
+        <div class="flex items-center gap-3 p-3">
+          <span class="bg-base-content/10 rounded-full w-9 h-9 flex items-center justify-center flex-shrink-0">
+            <Iconify.iconify icon={action_state.icon} class="w-4 h-4 text-base-content/90" />
+          </span>
+          <div class="flex-1 min-w-0 text-sm font-medium text-base-content">
+            {action_state.label}
+          </div>
+
+          <input
+            type="checkbox"
+            class="toggle toggle-primary"
+            data-role={"action_toggle_#{action_state.key}"}
+            aria-label={action_state.label}
+            checked={action_state.allowed?}
+            phx-click={JS.push("toggle_action_allowed",
+              value: %{
+                "action" => action_state.key,
+                "allowed" => !action_state.allowed?
+              },
+              target: "##{@parent_id}"
+            )}
+            disabled={@read_only || action_state.locked?}
+          />
+        </div>
+
+        <div
+          :if={action_state.show_exceptions?}
+          class="flex flex-col gap-2 p-3 border-t border-base-content/10 bg-base-content/5"
+        >
+          <div class="flex items-center gap-1.5">
+            <p class="text-xs text-base-content/60">{l("Except allow:")}</p>
+            <span
+              class="tooltip tooltip-bottom before:max-w-[180px] before:text-xs before:whitespace-normal before:text-left"
+              data-tip={l(
+                "People in these circles will still be able to perform this action on your post, even though it's turned off for the general audience."
+              )}
+            >
+              <Iconify.iconify
+                icon="ph:info-duotone"
+                class="w-3.5 h-3.5 text-base-content/50 hover:text-base-content/80 cursor-help"
+              />
+            </span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 max-h-48 overflow-y-auto pr-1">
+            {#for circle <- @state.exception_circles}
+              <label class="flex items-center gap-2 text-sm cursor-pointer min-w-0">
+                <input
+                  type="checkbox"
+                  class="checkbox checkbox-sm checkbox-primary flex-shrink-0"
+                  data-role={"action_exception_#{action_state.key}_#{uid(circle)}"}
+                  checked={Map.get(action_state.exception_checks, uid(circle), false)}
+                  phx-click={JS.push("toggle_action_exception",
+                    value: %{"action" => action_state.key, "circle_id" => uid(circle)},
+                    target: "##{@parent_id}"
+                  )}
+                  disabled={@read_only || action_state.locked?}
+                />
+                <span class="truncate">{circle_name(circle)}</span>
+              </label>
+            {/for}
+          </div>
+        </div>
+      </section>
+    {/for}
+  </div>
+</div>

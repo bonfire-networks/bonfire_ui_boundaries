@@ -1,45 +1,26 @@
-<div id={@id} class="">
+<div id={@id} class="flex flex-col">
   {#if @setting_boundaries in [:edit_object, :create_object]}
-    <div class="text-xs uppercase font-semibold text-base-content/80 mt-4">{l("General permissions")}</div>
-    <div class="flex mt-2 items-center justify-between gap-6 items-start">
-      <div
-        class="w-full"
-        data-position="bottom-start"
-        phx-hook="Tooltip"
-        id={"popup_boundaries_#{@setting_boundaries}_in_modal"}
-      >
-        <label class="btn-soft justify-between tooltip-button btn w-full btn-lg rounded-xl h-20 gap-3">
-          <Bonfire.UI.Boundaries.BoundariesPresetNameLive
-            icon_class="w-6 h-6 text-primary"
-            class="flex items-start gap-3"
-            to_boundaries={@to_boundaries}
-            with_description
-            to_circles={@to_circles || []}
-            exclude_circles={@exclude_circles || []}
-          />
-
-          <#Icon iconify="ph:dots-three-outline-duotone" class="w-5 h-5 text-primary" />
-        </label>
-        <ul
-          tabindex="0"
-          class="tooltip z-popover menu shadow bg-base-100 border border-base-content/10 rounded-xl p-0 w-full lg:w-[29rem] absolute top-0 left-0 hidden"
-          id={"popup_boundaries_#{@setting_boundaries}_in_modal_content"}
-          phx-update="ignore"
-        >
-          <Bonfire.UI.Boundaries.GeneralAccessListLive
-            hide_presets={@hide_presets}
-            boundary_preset={@boundary_preset}
-            set_action={@set_action}
-            set_opts={@set_opts}
-            scope={@scope}
-            is_customizable
-            to_boundaries={@to_boundaries}
-            hide_custom={@hide_custom}
-            my_acls={e(@my_acls, nil)}
-          />
-        </ul>
-      </div>
+    <div class="text-sm font-medium text-base-content/80 mt-4">{l("General audience")}</div>
+    <div class="text-xs text-base-content/60 mb-1">{l("Who can see and interact with this activity?")}</div>
+    <div class="mt-2 flex flex-col gap-1">
+      <Bonfire.UI.Boundaries.GeneralAccessListLive
+        hide_presets={@hide_presets}
+        boundary_preset={@preset_boundary}
+        set_action={@set_action}
+        set_opts={@set_opts}
+        scope={@scope}
+        is_customizable
+        to_boundaries={@to_boundaries}
+        hide_custom={@hide_custom}
+        my_acls={e(@my_acls, nil)}
+      />
     </div>
+
+    <Bonfire.UI.Boundaries.PerActionDefaultsLive
+      state={@per_action_state}
+      parent_id={@id}
+      read_only={@read_only}
+    />
   {/if}
 
   <StatefulComponent
@@ -57,4 +38,16 @@
     is_caretaker
     id={"set_boundaries_live_#{@id}"}
   />
+
+  <div class="py-4">
+    <button
+      type="button"
+      data-role="save_boundary"
+      phx-click="save_and_close"
+      phx-target={"##{@id}"}
+      class="btn btn-primary w-full"
+    >
+      {l("Save")}
+    </button>
+  </div>
 </div>

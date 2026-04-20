@@ -107,7 +107,30 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
       |> assign(:my_circles, my_circles)
       |> assign(:my_acls, my_acls)
       |> assign(:selected_users, selected_users)
+      |> assign_per_action_state()
     }
+  end
+
+  defp assign_per_action_state(socket) do
+    verb_permissions = e(assigns(socket), :verb_permissions, %{})
+    preset_boundary = e(assigns(socket), :preset_boundary, nil)
+    my_circles = e(assigns(socket), :my_circles, [])
+    sig = :erlang.phash2({verb_permissions, preset_boundary, my_circles})
+
+    if sig == e(assigns(socket), :per_action_state_sig, nil) do
+      socket
+    else
+      state =
+        Bonfire.UI.Boundaries.PerActionDefaultsLive.build_states(
+          verb_permissions,
+          preset_boundary,
+          my_circles
+        )
+
+      socket
+      |> assign(:per_action_state, state)
+      |> assign(:per_action_state_sig, sig)
+    end
   end
 
   defp editing_acl?(setting_boundaries) do
@@ -439,6 +462,99 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
     to_circles = e(assigns, :to_circles, [])
     exclude_circles = e(assigns, :exclude_circles, [])
     VerbPermissionsHelper.reconstruct_verb_permissions(to_circles, exclude_circles)
+  end
+
+  def handle_event(
+        "toggle_action_allowed",
+        %{"action" => action_key, "allowed" => allowed?},
+        socket
+      ) do
+    {verbs, current_verbs} = action_context(socket, action_key)
+    preset_boundary = e(assigns(socket), :preset_boundary, nil)
+
+    {updated_verbs, grants} =
+      apply_action_toggle(allowed?, preset_boundary, verbs, current_verbs)
+
+    socket =
+      socket
+      |> assign(:verb_permissions, persist_grants(socket, updated_verbs, grants))
+      |> assign_per_action_state()
+
+    {:noreply, socket}
+  end
+
+  @doc """
+  Returns `{updated_verb_permissions, grants}` for a per-action toggle. `grants`
+  is the list of `{circle_id, verb, value}` tuples to persist.
+  """
+  def apply_action_toggle(allowed?, preset_boundary, verbs, current_verb_permissions) do
+    {mode, target_circle_ids} = toggle_targets(allowed?, preset_boundary, verbs)
+    compute_action_mode_change(mode, verbs, target_circle_ids, current_verb_permissions)
+  end
+
+  # Toggling ON: if the preset already grants these verbs to someone, clearing
+  # any user overrides is enough for the preset default to re-apply. If it
+  # grants nothing (e.g. quote under public), clearing would just land back on
+  # OFF — write explicit :can for the preset's read audience so the toggle
+  # behaves as users expect ("allow quote for the public audience"). Fall back
+  # to guest only when the preset has no discernible audience.
+  defp toggle_targets(true, preset_boundary, verbs) do
+    if Bonfire.UI.Boundaries.PerActionDefaultsLive.preset_grants_any?(preset_boundary, verbs) do
+      {"same", []}
+    else
+      audience =
+        Bonfire.UI.Boundaries.PerActionDefaultsLive.preset_audience_circle_ids(preset_boundary)
+
+      targets =
+        if audience == [],
+          do: [Bonfire.Boundaries.Circles.get_id(:guest)],
+          else: audience
+
+      {"grant", targets}
+    end
+  end
+
+  defp toggle_targets(false, preset_boundary, verbs) do
+    {"nobody",
+     Bonfire.UI.Boundaries.PerActionDefaultsLive.preset_block_circle_ids(preset_boundary, verbs)}
+  end
+
+  def handle_event(
+        "toggle_action_exception",
+        %{"action" => action_key, "circle_id" => circle_id},
+        socket
+      ) do
+    {verbs, current_verbs} = action_context(socket, action_key)
+
+    if is_nil(circle_id) or circle_id == "" or verbs == [] do
+      {:noreply, socket}
+    else
+      already_granted? =
+        Enum.all?(verbs, fn v ->
+          Map.get(current_verbs, v, %{}) |> Map.get(circle_id) == :can
+        end)
+
+      new_value = if already_granted?, do: nil, else: :can
+
+      updated_verbs =
+        Enum.reduce(verbs, current_verbs, fn verb, acc ->
+          VerbPermissionsHelper.update_verb_permission(acc, circle_id, verb, new_value)
+        end)
+
+      grants = Enum.map(verbs, fn v -> {circle_id, v, new_value} end)
+
+      socket =
+        socket
+        |> assign(:verb_permissions, persist_grants(socket, updated_verbs, grants))
+        |> assign_per_action_state()
+
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("save_and_close", _params, socket) do
+    Bonfire.UI.Common.OpenModalLive.close("persistent_modal")
+    {:noreply, socket}
   end
 
   def handle_event(
@@ -776,5 +892,95 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
          type: "user"
        }}
     end)
+  end
+
+  defp action_context(socket, action_key) do
+    {Bonfire.UI.Boundaries.PerActionDefaultsLive.verbs_for(action_key),
+     e(assigns(socket), :verb_permissions, %{})}
+  end
+
+  defp compute_action_mode_change("same", verbs, _block_ids, current_verbs) do
+    updated = Enum.reduce(verbs, current_verbs, fn v, acc -> Map.delete(acc, v) end)
+
+    grants =
+      Enum.flat_map(verbs, fn v ->
+        Map.get(current_verbs, v, %{})
+        |> Enum.map(fn {cid, _val} -> {cid, v, nil} end)
+      end)
+
+    {updated, grants}
+  end
+
+  # "nobody" writes :cannot for every circle the preset would otherwise grant
+  # `:can` to (guest + locals/fediverse on a public preset, etc.) — otherwise
+  # those implicit preset grants stay in effect and toggling the action OFF
+  # only blocks strangers while locals keep replying. Other existing grants on
+  # the same verb are cleared so stale :can entries don't leak back through.
+  defp compute_action_mode_change("nobody", verbs, block_ids, current_verbs)
+       when is_list(block_ids) and block_ids != [] do
+    blocks_map = Map.new(block_ids, fn cid -> {cid, :cannot} end)
+
+    updated =
+      Enum.reduce(verbs, current_verbs, fn v, acc ->
+        Map.put(acc, v, blocks_map)
+      end)
+
+    grants =
+      Enum.flat_map(verbs, fn v ->
+        previous = Map.get(current_verbs, v, %{})
+        blocks = Enum.map(block_ids, fn cid -> {cid, v, :cannot} end)
+
+        clears =
+          previous
+          |> Map.drop(block_ids)
+          |> Enum.map(fn {cid, _val} -> {cid, v, nil} end)
+
+        blocks ++ clears
+      end)
+
+    {updated, grants}
+  end
+
+  # "grant" writes :can for each target circle on the action's verbs, clearing
+  # any other existing grants on those verbs so a previous "nobody" :cannot
+  # flip doesn't leak through and keep the action blocked.
+  defp compute_action_mode_change("grant", verbs, target_ids, current_verbs)
+       when is_list(target_ids) and target_ids != [] do
+    grants_map = Map.new(target_ids, fn cid -> {cid, :can} end)
+
+    updated =
+      Enum.reduce(verbs, current_verbs, fn v, acc ->
+        Map.put(acc, v, grants_map)
+      end)
+
+    grants =
+      Enum.flat_map(verbs, fn v ->
+        previous = Map.get(current_verbs, v, %{})
+        sets = Enum.map(target_ids, fn cid -> {cid, v, :can} end)
+
+        clears =
+          previous
+          |> Map.drop(target_ids)
+          |> Enum.map(fn {cid, _val} -> {cid, v, nil} end)
+
+        sets ++ clears
+      end)
+
+    {updated, grants}
+  end
+
+  defp compute_action_mode_change(_, _, _, current_verbs), do: {current_verbs, []}
+
+  defp persist_grants(socket, updated_verbs, grants) do
+    if editing_acl?(e(assigns(socket), :setting_boundaries, nil)) do
+      Enum.reduce(grants, updated_verbs, fn {cid, verb, val}, acc ->
+        case update_acl_mode_permissions(socket, cid, verb, val, acc) do
+          {:ok, v} -> v
+          _ -> acc
+        end
+      end)
+    else
+      update_boundary_mode_permissions(socket, updated_verbs)
+    end
   end
 end

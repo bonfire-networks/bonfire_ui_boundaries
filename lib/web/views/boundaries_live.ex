@@ -93,7 +93,7 @@ defmodule Bonfire.UI.Boundaries.BoundariesLive do
        page_header_aside: [
          {Bonfire.UI.Boundaries.NewCircleButtonLive,
           [
-            # id: "tab_new_cicle",
+            id: "tab_new_circle",
             scope: scope,
             setting_boundaries: false
           ]}

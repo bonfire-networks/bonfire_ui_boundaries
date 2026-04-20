@@ -102,7 +102,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
       {:noreply,
        socket
        |> assign_flash(:info, l("Member was removed"))
-       |> redirect_to("/boundaries/circles")}
+       |> redirect_to("/settings/boundaries/circles")}
     end
   end
 
@@ -190,7 +190,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
       {:noreply,
        socket
        |> assign_flash(:info, l("Deleted"))
-       |> redirect_to("/boundaries/circles")}
+       |> redirect_to("/settings/boundaries/circles")}
     end
   end
 

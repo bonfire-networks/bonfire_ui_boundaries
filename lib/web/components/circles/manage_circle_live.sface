@@ -105,7 +105,7 @@
           data-role="confirm_delete_circle"
           type="button"
           :on-click="Bonfire.Boundaries.Circles:circle_delete"
-          phx-value-go="/boundaries/circles"
+          phx-value-go="/settings/boundaries/circles"
           class="btn btn-error w-full"
         >
           {l("Delete")}</button>

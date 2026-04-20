@@ -39,7 +39,8 @@
               hide_custom={@hide_custom}
             />
             <:open_btn>
-              <div class="btn btn-soft btn-secondary btn-sm w-full">
+              <div class="btn btn-outline btn-sm w-full gap-2">
+                <#Icon iconify="ph:sliders-horizontal-duotone" class="w-4 h-4" />
                 {l("Advanced")}
               </div>
             </:open_btn>
@@ -69,7 +70,11 @@
             />
 
             <:open_btn>
-              <div class="w-full btn btn-sm flex" title={l("Preview boundary")}>
+              <div
+                class="w-full btn btn-ghost btn-sm flex gap-2 text-base-content/70 hover:text-base-content"
+                title={l("Preview boundary")}
+              >
+                <#Icon iconify="ph:eye-duotone" class="w-4 h-4" />
                 <span>
                   {l("Preview boundary")}
                 </span>

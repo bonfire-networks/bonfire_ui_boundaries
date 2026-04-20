@@ -69,8 +69,8 @@
             <LinkLive
               class="btn btn-sm"
               to={if @scope != nil,
-                do: ~p"/boundaries/scope/instance/acl/#{id(acl)}",
-                else: ~p"/boundaries/acl/#{id(acl)}"}
+                do: ~p"/settings/boundaries/scope/instance/acl/#{id(acl)}",
+                else: ~p"/settings/boundaries/acl/#{id(acl)}"}
             >
               {l("Manage")}
             </LinkLive>

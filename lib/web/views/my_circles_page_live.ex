@@ -23,7 +23,7 @@ defmodule Bonfire.UI.Boundaries.MyCirclesPageLive do
        page_header_aside: [
          {Bonfire.UI.Boundaries.NewCircleButtonLive,
           [
-            # id: "page_new_circle",
+            id: "page_new_circle",
             scope: nil,
             setting_boundaries: false
           ]}

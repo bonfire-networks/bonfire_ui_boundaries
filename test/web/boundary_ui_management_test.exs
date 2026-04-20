@@ -32,7 +32,7 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIManagementTest do
 
       # Navigate to boundaries settings page and create new preset
       conn
-      |> visit("/boundaries/acls")
+      |> visit("/settings/boundaries/acls")
       |> assert_has("button", text: "New preset")
       |> click_button("New preset")
       |> fill_in("Enter a name for the boundary preset", with: "close friends")
@@ -68,7 +68,7 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIManagementTest do
       )
 
       # Verify the preset is saved and appears in the list
-      |> visit("/boundaries/acls")
+      |> visit("/settings/boundaries/acls")
       |> assert_has("div", text: "close friends")
     end
 
@@ -83,7 +83,7 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIManagementTest do
       {:ok, _} = Circles.add_to_circles(alice, circle)
 
       conn
-      |> visit("/boundaries/acls")
+      |> visit("/settings/boundaries/acls")
       |> assert_has("button", text: "New preset")
       |> click_button("New preset")
       |> fill_in("Enter a name for the boundary preset", with: "custom perms")
@@ -143,7 +143,7 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIManagementTest do
     # FIXME: Validation for empty name needs to be implemented in the form/backend
     test "I see error messages for invalid preset creation", %{conn: conn} do
       conn
-      |> visit("/boundaries/acls")
+      |> visit("/settings/boundaries/acls")
       |> assert_has("button", text: "New preset")
       |> click_button("New preset")
       # Try to create without name

@@ -129,7 +129,7 @@
 
   <section class="flex flex-col gap-2 mt-3">
     {#if @selected_tab == "members"}
-      <div class="pull-right">
+      <div class="pull-right bonfire-wrapper">
         <Bonfire.UI.Boundaries.CircleMembersLive
           id={"members_#{@circle_id || id(@circle)}"}
           circle_id={@circle_id || id(@circle)}

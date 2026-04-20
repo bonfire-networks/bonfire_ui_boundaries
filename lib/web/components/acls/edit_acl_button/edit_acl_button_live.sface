@@ -66,7 +66,7 @@
                   data-id="delete_boundary"
                   type="button"
                   :on-click="Bonfire.Boundaries:acl_delete"
-                  phx-value-go="/boundaries/acls"
+                  phx-value-go="/settings/boundaries/acls"
                   class="normal-case btn btn-error btn-sm"
                 >
                   <span class="text-left truncate ellipsis">{l("Delete this boundary preset")}</span>

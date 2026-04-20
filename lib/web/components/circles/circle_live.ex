@@ -81,8 +81,8 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
            socket
            |> redirect_to(
              if(id,
-               do: "/boundaries/scope/#{scope}/circle/#{id}",
-               else: "boundaries/circles"
+               do: "/settings/boundaries/scope/#{scope}/circle/#{id}",
+               else: "/settings/boundaries/circles"
              )
            )}
         else

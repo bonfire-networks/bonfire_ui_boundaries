@@ -1,4 +1,4 @@
-<div id="circle_members" class="bonfire-wrapper">
+<div id="circle_members" class="">
   <div class="p-2">
     <#slot />
     {#if @is_admin_circle}

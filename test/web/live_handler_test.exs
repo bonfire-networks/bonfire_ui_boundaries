@@ -15,7 +15,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
   describe "Basic Circle actions" do
     test "I can create a circle", %{conn: conn} do
       conn
-      |> visit("/boundaries/circles")
+      |> visit("/settings/boundaries/circles")
       |> click_button("[data-role=open_modal]", "New circle")
       |> fill_in("Enter a name for the circle", with: "Friends", exact: false)
       |> click_button("[data-role=new_circle_submit]", "Create")
@@ -80,7 +80,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       |> click_button("[data-role=open_modal]", "Edit circle")
       |> click_button("[data-role=confirm_delete_circle]", "Delete")
       # |> PhoenixTest.open_browser()
-      |> assert_path("/boundaries/circles")
+      |> assert_path("/settings/boundaries/circles")
 
       # |> assert_has("[role=alert]", text: "Deleted")
     end
@@ -103,7 +103,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
   describe "Basic Boundaries actions" do
     test "I can create a boundary", %{conn: conn, me: me} do
       conn
-      |> visit("/boundaries/acls")
+      |> visit("/settings/boundaries/acls")
       |> click_button("[data-role=open_modal]", "New preset")
       |> fill_in("Enter a name for the boundary preset", with: "meme")
       |> click_button("[data-role=new_acl_submit]", "Create")
@@ -128,7 +128,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       {:ok, circle} = Circles.create(me, %{named: %{name: "family"}})
 
       conn
-      |> visit("/boundaries/acl/#{acl.id}")
+      |> visit("/settings/boundaries/acl/#{acl.id}")
       |> within("#edit_acl_members", fn conn ->
         conn
         |> click_button("[data-role=add-circle-to-acl]", "family")
@@ -153,7 +153,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       Grants.grant_role(alice.id, acl.id, "contribute", current_user: me)
 
       conn
-      |> visit("/boundaries/acl/#{acl.id}")
+      |> visit("/settings/boundaries/acl/#{acl.id}")
       |> wait_async()
       |> within("[data-role=remove_from_boundary]", fn session ->
         click_button(session, "[data-role=open_modal]", "Remove")
@@ -172,10 +172,10 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       Grants.grant_role(alice.id, acl.id, "contribute", current_user: me)
 
       conn
-      |> visit("/boundaries/acl/#{acl.id}")
+      |> visit("/settings/boundaries/acl/#{acl.id}")
       |> wait_async()
       # Verify we're on the correct boundary page with the ACL name visible
-      |> assert_path("/boundaries/acl/#{acl.id}")
+      |> assert_path("/settings/boundaries/acl/#{acl.id}")
       |> assert_has("[data-role=acl_name]", text: "meme")
     end
 
@@ -186,7 +186,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       {:ok, acl} = Acls.create(%{named: %{name: "meme"}}, current_user: me)
 
       conn
-      |> visit("/boundaries/acl/#{acl.id}")
+      |> visit("/settings/boundaries/acl/#{acl.id}")
       |> wait_async()
       |> click_button("[data-role=edit_boundary] [data-role=open_modal]", "Edit")
       |> within("#edit_acl", fn conn ->
@@ -198,12 +198,12 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
 
       # Delete the boundary
       conn
-      |> visit("/boundaries/acl/#{acl.id}")
+      |> visit("/settings/boundaries/acl/#{acl.id}")
       |> wait_async()
       |> click_button("[data-role=edit_boundary] [data-role=open_modal]", "Edit")
       |> click_button("[data-role=open_modal]", "Delete")
       |> click_button("[data-id=delete_boundary]", "Delete this boundary preset")
-      |> assert_path("/boundaries/acls")
+      |> assert_path("/settings/boundaries/acls")
     end
 
     @tag :skip

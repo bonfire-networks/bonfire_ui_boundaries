@@ -12,7 +12,7 @@ defmodule Bonfire.UI.Boundaries.RoleTest do
 
   test "I can create a new role and define some permissions", %{conn: conn} do
     conn
-    |> visit("/boundaries/roles")
+    |> visit("/settings/boundaries/roles")
     |> click_button("[data-role=open_modal]", "New role")
     |> fill_in("Enter a name for the role", with: "facilitator")
     |> click_button("Create role")
@@ -21,7 +21,7 @@ defmodule Bonfire.UI.Boundaries.RoleTest do
 
   test "I can edit the permissions of a role I've previously created", %{conn: conn} do
     conn
-    |> visit("/boundaries/roles")
+    |> visit("/settings/boundaries/roles")
     |> click_button("[data-role=open_modal]", "New role")
     |> fill_in("Enter a name for the role", with: "facilitator")
     |> click_button("Create role")
@@ -37,7 +37,7 @@ defmodule Bonfire.UI.Boundaries.RoleTest do
 
   test "I can edit the name of a role I've previously created", %{conn: conn} do
     conn
-    |> visit("/boundaries/roles")
+    |> visit("/settings/boundaries/roles")
     |> click_button("[data-role=open_modal]", "New role")
     |> fill_in("Enter a name for the role", with: "facilitator")
     |> click_button("Create role")
@@ -51,7 +51,7 @@ defmodule Bonfire.UI.Boundaries.RoleTest do
 
   test "I can delete a role I've previously created", %{conn: conn} do
     conn
-    |> visit("/boundaries/roles")
+    |> visit("/settings/boundaries/roles")
     |> click_button("[data-role=open_modal]", "New role")
     |> fill_in("Enter a name for the role", with: "facilitator")
     |> click_button("Create role")
@@ -64,7 +64,7 @@ defmodule Bonfire.UI.Boundaries.RoleTest do
 
   test "I can see the default list of roles", %{conn: conn} do
     conn
-    |> visit("/boundaries/default_roles")
+    |> visit("/settings/boundaries/default_roles")
     |> assert_has("h3", text: "None")
     |> assert_has("h3", text: "Read")
     |> assert_has("h3", text: "Edit")

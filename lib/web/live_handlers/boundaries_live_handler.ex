@@ -474,7 +474,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
       {:noreply,
        socket
        |> assign_flash(:info, l("Archived"))
-       |> redirect_to("/boundaries/acls")}
+       |> redirect_to("/settings/boundaries/acls")}
     end
   end
 
@@ -486,7 +486,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
       {:noreply,
        socket
        |> assign_flash(:info, l("Deleted"))
-       |> redirect_to("/boundaries/acls")}
+       |> redirect_to("/settings/boundaries/acls")}
     end
   end
 
@@ -720,8 +720,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
        |> assign_flash(:info, l("Boundary created!"))
        |> maybe_redirect_to(
          if(is_atom(scope) && not is_nil(scope),
-           do: ~p"/boundaries/scope/instance/acl/" <> id,
-           else: ~p"/boundaries/acl/" <> id
+           do: ~p"/settings/boundaries/scope/instance/acl/" <> id,
+           else: ~p"/settings/boundaries/acl/" <> id
          ),
          attrs
        )}

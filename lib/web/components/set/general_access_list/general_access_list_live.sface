@@ -40,7 +40,7 @@
                   {e(Bonfire.Boundaries.Presets.for_preset(slug), :label, slug)}
                 </div>
                 <p class="text-xs opacity-60">
-                  {short_description(slug)}
+                  {e(Bonfire.Boundaries.Presets.for_preset(slug), :description, nil)}
                 </p>
               </div>
             </div>
@@ -171,7 +171,7 @@
               {e(Bonfire.Boundaries.Presets.for_preset("private"), :label, l("Private"))}
             </div>
             <p class="text-xs opacity-60">
-              {short_description("private")}
+              {e(Bonfire.Boundaries.Presets.for_preset("private"), :description, nil)}
             </p>
           </div>
         </div>

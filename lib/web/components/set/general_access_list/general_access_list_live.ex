@@ -25,21 +25,4 @@ defmodule Bonfire.UI.Boundaries.GeneralAccessListLive do
   end
 
   def matches?(_, _), do: false
-
-  @doc """
-  Short, one-line descriptions shown in the compact preset picker.
-
-  Falls back to the (often longer) description in the preset config for
-  unknown slugs. Built-in slugs use tightened copy to keep the picker scannable.
-  """
-  def short_description(slug) do
-    case slug do
-      "public" -> l("Visible to everyone.")
-      "local" -> l("Everyone on this instance.")
-      "mentions" -> l("Only people you @mention.")
-      "follows" -> l("Only people you follow.")
-      "private" -> l("Only you.")
-      _ -> e(Bonfire.Boundaries.Presets.for_preset(slug), :description, nil)
-    end
-  end
 end

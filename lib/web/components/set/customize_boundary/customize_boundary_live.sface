@@ -1,6 +1,6 @@
 <div id={@id} class="flex flex-col">
   {#if @setting_boundaries in [:edit_object, :create_object]}
-    <div class="text-sm font-medium text-base-content/80 mt-4">{l("General audience")}</div>
+    <div class="text-sm font-medium text-base-content/80 mt-2">{l("General audience")}</div>
     <div class="text-xs text-base-content/60 mb-1">{l("Who can see and interact with this activity?")}</div>
     <div class="mt-2 flex flex-col gap-1">
       <Bonfire.UI.Boundaries.GeneralAccessListLive
@@ -39,7 +39,7 @@
     id={"set_boundaries_live_#{@id}"}
   />
 
-  <div class="py-4">
+  <div class="pt-4">
     <button
       type="button"
       data-role="save_boundary"

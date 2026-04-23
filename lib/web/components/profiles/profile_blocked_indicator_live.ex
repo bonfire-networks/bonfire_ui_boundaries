@@ -20,16 +20,26 @@ defmodule Bonfire.UI.Boundaries.ProfileBlockedIndicatorLive do
       |> assign(assigns)
 
     user = e(assigns(socket), :user, nil)
+    user_id = uid(user)
 
-    {:ok,
-     socket
-     |> assign(
-       Bonfire.Boundaries.Blocks.LiveHandler.preload_one(
-         user,
-         current_user(socket)
-       )
-       |> debug("any_block?")
-     )}
+    # Only re-run block-status queries when the user prop changes — parent
+    # re-renders otherwise trigger an n+1.
+    socket =
+      if user_id && e(assigns(socket), :__preloaded_blocks_for, nil) == user_id do
+        socket
+      else
+        socket
+        |> assign(
+          Bonfire.Boundaries.Blocks.LiveHandler.preload_one(
+            user,
+            current_user(socket)
+          )
+          |> debug("any_block?")
+        )
+        |> assign(:__preloaded_blocks_for, user_id)
+      end
+
+    {:ok, socket}
   end
 
   # TODO: to avoid n+1

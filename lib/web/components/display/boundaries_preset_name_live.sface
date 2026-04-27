@@ -240,7 +240,7 @@
       title={l("Private") <> ": " <> Config.get([:ui, :group, :preset_descriptions, preset], "")}
     >
       <span :if={@with_icon} class={@icon_wrapper}>
-        <#Icon iconify="heroicons-solid:lock-closed" class={@icon_class} />
+        <#Icon iconify="ph:lock-duotone" class={@icon_class} />
       </span>
       <span class={
         "text-sm normal-case",

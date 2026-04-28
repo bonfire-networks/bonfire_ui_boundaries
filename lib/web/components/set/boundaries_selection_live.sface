@@ -1,8 +1,17 @@
-{#for {id, data} <- List.wrap(@to_boundaries) |> debug("to_boundaries")}
-  <input
-    name="to_boundaries[]"
-    value={id}
-    label={e(data, :name, if(is_binary(data), do: data))}
-    type="hidden"
-  />
+{!-- Accepts both `{slug, data}` tuples and plain slug strings; otherwise a
+     caller passing bare slugs (e.g. `read_default_content_visibility/1`) would
+     silently render no inputs and the boundary would be dropped on submit. --}
+{#for entry <- List.wrap(@to_boundaries)}
+  {#case entry}
+    {#match {id, data}}
+      <input
+        name="to_boundaries[]"
+        value={id}
+        label={e(data, :name, if(is_binary(data), do: data))}
+        type="hidden"
+      />
+    {#match slug when is_binary(slug)}
+      <input name="to_boundaries[]" value={slug} label={slug} type="hidden">
+    {#match _}
+  {/case}
 {/for}

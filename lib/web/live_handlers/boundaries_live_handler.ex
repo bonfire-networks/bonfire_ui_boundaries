@@ -62,9 +62,12 @@ defmodule Bonfire.Boundaries.LiveHandler do
   end
 
   def handle_event("set_default_boundary", %{"id" => id, "scope" => scope} = _params, socket) do
+    # Persist to the same path that `Bonfire.Boundaries.Presets.default_boundaries/1`
+    # and the settings UI both read from — otherwise the click saves a value
+    # that nothing else looks at.
     Bonfire.Common.Settings.LiveHandler.handle_event(
       "set",
-      %{"ui" => %{"boundary_preset" => id}, "scope" => scope},
+      %{"bonfire_boundaries" => %{"default_boundary_preset" => id}, "scope" => scope},
       socket
     )
   end

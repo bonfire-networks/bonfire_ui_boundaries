@@ -2,6 +2,7 @@
   <Bonfire.UI.Common.OpenModalLive
     id={deterministic_dom_id(__MODULE__, @user_id, "add_to_circle_modal", @parent_id)}
     no_actions
+    title_text={l("Add to circles")}
     modal_class="add_to_circle"
   >
     <AddToCircleWidgetLive

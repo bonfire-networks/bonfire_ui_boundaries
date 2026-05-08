@@ -30,16 +30,14 @@ defmodule Bonfire.UI.Boundaries.BoundaryDetailsLive do
   end
 
   def render(assigns) do
-    role = Roles.preset_boundary_role_from_acl(assigns[:object_boundary])
-
-    {role_name, permissions} =
-      case role do
-        {role_name, permissions} -> {role_name, permissions || []}
-        _ -> {nil, []}
+    {role_atom, role_name, permissions} =
+      case Roles.preset_boundary_role_from_acl(assigns[:object_boundary]) do
+        {role_atom, role_name, permissions} -> {role_atom, role_name, permissions || []}
+        _ -> {nil, nil, []}
       end
       |> debug("role")
 
-    is_caretaker = role_name in ["Administer", "Caretaker"] or "Grant" in permissions
+    is_caretaker = role_atom == :administer
 
     assigns
     |> assign(

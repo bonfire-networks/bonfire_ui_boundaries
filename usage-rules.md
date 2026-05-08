@@ -183,10 +183,12 @@ def preview(socket, user_id, username) do
   ]
   
   with {:ok, verbs} <- Bonfire.Boundaries.Acls.preview(current_user, opts) do
-    role = Bonfire.Boundaries.Roles.preset_boundary_role_from_acl(verbs)
-    
+    {_role_atom, role_name, _verbs} =
+      Bonfire.Boundaries.Roles.preset_boundary_role_from_acl(verbs)
+
     socket
     |> assign(
+      role_name: role_name,
       preview_boundary_for_username: username,
       preview_boundary_for_id: user_id,
       preview_boundary_verbs: verbs

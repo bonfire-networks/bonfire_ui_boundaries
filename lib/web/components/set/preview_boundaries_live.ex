@@ -149,11 +149,9 @@ defmodule Bonfire.UI.Boundaries.PreviewBoundariesLive do
     with {:ok, verbs} <-
            Bonfire.Boundaries.Acls.preview(current_user, opts)
            |> debug("preview") do
-      role = Bonfire.Boundaries.Roles.preset_boundary_role_from_acl(verbs)
-
       role_name =
-        case role do
-          {role_name, _permissions} -> role_name
+        case Bonfire.Boundaries.Roles.preset_boundary_role_from_acl(verbs) do
+          {_role_atom, role_name, _permissions} -> role_name
           _ -> nil
         end
 

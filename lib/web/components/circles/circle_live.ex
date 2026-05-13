@@ -7,6 +7,7 @@ defmodule Bonfire.UI.Boundaries.CircleLive do
   def mount(_params, _session, socket) do
     {:ok,
      socket
+     |> assign(:parent_id, "circle")
      |> assign(:circle, nil)
      |> assign(:circle_id, nil)
      |> assign(:selected_tab, nil)

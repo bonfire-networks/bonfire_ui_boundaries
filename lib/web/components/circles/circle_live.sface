@@ -95,10 +95,12 @@
         <div class="flex -space-x-2">
           {#for member <- @preview_members}
             <Bonfire.UI.Common.AvatarLive
+              parent_id={deterministic_dom_id(__MODULE__, e(member, :subject_id, nil), "circle_preview", @parent_id)}
               class="w-8 h-8 rounded-full ring-2 ring-base-100 hover:ring-primary/50 hover:z-10 transition-shadow duration-150"
               src={Media.avatar_url(e(member, :subject, nil))}
               user_id={e(member, :subject_id, nil)}
               title={e(member, :subject, :profile, :name, "")}
+              is_remote={!check_is_local?(e(member, :subject, nil), preload_if_needed: false)}
             />
           {/for}
         </div>

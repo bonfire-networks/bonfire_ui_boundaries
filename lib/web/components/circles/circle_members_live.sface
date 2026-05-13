@@ -73,6 +73,7 @@
                   character={e(member, :subject, :character, nil)}
                   class="btn btn-sm"
                   show_controls={[:follows_me, :follow]}
+                  parent_id={deterministic_dom_id(__MODULE__, id, "circle_member", @parent_id)}
                 >
                   <button
                     data-role="remove_user"
@@ -94,6 +95,7 @@
                   show_summary
                   class="btn btn-sm"
                   show_controls={[:follows_me, :follow]}
+                  parent_id={deterministic_dom_id(__MODULE__, id, "circle_member", @parent_id)}
                 >
                   <button
                     data-role="remove_user"

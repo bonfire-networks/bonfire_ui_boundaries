@@ -4,6 +4,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   alias Bonfire.Boundaries.Blocks
   alias Bonfire.Boundaries.Circles.LiveHandler
 
+  prop parent_id, :string, default: nil
   prop circle_id, :any, default: nil
   prop circle, :any, default: nil
   prop circle_type, :atom, default: nil

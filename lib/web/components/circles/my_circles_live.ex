@@ -7,6 +7,7 @@ defmodule Bonfire.UI.Boundaries.MyCirclesLive do
   prop section, :any, default: nil
   prop parent_back, :any, default: nil
   prop scope, :any, default: nil
+  prop show_new_button, :boolean, default: true
 
   def update(
         %{scope: scope} = assigns,
@@ -23,6 +24,16 @@ defmodule Bonfire.UI.Boundaries.MyCirclesLive do
   def update(assigns, socket) do
     scope = LiveHandler.scope_origin(assigns, socket)
     # |> debug
+
+    if socket_connected?(socket) and e(assigns, :show_new_button, true),
+      do:
+        send_self(
+          page_header_aside: [
+            {Bonfire.UI.Boundaries.NewCircleButtonLive,
+             [id: "new_circle_btn", scope: scope, setting_boundaries: false]}
+          ]
+        )
+
     %{page_info: page_info, edges: edges} =
       Bonfire.Boundaries.Circles.LiveHandler.my_circles_paginated(scope)
 

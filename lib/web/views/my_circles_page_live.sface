@@ -4,5 +4,6 @@
     module={maybe_component(Bonfire.UI.Boundaries.MyCirclesLive, @__context__)}
     id="circles"
     scope={@scope}
+    show_new_button={false}
   />
 </section>

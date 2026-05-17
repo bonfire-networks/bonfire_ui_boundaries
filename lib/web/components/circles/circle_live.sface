@@ -156,6 +156,10 @@
         feed_filters={@feed_filters}
         feed_name={@feed_name}
         feed_title={@feed_title}
+        feed={@feed}
+        page_info={@page_info}
+        feed_count={@feed_count}
+        loading={@loading}
         showing_within={:circle}
         hide_filters
       />

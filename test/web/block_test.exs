@@ -18,9 +18,12 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
   test "Ghost a user works (PhoenixTest)", %{conn: conn, alice: alice} do
     conn
     |> visit("/@#{alice.character.username}")
-    |> within("[data-id='hero_more_actions-profile_header']", fn session ->
-      click_button(session, "Ghost #{alice.profile.name}")
-    end)
+    |> within(
+      "[data-id='hero_more_actions-profile_hero'] [data-role='ghost_modal']",
+      fn session ->
+        click_button(session, "Ghost #{alice.profile.name}")
+      end
+    )
     |> click_button("[data-role=ghost]", "Ghost")
     |> assert_has("[role=alert]", text: "ghosted")
   end
@@ -28,9 +31,12 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
   test "Silence a user works (PhoenixTest)", %{conn: conn, alice: alice} do
     conn
     |> visit("/@#{alice.character.username}")
-    |> within("[data-id='hero_more_actions-profile_header']", fn session ->
-      click_button(session, "Silence #{alice.profile.name}")
-    end)
+    |> within(
+      "[data-id='hero_more_actions-profile_hero'] [data-role='silence_modal']",
+      fn session ->
+        click_button(session, "Silence #{alice.profile.name}")
+      end
+    )
     |> click_button("[data-role=silence]", "Silence")
     |> assert_has("[role=alert]", text: "silenced")
   end

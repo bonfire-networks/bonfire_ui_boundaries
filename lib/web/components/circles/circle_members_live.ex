@@ -19,7 +19,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   prop feedback_title, :string, default: nil
   prop feedback_message, :string, default: nil
   prop read_only, :boolean, default: false
-  prop show_add, :boolean, default: nil
+  prop show_add, :any, default: nil
   prop show_remove, :boolean, default: nil
   prop with_batch_follow, :boolean, default: false
   prop local_only, :boolean, default: false
@@ -342,9 +342,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   end
 
   def handle_event(event, params, socket) do
-    debug(event, "Unmatched event")
-    debug(params, "Unmatched event params")
-    {:noreply, socket}
+    Bonfire.Boundaries.Circles.LiveHandler.handle_event(event, params, socket)
   end
 
   # Handle member search for autocomplete - use provided live_select_id

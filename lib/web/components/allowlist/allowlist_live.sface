@@ -1,0 +1,18 @@
+<div>
+  <Bonfire.UI.Boundaries.CircleMembersLive
+    id={@circle_id || @id}
+    circle_id={@circle_id}
+    circle={@circle}
+    name={@name}
+    title={@title}
+    description={@description}
+    circle_type={:allow_them}
+    scope={@scope}
+    read_only={@read_only}
+    show_remove={!@read_only}
+    show_add={:manual}
+    feedback_title={l("Your allowlist is empty")}
+    feedback_message={l("Add instances or actors to federate with in archipelago mode.")}
+  >
+  </Bonfire.UI.Boundaries.CircleMembersLive>
+</div>

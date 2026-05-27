@@ -93,6 +93,30 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     {:noreply, socket}
   end
 
+  def handle_event("add_to_circle_by_uri", %{"uri" => uri, "circle_id" => circle_id}, socket) do
+    current_user = current_user_required!(socket)
+
+    circle =
+      e(assigns(socket), :circle, nil) ||
+        Bonfire.Boundaries.Circles.get(circle_id, current_user)
+
+    with circle when not is_nil(circle) <- circle,
+         {:ok, subject} <-
+           Bonfire.Federate.ActivityPub.AdapterUtils.resolve_uri(uri, current_user) do
+      add_member(subject, socket)
+    else
+      nil ->
+        {:noreply, assign_flash(socket, :error, l("Circle not found"))}
+
+      {:error, :not_found} ->
+        {:noreply, assign_flash(socket, :error, l("Actor or instance not found"))}
+
+      other ->
+        error(other)
+        {:noreply, assign_flash(socket, :error, l("Could not add"))}
+    end
+  end
+
   def handle_event("remove_from_circle", %{"subject_id" => subject}, socket) do
     _current_user = current_user_required!(socket)
     id = uid!(e(assigns(socket), :circle, nil))
@@ -282,10 +306,9 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
        |> assign(
          members:
            Map.merge(
-             %{id => subject},
+             %{id => %{subject_id: id, subject: subject}},
              e(assigns(socket), :members, %{})
            )
-           |> debug()
        )}
     else
       true ->
@@ -308,7 +331,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
        |> assign(
          members:
            Map.merge(
-             %{id => subject},
+             %{id => %{subject_id: id, subject: subject}},
              e(assigns(socket), :members, %{})
            )
        )}

@@ -10,7 +10,8 @@
       circle_type={:silence}
       scope={@scope}
       showing_within={@block_type}
-      read_only
+      read_only={@read_only}
+      show_add={if !@read_only, do: :manual}
       show_remove={!@read_only}
       feedback_title={l("This list is empty")}
       feedback_message=""
@@ -73,7 +74,8 @@
       scope={@scope}
       showing_within={@block_type}
       blocked_circle_ids={@blocked_circle_ids}
-      read_only
+      read_only={@read_only}
+      show_add={if !@read_only, do: :manual}
       show_remove={!@read_only}
       feedback_title={l("This list is empty")}
       feedback_message=""
@@ -143,7 +145,8 @@
       circle_type={:ghost}
       scope={@scope}
       showing_within={@block_type}
-      read_only
+      read_only={@read_only}
+      show_add={if !@read_only, do: :manual}
       show_remove={!@read_only}
       feedback_title={l("This list is empty")}
       feedback_message=""

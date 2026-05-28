@@ -9,7 +9,7 @@
     <div :if={!@is_admin_circle && !@read_only && @show_add} class="flex flex-col gap-3">
       {#if description = @description || e(@circle, :extra_info, :summary, nil)}
         <div class="p-4 border-b border-base-content/10">
-          <span class="text-base-content/80">{description}</span>
+          <span class="text-base-content/80">{markdown(description)}</span>
         </div>
       {/if}
       <div class="menu menu-horizontal items-center justify-between gap-3 w-full">

@@ -19,7 +19,7 @@
             name="named[name]"
             value={e(@acl, :named, :name, nil) || e(@acl, :stereotyped, :named, :name, nil)}
             type="text"
-            placeholder="Type here"
+            placeholder={l("Type here")}
             class="w-full input"
           />
         </fieldset>
@@ -28,7 +28,7 @@
           <label class="fieldset-legend">{l("Edit the boundary preset description")}</label>
           <textarea
             name="extra_info[summary]"
-            placeholder="A short description to help you remember what this boundary is about"
+            placeholder={l("A short description to help you remember what this boundary is about")}
             rows="3"
             class="w-full h-24 text-sm textarea textarea-bordered"
           >{e(@acl, :extra_info, :summary, nil)}</textarea>

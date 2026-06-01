@@ -20,7 +20,7 @@
             value={e(@circle, :named, :name, nil)}
             type="text"
             class="input w-full"
-            placeholder="Type here"
+            placeholder={l("Type here")}
           />
         </fieldset>
         {!-- <div class="">

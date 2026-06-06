@@ -9,7 +9,7 @@
     <div :if={!@is_admin_circle && !@read_only && @show_add} class="flex flex-col gap-3">
       {#if description = @description || e(@circle, :extra_info, :summary, nil)}
         <div class="p-4 border-b border-base-content/10">
-          <span class="text-base-content/80">{markdown(description)}</span>
+          <div class="max-w-prose text-sm leading-relaxed text-base-content/80 space-y-2 [&_p]:m-0 [&_ul]:list-disc [&_ul]:ps-5 [&_ul]:space-y-1.5 [&_ul]:marker:text-base-content/40 [&_li]:ps-1 [&_a]:link [&_a]:link-primary [&_code]:rounded [&_code]:bg-base-content/10 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[0.8em] [&_code]:font-mono">{markdown(description)}</div>
         </div>
       {/if}
       <div class="menu menu-horizontal items-center justify-between gap-3 w-full">

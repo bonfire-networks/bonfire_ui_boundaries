@@ -1,7 +1,6 @@
 defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
   use Bonfire.UI.Common.Web, :stateful_component
   use Bonfire.Common.Utils
-  alias Bonfire.UI.Boundaries.VerbPermissionsHelper
 
   # declare_module_optional(l("Custom boundaries in composer"),
   #   description:

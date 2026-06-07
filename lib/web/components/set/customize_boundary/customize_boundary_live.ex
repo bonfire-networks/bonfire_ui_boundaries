@@ -2,7 +2,6 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   use Bonfire.UI.Common.Web, :stateful_component
   use Bonfire.Common.Utils
   # alias Bonfire.Boundaries.Roles
-  alias Bonfire.UI.Boundaries.VerbPermissionsHelper
   alias Bonfire.Common.Media
 
   prop to_boundaries, :any, default: nil
@@ -273,7 +272,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   #   acl_subject_verb_grants = Bonfire.Boundaries.Grants.subject_verb_grants(grants)
 
   #   {verb_permissions, _} =
-  #     VerbPermissionsHelper.transform_acl_to_verb_format(acl_subject_verb_grants)
+  #     Bonfire.Boundaries.VerbGrants.transform_acl_to_verb_format(acl_subject_verb_grants)
 
   #   {:ok, verb_permissions, extracted_users}
   # end
@@ -373,7 +372,9 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
     acl_subject_verb_grants = e(assigns, :acl_subject_verb_grants, nil)
 
     if acl_subject_verb_grants && acl_subject_verb_grants != %{} do
-      {perms, _} = VerbPermissionsHelper.transform_acl_to_verb_format(acl_subject_verb_grants)
+      {perms, _} =
+        Bonfire.Boundaries.VerbGrants.transform_acl_to_verb_format(acl_subject_verb_grants)
+
       # TODO: Extract users from acl_subject_verb_grants if needed
       {perms, []}
     else
@@ -409,7 +410,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
 
   #   # Convert to verb permissions format
   #   preset_verb_permissions =
-  #     VerbPermissionsHelper.reconstruct_verb_permissions(preset_circles_with_verbs, [])
+  #     Bonfire.Boundaries.VerbGrants.reconstruct_verb_permissions(preset_circles_with_verbs, [])
 
   #   # Check if preset has changed - if so, start fresh
   #   current_preset = e(assigns(socket), :preset_boundary, nil)
@@ -461,7 +462,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   defp reconstruct_from_circles(assigns) do
     to_circles = e(assigns, :to_circles, [])
     exclude_circles = e(assigns, :exclude_circles, [])
-    VerbPermissionsHelper.reconstruct_verb_permissions(to_circles, exclude_circles)
+    Bonfire.Boundaries.VerbGrants.reconstruct_verb_permissions(to_circles, exclude_circles)
   end
 
   def handle_event(
@@ -538,7 +539,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
 
       updated_verbs =
         Enum.reduce(verbs, current_verbs, fn verb, acc ->
-          VerbPermissionsHelper.update_verb_permission(acc, circle_id, verb, new_value)
+          Bonfire.Boundaries.VerbGrants.update_verb_permission(acc, circle_id, verb, new_value)
         end)
 
       grants = Enum.map(verbs, fn v -> {circle_id, v, new_value} end)
@@ -621,7 +622,12 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
     current_verbs = e(assigns(socket), :verb_permissions, %{})
     # Update the specific verb for the specific circle
     updated_verbs =
-      VerbPermissionsHelper.update_verb_permission(current_verbs, circle_id, verb, verb_value)
+      Bonfire.Boundaries.VerbGrants.update_verb_permission(
+        current_verbs,
+        circle_id,
+        verb,
+        verb_value
+      )
 
     # Handle ACL mode differently
     final_verbs =

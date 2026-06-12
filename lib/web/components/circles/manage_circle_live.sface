@@ -74,6 +74,7 @@
             "phx-target" => @myself
           }}
           hide_presets={false}
+          presets={["public", "local"]}
           hide_private={false}
           hide_custom
           to_boundaries={@to_boundaries}

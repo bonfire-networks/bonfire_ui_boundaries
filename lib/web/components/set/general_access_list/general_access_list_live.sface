@@ -1,7 +1,8 @@
 <div class="grid grid-cols-2 gap-1">
   {#if !@hide_presets}
     {#for slug <-
-        Bonfire.Common.Config.get(:preset_order, ["public", "local", "mentions"], :bonfire_boundaries)}
+        @presets ||
+          Bonfire.Common.Config.get(:preset_order, ["public", "local", "mentions"], :bonfire_boundaries)}
       <div class={[
         "flex items-center gap-3 rounded-lg justify-between bg-base-content/10",
         "bg-primary": matches?(@boundary_preset, slug)

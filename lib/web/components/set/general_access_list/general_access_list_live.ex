@@ -2,6 +2,8 @@ defmodule Bonfire.UI.Boundaries.GeneralAccessListLive do
   use Bonfire.UI.Common.Web, :stateless_component
 
   prop hide_presets, :boolean, default: false
+  # which preset slugs to offer; defaults to the configured `:preset_order`
+  prop presets, :list, default: nil
   prop boundary_preset, :any, default: nil
   prop set_action, :string, default: nil
   prop set_opts, :map, default: %{}

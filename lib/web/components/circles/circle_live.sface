@@ -138,6 +138,7 @@
           circle={@circle}
           preview_members={@preview_members}
           read_only={@read_only}
+          show_add={!@read_only}
           with_batch_follow
         />
       </div>

@@ -25,6 +25,7 @@
         selected_tab={@selected_tab}
         id="circle_members"
         scope={@scope}
+        show_add={true}
         circle_id={@current_params["id"]}
       />
       <!-- {#match "admin_circle"}

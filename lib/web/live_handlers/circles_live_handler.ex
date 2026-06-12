@@ -331,7 +331,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
        |> assign(
          members:
            Map.merge(
-             %{id => %{subject_id: id, subject: subject}},
+             %{id => %{subject_id: id, subject: load_member_subject(id, subject, socket)}},
              e(assigns(socket), :members, %{})
            )
        )}
@@ -340,6 +340,36 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
         error(other)
 
         {:noreply, assign_flash(socket, :error, l("Could not add to circle"))}
+    end
+  end
+
+  # Ensure the optimistically-added member renders with its name/avatar instead of
+  # "Unknown" until the page is refreshed. The multiselect pick only carries a flat
+  # map (id/name/username/icon), so we shape a subject that matches the template's
+  # `%{subject: %{profile: %{id: _}}}` clause, preferring the fully-loaded record.
+  defp load_member_subject(_id, %{profile: %{id: _}} = subject, _socket), do: subject
+
+  defp load_member_subject(id, subject, socket) do
+    loaded =
+      with {:ok, obj} <-
+             Bonfire.Common.Needles.get(id,
+               current_user: current_user(socket),
+               skip_boundary_check: true
+             ) do
+        repo().maybe_preload(obj, [:profile, :character, :named])
+      else
+        _ -> nil
+      end
+
+    if e(loaded, :profile, :id, nil) || e(loaded, :character, :id, nil) do
+      loaded
+    else
+      # Fall back to a display-shaped subject built from the pick data we already have
+      %{
+        id: id,
+        profile: %{id: id, name: e(subject, :name, nil) || e(subject, :username, nil), icon: e(subject, :icon, nil)},
+        character: %{id: id, username: e(subject, :username, nil)}
+      }
     end
   end
 

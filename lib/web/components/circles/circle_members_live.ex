@@ -297,16 +297,6 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   end
 
   def handle_event(
-        "live_select_change",
-        %{"id" => live_select_id, "text" => search},
-        %{assigns: %{circle_type: circle_type}} = socket
-      )
-      when circle_type in [:silence, :ghost, :block] and is_binary(search) do
-    debug(search, "LiveSelect autocomplete search for blocking circles")
-    handle_member_search_with_exclusion(search, live_select_id, socket)
-  end
-
-  def handle_event(
         "remove",
         %{"subject" => id} = _attrs,
         %{assigns: %{scope: scope, circle_type: circle_type}} = socket
@@ -347,33 +337,20 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
 
   # Handle member search for autocomplete - use provided live_select_id
   defp handle_member_search(search, live_select_id, socket) when byte_size(search) >= 2 do
+    # avoid suggesting blocking oneself when searching in a silence/ghost/block circle
+    exclude_id =
+      if e(assigns(socket), :circle_type, nil) in [:silence, :ghost, :block],
+        do: current_user_id(socket)
+
     search_results =
       do_results_for_multiselect(search, local_only: e(assigns(socket), :local_only, false))
+      |> Enum.reject(fn {_name, %{id: id}} -> !is_nil(exclude_id) and id == exclude_id end)
 
     maybe_send_update(LiveSelect.Component, live_select_id, options: search_results)
     {:noreply, socket}
   end
 
   defp handle_member_search(_search, _live_select_id, socket) do
-    {:noreply, socket}
-  end
-
-  # Handle member search with current user exclusion for blocking circles
-  defp handle_member_search_with_exclusion(search, live_select_id, socket)
-       when byte_size(search) >= 2 do
-    current_user_id =
-      current_user_id(socket)
-      |> debug("avoid blocking myself")
-
-    search_results =
-      do_results_for_multiselect(search, local_only: e(assigns(socket), :local_only, false))
-      |> Enum.reject(fn {_name, %{id: id}} -> id == current_user_id end)
-
-    maybe_send_update(LiveSelect.Component, live_select_id, options: search_results)
-    {:noreply, socket}
-  end
-
-  defp handle_member_search_with_exclusion(_search, _live_select_id, socket) do
     {:noreply, socket}
   end
 

@@ -39,7 +39,7 @@
     id={"set_boundaries_live_#{@id}"}
   />
 
-  <div class="pt-4">
+  <div :if={!@hide_save_button} class="pt-4">
     <button
       type="button"
       data-role="save_boundary"

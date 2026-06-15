@@ -284,7 +284,10 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
 
   defp maybe_filter_current_user(results, _), do: results
 
-  defp prepare_results_for_multiselect({:ok, results}) do
+  defp prepare_results_for_multiselect({:ok, results}),
+    do: prepare_results_for_multiselect(results)
+
+  defp prepare_results_for_multiselect(results) when is_list(results) do
     results
     |> Enum.map(fn user ->
       name = e(user, :profile, :name, nil) || e(user, :character, :username, nil)
@@ -306,7 +309,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
        |> assign(
          members:
            Map.merge(
-             %{id => %{subject_id: id, subject: subject}},
+             %{id => %{subject_id: id, subject: load_member_subject(id, subject, socket)}},
              e(assigns(socket), :members, %{})
            )
        )}
@@ -344,10 +347,11 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
   end
 
   # Ensure the optimistically-added member renders with its name/avatar instead of
-  # "Unknown" until the page is refreshed. The multiselect pick only carries a flat
-  # map (id/name/username/icon), so we shape a subject that matches the template's
-  # `%{subject: %{profile: %{id: _}}}` clause, preferring the fully-loaded record.
+  # "Unknown" until refresh. An already-loaded record (URI-resolved user / instance /
+  # remote actor) is used as-is; only a flat autocomplete pick (id/name/username/icon,
+  # always a user) is loaded from the DB, falling back to a display-shaped subject.
   defp load_member_subject(_id, %{profile: %{id: _}} = subject, _socket), do: subject
+  defp load_member_subject(_id, %{__struct__: _} = subject, _socket), do: subject
 
   defp load_member_subject(id, subject, socket) do
     loaded =
@@ -367,7 +371,11 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
       # Fall back to a display-shaped subject built from the pick data we already have
       %{
         id: id,
-        profile: %{id: id, name: e(subject, :name, nil) || e(subject, :username, nil), icon: e(subject, :icon, nil)},
+        profile: %{
+          id: id,
+          name: e(subject, :name, nil) || e(subject, :username, nil),
+          icon: e(subject, :icon, nil)
+        },
         character: %{id: id, username: e(subject, :username, nil)}
       }
     end

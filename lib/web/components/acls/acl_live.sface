@@ -52,6 +52,7 @@
                 id={deterministic_dom_id("customize_boundary", id(@acl), nil, @id)}
                 setting_boundaries={@setting_boundaries}
                 show_general_boundary={@show_general_boundary}
+                hide_save_button
                 acl={@acl}
                 scope={@scope}
                 acl_subject_verb_grants={@acl_subject_verb_grants}

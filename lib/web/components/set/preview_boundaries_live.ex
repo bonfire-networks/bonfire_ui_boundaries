@@ -54,22 +54,26 @@ defmodule Bonfire.UI.Boundaries.PreviewBoundariesLive do
   #   {:ok, socket}
   # end
 
-  def handle_event("live_select_change", %{"id" => live_select_id, "text" => search}, socket) do
-    # Only trigger search if the search text is at least 3 characters to prevent unnecessary operations
-    Utils.maybe_apply(
-      Bonfire.Me.Users,
-      :search,
-      [search]
-    )
-    |> Enum.map(fn
-      %Needle.Pointer{activity: %{object: user}} -> user
-      other -> other
-    end)
-    |> Bonfire.UI.Boundaries.SetBoundariesLive.results_for_multiselect()
-    |> maybe_send_update(LiveSelect.Component, live_select_id, options: ...)
+  def handle_event("live_select_change", %{"id" => live_select_id, "text" => search}, socket)
+      when is_binary(search) and byte_size(search) >= 2 do
+    search_results =
+      Utils.maybe_apply(
+        Bonfire.Me.Users,
+        :search,
+        [search]
+      )
+      |> Enum.map(fn
+        %Needle.Pointer{activity: %{object: user}} -> user
+        other -> other
+      end)
+      |> Bonfire.UI.Boundaries.SetBoundariesLive.results_for_multiselect()
+
+    maybe_send_update(LiveSelect.Component, live_select_id, options: search_results)
 
     {:noreply, socket}
   end
+
+  def handle_event("live_select_change", _params, socket), do: {:noreply, socket}
 
   def handle_event(
         "multi_select",

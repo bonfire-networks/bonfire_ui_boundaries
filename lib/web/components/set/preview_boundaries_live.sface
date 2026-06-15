@@ -12,7 +12,7 @@
             implementation={:live_select}
             form_input_name={__MODULE__}
             update_min_len={2}
-            event_target="#smart_input"
+            event_target={@myself}
             debounce={300}
           />
         </form>

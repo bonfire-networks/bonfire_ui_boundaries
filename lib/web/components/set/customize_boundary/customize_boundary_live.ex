@@ -27,6 +27,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
 
   # Display control
   prop show_general_boundary, :boolean, default: false
+  prop hide_save_button, :boolean, default: false
 
   # Verb filtering options
   prop include_verbs, :list, default: nil

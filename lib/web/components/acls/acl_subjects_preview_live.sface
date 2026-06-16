@@ -1,0 +1,33 @@
+{#case Grants.subjects(@grants)}
+  {#match subjects when is_list(subjects) and subjects != []}
+    <div class="flex items-center gap-2 mt-1">
+      <span class="text-xs text-base-content/70">
+        {length(subjects)} {@count_label || l("items")}
+      </span>
+      <div class="flex gap-1 avatar-group">
+        {#for subject <- subjects}
+          {#if e(subject, :profile, :id, nil)}
+            <Bonfire.UI.Common.AvatarLive
+              parent_id="acls"
+              src={Media.avatar_url(subject)}
+              user_id={id(subject)}
+              title={e(subject, :profile, :name, nil) ||
+                e(subject, :character, :username, nil) || id(subject)}
+              class="w-5 h-5 rounded-full"
+              is_remote={!check_is_local?(subject, preload_if_needed: false)}
+              bg_class="rounded-xl"
+            />
+          {#else}
+            <span
+              title={e(subject, :named, :name, nil) || e(subject, :stereotyped, :named, :name, nil) ||
+                e(subject, :name, nil) || id(subject)}
+              class="flex items-center w-5 h-5 rounded-full place-content-center"
+            >
+              <#Icon iconify="ph:circle-duotone" class={"inline-block w-5 h-5 #{@accent_class}"} />
+            </span>
+          {/if}
+        {/for}
+      </div>
+    </div>
+  {#match _}
+{/case}

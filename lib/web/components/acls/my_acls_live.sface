@@ -18,66 +18,72 @@
         </div>
       </div>
 
-      <ul role="list" class="list">
-        <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{l("Your Boundary presets")}</li>
-        {#for %{id: acl_id} = acl <- e(@acls, []) ++ e(@built_ins, [])}
-          <li class="list-row">
-            <#Icon iconify="ph:intersection-duotone" class="w-7 h-7 text-primary" />
-            <div>
-              <div class="text-sm font-semibold">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
-              {!-- <div class="text-xs uppercase font-semibold opacity-60">{e(circle, :encircles_count, 0)} {l(" Members")}</div> --}
-              {!-- {#if e(acl, :grants_count, 0) > 0} --}
-              <div class="flex items-center gap-2 mt-1">
-                {#case Grants.subjects(e(acl, :grants, []))}
-                  {#match subjects when is_list(subjects)}
-                    <span :if={subjects != []} class="text-xs text-base-content/70">
-                      {length(subjects)} {l("items")}
-                    </span>
-                    <div class="flex gap-1 avatar-group">
-                      {#for subject <- subjects}
-                        {#if e(subject, :profile, :id, nil)}
-                          <Bonfire.UI.Common.AvatarLive
-                            parent_id="acls"
-                            src={Media.avatar_url(subject)}
-                            user_id={id(subject)}
-                            title={e(subject, :profile, :name, nil) ||
-                              e(subject, :character, :username, nil) || id(subject)}
-                            class="w-5 h-5 rounded-full"
-                            is_remote={!check_is_local?(subject, preload_if_needed: false)}
-                            bg_class="rounded-xl"
-                          />
-                        {#else}
-                          <div class="flex items-center gap-3">
-                            <span
-                              title={e(subject, :named, :name, nil) || e(subject, :stereotyped, :named, :name, nil) ||
-                                e(subject, :name, nil) || id(subject)}
-                              class="flex items-center w-5 h-5 rounded-full place-content-center"
-                            >
-                              <#Icon iconify="ph:circle-duotone" class="inline-block w-5 h-5 text-primary" />
-                            </span>
-                          </div>
-                        {/if}
-                      {/for}
+      {#case {e(@acls, []), e(@system_acls, [])}}
+        {#match {custom_acls, system_acls}}
+          <ul role="list" class="list">
+            {#if custom_acls != []}
+              <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{l("Your custom presets")}</li>
+              {#for acl <- custom_acls}
+                <li class="list-row">
+                  <#Icon iconify="ph:intersection-duotone" class="w-7 h-7 text-primary" />
+                  <div>
+                    <div class="text-sm font-semibold">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
+                    <Bonfire.UI.Boundaries.AclSubjectsPreviewLive grants={e(acl, :grants, [])} />
+                  </div>
+                  <LinkLive
+                    class="btn btn-sm"
+                    aria-label={l("Manage %{name}", name: e(acl, :named, :name, nil) || l("preset"))}
+                    to={if @scope != nil,
+                      do: ~p"/settings/boundaries/scope/instance/acl/#{id(acl)}",
+                      else: ~p"/settings/boundaries/acl/#{id(acl)}"}
+                  >
+                    {l("Manage")}
+                  </LinkLive>
+                </li>
+              {/for}
+            {/if}
+
+            {#if system_acls != []}
+              <li class="p-4 pb-2 flex items-center gap-2 text-xs opacity-60 tracking-wide">
+                <#Icon iconify="ph:lock-simple-duotone" class="w-4 h-4" />
+                <span>{l("System presets")}</span>
+                <span class="font-normal normal-case">· {l("read-only")}</span>
+              </li>
+              {#for acl <- system_acls}
+                <li class="border-b border-base-content/10 last:border-b-0" x-data="{open: false}">
+                  <button
+                    type="button"
+                    data-role="toggle_preset"
+                    x-on:click="open = !open"
+                    x-bind:aria-expanded="open.toString()"
+                    class="w-full flex items-center gap-3 p-4 text-left cursor-pointer hover:bg-base-content/5 transition-colors"
+                  >
+                    <#Icon iconify="ph:intersection-duotone" class="w-7 h-7 text-base-content/50 shrink-0" />
+                    <div class="flex-1 min-w-0">
+                      <div class="text-sm font-semibold">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
+                      <Bonfire.UI.Boundaries.AclSubjectsPreviewLive
+                        grants={e(acl, :grants, [])}
+                        count_label={l("audiences")}
+                        accent_class="text-base-content/50"
+                      />
                     </div>
-                  {#match _}
-                    <!-- <span  class="text-xs text-base-content/70">
-                      0 {l("items")}
-                    </span> -->
-                {/case}
-              </div>
-              {!-- {/if} --}
-            </div>
-            <LinkLive
-              class="btn btn-sm"
-              to={if @scope != nil,
-                do: ~p"/settings/boundaries/scope/instance/acl/#{id(acl)}",
-                else: ~p"/settings/boundaries/acl/#{id(acl)}"}
-            >
-              {l("Manage")}
-            </LinkLive>
-          </li>
-        {/for}
-      </ul>
+                    <#Icon
+                      iconify="ph:caret-down"
+                      class="w-4 h-4 text-base-content/60 shrink-0 transition-transform duration-150"
+                      x-bind:class="open && 'rotate-180'"
+                    />
+                  </button>
+                  <div x-show="open" x-collapse class="px-4 pb-4">
+                    <Bonfire.UI.Boundaries.AclAudienceSummaryLive
+                      acl_subject_verb_grants={Grants.subject_verb_grants(e(acl, :grants, []))}
+                      show_heading={false}
+                    />
+                  </div>
+                </li>
+              {/for}
+            {/if}
+          </ul>
+      {/case}
       <Bonfire.UI.Common.LoadMoreLive
         :if={@page_info}
         live_handler={__MODULE__}

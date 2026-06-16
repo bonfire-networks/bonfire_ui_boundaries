@@ -1,0 +1,116 @@
+<div class="py-4 flex flex-col gap-4">
+  <div class="flex items-start justify-between gap-4">
+    <p class="text-sm text-base-content/70">
+      {l(
+        "Grant instance-wide capabilities to circles or people. Everything here applies across the whole instance, so changes are deliberate: you're in view mode until you choose to edit."
+      )}
+    </p>
+    <button
+      :if={@can_edit}
+      type="button"
+      data-role="toggle_edit"
+      phx-click="toggle_edit"
+      phx-target={@myself}
+      class={"btn btn-sm shrink-0", "btn-primary": @edit_mode, "btn-outline": !@edit_mode}
+    >
+      {#if @edit_mode}
+        <#Icon iconify="ph:check-bold" class="w-4 h-4" />
+        {l("Done")}
+      {#else}
+        <#Icon iconify="ph:pencil-simple-duotone" class="w-4 h-4" />
+        {l("Edit")}
+      {/if}
+    </button>
+  </div>
+
+  <div
+    :if={@edit_mode}
+    role="note"
+    class="flex items-start gap-3 rounded-lg bg-warning/10 border border-warning/30 p-3 text-sm"
+  >
+    <#Icon iconify="ph:warning-duotone" class="w-5 h-5 text-warning shrink-0 mt-0.5" />
+    <span class="text-base-content/80">{l("You're editing instance-wide permissions. Changes take effect immediately.")}</span>
+  </div>
+
+  <ul
+    role="list"
+    class="flex flex-col rounded-lg border border-base-content/10 divide-y divide-base-content/10"
+  >
+    {#for capability <- @capabilities_with_ids}
+      <li class="p-4 flex flex-col gap-3">
+        <div class="flex items-start gap-3">
+          <span class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+            <Iconify.iconify icon={capability.icon} class="w-4 h-4 text-primary" aria-hidden="true" />
+          </span>
+          <div class="flex flex-col min-w-0">
+            <span class="text-sm font-semibold text-base-content">{capability_label(capability.key)}</span>
+            <span class="text-xs text-base-content/60">{capability_summary(capability.key)}</span>
+          </div>
+        </div>
+
+        {#if @edit_mode}
+          <div class="flex flex-wrap gap-2 pl-11">
+            {#for audience <- @audiences}
+              {#case e(audience.states, capability.key, :off)}
+                {#match state}
+                  <button
+                    type="button"
+                    data-role="capability_toggle"
+                    phx-click="toggle_capability"
+                    phx-value-audience={audience.id}
+                    phx-value-capability={capability.key}
+                    phx-target={@myself}
+                    data-state={to_string(state)}
+                    aria-pressed={case state do
+                      :on -> "true"
+                      :partial -> "mixed"
+                      _ -> "false"
+                    end}
+                    class={
+                      "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors cursor-pointer",
+                      "bg-success/15 border-success/40 text-base-content": state == :on,
+                      "bg-warning/10 border-warning/40 text-base-content": state == :partial,
+                      "border-base-content/15 text-base-content/80 hover:bg-base-content/5": state == :off
+                    }
+                  >
+                    {#if state == :on}
+                      <#Icon iconify="ph:check-square-fill" class="w-4 h-4 text-success" />
+                    {#elseif state == :partial}
+                      <#Icon iconify="ph:minus-square-fill" class="w-4 h-4 text-warning" />
+                    {#else}
+                      <#Icon iconify="ph:square" class="w-4 h-4 text-base-content/40" />
+                    {/if}
+                    <span>{audience.name}</span>
+                  </button>
+              {/case}
+            {/for}
+          </div>
+        {#else}
+          {#case Enum.filter(@audiences, fn a -> e(a.states, capability.key, :off) != :off end)}
+            {#match []}
+              <span class="pl-11 text-xs text-base-content/50">{l("No one")}</span>
+            {#match granted}
+              <div class="flex flex-wrap gap-1.5 pl-11">
+                {#for audience <- granted}
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-xs">
+                    {#if e(audience.states, capability.key, :off) == :partial}
+                      <#Icon iconify="ph:minus-bold" class="w-3.5 h-3.5 text-warning" />
+                    {#else}
+                      <#Icon iconify="ph:check-bold" class="w-3.5 h-3.5 text-success" />
+                    {/if}
+                    <span class="text-base-content/90">{audience.name}</span>
+                  </span>
+                {/for}
+              </div>
+          {/case}
+        {/if}
+      </li>
+    {/for}
+  </ul>
+
+  <p class="text-xs text-base-content/50">
+    {l(
+      "Looking for content permissions like replies or boosts? Those are set per post, or via boundary presets."
+    )}
+  </p>
+</div>

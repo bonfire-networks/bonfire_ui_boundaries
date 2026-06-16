@@ -20,7 +20,25 @@
         />
       </section>
     {#match nil}
-      <div>
+      <div :if={@usage == :ops}>
+        <Bonfire.UI.Boundaries.InstancePermissionsLive
+          id={"instance_permissions_#{id(@acl)}"}
+          acl={@acl}
+          scope={@scope}
+          can_edit={!@read_only}
+        />
+      </div>
+      {!-- static read-only viewer only for viewing a built-in/system preset (e.g. in boundary settings);
+        the object-edit flow (`setting_boundaries == :edit_object`, e.g. a post's "Advanced" modal) keeps
+        the editable CustomizeBoundaryLive below, which itself disables inputs when `read_only` --}
+      <div :if={@usage != :ops && @read_only && @setting_boundaries != :edit_object}>
+        <Bonfire.UI.Boundaries.AclViewLive
+          acl={@acl}
+          acl_subject_verb_grants={@acl_subject_verb_grants}
+          description={@description}
+        />
+      </div>
+      <div :if={@usage != :ops && (!@read_only || @setting_boundaries == :edit_object)}>
         <div
           :if={!@setting_boundaries && (e(@description, nil) || e(@acl, :extra_info, :summary, nil))}
           class="p-4 border-b border-base-content/10"

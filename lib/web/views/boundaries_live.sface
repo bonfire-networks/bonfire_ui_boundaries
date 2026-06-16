@@ -84,9 +84,6 @@
         selected_tab="silenced"
         name={l("Silenced instance-wide")}
         title={l("People & instances silenced instance-wide")}
-        description={l(
-          "Silenced users and instances are hidden from feeds and notifications on this instance. They won't appear in posts, mentions, or messages, but can still see public content."
-        )}
       />
     {#match "instance_ghosted"}
       <Bonfire.UI.Boundaries.BlocksLive
@@ -95,9 +92,6 @@
         selected_tab="ghosted"
         name={l("Ghosted instance-wide")}
         title={l("People & instances ghosted instance-wide")}
-        description={l(
-          "Ghosted users and instances cannot see or interact with anyone on this instance. This is a stronger form of blocking where they are completely invisible to each other."
-        )}
       />
     {#match "instance_blocked"}
       <Bonfire.UI.Boundaries.BlocksLive
@@ -106,9 +100,6 @@
         selected_tab="blocked"
         name={l("Blocked instance-wide")}
         title={l("People & instances blocked instance-wide")}
-        description={l(
-          "Blocked users and instances are completely blocked from this instance. This combines both silencing (they won't appear in feeds) and ghosting (mutual invisibility). This is the strongest form of blocking available."
-        )}
       />
       {!-- {#match "instance_circles"}
       <StatefulComponent

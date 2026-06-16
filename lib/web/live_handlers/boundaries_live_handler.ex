@@ -879,6 +879,11 @@ defmodule Bonfire.Boundaries.LiveHandler do
       e(subject, :name, nil) || uid(subject)
   end
 
+  def subject_icon(subject) do
+    e(subject, :extra_info, :icon, nil) || e(subject, :stereotyped, :extra_info, :icon, nil) ||
+      "ph:circle-duotone"
+  end
+
   def scope_origin(assigns \\ nil, socket) do
     context = e(assigns, :__context__, nil) || assigns(socket)[:__context__]
     current_user = current_user_or_id(context)

@@ -6,7 +6,13 @@
       circle={@circle}
       name={@name}
       title={@title}
-      description={@description}
+      description={@description ||
+        if @scope == :instance_wide,
+          do:
+            l(
+              "Silenced users and instances are hidden from feeds and notifications on this instance. They won't appear in posts, mentions, or messages, but can still see public content."
+            ),
+          else: l("You will not receive any updates from the users or instances on this list")}
       circle_type={:silence}
       scope={@scope}
       showing_within={@block_type}
@@ -15,51 +21,7 @@
       show_remove={!@read_only}
       feedback_title={l("This list is empty")}
       feedback_message=""
-    >
-      <div class="flex flex-col p-2 flex-1 gap-1 text-left text-sm max-w-full">
-        <p :if={@scope == :instance_wide} class="">
-          {l("Nobody on this instance will receive any updates from the users or instances on this list")}
-        </p>
-        <p :if={@scope != :instance_wide} class="">
-          {l("You will not receive any updates from the users or instances on this list")}
-        </p>
-        <div x-data="{active_info: false}" role="region" class="">
-          <div x-cloak x-show="active_info" x-collapse>
-            <div class="block mt-3 text-left px-3">
-              <ul class="block pl-4 mt-1 prose-sm list-disc">
-                <li>
-                  {l("You won't see anything they write/create in feeds.")}
-                </li>
-                <li>
-                  {l("You will still be able to view their profile or read their posts using direct links.")}
-                </li>
-                <li>
-                  {l("You won't see any @ mentions or messages they send you.")}
-                </li>
-                <li>
-                  {l("You won't be able to follow them.")}
-                </li>
-                <li>
-                  {l("You will be able to undo this later but may not be able to see any activities you missed.")}
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            x-on:click="active_info = ! active_info"
-            :aria-expanded="active_info"
-            class="font-medium text-sm link link-primary"
-          >
-            <span x-show="!active_info">{l("Read more")}</span>
-            <span x-show="active_info">{l("Read less")}</span>
-            <span x-show="active_info" aria-hidden="true" class="ml-2">&minus;</span>
-            <span x-show="!active_info" aria-hidden="true" class="ml-2">&plus;</span>
-          </button>
-        </div>
-      </div>
-    </Bonfire.UI.Boundaries.CircleMembersLive>
+    />
   {#elseif @selected_tab == "blocked"}
     {!-- blocked (both silenced AND ghosted) --}
 
@@ -69,7 +31,16 @@
       circle={@circle}
       name={@name}
       title={@title}
-      description={@description}
+      description={@description ||
+        if @scope == :instance_wide,
+          do:
+            l(
+              "Blocked users and instances are completely blocked from this instance. This combines both silencing (they won't appear in feeds) and ghosting (mutual invisibility). This is the strongest form of blocking available."
+            ),
+          else:
+            l(
+              "Users or instances on this list are completely blocked. This is a bidirectional block - you won't see their content and they won't see yours."
+            )}
       circle_type={:block}
       scope={@scope}
       showing_within={@block_type}
@@ -79,59 +50,7 @@
       show_remove={!@read_only}
       feedback_title={l("This list is empty")}
       feedback_message=""
-    >
-      <div class="flex p-2 flex-col flex-1 gap-1 text-left text-sm max-w-full">
-        <p :if={@scope == :instance_wide} class="">
-          {l(
-            "Users or instances on this list are completely blocked. They cannot see or interact with anyone on this instance, and nobody on this instance will see their content."
-          )}
-        </p>
-        <p :if={@scope != :instance_wide} class="">
-          {l(
-            "Users or instances on this list are completely blocked. This is a bidirectional block - you won't see their content and they won't see yours."
-          )}
-        </p>
-        <div x-data="{active_info: false}" role="region" class="">
-          <div x-cloak x-show="active_info" x-collapse>
-            <div class="block text-left px-3">
-              <ul class="block pl-4 mt-1 prose-sm list-disc">
-                <li>
-                  {l("You won't see anything they write/create in feeds.")}
-                </li>
-                <li>
-                  {l("They won't see anything you write/create in feeds.")}
-                </li>
-                <li>
-                  {l("You won't see any @ mentions or messages they send you.")}
-                </li>
-                <li>
-                  {l("They won't see any @ mentions or messages you send them.")}
-                </li>
-                <li>
-                  {l("You won't be able to follow them and they won't be able to follow you.")}
-                </li>
-                <li>
-                  {l(
-                    "You will be able to undo this later but both parties may not be able to see any activities they missed."
-                  )}
-                </li>
-              </ul>
-            </div>
-          </div>
-          <button
-            type="button"
-            x-on:click="active_info = ! active_info"
-            :aria-expanded="active_info"
-            class="font-medium text-sm link link-primary"
-          >
-            <span x-cloak x-show="!active_info">{l("Read more")}</span>
-            <span x-cloak x-show="active_info">{l("Read less")}</span>
-            <span x-cloak x-show="active_info" aria-hidden="true" class="ml-2">&minus;</span>
-            <span x-cloak x-show="!active_info" aria-hidden="true" class="ml-2">&plus;</span>
-          </button>
-        </div>
-      </div>
-    </Bonfire.UI.Boundaries.CircleMembersLive>
+    />
   {#else}
     {!-- ghost --}
 
@@ -141,7 +60,16 @@
       circle={@circle}
       name={@name}
       title={@title}
-      description={@description}
+      description={@description ||
+        if @scope == :instance_wide,
+          do:
+            l(
+              "Ghosted users and instances cannot see or interact with anyone on this instance. This is a stronger form of blocking where they are completely invisible to each other."
+            ),
+          else:
+            l(
+              "Users or instances on this list will not be able to see or interact with you or your content"
+            )}
       circle_type={:ghost}
       scope={@scope}
       showing_within={@block_type}
@@ -150,55 +78,6 @@
       show_remove={!@read_only}
       feedback_title={l("This list is empty")}
       feedback_message=""
-    >
-      <div class="flex p-2 flex-col flex-1 gap-1 text-left text-sm max-w-full">
-        <p :if={@scope == :instance_wide} class="">
-          {l(
-            "Users or instances on this list will not be able to see or interact with anyone on this instance"
-          )}
-        </p>
-        <p :if={@scope != :instance_wide} class="">
-          {l("Users or instances on this list will not be able to see or interact with you or your content")}
-        </p>
-        <div x-data="{active_info: false}" role="region" class="">
-          <div x-cloak x-show="active_info" x-collapse>
-            <div class="block text-left px-3">
-              <ul class="block pl-4 mt-1 prose-sm list-disc">
-                <li>
-                  {l("Nothing you post privately will be shown to them from now on (at least on this instance).")}
-                </li>
-                <li>
-                  {l("They may still be able to see things you post publicly.")}
-                </li>
-                <li>
-                  {l("You won't be able to @ mention or message them.")}
-                </li>
-                <li>
-                  {l("They won't be able to follow you.")}
-                </li>
-                <li>
-                  {l(
-                    "You will be able to undo this later but they may not be able to see any activities they missed."
-                  )}
-                </li>
-              </ul>
-            </div>
-          </div>
-          <button
-            type="button"
-            x-on:click="active_info = ! active_info"
-            :aria-expanded="active_info"
-            class="font-medium text-sm link link-primary"
-          >
-            <span x-cloak x-show="!active_info">{l("Read more")}</span>
-            <span x-cloak x-show="active_info">{l("Read less")}</span>
-            <span x-cloak x-show="active_info" aria-hidden="true" class="ml-2">&minus;</span>
-            <span x-cloak x-show="!active_info" aria-hidden="true" class="ml-2">&plus;</span>
-          </button>
-        </div>
-      </div>
-    </Bonfire.UI.Boundaries.CircleMembersLive>
-    {!-- </div>
-  </div> --}
+    />
   {/if}
 </div>

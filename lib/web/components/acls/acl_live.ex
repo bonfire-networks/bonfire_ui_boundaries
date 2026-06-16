@@ -183,15 +183,23 @@ defmodule Bonfire.UI.Boundaries.AclLive do
           e(assigns(socket), :title, nil) || e(acl, :named, :name, nil) ||
             e(acl, :stereotyped, :named, :name, nil),
         acl: acl,
-        page_header_aside: [
-          {Bonfire.UI.Boundaries.EditAclButtonLive,
-           [
-             acl: acl,
-             read_only: read_only,
-             acl_id: acl_id
-           ]}
-        ]
+        page_header_aside: page_header_aside(socket, acl, acl_id, read_only)
       )
+    end
+  end
+
+  defp page_header_aside(socket, acl, acl_id, read_only) do
+    if e(assigns(socket), :usage, nil) == :ops do
+      []
+    else
+      [
+        {Bonfire.UI.Boundaries.EditAclButtonLive,
+         [
+           acl: acl,
+           read_only: read_only,
+           acl_id: acl_id
+         ]}
+      ]
     end
   end
 

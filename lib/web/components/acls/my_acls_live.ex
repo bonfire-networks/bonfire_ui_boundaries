@@ -10,7 +10,6 @@ defmodule Bonfire.UI.Boundaries.MyAclsLive do
   prop click_override, :boolean, default: false
   prop to_boundaries, :any, default: nil
   prop to_boundaries_ids, :list, default: []
-  prop built_ins, :list, default: []
   prop section, :any, default: nil
   prop edit_acl_id, :string, default: nil
   prop scope, :any, default: nil
@@ -44,12 +43,33 @@ defmodule Bonfire.UI.Boundaries.MyAclsLive do
      |> assign(
        loaded: true,
        acls: acls,
+       system_acls: list_system_acls(socket),
        page_info: page_info,
        section: :acls,
-       # built_ins: Bonfire.Boundaries.Acls.list_built_ins,
        settings_section_title: "Create and manage your boundaries",
        settings_section_description: "Create and manage your boundaries."
      )}
+  end
+
+  # Skipped in the in-composer boundary picker (`setting_boundaries`, which
+  # surfaces presets through its own UI) and on the disconnected/static render:
+  # the grants+subject preload is only needed once the LiveView connects and the
+  # read-only "System presets" section can be expanded.
+  defp list_system_acls(socket) do
+    if e(assigns(socket), :setting_boundaries, nil) do
+      []
+    else
+      built_ins = Acls.list_built_ins()
+
+      if connected?(socket) do
+        built_ins
+        |> repo().maybe_preload(
+          grants: [:verb, subject: [:named, :profile, :character, stereotyped: [:named]]]
+        )
+      else
+        built_ins
+      end
+    end
   end
 
   def handle_event("load_more", attrs, socket) do

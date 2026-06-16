@@ -1,0 +1,66 @@
+{#case audiences(@acl_subject_verb_grants)}
+  {#match []}
+    <div class="text-center py-8 px-4 text-base-content/60">
+      <#Icon iconify="ph:users-three-duotone" class="w-8 h-8 mx-auto mb-2 text-base-content/40" />
+      <p class="text-sm">{l("This preset doesn't grant any permissions.")}</p>
+    </div>
+  {#match audiences}
+    <div>
+      <h2
+        :if={@show_heading}
+        class="text-xs uppercase font-semibold tracking-wide text-base-content/50 mb-2"
+      >
+        {l("Who can do what")}
+      </h2>
+      <ul
+        role="list"
+        class="flex flex-col rounded-lg border border-base-content/10 divide-y divide-base-content/10"
+      >
+        {#for %{subject: subject, is_user: is_user, name: name, icon: icon, allowed: allowed, blocked: blocked} <-
+            audiences}
+          <li class="p-4 flex flex-col gap-2.5">
+            <div class="flex items-center gap-3">
+              {#if is_user}
+                <Bonfire.UI.Common.AvatarLive
+                  parent_id="acl_summary"
+                  src={Media.avatar_url(subject)}
+                  user_id={id(subject)}
+                  title={name}
+                  class="w-7 h-7 rounded-full"
+                />
+              {#else}
+                <span class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Iconify.iconify icon={icon} class="w-4 h-4 text-primary" aria-hidden="true" />
+                </span>
+              {/if}
+              <span class="font-medium text-base-content">{name}</span>
+            </div>
+
+            <div :if={allowed != []} class="flex flex-wrap gap-1.5 pl-10">
+              {#for verb <- allowed}
+                <span
+                  class="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-xs"
+                  title={verb_summary(verb)}
+                >
+                  <#Icon iconify="ph:check-bold" class="w-3.5 h-3.5 text-success" />
+                  <span class="text-base-content/90">{verb_name(verb)}</span>
+                </span>
+              {/for}
+            </div>
+
+            <div :if={blocked != []} class="flex flex-wrap gap-1.5 pl-10">
+              {#for verb <- blocked}
+                <span
+                  class="inline-flex items-center gap-1.5 rounded-full bg-error/10 px-2.5 py-1 text-xs"
+                  title={verb_summary(verb)}
+                >
+                  <#Icon iconify="ph:x-bold" class="w-3.5 h-3.5 text-error" />
+                  <span class="text-base-content/90 line-through">{verb_name(verb)}</span>
+                </span>
+              {/for}
+            </div>
+          </li>
+        {/for}
+      </ul>
+    </div>
+{/case}

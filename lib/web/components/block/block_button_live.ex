@@ -35,6 +35,20 @@ defmodule Bonfire.UI.Boundaries.BlockButtonLive do
         type -> type
       end
     end)
+    |> assign_new(:action_label, fn ->
+      # Use a full-phrase msgid per action type (verb baked in) so translators can
+      # reorder verb and name — e.g. German "%{user_or_instance_name} ghosten".
+      # Composing a separately-translated verb into "%{type} %{name}" can't be reordered.
+      name = assigns[:label]
+
+      case assigns[:type] do
+        :block -> l("Block %{user_or_instance_name}", user_or_instance_name: name)
+        :silence -> l("Silence %{user_or_instance_name}", user_or_instance_name: name)
+        :ghost -> l("Ghost %{user_or_instance_name}", user_or_instance_name: name)
+        :hide -> l("Hide %{user_or_instance_name}", user_or_instance_name: name)
+        _ -> name
+      end
+    end)
     |> assign(
       :can_instance_wide?,
       # TODO: optimise so it doesn't make a query every time

@@ -14,6 +14,9 @@ defmodule Bonfire.UI.Boundaries.GeneralAccessListLive do
   prop is_customizable, :boolean, default: false
   prop scope, :any, default: :user
 
+  def matches?(to_boundaries, boundary_preset, acl_id),
+    do: matches?(to_boundaries, acl_id) or matches?(boundary_preset, acl_id)
+
   def matches?({preset, _}, preset), do: true
   def matches?([{preset, _}], preset), do: true
   def matches?(preset, preset), do: true

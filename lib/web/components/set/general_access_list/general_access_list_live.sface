@@ -57,6 +57,9 @@
               </div>
             </div>
           </div>
+          {#if matches?(@boundary_preset, slug)}
+            <#Icon iconify="ph:check-bold" class="w-5 h-5 text-primary flex-shrink-0" />
+          {/if}
         </button>
       </div>
     {/for}
@@ -95,6 +98,9 @@
             </div>
           </div>
         </div>
+        {#if matches?(@to_boundaries, @boundary_preset, acl_id)}
+          <#Icon iconify="ph:check-bold" class="w-5 h-5 text-primary flex-shrink-0" />
+        {/if}
       </button>
     </div>
   {/for}
@@ -122,6 +128,9 @@
             <p class="text-xs text-muted -mt-[2px] break-[word]">{l("Start from scratch.")}</p>
           </div>
         </div>
+        {#if matches?(@boundary_preset, "custom")}
+          <#Icon iconify="ph:check-bold" class="w-5 h-5 text-primary flex-shrink-0" />
+        {/if}
       </button>
     </div>
   {/if}
@@ -159,6 +168,9 @@
             </p>
           </div>
         </div>
+        {#if matches?(@boundary_preset, "private")}
+          <#Icon iconify="ph:check-bold" class="w-5 h-5 text-primary flex-shrink-0" />
+        {/if}
       </button>
     </div>
   {/if}

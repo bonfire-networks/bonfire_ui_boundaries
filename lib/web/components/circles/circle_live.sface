@@ -42,7 +42,7 @@
       <span :if={e(@circle, :creator_username, nil)}>
         {l("by ")}
         <LinkLive
-          class="text-base-content/70 hover:text-base-content transition-colors duration-150"
+          class="text-muted hover:text-base-content transition-colors duration-150"
           to={"/@#{e(@circle, :creator_username, nil)}"}
         >{e(@circle, :creator_name, "")}</LinkLive>
       </span>
@@ -87,7 +87,7 @@
     </div>
 
     {#if description = e(@circle, :extra_info, :summary, nil)}
-      <p class="text-sm text-base-content/70 mt-2 leading-relaxed">{description}</p>
+      <p class="text-sm text-muted mt-2 leading-relaxed">{description}</p>
     {/if}
 
     {#if @selected_tab != "members" and @preview_members != []}

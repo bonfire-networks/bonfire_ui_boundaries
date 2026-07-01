@@ -33,7 +33,7 @@
           <div class="flex flex-col">
             <div class="text-sm font-medium text-base-content truncate max-w-[210px]">{name(data, @my_circles)}</div>
             <!-- Dynamic list of verbs enabled/disabled by the role -->
-            <div class="text-xs text-base-content/70">
+            <div class="text-xs text-muted">
               {#case verbs_text_for_role(role)}
                 {#match ""}
                   <!-- No permissions to display -->
@@ -62,7 +62,7 @@
           <div class="flex flex-col">
             <div class="text-sm font-medium text-base-content truncate max-w-[210px]">{name(data) ||
                 l("Unknown circle or user")}</div>
-            <div class="text-xs text-base-content/70">
+            <div class="text-xs text-muted">
               {#case verbs_text_for_role(role)}
                 {#match ""}
                   <!-- No permissions to display -->

@@ -1,7 +1,7 @@
 {#case Grants.subjects(@grants)}
   {#match subjects when is_list(subjects) and subjects != []}
     <div class="flex items-center gap-2 mt-1">
-      <span class="text-xs text-base-content/70">
+      <span class="text-xs text-muted">
         {length(subjects)} {@count_label || l("items")}
       </span>
       <div class="flex gap-1 avatar-group">

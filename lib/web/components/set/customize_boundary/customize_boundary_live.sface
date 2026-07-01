@@ -1,9 +1,10 @@
 <div id={@id} class="flex flex-col">
   {#if @setting_boundaries in [:edit_object, :create_object]}
-    <div class="text-sm font-medium text-base-content/80 mt-2">{l("General audience")}</div>
-    <div class="text-xs text-base-content/60 mb-1">{l("Who can see and interact with this activity?")}</div>
+    <div class="text-sm text-base-content">{l("General audience")}</div>
+    <div class="text-xs text-muted">{l("Who can see and interact with this activity?")}</div>
     <div class="mt-2 flex flex-col gap-1">
       <Bonfire.UI.Boundaries.GeneralAccessListLive
+        id={"#{@id}_general_access_list"}
         hide_presets={@hide_presets}
         boundary_preset={@preset_boundary}
         set_action={@set_action}

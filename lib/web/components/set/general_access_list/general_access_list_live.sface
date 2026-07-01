@@ -1,15 +1,32 @@
-<div class="grid grid-cols-2 gap-1">
+<Dropdown
+  id={@id}
+  menu={false}
+  close_on_select
+  wrapper_class="w-full"
+  position="bottom-start"
+  trigger_class="btn btn-outline border-hair border-secondary w-full justify-between font-normal"
+  panel_class="!w-full max-h-[50vh] overflow-y-auto divide-hair divide-secondary flex flex-col gap-1 p-1"
+  label={l("Choose who can see and interact with this")}
+>
+  <:trigger>
+    {#case selected_option(@boundary_preset, @to_boundaries, @my_acls, @presets)}
+      {#match {label, icon}}
+        <span class="flex items-center gap-2 min-w-0">
+          <Iconify.iconify icon={icon} class="w-5 h-5 text-primary flex-shrink-0" />
+          <span class="truncate">{label}</span>
+        </span>
+    {/case}
+    <#Icon iconify="ph:caret-down-bold" class="w-4 h-4 flex-shrink-0" />
+  </:trigger>
+
   {#if !@hide_presets}
     {#for slug <-
         @presets ||
           Bonfire.Common.Config.get(:preset_order, ["public", "local", "mentions"], :bonfire_boundaries)}
-      <div class={[
-        "flex items-center gap-3 rounded-lg justify-between bg-base-content/10",
-        "bg-primary": matches?(@boundary_preset, slug)
-      ]}>
+      <div class="flex items-center gap-3">
         <button
           data-scope={"#{slug}_boundary"}
-          class="text-base-content cursor-pointer flex items-center p-2 gap-2 justify-between w-full"
+          class="text-base-content cursor-pointer flex items-center py-2 gap-2 justify-between w-full hover:bg-base-200"
           phx-click={@set_action ||
             JS.push("Bonfire.Boundaries:replace_boundary",
               value: %{id: slug, name: e(Bonfire.Boundaries.Presets.for_preset(slug), :label, slug)},
@@ -23,24 +40,18 @@
           <div class="flex items-center gap-2">
             <div class="pr-2 flex items-center text-left">
               <div class="flex-shrink-0">
-                <span class="bg-base-content/10 items-center rounded-full w-9 h-9 flex place-content-center">
+                <span>
                   <Iconify.iconify
                     icon={e(Bonfire.Boundaries.Presets.for_preset(slug), :icon, "ph:gear-six-duotone")}
-                    class={
-                      "w-4 h-4 text-base-content/90",
-                      "text-primary-content": matches?(@boundary_preset, slug)
-                    }
+                    class="size-5"
                   />
                 </span>
               </div>
-              <div class={
-                "flex flex-col ml-3 text-base-content/90",
-                "!text-primary-content": matches?(@boundary_preset, slug)
-              }>
-                <div class="text-sm font-semibold">
+              <div class="flex flex-col ml-3 text-base-content">
+                <div class="text-sm">
                   {e(Bonfire.Boundaries.Presets.for_preset(slug), :label, slug)}
                 </div>
-                <p class="text-xs opacity-60">
+                <p class="text-xs text-muted -mt-[2px] break-[word]">
                   {e(Bonfire.Boundaries.Presets.for_preset(slug), :description, nil)}
                 </p>
               </div>
@@ -53,15 +64,9 @@
 
   {!-- Custom ACLs --}
   {#for {acl_id, acl} <- @my_acls}
-    <div
-      data-role="custom_boundary"
-      class={[
-        "flex items-center gap-3 justify-between rounded-lg bg-base-content/10",
-        "bg-primary": matches?(@to_boundaries, @boundary_preset, acl_id)
-      ]}
-    >
+    <div data-role="custom_boundary" class="flex items-center gap-3 justify-between">
       <button
-        class="text-base-content cursor-pointer w-full flex items-center p-2 gap-2 justify-between"
+        class="text-base-content cursor-pointer w-full flex items-center py-2 gap-2 justify-between hover:bg-base-200"
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
             value: %{id: acl_id, name: e(acl, :name, nil)},
@@ -75,24 +80,18 @@
         <div class="flex items-center gap-2">
           <div class="flex items-center text-left">
             <div class="flex-shrink-0">
-              <span class={
-                "bg-base-content/10 items-center rounded-full w-9 h-9 flex place-content-center text-base-content/90",
-                "!text-primary-content": matches?(@to_boundaries, @boundary_preset, acl_id)
-              }>
+              <span>
                 {#case e(acl, :icon, nil)}
                   {#match nil}
-                    <#Icon iconify="fluent:door-tag-20-filled" class="w-4 h-4" />
+                    <#Icon iconify="fluent:door-tag-20-filled" class="w-5 h-5" />
                   {#match icon}
-                    <Iconify.iconify icon={icon} class="w-4 h-4" />
+                    <Iconify.iconify icon={icon} class="w-5 h-5" />
                 {/case}
               </span>
             </div>
-            <div class={
-              "flex flex-col ml-3 text-base-content/90",
-              "!text-primary-content": matches?(@to_boundaries, @boundary_preset, acl_id)
-            }>
-              <div class="text-sm font-semibold">{e(acl, :name, nil)}</div>
-              <p class="text-xs opacity-60">{e(acl, :description, nil)}</p>
+            <div class="flex flex-col ml-3 text-base-content">
+              <div class="text-sm">{e(acl, :name, nil)}</div>
+              <p class="text-xs text-muted -mt-[2px] break-[word]">{e(acl, :description, nil)}</p>
             </div>
           </div>
         </div>
@@ -102,11 +101,10 @@
 
   {#if !@hide_custom}
     <div class={[
-      "flex items-center gap-3 cursor-pointer justify-between rounded-lg bg-base-content/10",
-      "bg-primary": matches?(@boundary_preset, "custom")
+      "flex items-center gap-3 cursor-pointer justify-between"
     ]}>
       <button
-        class="text-base-content p-2 cursor-pointer flex items-center gap-2 justify-between w-full"
+        class="text-base-content py-2 cursor-pointer flex items-center gap-2 justify-between w-full hover:bg-base-200"
         data-id="custom_boundary"
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
@@ -116,18 +114,12 @@
         type="button"
       >
         <div class="flex items-center text-left">
-          <div class={
-            "flex-shrink-0 bg-base-content/10 items-center rounded-full w-9 h-9 flex place-content-center text-base-content/90",
-            "!text-primary-content": matches?(@boundary_preset, "custom")
-          }>
-            <#Icon iconify="ri:settings-4-line" class="w-4 h-4" />
+          <div class="flex-shrink-0">
+            <#Icon iconify="ri:settings-4-line" class="w-5 h-5" />
           </div>
-          <div class={
-            "flex flex-col ml-3 text-base-content/90",
-            "!text-primary-content": matches?(@boundary_preset, "custom")
-          }>
-            <div class="text-sm font-semibold">{l("Custom")}</div>
-            <p class="text-xs opacity-60">{l("Start from scratch.")}</p>
+          <div class="flex flex-col ml-3 text-base-content">
+            <div class="text-sm">{l("Custom")}</div>
+            <p class="text-xs text-muted -mt-[2px] break-[word]">{l("Start from scratch.")}</p>
           </div>
         </div>
       </button>
@@ -135,12 +127,9 @@
   {/if}
 
   {#if !@hide_private}
-    <div class={[
-      "flex items-center gap-3  cursor-pointer justify-between rounded-lg bg-base-content/10",
-      "bg-primary": matches?(@boundary_preset, "private")
-    ]}>
+    <div class="flex items-center gap-3  cursor-pointer justify-between">
       <button
-        class="text-base-content p-2 flex items-center gap-2 justify-between w-full"
+        class="text-base-content py-2 flex items-center gap-2 justify-between w-full hover:bg-base-200"
         phx-click={@set_action ||
           JS.push("Bonfire.Boundaries:replace_boundary",
             value: %{
@@ -155,23 +144,17 @@
         {...@set_opts}
       >
         <div class="flex items-center text-left">
-          <div class={
-            "flex-shrink-0 bg-base-content/10 items-center rounded-full w-9 h-9 flex place-content-center text-base-content/90",
-            "!text-primary-content": matches?(@boundary_preset, "private")
-          }>
+          <div class="flex-shrink-0">
             <Iconify.iconify
               icon={e(Bonfire.Boundaries.Presets.for_preset("private"), :icon, "heroicons-solid:eye-off")}
-              class="w-4 h-4"
+              class="w-5 h-5"
             />
           </div>
-          <div class={
-            "flex flex-col ml-3 text-base-content/90",
-            "!text-primary-content": matches?(@boundary_preset, "private")
-          }>
-            <div class="text-sm font-semibold">
+          <div class="flex flex-col ml-3 text-base-content">
+            <div class="text-sm">
               {e(Bonfire.Boundaries.Presets.for_preset("private"), :label, l("Private"))}
             </div>
-            <p class="text-xs opacity-60">
+            <p class="text-xs text-muted -mt-[2px] break-[word]">
               {e(Bonfire.Boundaries.Presets.for_preset("private"), :description, nil)}
             </p>
           </div>
@@ -179,4 +162,4 @@
       </button>
     </div>
   {/if}
-</div>
+</Dropdown>

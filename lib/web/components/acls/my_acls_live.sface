@@ -10,7 +10,7 @@
     <div>
       <div :if={!@setting_boundaries}>
         <div class="p-4 border-b border-base-content/10">
-          <span class="text-sm text-base-content/70">
+          <span class="text-sm text-muted">
             {l(
               "Boundaries define and enforce rules that can be used to control access and permissions to content or functionality. A boundary preset can apply to one or more users and circles."
             )}
@@ -22,7 +22,7 @@
         {#match {custom_acls, system_acls}}
           <ul role="list" class="list">
             {#if custom_acls != []}
-              <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{l("Your custom presets")}</li>
+              <li class="p-4 pb-2 text-xs text-meta break-[word] tracking-wide">{l("Your custom presets")}</li>
               {#for acl <- custom_acls}
                 <li class="list-row">
                   <#Icon iconify="ph:intersection-duotone" class="w-7 h-7 text-primary" />
@@ -44,7 +44,7 @@
             {/if}
 
             {#if system_acls != []}
-              <li class="p-4 pb-2 flex items-center gap-2 text-xs opacity-60 tracking-wide">
+              <li class="p-4 pb-2 flex items-center gap-2 text-xs text-meta break-[word] tracking-wide">
                 <#Icon iconify="ph:lock-simple-duotone" class="w-4 h-4" />
                 <span>{l("System presets")}</span>
                 <span class="font-normal normal-case">· {l("read-only")}</span>
@@ -68,8 +68,8 @@
                       />
                     </div>
                     <#Icon
-                      iconify="ph:caret-down"
-                      class="w-4 h-4 text-base-content/60 shrink-0 transition-transform duration-150"
+                      iconify="ph:caret-down-bold"
+                      class="w-4 h-4 text-muted shrink-0 transition-transform duration-150"
                       x-bind:class="open && 'rotate-180'"
                     />
                   </button>

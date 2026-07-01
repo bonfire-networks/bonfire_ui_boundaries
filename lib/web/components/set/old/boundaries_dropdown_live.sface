@@ -18,28 +18,28 @@
       <div
         x-show="to_boundaries.length==0 || (to_boundaries.length==1 && to_boundaries[0] == 'public')"
         style="display: none"
-        class="font-normal normal-case btn btn-ghost btn-xs"
+        class="font-normal normal-case btn btn-ghost btn-sm"
       >
         <#Icon solid="Globe" class="w-4 h-4 text-base-content text-opacity-70" />
       </div>
       <div
         x-show="to_boundaries.length==1 && to_boundaries[0] == 'local'"
         style="display: none"
-        class="font-normal normal-case btn btn-ghost btn-xs"
+        class="font-normal normal-case btn btn-ghost btn-sm"
       >
         <#Icon solid="LocationMarker" class="w-4 h-4 text-base-content text-opacity-70" />
       </div>
       <div
         x-show="to_boundaries.length==1 && to_boundaries[0] == 'mentions'"
         style="display: none"
-        class="font-normal normal-case btn btn-ghost btn-xs"
+        class="font-normal normal-case btn btn-ghost btn-sm"
       >
         <#Icon solid="AtSymbol" class="w-4 h-4 text-base-content text-opacity-70" />
       </div>
       <div
         x-show="to_boundaries.length==1 && to_boundaries[0] == 'message'"
         style="display: none"
-        class="font-normal normal-case btn btn-ghost btn-xs"
+        class="font-normal normal-case btn btn-ghost btn-sm"
       >
         <#Icon solid="Chat-alt-2" class="w-4 h-4 text-base-content text-opacity-70" />
       </div>

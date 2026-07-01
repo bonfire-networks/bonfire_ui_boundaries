@@ -12,10 +12,10 @@
     data-role="read_only_notice"
     class="flex items-start gap-3 rounded-lg bg-base-content/5 border border-base-content/10 p-3"
   >
-    <#Icon iconify="ph:lock-simple-duotone" class="w-5 h-5 text-base-content/60 shrink-0 mt-0.5" />
+    <#Icon iconify="ph:lock-simple-duotone" class="w-5 h-5 text-muted shrink-0 mt-0.5" />
     <div class="text-sm">
       <div class="font-medium text-base-content">{l("Built-in system preset")}</div>
-      <p class="text-base-content/70 mt-0.5">
+      <p class="text-muted mt-0.5">
         {l(
           "This preset defines how core features behave on this instance. It's read-only, so you can view exactly who can do what, but it can't be edited. To apply different permissions, create a custom preset instead."
         )}
@@ -23,10 +23,7 @@
     </div>
   </div>
 
-  <p
-    :if={e(@description, nil) || e(@acl, :extra_info, :summary, nil)}
-    class="text-sm text-base-content/70"
-  >
+  <p :if={e(@description, nil) || e(@acl, :extra_info, :summary, nil)} class="text-sm text-muted">
     {e(@description, nil) || e(@acl, :extra_info, :summary, nil)}
   </p>
 

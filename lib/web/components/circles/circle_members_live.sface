@@ -1,5 +1,5 @@
 <div id="circle_members" class="">
-  <div class="p-2">
+  <div class="">
     {#if description = @description || e(@circle, :extra_info, :summary, nil)}
       <div class="p-4 border-b border-base-content/10">
         <div class="max-w-prose text-sm leading-relaxed text-base-content/80 space-y-2 [&_p]:m-0 [&_ul]:list-disc [&_ul]:ps-5 [&_ul]:space-y-1.5 [&_ul]:marker:text-base-content/40 [&_li]:ps-1 [&_a]:link [&_a]:link-primary [&_code]:rounded [&_code]:bg-base-content/10 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[0.8em] [&_code]:font-mono">{markdown(description)}</div>
@@ -7,11 +7,11 @@
     {/if}
     <#slot />
     {#if @is_admin_circle}
-      <div class="p-4 text-sm text-base-content/70">
+      <div class="p-4 text-sm text-muted">
         {l("To add or remove admins, use the \"Make admin\" option on a user's profile page.")}
       </div>
     {/if}
-    <div :if={!@is_admin_circle && !@read_only && @show_add} class="flex flex-col gap-3 mt-2">
+    <div :if={!@is_admin_circle && !@read_only && @show_add} class="flex flex-col gap-3 mt-2 px-2">
       <div class="flex flex-col gap-2 w-full">
         {#if @show_add != :manual}
           <form id="add_members" phx-change="change" phx-target="#circle_members" class="w-full flex-1">
@@ -48,7 +48,7 @@
                 )
                 |> JS.toggle_class("rotate-180", to: "#add_url_caret")
                 |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: "#add_url_toggle")}
-                class="inline-flex items-center gap-2 self-start rounded-lg px-2 py-1.5 -ms-2 text-sm font-medium text-base-content/70 transition-colors hover:bg-base-content/5 hover:text-base-content"
+                class="inline-flex items-center gap-2 self-start rounded-lg px-2 py-1.5 -ms-2 text-sm font-medium text-muted transition-colors hover:bg-base-content/5 hover:text-base-content"
               >
                 <#Icon iconify="ph:globe-hemisphere-west-duotone" class="w-4 h-4 shrink-0 text-base-content/50" />
                 <span>{l("Add by URL or domain")}</span>
@@ -56,7 +56,7 @@
                   id="add_url_caret"
                   class="inline-flex shrink-0 transition-transform duration-150 motion-reduce:transition-none"
                 >
-                  <#Icon iconify="ph:caret-down" class="w-4 h-4 text-base-content/50" />
+                  <#Icon iconify="ph:caret-down-bold" class="w-4 h-4 text-base-content/50" />
                 </span>
               </button>
             {/if}
@@ -87,7 +87,7 @@
   {#case Enum.count(@members)}
     {#match count when count > 0}
       <div class="p-4 py-2 flex items-center justify-between border-b border-base-content/10">
-        <span class="text-xs font-semibold uppercase tracking-wider text-base-content/60">
+        <span class="text-xs font-semibold uppercase tracking-wider text-muted">
           {#if @total_count && @total_count > 0}
             {l("%{count} entries", count: @total_count)}
           {#else}
@@ -110,7 +110,7 @@
           </a>
         {/if}
       </div>
-      <ul role="list" class="list divide-y divide-base-content/10">
+      <ul role="list" class="list   divide-hair divide-secondary">
         {#for {id, member} <- @members}
           <li id={"member-#{id}"} class="p-3 hover:bg-base-content/5 transition-colors">
             <input type="hidden" name={"circle[encircle][#{id}][circle_id]"} value={e(@circle, :id, nil)}>

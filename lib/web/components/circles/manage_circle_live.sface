@@ -2,7 +2,7 @@
   <#slot />
 
   {!-- {#if description = e(@circle, :extra_info, :summary, nil)}
-        <div class="text-base-content/70 p-2 pb-0">{description}</div>
+        <div class="text-muted p-2 pb-0">{description}</div>
       {/if} --}
   <div class="menu menu-horizontal items-center justify-between gap-3 w-full p-0">
     {#if !e(@circle, :stereotyped, :stereotype_id, nil) and !@read_only}
@@ -67,6 +67,7 @@
   /> --}
 
         <Bonfire.UI.Boundaries.GeneralAccessListLive
+          id={"manage_circle_access_#{e(@circle, :id, nil)}"}
           set_action="Bonfire.Social.Objects:reset_boundary"
           set_opts={%{
             "phx-value-object_assign" => "circle",

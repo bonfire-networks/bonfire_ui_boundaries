@@ -1,4 +1,4 @@
-<div id="boundaries_acl" class={"px-4": not @show_general_boundary}>
+<div id="boundaries_acl">
   <h1
     :if={!@setting_boundaries && e(@acl, :named, :name, nil)}
     data-role="acl_name"
@@ -43,7 +43,7 @@
           :if={!@setting_boundaries && (e(@description, nil) || e(@acl, :extra_info, :summary, nil))}
           class="p-4 border-b border-base-content/10"
         >
-          <span class="text-base-content/70">
+          <span class="text-muted">
             {e(@description, nil) ||
               e(@acl, :extra_info, :summary, "No description provided for this boundary preset.")}
           </span>

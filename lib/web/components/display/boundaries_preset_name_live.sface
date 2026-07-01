@@ -21,10 +21,7 @@
             "btn btn-sm btn-outline": @with_icon != true
           }
         >{meta[:label]}</span>
-        <span
-          :if={@with_description}
-          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
-        >{meta[:description]}</span>
+        <span :if={@with_description} class="flex-1 w-full text-xs font-light text-muted text-left">{meta[:description]}</span>
       </div>
     </span>
   {#match {{id, name}, nil} when id != "custom"}
@@ -56,10 +53,7 @@
           "sr-only": !@with_label,
           "btn btn-sm btn-outline": @with_icon != true
         }>{e(name, :name, nil) || name || l("Preset Boundary")}</span>
-        <span
-          :if={@with_description}
-          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
-        >{e(name, :description, nil)}</span>
+        <span :if={@with_description} class="flex-1 w-full text-xs font-light text-muted text-left">{e(name, :description, nil)}</span>
       </div>
     </span>
 
@@ -83,10 +77,7 @@
           "sr-only": !@with_label,
           "btn btn-sm btn-outline": @with_icon != true
         }>{name}</span>
-        <span
-          :if={@with_description}
-          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
-        >{l("A custom boundary")}</span>
+        <span :if={@with_description} class="flex-1 w-full text-xs font-light text-muted text-left">{l("A custom boundary")}</span>
       </div>
     </span>
 
@@ -135,7 +126,7 @@
         >{l("Public")}</span>
         <span
           :if={@with_description}
-          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+          class="flex-1 w-full text-xs font-light text-muted text-left"
         >{l("Publicly visible to everyone.")}</span>
       </div>
     </span>
@@ -161,7 +152,7 @@
         >{l("Local")}</span>
         <span
           :if={@with_description}
-          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+          class="flex-1 w-full text-xs font-light text-muted text-left"
         >{l("Everyone on this instance will be able to see, like, boost, and reply.")}</span>
       </div>
     </span>
@@ -187,7 +178,7 @@
         >{l("Follows")}</span>
         <span
           :if={@with_description}
-          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+          class="flex-1 w-full text-xs font-light text-muted text-left"
         >{l("People who I follow may read, like, boost and reply.")}</span>
       </div>
     </span>
@@ -210,7 +201,7 @@
         }>{boundary_name || l("Open")}</span>
         <span
           :if={@with_description}
-          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+          class="flex-1 w-full text-xs font-light text-muted text-left"
         >{l("Anyone can join and participate")}</span>
       </div>
     </div>
@@ -275,7 +266,7 @@
         }>{e(name, :name, nil) || name || l("Preset Boundary")}</span>
         <span
           :if={@with_description}
-          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+          class="flex-1 w-full text-xs font-light text-muted text-left"
         >{e(name, :description, nil)}</span>
       </div>
     </span>
@@ -300,7 +291,7 @@
         }>{name}</span>
         <span
           :if={@with_description}
-          class="flex-1 w-full text-xs font-light text-base-content/70 text-left"
+          class="flex-1 w-full text-xs font-light text-muted text-left"
         >{l("A custom boundary")}</span>
       </div>
     </span>

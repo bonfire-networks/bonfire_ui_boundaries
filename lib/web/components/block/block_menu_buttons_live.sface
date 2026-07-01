@@ -21,7 +21,7 @@
     {#match {_, block_peer, is_local_user}}
       <!-- <li>
         <details>
-          <summary class="text-base-content/70">
+          <summary class="text-muted">
             <div class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error">
               <#Icon :if={@with_icon} iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" />
               <span class="truncate ellipsis">{l("Block")}</span>

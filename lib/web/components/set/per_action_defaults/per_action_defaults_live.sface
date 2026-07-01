@@ -1,12 +1,9 @@
 <div class="flex flex-col gap-1">
-  <div class="text-sm font-medium text-base-content/80 mt-4">{l("Override the audience for specific actions.")}</div>
-  <div class="flex flex-col divide-y divide-base-content/10 rounded-lg bg-base-content/5 overflow-hidden">
+  <div class="text-sm text-base-content mt-4">{l("Override the audience for specific actions.")}</div>
+  <div class="flex flex-col divide-hair divide-secondary rounded-lg border-hair border-secondary overflow-hidden">
     {#for action_state <- @state.action_states}
       <section class="flex flex-col">
         <div class="flex items-center gap-3 p-3">
-          <span class="bg-base-content/10 rounded-full w-9 h-9 flex items-center justify-center flex-shrink-0">
-            <Iconify.iconify icon={action_state.icon} class="w-4 h-4 text-base-content/90" />
-          </span>
           <div class="flex-1 min-w-0 text-sm font-medium text-base-content">
             {action_state.label}
           </div>
@@ -33,7 +30,7 @@
           class="flex flex-col gap-2 p-3 border-t border-base-content/10 bg-base-content/5"
         >
           <div class="flex items-center gap-1.5">
-            <p class="text-xs text-base-content/60">{l("Except allow:")}</p>
+            <p class="text-xs text-muted">{l("Except allow:")}</p>
             <span
               class="tooltip tooltip-bottom before:max-w-[180px] before:text-xs before:whitespace-normal before:text-left"
               data-tip={l(

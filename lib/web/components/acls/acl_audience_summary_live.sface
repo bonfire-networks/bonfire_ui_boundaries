@@ -1,6 +1,6 @@
 {#case audiences(@acl_subject_verb_grants)}
   {#match []}
-    <div class="text-center py-8 px-4 text-base-content/60">
+    <div class="text-center py-8 px-4 text-muted">
       <#Icon iconify="ph:users-three-duotone" class="w-8 h-8 mx-auto mb-2 text-base-content/40" />
       <p class="text-sm">{l("This preset doesn't grant any permissions.")}</p>
     </div>
@@ -14,7 +14,7 @@
       </h2>
       <ul
         role="list"
-        class="flex flex-col rounded-lg border border-base-content/10 divide-y divide-base-content/10"
+        class="flex flex-col rounded-lg border border-base-content/10   divide-hair divide-secondary"
       >
         {#for %{subject: subject, is_user: is_user, name: name, icon: icon, allowed: allowed, blocked: blocked} <-
             audiences}
@@ -43,7 +43,7 @@
                   title={verb_summary(verb)}
                 >
                   <#Icon iconify="ph:check-bold" class="w-3.5 h-3.5 text-success" />
-                  <span class="text-base-content/90">{verb_name(verb)}</span>
+                  <span class="text-base-content">{verb_name(verb)}</span>
                 </span>
               {/for}
             </div>
@@ -55,7 +55,7 @@
                   title={verb_summary(verb)}
                 >
                   <#Icon iconify="ph:x-bold" class="w-3.5 h-3.5 text-error" />
-                  <span class="text-base-content/90 line-through">{verb_name(verb)}</span>
+                  <span class="text-base-content line-through">{verb_name(verb)}</span>
                 </span>
               {/for}
             </div>

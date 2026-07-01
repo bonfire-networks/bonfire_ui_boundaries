@@ -1,6 +1,6 @@
 <div class="">
   <div class="p-4 border-b border-base-content/10">
-    <span class="text-sm text-base-content/70">
+    <span class="text-sm text-muted">
       {l(
         "Circles are a way to organize your connections and relations with people. Circles can be used to group people together based on your relationship, shared interests, affiliations, or other factors."
       )}</span>

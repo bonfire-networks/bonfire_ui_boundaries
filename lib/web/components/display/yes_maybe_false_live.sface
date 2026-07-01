@@ -4,7 +4,7 @@
       data-id={"#{@role}_#{@verb}_can"}
       data-value={"#{@role}_#{@verb}_#{@value}"}
       class={
-        "text-base-content/70 p-1 rounded-lg transition-colors duration-100",
+        "text-muted p-1 rounded-lg transition-colors duration-100",
         "bg-success hover:bg-success text-success-content":
           (@value == :can or @value == true) and not @read_only,
         "bg-success/50 text-success-content/50": (@value == :can or @value == true) and @read_only,
@@ -26,7 +26,7 @@
       data-id={"#{@role}_#{@verb}_undefined"}
       data-value={"#{@role}_#{@verb}_nil"}
       class={
-        "text-base-content/70 p-1 rounded-lg transition-colors duration-100",
+        "text-muted p-1 rounded-lg transition-colors duration-100",
         "bg-neutral hover:bg-neutral text-neutral-content": @value == nil and not @read_only,
         "bg-neutral/50 text-neutral-content/50": @value == nil and @read_only,
         "hover:bg-base-content/10": not @read_only,
@@ -47,7 +47,7 @@
       data-id={"#{@role}_#{@verb}_cannot"}
       data-value={"#{@role}_#{@verb}_cannot"}
       class={
-        "text-base-content/70 p-1 rounded-lg transition-colors duration-100",
+        "text-muted p-1 rounded-lg transition-colors duration-100",
         "bg-error hover:bg-error text-error-content":
           (@value == :cannot or @value == false) and not @read_only,
         "bg-error/50 text-error-content/50": (@value == :cannot or @value == false) and @read_only,

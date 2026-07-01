@@ -16,7 +16,7 @@
         <h3 class="font-semibold">{Recase.to_title(to_string(@role_name))}</h3>
         <div class="flex items-center gap-1.5">
           <span :if={@read_only} class="badge badge-sm badge-secondary badge-ghost">{l("Built-in")}</span>
-          <span class="text-sm text-base-content/70">{permission_summary(@role_verbs)}</span>
+          <span class="text-sm text-muted">{permission_summary(@role_verbs)}</span>
         </div>
       </div>
     </div>
@@ -31,7 +31,7 @@
       {#if @read_only}
         {!-- Read-only: Flat list of only defined permissions --}
         {#if Enum.empty?(@defined_verbs)}
-          <div class="text-center py-3 text-base-content/60">
+          <div class="text-center py-3 text-muted">
             <Iconify.iconify icon="ph:empty-duotone" class="w-6 h-6 mx-auto mb-2" />
             <p class="text-sm">{l("No permissions defined for this role")}</p>
           </div>
@@ -56,9 +56,9 @@
         {/if}
       {#else}
         {!-- Editable: Verb groups with toggles --}
-        <div class="divide-y divide-base-content/10">
+        <div class="divide-hair divide-secondary">
           {#if Enum.empty?(@grouped_verbs)}
-            <div class="text-center py-3 text-base-content/60">
+            <div class="text-center py-3 text-muted">
               <#Icon iconify="ph:empty-duotone" class="w-6 h-6 mx-auto mb-1.5 opacity-50" />
               <p class="text-xs">{l("No permissions defined for this role")}</p>
             </div>

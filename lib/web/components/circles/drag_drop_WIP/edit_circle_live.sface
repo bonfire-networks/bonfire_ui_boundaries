@@ -96,7 +96,7 @@
         <div class="relative overflow-hidden border rounded-lg drag_drop__container__from">
           <ul
             id="circle_suggestions"
-            class="flex flex-col divide-y-2"
+            class="flex flex-col  -2"
             :class="{ 'drag_drop__items__removing': removing }"
             x-on:drop="removing = false"
             x-on:drop.prevent="target = event.target.closest('ul');

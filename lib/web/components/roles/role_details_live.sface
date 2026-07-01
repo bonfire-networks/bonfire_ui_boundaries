@@ -4,7 +4,7 @@
   class="block cursor-pointer"
 >
   <div class="flex items-center gap-3 p-4">
-    <#Icon iconify="mingcute:hat-fill" class="w-5 h-5 text-base-content/70" />
+    <#Icon iconify="mingcute:hat-fill" class="w-5 h-5 text-muted" />
     <div class="flex-1 min-w-0 sm:flex sm:items-center sm:justify-between">
       <div class="truncate">
         <div class="flex text-sm">
@@ -14,7 +14,7 @@
     </div>
     <div class="btn btn-ghost btn-circle flex items-center gap-2 btn-sm normal-case">
       <span class="sr-only">{l("Details")}</span>
-      <#Icon solid="ChevronDown" class="w-5 h-5 text-base-content/70" />
+      <#Icon solid="ChevronDown" class="w-5 h-5 text-muted" />
     </div>
   </div>
 </div>

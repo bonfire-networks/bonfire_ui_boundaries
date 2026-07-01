@@ -152,7 +152,7 @@
         scope={@scope}
       />
     {#match _}
-      <div class="flex flex-col gap-8 divide-y divide-base-content/10">
+      <div class="flex flex-col gap-8   divide-hair divide-secondary">
         <StatefulComponent
           :if={current_user(@__context__)}
           module={maybe_component(Bonfire.UI.Boundaries.MyAclsLive, @__context__)}

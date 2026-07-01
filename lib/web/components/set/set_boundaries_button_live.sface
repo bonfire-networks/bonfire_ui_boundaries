@@ -24,7 +24,7 @@
             />
             <!-- my_acls={@my_acls} -->
             <:open_btn>
-              <label class="tooltip-button border-primary/50 flex items-center gap-2 btn-xs h-[30px] btn btn-primary btn-outline font-normal">
+              <label class="tooltip-button border-secondary flex items-center gap-2 btn-sm h-[30px] btn btn-primary btn-outline font-normal">
                 <Bonfire.UI.Boundaries.BoundariesPresetNameLive
                   icon_class="w-5 h-5"
                   to_circles={@to_circles}
@@ -38,7 +38,7 @@
       </div>
 
       {!-- <div class="" phx-hook="Tooltip" id="popup_boundaries">
-          <label class="tooltip-button border-primary/30 flex items-center gap-2 btn-xs h-[30px] btn btn-primary btn-outline font-normal">
+          <label class="tooltip-button border-secondary flex items-center gap-2 btn-sm h-[30px] btn btn-primary btn-outline font-normal">
             <Bonfire.UI.Boundaries.BoundariesPresetNameLive
               icon_class="w-5 h-5"
               to_circles={@to_circles}
@@ -127,60 +127,62 @@
     </div>
   {#match boundary_name}
     {#if e(@context_group, :topics, []) != [] and @context_group}
-      <div class="dropdown dropdown-bottom" data-tip={l("Choose a topic in this group")}>
-        <label tabindex="0" id="topic_btn" class="btn-primary btn btn-sm gap-1">
+      <Dropdown
+        id="set_boundaries_topic_dropdown"
+        position="bottom-start"
+        trigger_class="btn-primary btn btn-sm gap-1"
+        panel_class="flex-col flex-nowrap max-h-60 overflow-y-auto"
+        label={l("Choose a topic in this group")}
+        wrapper_opts={["data-tip": l("Choose a topic in this group")]}
+      >
+        <:trigger>
           <span class="truncate max-w-[10rem]">{boundary_name}</span>
-          <#Icon iconify="ph:caret-down" class="size-4" />
-        </label>
-        <ul
-          tabindex="0"
-          class="dropdown-content z-dropdown menu flex-col flex-nowrap p-2 shadow-lg bg-base-100 rounded-box border border-base-content/10 w-56 max-h-60 overflow-y-auto"
-        >
+          <#Icon iconify="ph:caret-down-bold" class="size-4" />
+        </:trigger>
+        <li>
+          <button
+            type="button"
+            data-role="select-topic"
+            class={
+              "flex items-center gap-2 w-full text-left",
+              "font-semibold": @context_id == e(@context_group, :id, nil)
+            }
+            :on-click={Bonfire.UI.Common.SmartInput.LiveHandler.open(%JS{}, %{
+              context_id: e(@context_group, :id, nil),
+              mentions: e(@context_group, :mentions, []),
+              to_boundaries: e(@context_group, :to_boundaries, nil),
+              to_circles: e(@context_group, :to_circles, [])
+            })}
+            phx-target={@event_target || "#smart_input"}
+          >
+            <#Icon iconify="ph:users-three-duotone" class="w-4 h-4 text-muted" />
+            <span class="truncate">{l("Whole group")}</span>
+          </button>
+        </li>
+        <li class="menu-title pt-2 pb-1 text-xs uppercase opacity-60">{l("Topics")}</li>
+        {#for topic <- e(@context_group, :topics, [])}
           <li>
             <button
               type="button"
               data-role="select-topic"
               class={
                 "flex items-center gap-2 w-full text-left",
-                "font-semibold": @context_id == e(@context_group, :id, nil)
+                "font-semibold": @context_id == id(topic)
               }
               :on-click={Bonfire.UI.Common.SmartInput.LiveHandler.open(%JS{}, %{
-                context_id: e(@context_group, :id, nil),
-                mentions: e(@context_group, :mentions, []),
-                to_boundaries: e(@context_group, :to_boundaries, nil),
-                to_circles: e(@context_group, :to_circles, [])
+                context_id: id(topic),
+                mentions: [id(topic)],
+                to_boundaries: [{:clone_context, topic_name(topic)}],
+                to_circles: [{id(topic), topic_name(topic)}]
               })}
               phx-target={@event_target || "#smart_input"}
             >
-              <#Icon iconify="ph:users-three-duotone" class="w-4 h-4 text-base-content/70" />
-              <span class="truncate">{l("Whole group")}</span>
+              <#Icon iconify="ph:hash-duotone" class="w-4 h-4 text-muted" />
+              <span class="truncate">{topic_name(topic)}</span>
             </button>
           </li>
-          <li class="menu-title pt-2 pb-1 text-xs uppercase opacity-60">{l("Topics")}</li>
-          {#for topic <- e(@context_group, :topics, [])}
-            <li>
-              <button
-                type="button"
-                data-role="select-topic"
-                class={
-                  "flex items-center gap-2 w-full text-left",
-                  "font-semibold": @context_id == id(topic)
-                }
-                :on-click={Bonfire.UI.Common.SmartInput.LiveHandler.open(%JS{}, %{
-                  context_id: id(topic),
-                  mentions: [id(topic)],
-                  to_boundaries: [{:clone_context, topic_name(topic)}],
-                  to_circles: [{id(topic), topic_name(topic)}]
-                })}
-                phx-target={@event_target || "#smart_input"}
-              >
-                <#Icon iconify="ph:hash-duotone" class="w-4 h-4 text-base-content/70" />
-                <span class="truncate">{topic_name(topic)}</span>
-              </button>
-            </li>
-          {/for}
-        </ul>
-      </div>
+        {/for}
+      </Dropdown>
     {#else}
       <div class="btn-active btn btn-ghost btn-sm cursor-default">
         <span>{boundary_name}</span>

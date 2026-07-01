@@ -36,7 +36,7 @@
         <button
           type="submit"
           data-id="edit_boundary_submit"
-          class="w-full mt-3 normal-case btn-outline  !border-primary/30 btn btn-primary"
+          class="w-full mt-3 normal-case btn-outline  !border-secondary btn btn-primary"
         >{l("Save")}</button>
       </form>
       <div

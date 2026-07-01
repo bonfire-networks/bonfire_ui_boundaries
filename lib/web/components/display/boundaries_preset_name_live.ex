@@ -7,7 +7,7 @@ defmodule Bonfire.UI.Boundaries.BoundariesPresetNameLive do
   prop exclude_circles, :any, default: []
 
   prop class, :css_class, default: ""
-  prop icon_class, :css_class, default: "w-5 h-5 text-base-content/60"
+  prop icon_class, :css_class, default: "w-5 h-5 text-muted"
   prop icon_wrapper, :css_class, default: ""
   prop with_icon, :boolean, default: true
   prop with_label, :boolean, default: true

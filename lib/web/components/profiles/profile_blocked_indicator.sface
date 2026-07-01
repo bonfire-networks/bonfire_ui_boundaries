@@ -22,7 +22,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Re-enable")}
             parent_id={deterministic_dom_id(__MODULE__, id(@user), "user", @parent_id)}
-            class="btn btn-error btn-xs"
+            class="btn btn-error btn-sm"
           />
         </div>
       </div>
@@ -40,7 +40,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unghost instance-wide")}
             parent_id={deterministic_dom_id(__MODULE__, id(@user), "user", @parent_id)}
-            class="btn btn-primary btn-xs"
+            class="btn btn-primary btn-sm"
           />
         </div>
       </div>
@@ -59,7 +59,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unsilence instance-wide")}
             parent_id={deterministic_dom_id(__MODULE__, id(@user), "user", @parent_id)}
-            class="btn btn-primary btn-xs"
+            class="btn btn-primary btn-sm"
           />
         </div>
       </div>
@@ -76,7 +76,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unblock")}
             parent_id={deterministic_dom_id(__MODULE__, id(@user), "user", @parent_id)}
-            class="btn btn-error btn-xs"
+            class="btn btn-error btn-sm"
           />
         </div>
       </div>
@@ -93,7 +93,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unsilence")}
             parent_id={deterministic_dom_id(__MODULE__, id(@user), "user", @parent_id)}
-            class="btn btn-primary btn-xs"
+            class="btn btn-primary btn-sm"
           />
         </div>
       </div>
@@ -109,7 +109,7 @@
             label={e(@user, :profile, :name, l("this user"))}
             open_btn_label={l("Unghost")}
             parent_id={deterministic_dom_id(__MODULE__, id(@user), "user", @parent_id)}
-            class="btn btn-primary btn-xs"
+            class="btn btn-primary btn-sm"
           />
         </div>
         {!-- <button class="link link-primary link-sm">{l "Unghost"}</button> --}

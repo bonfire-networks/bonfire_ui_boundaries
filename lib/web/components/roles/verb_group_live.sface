@@ -8,7 +8,7 @@
     <div class="flex flex-col gap-1.5 flex-wrap">
       <div class="flex flex-col gap-0">
         <span class="font-medium text-sm">{@group[:name]}</span>
-        <p class="text-sm text-base-content/70">{@group[:description]}</p>
+        <p class="text-sm text-muted">{@group[:description]}</p>
       </div>
       <div class="flex flex-wrap items-center gap-2">
         {#case permission_summary(@group[:role_verbs])}
@@ -23,15 +23,12 @@
         {/case}
       </div>
     </div>
-    <#Icon iconify="ph:caret-down" class="w-5 h-5" x-bind:class="open ? '' : 'rotate-180'" />
+    <#Icon iconify="ph:caret-down-bold" class="w-5 h-5" x-bind:class="open ? '' : 'rotate-180'" />
   </button>
 
   {!-- Verbs List --}
   <div x-cloak x-show="open" x-collapse class="px-2 pb-2 pt-1 border-t border-base-content/5">
-    <div
-      :if={!@read_only}
-      class="flex items-center justify-end gap-3 text-xs text-base-content/70 mb-2"
-    >
+    <div :if={!@read_only} class="flex items-center justify-end gap-3 text-xs text-muted mb-2">
       <span class="flex items-center gap-1"><#Icon iconify="ph:check-duotone" class="w-4 h-4 text-success" />{l("Grant")}</span>
       <span class="flex items-center gap-1"><#Icon iconify="ph:minus-duotone" class="w-4 h-4 text-base-content/50" />{l("Default")}</span>
       <span class="flex items-center gap-1"><#Icon iconify="ph:x-duotone" class="w-4 h-4 text-error" />{l("Deny")}</span>

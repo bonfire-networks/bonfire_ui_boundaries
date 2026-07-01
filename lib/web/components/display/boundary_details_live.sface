@@ -57,7 +57,7 @@
       </details> -->
 
       <!-- {#if is_list(@preset_acls) and @preset_acls != []}
-        <ul class="flex flex-col divide-y divide-base-content/10 px-4 mt-2">
+        <ul class="flex flex-col   divide-hair divide-secondary px-4 mt-2">
           <li :for={acl <- @preset_acls} class="flex items-center justify-between py-4">
             <div class="flex items-center gap-3">
               <span class="flex items-center w-10 h-10 rounded-full place-content-center bg-info/10">
@@ -69,7 +69,7 @@
             <div class="flex items-center gap-2">
               <div class="dropdown dropdown-end">
                 <label tabindex="0" class="rounded btn btn-square btn-ghost btn-sm">
-                  <#Icon iconify="ph:dots-three-outline-vertical-duotone" class="w-4 h-4" />
+                  <#Icon iconify="ph:dots-three-outline-vertical-fill" class="w-4 h-4" />
                 </label>
                 <ul tabindex="0" class="w-48 p-1 rounded shadow dropdown-content menu bg-base-200">
                   <li data-role="remove_from_boundary">
@@ -117,11 +117,11 @@
         type="button"
         x-on:click="edit = !edit"
         type="button"
-        class="btn btn-warning btn-sm"
+        class="btn btn-outline w-full btn-sm"
       >
         {l("Edit boundaries")}
       </button>
-      <button x-show="edit" type="button" x-on:click="edit = !edit" class="btn btn-soft w-full my-3">
+      <button x-show="edit" type="button" x-on:click="edit = !edit" class="btn btn-outline w-full my-3">
         {l("Done")}
       </button>
     {/if}

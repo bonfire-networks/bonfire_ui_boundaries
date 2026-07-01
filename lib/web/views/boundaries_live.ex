@@ -5,7 +5,7 @@ defmodule Bonfire.UI.Boundaries.BoundariesLive do
   # alias Bonfire.Boundaries.Circles
 
   declare_extension(
-    "Boundaries defaults",
+    l("Boundaries defaults"),
     icon: "fa6-solid:handshake-angle",
     emoji: "🤝",
     description:

@@ -21,7 +21,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
     boundaries =
       Enum.map(
-        List.wrap(socket.assigns[:boundary_preset] || socket.assigns[:to_boundaries] || []),
+        List.wrap(assigns(socket)[:boundary_preset] || assigns(socket)[:to_boundaries] || []),
         fn
           {slug, _} -> slug
           slug -> slug
@@ -739,6 +739,7 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
     list_of_assigns =
       assigns_sockets
+      |> Enum.map(fn {assigns, _socket} -> assigns end)
       # |> debug("list_of_assigns")
       # only check when explicitly asked
       |> Enum.reject(&(e(&1, :check_object_boundary, nil) != true))

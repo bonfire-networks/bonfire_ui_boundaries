@@ -39,7 +39,7 @@
           <div class="flex items-center space-x-4">
             <span class="text-2xl">🌍</span>
             <div class="flex flex-col">
-              <div class="text-base font-semibold">{l("Public")}</div>
+              <div class="text-base font-medium">{l("Public")}</div>
               <div class="text-sm text-muted">
                 {l(
                   "Publicly visible to everyone. People on the fediverse can see, interact, and reply. Discoverable by search engines."
@@ -83,7 +83,7 @@
           <div class="flex items-center space-x-4">
             <span class="text-2xl">🏠</span>
             <div class="flex flex-col">
-              <div class="text-base font-semibold">{l("Local Instance")}</div>
+              <div class="text-base font-medium">{l("Local Instance")}</div>
               <div class="text-sm text-muted">
                 {l("Everyone on this instance will be able to see, interact, and reply")}
               </div>
@@ -126,7 +126,7 @@
           <div class="flex items-center space-x-4">
             <span class="text-2xl">🔔</span>
             <div class="flex flex-col">
-              <div class="text-base font-semibold">{l("Mentions")}</div>
+              <div class="text-base font-medium">{l("Mentions")}</div>
               <div class="text-sm text-muted">
                 {l("Anyone mentioned will be able to see, interact, and reply (across the fediverse)")}
               </div>

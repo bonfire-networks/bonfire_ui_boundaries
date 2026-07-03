@@ -41,7 +41,7 @@
       <div class="flex flex-col">
         <span class={
           "text-sm",
-          "font-semibold": @showing_within == :dashboard
+          "font-medium": @showing_within == :dashboard
         }>{l("Default roles")}</span>
         {!-- <p class="text-sm text-muted" :if={@showing_within == :dashboard}>{l("Define sets of permissions which you can assign to users and circles")}</p> --}
       </div>

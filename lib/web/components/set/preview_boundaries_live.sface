@@ -18,7 +18,7 @@
         </form>
       </div>
       <div class="" :if={@preview_boundary_for_id}>
-        <span class="my-3 block text-base-content tracking-wide uppercase text-xs font-semibold">{l("Previewing boundaries for")} <b>{@preview_boundary_for_username}</b></span>
+        <span class="my-3 block text-base-content tracking-wide uppercase text-xs font-medium">{l("Previewing boundaries for")} <b>{@preview_boundary_for_username}</b></span>
 
         <input type="hidden" name="preview_boundary_for_id" value={@preview_boundary_for_id}>
         <div class="">

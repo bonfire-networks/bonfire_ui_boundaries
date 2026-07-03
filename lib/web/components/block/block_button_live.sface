@@ -45,7 +45,7 @@
                 type="button"
                 x-on:click="active = ! active"
                 :aria-expanded="active"
-                class="flex mt-1 items-center w-full font-semibold text-sm"
+                class="flex mt-1 items-center w-full font-medium text-sm"
               >
                 <span x-show="!active" class="underline">{l("Read more")}</span>
                 <span x-show="active" class="underline">{l("Read less")}</span>
@@ -103,7 +103,7 @@
           >{if @type == :silence, do: l("Unsilence instance-wide"), else: l("Unhide instance-wide")}</button>
         {#else}
           <div class="flex flex-col p-2 mt-5 space-y-3 border rounded border-error/30 bg-error/5">
-            <div class="text-base font-semibold">{l("Super powers")}</div>
+            <div class="text-base font-medium">{l("Super powers")}</div>
             <p class="mt-0 text-sm">
               {l(
                 "%{silence} %{user_or_instance_name} for all users of your instance.",
@@ -151,7 +151,7 @@
               type="button"
               x-on:click="active = ! active"
               :aria-expanded="active"
-              class="flex mt-1 items-center w-full font-semibold text-sm"
+              class="flex mt-1 items-center w-full font-medium text-sm"
             >
               <span x-show="!active" class="underline">{l("Read more")}</span>
               <span x-show="active" class="underline">{l("Read less")}</span>
@@ -210,7 +210,7 @@
           >{l("Unghost instance-wide")}</button>
         {#else}
           <div class="flex flex-col p-2 mt-5 space-y-3 border rounded border-error/30 bg-error/5">
-            <div class="text-base font-semibold">{l("Super powers")}</div>
+            <div class="text-base font-medium">{l("Super powers")}</div>
             <p class="mt-0 text-sm">
               {l(
                 "You can enforce the ghost for all users of your instance. Prevent %{user_or_instance_name} from seeing or interacting with all local users",
@@ -281,7 +281,7 @@
           >{l("Unblock instance-wide")}</button>
         {#else} --}
         <div class="flex flex-col p-2 mt-5 space-y-3 border rounded border-error/30 bg-error/5">
-          <div class="text-base font-semibold">{l("Super powers")}</div>
+          <div class="text-base font-medium">{l("Super powers")}</div>
           <p class="mt-0 text-sm">
             {l(
               "You can enforce the block for your group: %{user_or_instance_name} will no longer be able to see or interact with the group or future group activities.",
@@ -331,7 +331,7 @@
           {/case}
         {#else}
           <div class="flex flex-col p-2 mt-5 space-y-3 border rounded border-error/30 bg-error/5">
-            <div class="text-base font-semibold">{l("Super powers")}</div>
+            <div class="text-base font-medium">{l("Super powers")}</div>
             {#case if(is_nil(@is_local_user), do: is_local?(@object, preload_if_needed: false), else: @is_local_user)}
               {#match true}
                 <p class="mt-0 text-sm">

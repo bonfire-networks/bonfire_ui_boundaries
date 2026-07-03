@@ -8,7 +8,7 @@
     <div>
       <h2
         :if={@show_heading}
-        class="text-xs uppercase font-semibold tracking-wide text-base-content/50 mb-2"
+        class="text-xs uppercase font-medium tracking-wide text-base-content/50 mb-2"
       >
         {l("Who can do what")}
       </h2>

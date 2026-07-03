@@ -13,7 +13,7 @@
         <#Icon iconify="mingcute:hat-fill" class="w-5 h-5 text-info" />
       </div>
       <div>
-        <h3 class="font-semibold">{Recase.to_title(to_string(@role_name))}</h3>
+        <h3 class="font-medium">{Recase.to_title(to_string(@role_name))}</h3>
         <div class="flex items-center gap-1.5">
           <span :if={@read_only} class="badge badge-sm badge-secondary badge-ghost">{l("Built-in")}</span>
           <span class="text-sm text-muted">{permission_summary(@role_verbs)}</span>

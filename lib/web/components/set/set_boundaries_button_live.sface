@@ -145,7 +145,7 @@
             data-role="select-topic"
             class={
               "flex items-center gap-2 w-full text-left",
-              "font-semibold": @context_id == e(@context_group, :id, nil)
+              "font-medium": @context_id == e(@context_group, :id, nil)
             }
             :on-click={Bonfire.UI.Common.SmartInput.LiveHandler.open(%JS{}, %{
               context_id: e(@context_group, :id, nil),
@@ -167,7 +167,7 @@
               data-role="select-topic"
               class={
                 "flex items-center gap-2 w-full text-left",
-                "font-semibold": @context_id == id(topic)
+                "font-medium": @context_id == id(topic)
               }
               :on-click={Bonfire.UI.Common.SmartInput.LiveHandler.open(%JS{}, %{
                 context_id: id(topic),

@@ -87,7 +87,7 @@
   {#case Enum.count(@members)}
     {#match count when count > 0}
       <div class="p-4 py-2 flex items-center justify-between border-b border-base-content/10">
-        <span class="text-xs font-semibold uppercase tracking-wider text-muted">
+        <span class="text-xs font-medium uppercase tracking-wider text-muted">
           {#if @total_count && @total_count > 0}
             {l("%{count} entries", count: @total_count)}
           {#else}

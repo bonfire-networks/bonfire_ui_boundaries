@@ -2,7 +2,7 @@
   <h2
     :if={e(@acl, :named, :name, nil) || e(@acl, :stereotyped, :named, :name, nil)}
     data-role="acl_view_name"
-    class="text-lg font-semibold text-base-content"
+    class="text-lg font-medium text-base-content"
   >
     {e(@acl, :named, :name, nil) || e(@acl, :stereotyped, :named, :name, nil)}
   </h2>

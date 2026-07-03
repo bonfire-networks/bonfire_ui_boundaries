@@ -27,7 +27,7 @@
                 <li class="list-row">
                   <#Icon iconify="ph:intersection-duotone" class="w-7 h-7 text-primary" />
                   <div>
-                    <div class="text-sm font-semibold">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
+                    <div class="text-sm font-medium">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
                     <Bonfire.UI.Boundaries.AclSubjectsPreviewLive grants={e(acl, :grants, [])} />
                   </div>
                   <LinkLive
@@ -60,7 +60,7 @@
                   >
                     <#Icon iconify="ph:intersection-duotone" class="w-7 h-7 text-base-content/50 shrink-0" />
                     <div class="flex-1 min-w-0">
-                      <div class="text-sm font-semibold">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
+                      <div class="text-sm font-medium">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
                       <Bonfire.UI.Boundaries.AclSubjectsPreviewLive
                         grants={e(acl, :grants, [])}
                         count_label={l("audiences")}

@@ -3,7 +3,7 @@
     <div class="flex flex-col gap-0.5">
       {#case Bonfire.Boundaries.Verbs.get(@verb, @all_verbs)}
         {#match nil}
-          <div class="flex-1 text-sm font-semibold capitalize">
+          <div class="flex-1 text-sm font-medium capitalize">
             <#Icon iconify="ri:shield-user-fill" class="w-4 h-4 text-secondary-content/70" />
             {@verb}
           </div>
@@ -17,7 +17,7 @@
               />
             </div>
             <div class="flex flex-col">
-              <div class="flex-1 text-sm font-semibold capitalize">
+              <div class="flex-1 text-sm font-medium capitalize">
                 {e(verb, :verb, nil) || verb}
               </div>
               <div class="text-[13px] text-muted">{e(verb, :summary, nil)}</div>

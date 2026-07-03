@@ -11,7 +11,7 @@
     <div class="p-4">
       <div class="flex items-center gap-2 mb-3">
         <#Icon iconify="ph:shield-duotone" class="w-4 h-4 shrink-0 text-base-content/50" />
-        <span class="text-xs font-semibold uppercase tracking-wider text-base-content/50">{@label || l("Your permissions")}</span>
+        <span class="text-xs font-medium uppercase tracking-wider text-base-content/50">{@label || l("Your permissions")}</span>
       </div>
 
       {#if is_list(@role_permissions) and @role_permissions != []}

@@ -23,7 +23,7 @@
         </div>
       {#else}
         <div class="flex items-center w-full gap-2 justify-between text-sm text-base-content">
-          <span class="text-sm text-left font-medium">{@label || l("Add to circles")}</span>
+          <span class="text-sm text-left">{@label || l("Add to circles")}</span>
           <#Icon iconify="ph:circle-fill" class="w-5 h-5 shrink-0" />
         </div>
       {/if}

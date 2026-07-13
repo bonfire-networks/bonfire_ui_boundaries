@@ -15,6 +15,18 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
     {:ok, conn: conn, account: account, me: me, alice: alice, bob: bob, carl: carl}
   end
 
+  test "a logged-out visitor to /@username/interact/block gets the remote-interaction form for blocking",
+       %{alice: alice} do
+    # The block menu links guests here (mirroring the follow deeplink), instead of building the
+    # target's `canonical_url` in the template: the actor is resolved server-side on the profile
+    # and the `interact` section renders `RemoteInteractionFormLive` with the type from `:extra`.
+    conn()
+    |> visit("/@#{alice.character.username}/interact/block")
+    # the remote-interaction form, with the interaction type plumbed from `/interact/:type`
+    |> assert_has("form[action='/pub/remote_interaction']")
+    |> assert_has("input[value=block]")
+  end
+
   test "Ghost a user works (PhoenixTest)", %{conn: conn, alice: alice} do
     conn
     |> visit("/@#{alice.character.username}")

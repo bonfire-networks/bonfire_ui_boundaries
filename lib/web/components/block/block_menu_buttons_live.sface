@@ -1,12 +1,7 @@
 {#if !current_user_id(@__context__)}
   <li>
     <LinkLive
-      to={maybe_apply(
-        Bonfire.UI.Me.RemoteInteractionLive,
-        :generate_url,
-        ["block", l("this user or instance"), @permalink || URIs.canonical_url(@object), @__context__],
-        fallback_return: "/login"
-      )}
+      to={"#{path(@object)}/interact/block"}
       class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
     >
       {!-- <#Icon :if={@with_icon} iconify="heroicons-solid:ban" class="w-4 h-4 shrink-0" /> --}

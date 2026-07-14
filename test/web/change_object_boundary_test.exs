@@ -10,7 +10,7 @@ defmodule Bonfire.UI.Boundaries.ChangeObjectBoundaryTest do
     account = fake_account!()
     me = fake_user!(account)
 
-    Process.put(:feed_live_update_many_preload_mode, :inline)
+    Process.put([:bonfire, :feed_live_update_many_preload_mode], :inline)
 
     {:ok, account: account, me: me}
   end

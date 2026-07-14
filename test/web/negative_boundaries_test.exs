@@ -20,7 +20,7 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
     bob: bob,
     account: account
   } do
-    Process.put(:feed_live_update_many_preload_mode, :inline)
+    Process.put([:bonfire, :feed_live_update_many_preload_mode], :inline)
 
     html_body = "epic html message"
     attrs = %{post_content: %{html_body: html_body}}
@@ -46,7 +46,7 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
 
   test "Assign 'cannot interact' to Alice, She can see but not like the post, Bob can see and interact with it",
        %{me: me, alice: alice, bob: bob, account: account} do
-    Process.put(:feed_live_update_many_preload_mode, :inline)
+    Process.put([:bonfire, :feed_live_update_many_preload_mode], :inline)
 
     html_body = "epic html message"
     attrs = %{post_content: %{html_body: html_body}}
@@ -80,7 +80,7 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
   # Test adding a user with a 'cannot participate' role and verify that the user can see and interact with the post but not reply to it but another local user can.
   test "Assign 'cannot_participate' to Alice, She can see, like and boost but not reply to the post, Bob can see and reply to it",
        %{me: me, alice: alice, bob: bob, account: account} do
-    Process.put(:feed_live_update_many_preload_mode, :inline)
+    Process.put([:bonfire, :feed_live_update_many_preload_mode], :inline)
 
     html_body = "epic html message"
     attrs = %{post_content: %{html_body: html_body}}

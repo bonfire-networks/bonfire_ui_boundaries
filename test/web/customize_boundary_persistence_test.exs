@@ -26,7 +26,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryPersistenceTest do
     alice = fake_user!(account)
     bob = fake_user!(account)
 
-    Process.put(:feed_live_update_many_preload_mode, :inline)
+    Process.put([:bonfire, :feed_live_update_many_preload_mode], :inline)
 
     conn = conn(user: me, account: account)
     {:ok, conn: conn, account: account, me: me, alice: alice, bob: bob}

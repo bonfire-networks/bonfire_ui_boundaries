@@ -70,7 +70,7 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
 
         # Disable JavaScript error checking for Milkdown issues
         Application.put_env(:wallaby, :js_errors, false)
-        # Process.put(:feed_live_update_many_preload_mode, :inline)
+        # Process.put([:bonfire, :feed_live_update_many_preload_mode], :inline)
 
         # alice = fake_user!()
         # conn = conn(user: alice)

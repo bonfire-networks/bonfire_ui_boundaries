@@ -10,7 +10,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
     me = fake_user!(account)
     alice = fake_user!(account)
     bob = fake_user!(account)
-    Process.put(:feed_live_update_many_preload_mode, :inline)
+    Process.put([:bonfire, :feed_live_update_many_preload_mode], :inline)
 
     {:ok, account: account, me: me, alice: alice, bob: bob}
   end

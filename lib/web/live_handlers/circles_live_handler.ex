@@ -348,37 +348,21 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
 
   # Ensure the optimistically-added member renders with its name/avatar instead of
   # "Unknown" until refresh. An already-loaded record (URI-resolved user / instance /
-  # remote actor) is used as-is; only a flat autocomplete pick (id/name/username/icon,
-  # always a user) is loaded from the DB, falling back to a display-shaped subject.
+  # remote actor) is used as-is; a flat autocomplete pick (id/name/username/icon,
+  # always a user) is converted to the display shape without bypassing boundaries to reload it.
   defp load_member_subject(_id, %{profile: %{id: _}} = subject, _socket), do: subject
   defp load_member_subject(_id, %{__struct__: _} = subject, _socket), do: subject
 
-  defp load_member_subject(id, subject, socket) do
-    loaded =
-      with {:ok, obj} <-
-             Bonfire.Common.Needles.get(id,
-               current_user: current_user(socket),
-               skip_boundary_check: true
-             ) do
-        repo().maybe_preload(obj, [:profile, :character, :named])
-      else
-        _ -> nil
-      end
-
-    if e(loaded, :profile, :id, nil) || e(loaded, :character, :id, nil) do
-      loaded
-    else
-      # Fall back to a display-shaped subject built from the pick data we already have
-      %{
+  defp load_member_subject(id, subject, _socket) do
+    %{
+      id: id,
+      profile: %{
         id: id,
-        profile: %{
-          id: id,
-          name: e(subject, :name, nil) || e(subject, :username, nil),
-          icon: e(subject, :icon, nil)
-        },
-        character: %{id: id, username: e(subject, :username, nil)}
-      }
-    end
+        name: e(subject, :name, nil) || e(subject, :username, nil),
+        icon: e(subject, :icon, nil)
+      },
+      character: %{id: id, username: e(subject, :username, nil)}
+    }
   end
 
   # def set_circles(selected_circles, previous_circles, add_to_previous \\ false) do

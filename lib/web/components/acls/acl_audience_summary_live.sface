@@ -6,10 +6,7 @@
     </div>
   {#match audiences}
     <div>
-      <h2
-        :if={@show_heading}
-        class="text-xs uppercase font-medium tracking-wide text-muted mb-2"
-      >
+      <h2 :if={@show_heading} class="text-xs uppercase font-medium tracking-wide text-muted mb-2">
         {l("Who can do what")}
       </h2>
       <ul

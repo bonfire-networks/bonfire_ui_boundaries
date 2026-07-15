@@ -8,13 +8,13 @@
     <div>
       <h2
         :if={@show_heading}
-        class="text-xs uppercase font-medium tracking-wide text-base-content/50 mb-2"
+        class="text-xs uppercase font-medium tracking-wide text-muted mb-2"
       >
         {l("Who can do what")}
       </h2>
       <ul
         role="list"
-        class="flex flex-col rounded-lg border border-base-content/10   divide-hair divide-secondary"
+        class="flex flex-col rounded-lg border border-secondary   divide-hair divide-secondary"
       >
         {#for %{subject: subject, is_user: is_user, name: name, icon: icon, allowed: allowed, blocked: blocked} <-
             audiences}

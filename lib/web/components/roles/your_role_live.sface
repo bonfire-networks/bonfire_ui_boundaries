@@ -4,14 +4,14 @@
       <#Icon iconify="ph:shield-check-duotone" class="w-5 h-5 shrink-0 text-success" />
       <div>
         <div class="text-sm font-medium">{l("You have full control")}</div>
-        <div class="text-xs text-base-content/50">{l("You can perform any action and edit boundaries.")}</div>
+        <div class="text-xs text-muted">{l("You can perform any action and edit boundaries.")}</div>
       </div>
     </div>
   {#else}
     <div class="p-4">
       <div class="flex items-center gap-2 mb-3">
-        <#Icon iconify="ph:shield-duotone" class="w-4 h-4 shrink-0 text-base-content/50" />
-        <span class="text-xs font-medium uppercase tracking-wider text-base-content/50">{@label || l("Your permissions")}</span>
+        <#Icon iconify="ph:shield-duotone" class="w-4 h-4 shrink-0 text-muted" />
+        <span class="text-xs font-medium uppercase tracking-wider text-muted">{@label || l("Your permissions")}</span>
       </div>
 
       {#if is_list(@role_permissions) and @role_permissions != []}
@@ -25,7 +25,7 @@
         </div>
         <div class="text-xs text-base-content/40 mt-2">{l("Set by the author.")}</div>
       {#else}
-        <div class="text-sm text-base-content/50">{l("No specific permissions found.")}</div>
+        <div class="text-sm text-muted">{l("No specific permissions found.")}</div>
       {/if}
     </div>
   {/if}

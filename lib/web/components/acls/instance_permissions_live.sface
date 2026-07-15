@@ -67,7 +67,7 @@
                       "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors cursor-pointer",
                       "bg-success/15 border-success/40 text-base-content": state == :on,
                       "bg-warning/10 border-warning/40 text-base-content": state == :partial,
-                      "border-base-content/15 text-base-content/80 hover:bg-base-content/5": state == :off
+                      "border-secondary text-base-content/80 hover:bg-base-content/5": state == :off
                     }
                   >
                     {#if state == :on}
@@ -85,7 +85,7 @@
         {#else}
           {#case Enum.filter(@audiences, fn a -> e(a.states, capability.key, :off) != :off end)}
             {#match []}
-              <span class="pl-11 text-xs text-base-content/50">{l("No one")}</span>
+              <span class="pl-11 text-xs text-muted">{l("No one")}</span>
             {#match granted}
               <div class="flex flex-wrap gap-1.5 pl-11">
                 {#for audience <- granted}
@@ -105,7 +105,7 @@
     {/for}
   </ul>
 
-  <p class="text-xs text-base-content/50">
+  <p class="text-xs text-muted">
     {l(
       "Looking for content permissions like replies or boosts? Those are set per post, or via boundary presets."
     )}

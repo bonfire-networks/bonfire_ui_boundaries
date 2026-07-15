@@ -52,7 +52,7 @@
         </div>
 
         {#if Enum.empty?(@custom_roles)}
-          <div class="text-center py-6 text-muted border border-dashed border-base-content/10 rounded-lg">
+          <div class="text-center py-6 text-muted border border-dashed border-secondary rounded-lg">
             <Iconify.iconify icon="ph:plus-circle-duotone" class="w-8 h-8 mx-auto mb-1.5 opacity-50" />
             <p class="text-sm">{l("No custom roles yet")}</p>
             <p class="text-xs">{l("Create a role to customize permissions")}</p>

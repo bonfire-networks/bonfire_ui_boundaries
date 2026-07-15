@@ -1,5 +1,5 @@
 {#if !@read_only}
-  <div class="p-4 border-b border-base-content/10">
+  <div class="p-4 border-b border-secondary">
     <form id="add_members_to_group_acl" phx-change="change" phx-target={@myself} class="w-full">
       <label for="multi_select_group_acl_text_input" class="sr-only">{l("Search for users to add")}</label>
       <Bonfire.UI.Common.MultiselectLive

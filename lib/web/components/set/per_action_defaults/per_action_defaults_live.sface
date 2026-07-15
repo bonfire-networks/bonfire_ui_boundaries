@@ -27,7 +27,7 @@
 
         <div
           :if={action_state.show_exceptions?}
-          class="flex flex-col gap-2 p-3 border-t border-base-content/10 bg-base-content/5"
+          class="flex flex-col gap-2 p-3 border-t border-secondary bg-base-content/5"
         >
           <div class="flex items-center gap-1.5">
             <p class="text-xs text-muted">{l("Except allow:")}</p>
@@ -39,7 +39,7 @@
             >
               <Iconify.iconify
                 icon="ph:info-duotone"
-                class="w-3.5 h-3.5 text-base-content/50 hover:text-base-content/80 cursor-help"
+                class="w-3.5 h-3.5 text-muted hover:text-base-content/80 cursor-help"
               />
             </span>
           </div>

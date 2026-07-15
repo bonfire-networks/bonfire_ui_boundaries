@@ -9,7 +9,7 @@
   {#else}
     <div>
       <div :if={!@setting_boundaries}>
-        <div class="p-4 border-b border-base-content/10">
+        <div class="p-4 border-b border-secondary">
           <span class="text-sm text-muted">
             {l(
               "Boundaries define and enforce rules that can be used to control access and permissions to content or functionality. A boundary preset can apply to one or more users and circles."
@@ -50,7 +50,7 @@
                 <span class="font-normal normal-case">· {l("read-only")}</span>
               </li>
               {#for acl <- system_acls}
-                <li class="border-b border-base-content/10 last:border-b-0" x-data="{open: false}">
+                <li class="border-b border-secondary last:border-b-0" x-data="{open: false}">
                   <button
                     type="button"
                     data-role="toggle_preset"
@@ -58,13 +58,13 @@
                     x-bind:aria-expanded="open.toString()"
                     class="w-full flex items-center gap-3 p-4 text-left cursor-pointer hover:bg-base-content/5 transition-colors"
                   >
-                    <#Icon iconify="ph:intersection-duotone" class="w-7 h-7 text-base-content/50 shrink-0" />
+                    <#Icon iconify="ph:intersection-duotone" class="w-7 h-7 text-muted shrink-0" />
                     <div class="flex-1 min-w-0">
                       <div class="text-sm font-medium">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
                       <Bonfire.UI.Boundaries.AclSubjectsPreviewLive
                         grants={e(acl, :grants, [])}
                         count_label={l("audiences")}
-                        accent_class="text-base-content/50"
+                        accent_class="text-muted"
                       />
                     </div>
                     <#Icon

@@ -38,7 +38,7 @@
     </div>
 
     {!-- Metadata --}
-    <div class="flex items-center gap-2 mt-2 flex-wrap text-sm text-base-content/50">
+    <div class="flex items-center gap-2 mt-2 flex-wrap text-sm text-muted">
       <span :if={e(@circle, :creator_username, nil)}>
         {l("by ")}
         <LinkLive
@@ -75,8 +75,8 @@
           boundary_preset={@boundary_preset}
           with_icon
           with_label
-          icon_class="w-4 h-4 text-base-content/50"
-          class="text-base-content/50"
+          icon_class="w-4 h-4 text-muted"
+          class="text-muted"
         />
       {/if}
     </div>
@@ -107,7 +107,7 @@
         <LinkLive
           :if={@member_count > Enum.count(@preview_members)}
           to={"/circle/#{id(@circle)}/members"}
-          class="text-xs font-medium text-base-content/50 hover:text-base-content transition-colors duration-150"
+          class="text-xs font-medium text-muted hover:text-base-content transition-colors duration-150"
           aria-label={l("View all %{count} members", count: @member_count)}
         >
           {l("+%{count} more", count: @member_count - Enum.count(@preview_members))}
@@ -149,7 +149,7 @@
           class="w-4 h-4 text-base-content/40 shrink-0"
           aria-hidden="true"
         />
-        <span class="text-sm text-base-content/50">{l("Showing activities from people in this circle")}</span>
+        <span class="text-sm text-muted">{l("Showing activities from people in this circle")}</span>
       </div>
       <StatefulComponent
         module={maybe_component(Bonfire.UI.Social.FeedLive, @__context__)}

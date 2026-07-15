@@ -2,7 +2,7 @@
   <ul class="menu relative p-0 w-full mt-2">
     <li class="w-full" :if={Bonfire.Boundaries.can?(@__context__, :assign, :instance)}>
       <details open class="w-full overflow-hidden">
-        <summary class="relative font-medium uppercase text-xs pl-5 text-base-content/50">
+        <summary class="relative font-medium uppercase text-xs pl-5 text-muted">
           <span>{l("Instance Boundaries")}</span>
         </summary>
 

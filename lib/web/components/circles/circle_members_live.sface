@@ -1,7 +1,7 @@
 <div id="circle_members" class="">
   <div class="">
     {#if description = @description || e(@circle, :extra_info, :summary, nil)}
-      <div class="p-4 border-b border-base-content/10">
+      <div class="p-4 border-b border-secondary">
         <div class="max-w-prose text-sm leading-relaxed text-base-content/80 space-y-2 [&_p]:m-0 [&_ul]:list-disc [&_ul]:ps-5 [&_ul]:space-y-1.5 [&_ul]:marker:text-base-content/40 [&_li]:ps-1 [&_a]:link [&_a]:link-primary [&_code]:rounded [&_code]:bg-base-content/10 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[0.8em] [&_code]:font-mono">{markdown(description)}</div>
       </div>
     {/if}
@@ -50,13 +50,13 @@
                 |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: "#add_url_toggle")}
                 class="inline-flex items-center gap-2 self-start rounded-lg px-2 py-1.5 -ms-2 text-sm font-medium text-muted transition-colors hover:bg-base-content/5 hover:text-base-content"
               >
-                <#Icon iconify="ph:globe-hemisphere-west-duotone" class="w-4 h-4 shrink-0 text-base-content/50" />
+                <#Icon iconify="ph:globe-hemisphere-west-duotone" class="w-4 h-4 shrink-0 text-muted" />
                 <span>{l("Add by URL or domain")}</span>
                 <span
                   id="add_url_caret"
                   class="inline-flex shrink-0 transition-transform duration-150 motion-reduce:transition-none"
                 >
-                  <#Icon iconify="ph:caret-down-bold" class="w-4 h-4 text-base-content/50" />
+                  <#Icon iconify="ph:caret-down-bold" class="w-4 h-4 text-muted" />
                 </span>
               </button>
             {/if}
@@ -86,7 +86,7 @@
   </div>
   {#case Enum.count(@members)}
     {#match count when count > 0}
-      <div class="p-4 py-2 flex items-center justify-between border-b border-base-content/10">
+      <div class="p-4 py-2 flex items-center justify-between border-b border-secondary">
         <span class="text-xs font-medium uppercase tracking-wider text-muted">
           {#if @total_count && @total_count > 0}
             {l("%{count} entries", count: @total_count)}
@@ -165,7 +165,7 @@
                 <div class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-row justify-between">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-box bg-base-content/10 flex items-center justify-center shrink-0">
-                      <div iconify="ph:globe-duotone" class="w-5 h-5 text-base-content/50" aria-hidden="true" />
+                      <div iconify="ph:globe-duotone" class="w-5 h-5 text-muted" aria-hidden="true" />
                     </div>
                     <div>
                       <span class="font-medium text-base-content text-sm">
@@ -204,7 +204,7 @@
         target={@myself}
       >
         <:if_no_more>
-          <p class="text-center text-sm text-base-content/50 py-4">{l("That's all the entries")}</p>
+          <p class="text-center text-sm text-muted py-4">{l("That's all the entries")}</p>
         </:if_no_more>
       </Bonfire.UI.Common.LoadMoreLive>
     {#match _}

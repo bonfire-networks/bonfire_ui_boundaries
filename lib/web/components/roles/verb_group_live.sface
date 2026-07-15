@@ -19,7 +19,7 @@
               <span :if={status == :can} class="badge badge-xs badge-success gap-0.5">{name} <#Icon iconify="ph:check-bold" class="w-2.5 h-2.5" /></span>
               <span :if={status == :cannot} class="badge badge-xs badge-error gap-0.5">{name} <#Icon iconify="ph:x-bold" class="w-2.5 h-2.5" /></span>
             {/for}
-            <span :if={defined_count(@group[:role_verbs]) > 3} class="text-xs text-base-content/50">+{defined_count(@group[:role_verbs]) - 3}</span>
+            <span :if={defined_count(@group[:role_verbs]) > 3} class="text-xs text-muted">+{defined_count(@group[:role_verbs]) - 3}</span>
         {/case}
       </div>
     </div>
@@ -27,10 +27,10 @@
   </button>
 
   {!-- Verbs List --}
-  <div x-cloak x-show="open" x-collapse class="px-2 pb-2 pt-1 border-t border-base-content/5">
+  <div x-cloak x-show="open" x-collapse class="px-2 pb-2 pt-1 border-t border-secondary">
     <div :if={!@read_only} class="flex items-center justify-end gap-3 text-xs text-muted mb-2">
       <span class="flex items-center gap-1"><#Icon iconify="ph:check-duotone" class="w-4 h-4 text-success" />{l("Grant")}</span>
-      <span class="flex items-center gap-1"><#Icon iconify="ph:minus-duotone" class="w-4 h-4 text-base-content/50" />{l("Default")}</span>
+      <span class="flex items-center gap-1"><#Icon iconify="ph:minus-duotone" class="w-4 h-4 text-muted" />{l("Default")}</span>
       <span class="flex items-center gap-1"><#Icon iconify="ph:x-duotone" class="w-4 h-4 text-error" />{l("Deny")}</span>
     </div>
     <div class="space-y-0.5">
@@ -42,7 +42,7 @@
               "bg-base-100/50 hover:bg-base-100": !@read_only
             ]}>
               <div class="flex items-center gap-1.5">
-                <Iconify.iconify icon={verb_data.icon} class="w-5 h-5 text-base-content/50" />
+                <Iconify.iconify icon={verb_data.icon} class="w-5 h-5 text-muted" />
                 <span class="text-sm">{verb_data.display_name}</span>
               </div>
               {#if @read_only}

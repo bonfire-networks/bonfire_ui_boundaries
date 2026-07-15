@@ -41,7 +41,7 @@
       <div :if={@usage != :ops && (!@read_only || @setting_boundaries == :edit_object)}>
         <div
           :if={!@setting_boundaries && (e(@description, nil) || e(@acl, :extra_info, :summary, nil))}
-          class="p-4 border-b border-base-content/10"
+          class="p-4 border-b border-secondary"
         >
           <span class="text-muted">
             {e(@description, nil) ||

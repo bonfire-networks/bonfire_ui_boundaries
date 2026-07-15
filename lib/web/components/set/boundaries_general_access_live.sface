@@ -1,5 +1,5 @@
 <div class="block items-center justify-between w-full gap-2">
-  <!-- <div class="items-start text-left flex-1 text-xs font-medium uppercase text-base-content/50 p-2">{l("Define the boundary")}</div> -->
+  <!-- <div class="items-start text-left flex-1 text-xs font-medium uppercase text-muted p-2">{l("Define the boundary")}</div> -->
 
   <Bonfire.UI.Boundaries.GeneralAccessListLive
     id="boundaries_general_access_list"

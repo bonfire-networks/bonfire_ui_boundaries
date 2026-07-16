@@ -69,6 +69,8 @@ defmodule Bonfire.UI.Boundaries.BlocklistUriTest do
         |> fill_in("Actor URL, domain, or @handle@domain", with: @remote_actor)
         |> click_button("Add")
       end)
+      # the members list loads/refreshes async (renders skeletons first); wait for it to settle
+      |> wait_async()
       |> assert_has("li", text: "karen")
       |> refute_has("li", text: "Unknown")
     end
@@ -111,6 +113,8 @@ defmodule Bonfire.UI.Boundaries.BlocklistUriTest do
         |> fill_in("Actor URL, domain, or @handle@domain", with: @remote_actor)
         |> click_button("Add")
       end)
+      # the members list loads/refreshes async (renders skeletons first); wait for it to settle
+      |> wait_async()
       |> assert_has("li", text: "karen")
       |> refute_has("li", text: "Unknown")
     end

@@ -202,6 +202,16 @@ defmodule Bonfire.Boundaries.LiveHandler do
       }
     )
 
+    # Also sync the host LiveView's copies (eg. the sticky PersistentLive whose template
+    # re-passes `to_boundaries`/`to_circles` props to SmartInputContainerLive on every
+    # re-render, such as page navigation) — otherwise the host's stale copy (seeded with
+    # the default boundary by `prepare_assigns/1`) overwrites this selection.
+    send_self_global(
+      to_boundaries: new_to_boundaries,
+      to_circles: reset_circles,
+      exclude_circles: reset_circles
+    )
+
     {:noreply,
      socket
      |> assign(:to_boundaries, new_to_boundaries)
@@ -231,6 +241,13 @@ defmodule Bonfire.Boundaries.LiveHandler do
         to_circles: reset_circles,
         exclude_circles: reset_circles
       }
+    )
+
+    # Keep the host LiveView's copies in sync too (see `replace_boundary`)
+    send_self_global(
+      to_boundaries: new_to_boundaries,
+      to_circles: reset_circles,
+      exclude_circles: reset_circles
     )
 
     {:noreply,
@@ -361,6 +378,12 @@ defmodule Bonfire.Boundaries.LiveHandler do
       }
     )
 
+    # Keep the host LiveView's copies in sync too (see `replace_boundary`)
+    send_self_global(
+      to_circles: e(assigns(updated_socket), :to_circles, []),
+      exclude_circles: e(assigns(updated_socket), :exclude_circles, [])
+    )
+
     {:noreply, updated_socket}
   end
 
@@ -383,6 +406,12 @@ defmodule Bonfire.Boundaries.LiveHandler do
       }
     )
 
+    # Keep the host LiveView's copies in sync too (see `replace_boundary`)
+    send_self_global(
+      to_circles: e(assigns(updated_socket), :to_circles, []),
+      exclude_circles: e(assigns(updated_socket), :exclude_circles, [])
+    )
+
     {:noreply, updated_socket}
   end
 
@@ -399,6 +428,12 @@ defmodule Bonfire.Boundaries.LiveHandler do
         to_circles: e(assigns(updated_socket), :to_circles, []),
         exclude_circles: e(assigns(updated_socket), :exclude_circles, [])
       }
+    )
+
+    # Keep the host LiveView's copies in sync too (see `replace_boundary`)
+    send_self_global(
+      to_circles: e(assigns(updated_socket), :to_circles, []),
+      exclude_circles: e(assigns(updated_socket), :exclude_circles, [])
     )
 
     {:noreply, updated_socket}

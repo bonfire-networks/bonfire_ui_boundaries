@@ -202,10 +202,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
       }
     )
 
-    # Also sync the host LiveView's copies (eg. the sticky PersistentLive whose template
-    # re-passes `to_boundaries`/`to_circles` props to SmartInputContainerLive on every
-    # re-render, such as page navigation) — otherwise the host's stale copy (seeded with
-    # the default boundary by `prepare_assigns/1`) overwrites this selection.
+    # Sync the host LiveView's copies too (eg. sticky PersistentLive, whose template
+    # re-passes these as props on re-render — a stale copy would undo this selection)
     send_self_global(
       to_boundaries: new_to_boundaries,
       to_circles: reset_circles,

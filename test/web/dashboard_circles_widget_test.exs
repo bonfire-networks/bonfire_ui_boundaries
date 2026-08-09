@@ -3,6 +3,8 @@ defmodule Bonfire.UI.Boundaries.DashboardCirclesWidgetTest do
 
   alias Bonfire.Boundaries.Circles
 
+  doctest Bonfire.UI.Boundaries.WidgetCirclesLive
+
   setup do
     account = fake_account!()
     me = fake_user!(account)
@@ -33,6 +35,8 @@ defmodule Bonfire.UI.Boundaries.DashboardCirclesWidgetTest do
            )
 
     assert html_has_element?(html, "#dashboard-circle-#{work.id} a[href='/circle/#{work.id}']")
+    assert html_element_text(html, "#dashboard-circle-#{friends.id} [data-role=circle-marker]") == "F"
+    assert html_element_text(html, "#dashboard-circle-#{work.id} [data-role=circle-marker]") == "W"
     assert html =~ "Friends"
     assert html =~ "Work"
   end
@@ -57,5 +61,13 @@ defmodule Bonfire.UI.Boundaries.DashboardCirclesWidgetTest do
     |> Floki.find(selector)
     |> Enum.empty?()
     |> Kernel.not()
+  end
+
+  defp html_element_text(html, selector) do
+    html
+    |> Floki.parse_fragment!()
+    |> Floki.find(selector)
+    |> Floki.text()
+    |> String.trim()
   end
 end

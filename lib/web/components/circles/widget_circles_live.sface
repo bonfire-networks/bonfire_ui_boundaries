@@ -46,13 +46,15 @@
           <li id={"dashboard-circle-#{id(circle)}"} class="shrink-0">
             <LinkLive
               to={~p"/circle/#{id(circle)}"}
-              class="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-selector bg-primary/10 px-4 text-sm font-semibold text-primary whitespace-nowrap touch-manipulation transition-colors duration-150 hover:bg-primary/20 motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-primary/20"
+              class="inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary/10 py-1 pl-1 pr-3 text-sm font-semibold text-base-content whitespace-nowrap touch-manipulation transition-[background-color,color,transform] duration-150 ease-out hover:-translate-y-px hover:bg-primary/20 hover:text-primary motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.98] active:bg-primary/20"
             >
-              <Iconify.iconify
-                icon="ph:circle-fill"
-                class="h-2.5 w-2.5 opacity-70"
+              <span
+                class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary text-[0.6875rem] font-extrabold tracking-tight text-primary-content"
                 aria-hidden="true"
-              />
+                data-role="circle-marker"
+              >
+                {circle_initials(LiveHandler.subject_name(circle))}
+              </span>
               {LiveHandler.subject_name(circle)}
             </LinkLive>
           </li>

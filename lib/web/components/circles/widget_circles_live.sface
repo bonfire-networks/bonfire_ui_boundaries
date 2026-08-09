@@ -7,10 +7,7 @@
     empty_message={l("Create a circle to organise people you follow.")}
   >
     <:empty_state>
-      <div
-        class="flex flex-col items-center gap-3 py-5 text-center"
-        data-role="widget-empty-state"
-      >
+      <div class="flex flex-col items-center gap-3 py-5 text-center" data-role="widget-empty-state">
         <div
           class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"
           aria-hidden="true"
@@ -48,11 +45,7 @@
               to={~p"/circle/#{id(circle)}"}
               class="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-selector bg-primary/10 px-4 text-sm font-semibold text-primary whitespace-nowrap touch-manipulation transition-colors duration-150 hover:bg-primary/20 motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-primary/20"
             >
-              <Iconify.iconify
-                icon="ph:circle-fill"
-                class="h-2.5 w-2.5 opacity-70"
-                aria-hidden="true"
-              />
+              <Iconify.iconify icon="ph:circle-fill" class="h-2.5 w-2.5 opacity-70" aria-hidden="true" />
               {LiveHandler.subject_name(circle)}
             </LinkLive>
           </li>

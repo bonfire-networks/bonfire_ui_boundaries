@@ -132,7 +132,10 @@
           "aria-selected": to_string(@selected_tab != "members"),
           "aria-current": if(@selected_tab != "members", do: "page")
         ]}
-        class={"tab min-h-12 font-medium transition-colors duration-150", "tab-active": @selected_tab != "members"}
+        class={
+          "tab min-h-12 font-medium transition-colors duration-150",
+          "tab-active": @selected_tab != "members"
+        }
       >{l("Posts")}</LinkLive>
       <LinkLive
         to={"/circle/#{id(@circle)}/members"}
@@ -141,7 +144,10 @@
           "aria-selected": to_string(@selected_tab == "members"),
           "aria-current": if(@selected_tab == "members", do: "page")
         ]}
-        class={"tab min-h-12 font-medium transition-colors duration-150", "tab-active": @selected_tab == "members"}
+        class={
+          "tab min-h-12 font-medium transition-colors duration-150",
+          "tab-active": @selected_tab == "members"
+        }
       >{l("People")}</LinkLive>
     </div>
   </header>

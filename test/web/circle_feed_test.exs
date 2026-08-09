@@ -58,6 +58,20 @@ defmodule Bonfire.UI.Boundaries.FeedsCirclesFilterTest do
       # Assert posts by Carl (not in the circle) are excluded
       |> refute_has("article", text: "post by carl")
     end
+
+    test "the circle header presents its identity and accessible navigation", %{
+      me: me,
+      circle: circle
+    } do
+      conn(user: me)
+      |> visit("/circle/#{circle.id}")
+      |> assert_has("[data-role=circle_identity]", text: "friends")
+      |> assert_has("[data-role=circle_member_count]", text: "1 person")
+      |> assert_has("[data-role=edit_circle_name] button[data-role=open_modal]", text: "Manage")
+      |> assert_has("[data-role=circle_tabs] [role=tab][aria-selected=true]", text: "Posts")
+      |> assert_has("[data-role=circle_tabs] [role=tab][aria-selected=false]", text: "People")
+      |> refute_has("#circle_view", text: "Showing activities from people in this circle")
+    end
   end
 
   describe "guest pagination on a circle feed (without JavaScript)" do

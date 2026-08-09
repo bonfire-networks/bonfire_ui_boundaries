@@ -97,7 +97,7 @@
                   --}
       </div>
 
-      <div class="mt-4 flex items-start flex-col alert alert-error alert-soft w-full">
+      <div class="flex items-start flex-col alert alert-error alert-soft w-full">
         <div class="font-bold text-lg">{l("Delete this circle")}</div>
         <p>{l(
             "The circle will be permanently deleted. This action may affect all the activities that included this circle."

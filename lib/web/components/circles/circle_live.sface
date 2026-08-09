@@ -1,102 +1,102 @@
 <div id="circle_view" class="w-full max-w-full flex flex-col feed">
-  <header class="flex flex-col p-4 bonfire-wrapper pb-0">
-    {!-- Title row: icon + name + settings --}
-    <div class="flex items-center gap-3">
-      <div
-        class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center shrink-0"
-        aria-hidden="true"
-      >
-        <#Icon iconify="ph:circle-duotone" class="w-6 h-6 text-secondary" />
-      </div>
-      <h2 class="text-2xl font-extrabold tracking-tight flex-1 min-w-0 truncate">{e(@circle, :named, :name, nil)}</h2>
-      {#if @is_caretaker}
-        <div data-role="edit_circle_name">
-          <Bonfire.UI.Common.OpenModalLive
-            id="edit_name"
-            title_text={l("Edit circle")}
-            no_actions
-            open_btn_wrapper_class="flex flex-1 w-full"
-          >
-            <Bonfire.UI.Boundaries.ManageCircleLive
-              id={"members_#{@circle_id || id(@circle)}"}
-              circle_id={@circle_id || id(@circle)}
-              circle={@circle}
-              read_only={@read_only}
-              to_boundaries={@to_boundaries}
-              boundary_preset={@boundary_preset}
+  <header class="flex flex-col px-4 pt-5 !pb-0 bonfire-wrapper !border-b border-hair border-secondary">
+    <div data-role="circle_identity" class="flex items-start gap-4">
+      {#if Enum.count(@preview_members) >= 4}
+        <div
+          class="w-16 h-16 rounded-2xl overflow-hidden grid grid-cols-2 grid-rows-2 shrink-0 ring-1 ring-base-content/10 bg-base-200"
+          aria-label={l("Circle member preview")}
+        >
+          {#for member <- Enum.take(@preview_members, 4)}
+            <Bonfire.UI.Common.AvatarLive
+              parent_id={deterministic_dom_id(__MODULE__, e(member, :subject_id, nil), "circle_identity", @parent_id)}
+              wrapper_class="border-0 avatar !flex w-full h-full"
+              class="w-full h-full rounded-none bg-base-200"
+              src={Media.avatar_url(e(member, :subject, nil))}
+              user_id={e(member, :subject_id, nil)}
+              title={e(member, :subject, :profile, :name, "")}
+              is_remote={!check_is_local?(e(member, :subject, nil), preload_if_needed: false)}
             />
-
-            <:open_btn>
-              <div class="btn btn-sm btn-ghost btn-circle hover:bg-primary/10 hover:text-primary transition-colors duration-150">
-                <#Icon iconify="ph:sliders-horizontal-duotone" class="w-5 h-5" />
-                <span class="sr-only">{l("Edit circle")}</span>
-              </div>
-            </:open_btn>
-          </Bonfire.UI.Common.OpenModalLive>
+          {/for}
+        </div>
+      {#else}
+        <div
+          class="w-16 h-16 rounded-2xl bg-secondary/15 flex items-center justify-center shrink-0 ring-1 ring-base-content/5"
+          aria-hidden="true"
+        >
+          <#Icon iconify="ph:circle-duotone" class="w-8 h-8 text-secondary" />
         </div>
       {/if}
-    </div>
 
-    {!-- Metadata --}
-    <div class="flex items-center gap-2 mt-2 flex-wrap text-sm text-muted">
-      <span :if={e(@circle, :creator_username, nil)}>
-        {l("by ")}
-        <LinkLive
-          class="text-muted hover:text-base-content transition-colors duration-150"
-          to={"/@#{e(@circle, :creator_username, nil)}"}
-        >{e(@circle, :creator_name, "")}</LinkLive>
-      </span>
-      {#if @member_count > 0}
-        <span :if={e(@circle, :creator_username, nil)} class="text-base-content/30" aria-hidden="true">·</span>
-        <span>
-          {#if @member_count == 1}
-            {l("1 member")}
-          {#else}
-            {l("%{count} members", count: @member_count)}
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start gap-3">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight flex-1 min-w-0 text-balance break-words">
+            {e(@circle, :named, :name, nil)}
+          </h2>
+          {#if @is_caretaker}
+            <div data-role="edit_circle_name" class="shrink-0">
+              <Bonfire.UI.Common.OpenModalLive
+                id="edit_name"
+                title_text={l("Edit circle")}
+                no_actions
+                open_modal_wrapper_class="w-auto open_modal_wrapper flex"
+                open_btn_wrapper_class="btn btn-sm btn-soft min-h-11 px-3 gap-2"
+              >
+                <Bonfire.UI.Boundaries.ManageCircleLive
+                  id={"members_#{@circle_id || id(@circle)}"}
+                  circle_id={@circle_id || id(@circle)}
+                  circle={@circle}
+                  read_only={@read_only}
+                  to_boundaries={@to_boundaries}
+                  boundary_preset={@boundary_preset}
+                />
+
+                <:open_btn>
+                  <#Icon iconify="ph:sliders-horizontal-duotone" class="w-5 h-5" aria-hidden="true" />
+                  <span class="hidden sm:inline" aria-hidden="true">{l("Manage")}</span>
+                  <span class="sr-only">{l("Edit circle")}</span>
+                </:open_btn>
+              </Bonfire.UI.Common.OpenModalLive>
+            </div>
           {/if}
-        </span>
-      {/if}
-      {#if @created_ago}
-        <span
-          :if={e(@circle, :creator_username, nil) || @member_count > 0}
-          class="text-base-content/30"
-          aria-hidden="true"
-        >·</span>
-        <span>{l("created %{ago}", ago: @created_ago)}</span>
-      {/if}
-      {#if @boundary_preset}
-        <span
-          :if={e(@circle, :creator_username, nil) || @member_count > 0 || @created_ago}
-          class="text-base-content/30"
-          aria-hidden="true"
-        >·</span>
-        <StatelessComponent
-          module={maybe_component(Bonfire.UI.Boundaries.BoundariesPresetNameLive, @__context__)}
-          boundary_preset={@boundary_preset}
-          with_icon
-          with_label
-          icon_class="w-4 h-4 text-muted"
-          class="text-muted"
-        />
-      {/if}
-    </div>
+        </div>
 
-    <div :if={@is_member} class="flex items-center gap-1.5 mt-3">
-      <#Icon iconify="ph:check-circle-duotone" class="w-4 h-4 text-success" aria-hidden="true" />
-      <span class="text-xs font-medium text-success">{l("You're in this circle")}</span>
+        <div class="flex items-center gap-2 -mt-1 flex-wrap text-sm text-muted">
+          <span :if={e(@circle, :creator_username, nil)}>
+            {l("Circle by ")}
+            <LinkLive
+              class="text-muted hover:text-base-content transition-colors duration-150"
+              to={"/@#{e(@circle, :creator_username, nil)}"}
+            >{e(@circle, :creator_name, "")}</LinkLive>
+          </span>
+          {#if @boundary_preset}
+            <span :if={e(@circle, :creator_username, nil)} class="text-base-content/30" aria-hidden="true">·</span>
+            <StatelessComponent
+              module={maybe_component(Bonfire.UI.Boundaries.BoundariesPresetNameLive, @__context__)}
+              boundary_preset={@boundary_preset}
+              with_icon
+              with_label
+              icon_class="w-4 h-4 text-muted"
+              class="text-muted"
+            />
+          {/if}
+        </div>
+      </div>
     </div>
 
     {#if description = e(@circle, :extra_info, :summary, nil)}
-      <p class="text-sm text-muted mt-2 leading-relaxed">{description}</p>
+      <p class="text-base text-base-content mt-4 leading-relaxed max-w-prose">{description}</p>
     {/if}
 
-    {#if @selected_tab != "members" and @preview_members != []}
-      <div class="flex items-center mt-3 gap-3">
-        <div class="flex -space-x-2">
+    <div
+      :if={@selected_tab != "members" and (@preview_members != [] or @is_member)}
+      class="flex items-center justify-between gap-4 mt-4 flex-wrap"
+    >
+      <div :if={@preview_members != []} class="flex items-center gap-3 min-h-11">
+        <div class="flex -space-x-2" aria-label={l("Circle members")}>
           {#for member <- @preview_members}
             <Bonfire.UI.Common.AvatarLive
               parent_id={deterministic_dom_id(__MODULE__, e(member, :subject_id, nil), "circle_preview", @parent_id)}
-              class="w-8 h-8 rounded-full ring-2 ring-base-100 hover:ring-primary/50 hover:z-10 transition-shadow duration-150"
+              class="w-8 h-8 rounded-full ring-2 ring-base-100"
               src={Media.avatar_url(e(member, :subject, nil))}
               user_id={e(member, :subject_id, nil)}
               title={e(member, :subject, :profile, :name, "")}
@@ -105,31 +105,48 @@
           {/for}
         </div>
         <LinkLive
-          :if={@member_count > Enum.count(@preview_members)}
           to={"/circle/#{id(@circle)}/members"}
-          class="text-xs font-medium text-muted hover:text-base-content transition-colors duration-150"
-          aria-label={l("View all %{count} members", count: @member_count)}
+          opts={["data-role": "circle_member_count"]}
+          class="text-sm font-medium text-muted hover:text-base-content transition-colors duration-150 min-h-11 inline-flex items-center"
+          label={l("View all %{count} members", count: @member_count)}
         >
-          {l("+%{count} more", count: @member_count - Enum.count(@preview_members))}
+          {#if @member_count == 1}
+            {l("1 person")}
+          {#else}
+            {l("%{count} people", count: @member_count)}
+          {/if}
         </LinkLive>
       </div>
-    {/if}
 
-    <div role="tablist" class="tabs pt-6 justify-center gap-8 w-full tabs-border">
+      <div :if={@is_member} class="flex items-center gap-1.5 min-h-11">
+        <#Icon iconify="ph:check-circle-duotone" class="w-4 h-4 text-success" aria-hidden="true" />
+        <span class="text-sm font-medium text-success">{l("You're in this circle")}</span>
+      </div>
+    </div>
+
+    <div data-role="circle_tabs" role="tablist" class="tabs tabs-border grid grid-cols-2 w-full mt-5">
       <LinkLive
         to={"/circle/#{id(@circle)}"}
-        role="tab"
-        class={"tab font-medium transition-colors duration-150", "tab-active": @selected_tab != "members"}
-      >{l("Feed")}</LinkLive>
+        opts={[
+          role: "tab",
+          "aria-selected": to_string(@selected_tab != "members"),
+          "aria-current": if(@selected_tab != "members", do: "page")
+        ]}
+        class={"tab min-h-12 font-medium transition-colors duration-150", "tab-active": @selected_tab != "members"}
+      >{l("Posts")}</LinkLive>
       <LinkLive
         to={"/circle/#{id(@circle)}/members"}
-        role="tab"
-        class={"tab font-medium transition-colors duration-150", "tab-active": @selected_tab == "members"}
-      >{l("Members")}</LinkLive>
+        opts={[
+          role: "tab",
+          "aria-selected": to_string(@selected_tab == "members"),
+          "aria-current": if(@selected_tab == "members", do: "page")
+        ]}
+        class={"tab min-h-12 font-medium transition-colors duration-150", "tab-active": @selected_tab == "members"}
+      >{l("People")}</LinkLive>
     </div>
   </header>
 
-  <section class="flex flex-col gap-2 mt-3">
+  <section class="flex flex-col">
     {#if @selected_tab == "members"}
       <div class="pull-right bonfire-wrapper">
         <Bonfire.UI.Boundaries.CircleMembersLive
@@ -143,14 +160,6 @@
         />
       </div>
     {#else}
-      <div class="flex items-center gap-2 px-4 py-2">
-        <#Icon
-          iconify="ph:users-three-duotone"
-          class="w-4 h-4 text-base-content/40 shrink-0"
-          aria-hidden="true"
-        />
-        <span class="text-sm text-muted">{l("Showing activities from people in this circle")}</span>
-      </div>
       <StatefulComponent
         module={maybe_component(Bonfire.UI.Social.FeedLive, @__context__)}
         id={ComponentID.new(Bonfire.UI.Social.FeedLive, @feed_name, __MODULE__)}

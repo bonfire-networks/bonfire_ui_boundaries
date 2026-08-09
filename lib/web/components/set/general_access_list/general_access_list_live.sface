@@ -5,7 +5,7 @@
   wrapper_class="w-full"
   position="bottom-start"
   trigger_class="btn btn-outline border-hair border-secondary w-full justify-between font-normal"
-  panel_class="!w-full max-h-[50vh] overflow-y-auto divide-hair divide-secondary flex flex-col gap-1 p-1"
+  panel_class="!w-full max-h-[50vh] overflow-y-auto flex flex-col gap-0.5 p-1.5"
   label={l("Choose who can see and interact with this")}
 >
   <:trigger>
@@ -23,155 +23,146 @@
     {#for slug <-
         @presets ||
           Bonfire.Common.Config.get(:preset_order, ["public", "local", "mentions"], :bonfire_boundaries)}
-      <div class="flex items-center gap-3">
-        <button
-          data-scope={"#{slug}_boundary"}
-          class="text-base-content cursor-pointer flex items-center py-2 gap-2 justify-between w-full hover:bg-base-200"
-          phx-click={@set_action ||
-            JS.push("Bonfire.Boundaries:replace_boundary",
-              value: %{id: slug, name: e(Bonfire.Boundaries.Presets.for_preset(slug), :label, slug)},
-              target: "#customize_boundary_live"
-            )}
-          phx-value-id={slug}
-          phx-value-name={e(Bonfire.Boundaries.Presets.for_preset(slug), :label, slug)}
-          type="button"
-          {...@set_opts}
-        >
-          <div class="flex items-center gap-2">
-            <div class="pr-2 flex items-center text-left">
-              <div class="flex-shrink-0">
-                <span>
-                  <Iconify.iconify
-                    icon={e(Bonfire.Boundaries.Presets.for_preset(slug), :icon, "ph:gear-six-duotone")}
-                    class="size-5"
-                  />
-                </span>
-              </div>
-              <div class="flex flex-col ml-3 text-base-content">
-                <div class="text-sm">
-                  {e(Bonfire.Boundaries.Presets.for_preset(slug), :label, slug)}
-                </div>
-                <p class="text-xs text-muted -mt-[2px] break-[word]">
-                  {e(Bonfire.Boundaries.Presets.for_preset(slug), :description, nil)}
-                </p>
-              </div>
-            </div>
-          </div>
-          {#if matches?(@boundary_preset, slug)}
-            <#Icon iconify="ph:check-bold" class="w-5 h-5 text-primary flex-shrink-0" />
-          {/if}
-        </button>
-      </div>
+      <button
+        data-scope={"#{slug}_boundary"}
+        class={
+          "w-full flex items-center gap-3 px-2.5 py-2 rounded-field text-left cursor-pointer text-base-content transition-colors duration-150 hover:bg-base-200",
+          "bg-base-200": matches?(@boundary_preset, slug)
+        }
+        aria-pressed={"#{matches?(@boundary_preset, slug)}"}
+        phx-click={@set_action ||
+          JS.push("Bonfire.Boundaries:replace_boundary",
+            value: %{id: slug, name: e(Bonfire.Boundaries.Presets.for_preset(slug), :label, slug)},
+            target: "#customize_boundary_live"
+          )}
+        phx-value-id={slug}
+        phx-value-name={e(Bonfire.Boundaries.Presets.for_preset(slug), :label, slug)}
+        type="button"
+        {...@set_opts}
+      >
+        <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-base-content/5">
+          <Iconify.iconify
+            icon={e(Bonfire.Boundaries.Presets.for_preset(slug), :icon, "ph:gear-six-duotone")}
+            class="size-5"
+          />
+        </span>
+        <span class="flex min-w-0 flex-1 flex-col">
+          <span class="text-sm font-medium">
+            {e(Bonfire.Boundaries.Presets.for_preset(slug), :label, slug)}
+          </span>
+          <span class="text-xs text-muted break-words line-clamp-2">
+            {e(Bonfire.Boundaries.Presets.for_preset(slug), :description, nil)}
+          </span>
+        </span>
+        {#if matches?(@boundary_preset, slug)}
+          <#Icon iconify="ph:check-bold" class="w-4 h-4 text-primary flex-shrink-0" />
+        {/if}
+      </button>
     {/for}
   {/if}
 
   {!-- Custom ACLs --}
   {#for {acl_id, acl} <- @my_acls}
-    <div data-role="custom_boundary" class="flex items-center gap-3 justify-between">
-      <button
-        class="text-base-content cursor-pointer w-full flex items-center py-2 gap-2 justify-between hover:bg-base-200"
-        phx-click={@set_action ||
-          JS.push("Bonfire.Boundaries:replace_boundary",
-            value: %{id: acl_id, name: e(acl, :name, nil)},
-            target: "#customize_boundary_live"
-          )}
-        phx-value-id={acl_id}
-        phx-value-name={e(acl, :name, nil)}
-        type="button"
-        {...@set_opts}
-      >
-        <div class="flex items-center gap-2">
-          <div class="flex items-center text-left">
-            <div class="flex-shrink-0">
-              <span>
-                {#case e(acl, :icon, nil)}
-                  {#match nil}
-                    <#Icon iconify="fluent:door-tag-20-filled" class="w-5 h-5" />
-                  {#match icon}
-                    <Iconify.iconify icon={icon} class="w-5 h-5" />
-                {/case}
-              </span>
-            </div>
-            <div class="flex flex-col ml-3 text-base-content">
-              <div class="text-sm">{e(acl, :name, nil)}</div>
-              <p class="text-xs text-muted -mt-[2px] break-[word]">{e(acl, :description, nil)}</p>
-            </div>
-          </div>
-        </div>
-        {#if matches?(@to_boundaries, @boundary_preset, acl_id)}
-          <#Icon iconify="ph:check-bold" class="w-5 h-5 text-primary flex-shrink-0" />
-        {/if}
-      </button>
-    </div>
+    <button
+      data-role="custom_boundary"
+      class={
+        "w-full flex items-center gap-3 px-2.5 py-2 rounded-field text-left cursor-pointer text-base-content transition-colors duration-150 hover:bg-base-200",
+        "bg-base-200": matches?(@to_boundaries, @boundary_preset, acl_id)
+      }
+      aria-pressed={"#{matches?(@to_boundaries, @boundary_preset, acl_id)}"}
+      phx-click={@set_action ||
+        JS.push("Bonfire.Boundaries:replace_boundary",
+          value: %{id: acl_id, name: e(acl, :name, nil)},
+          target: "#customize_boundary_live"
+        )}
+      phx-value-id={acl_id}
+      phx-value-name={e(acl, :name, nil)}
+      type="button"
+      {...@set_opts}
+    >
+      <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-base-content/5">
+        {#case e(acl, :icon, nil)}
+          {#match nil}
+            <#Icon iconify="fluent:door-tag-20-filled" class="size-5" />
+          {#match icon}
+            <Iconify.iconify icon={icon} class="size-5" />
+        {/case}
+      </span>
+      <span class="flex min-w-0 flex-1 flex-col">
+        <span class="text-sm font-medium">{e(acl, :name, nil)}</span>
+        <span class="text-xs text-muted break-words line-clamp-2">{e(acl, :description, nil)}</span>
+      </span>
+      {#if matches?(@to_boundaries, @boundary_preset, acl_id)}
+        <#Icon iconify="ph:check-bold" class="w-4 h-4 text-primary flex-shrink-0" />
+      {/if}
+    </button>
   {/for}
 
   {#if !@hide_custom}
-    <div class={[
-      "flex items-center gap-3 cursor-pointer justify-between"
-    ]}>
-      <button
-        class="text-base-content py-2 cursor-pointer flex items-center gap-2 justify-between w-full hover:bg-base-200"
-        data-id="custom_boundary"
-        phx-click={@set_action ||
-          JS.push("Bonfire.Boundaries:replace_boundary",
-            value: %{id: "custom", name: l("Custom")},
-            target: "#customize_boundary_live"
-          )}
-        type="button"
-      >
-        <div class="flex items-center text-left">
-          <div class="flex-shrink-0">
-            <#Icon iconify="ri:settings-4-line" class="w-5 h-5" />
-          </div>
-          <div class="flex flex-col ml-3 text-base-content">
-            <div class="text-sm">{l("Custom")}</div>
-            <p class="text-xs text-muted -mt-[2px] break-[word]">{l("Start from scratch.")}</p>
-          </div>
-        </div>
-        {#if matches?(@boundary_preset, "custom")}
-          <#Icon iconify="ph:check-bold" class="w-5 h-5 text-primary flex-shrink-0" />
-        {/if}
-      </button>
-    </div>
+    <button
+      data-id="custom_boundary"
+      class={
+        "w-full flex items-center gap-3 px-2.5 py-2 rounded-field text-left cursor-pointer text-base-content transition-colors duration-150 hover:bg-base-200",
+        "bg-base-200": matches?(@boundary_preset, "custom")
+      }
+      aria-pressed={"#{matches?(@boundary_preset, "custom")}"}
+      phx-click={@set_action ||
+        JS.push("Bonfire.Boundaries:replace_boundary",
+          value: %{id: "custom", name: l("Custom")},
+          target: "#customize_boundary_live"
+        )}
+      type="button"
+    >
+      <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-base-content/5">
+        <#Icon iconify="ri:settings-4-line" class="size-5" />
+      </span>
+      <span class="flex min-w-0 flex-1 flex-col">
+        <span class="text-sm font-medium">{l("Custom")}</span>
+        <span class="text-xs text-muted break-words line-clamp-2">{l("Start from scratch.")}</span>
+      </span>
+      {#if matches?(@boundary_preset, "custom")}
+        <#Icon iconify="ph:check-bold" class="w-4 h-4 text-primary flex-shrink-0" />
+      {/if}
+    </button>
   {/if}
 
   {#if !@hide_private}
-    <div class="flex items-center gap-3  cursor-pointer justify-between">
-      <button
-        class="text-base-content py-2 flex items-center gap-2 justify-between w-full hover:bg-base-200"
-        phx-click={@set_action ||
-          JS.push("Bonfire.Boundaries:replace_boundary",
-            value: %{
-              id: "private",
-              name: e(Bonfire.Boundaries.Presets.for_preset("private"), :label, l("Private"))
-            },
-            target: "#customize_boundary_live"
-          )}
-        phx-value-id="private"
-        phx-value-name={e(Bonfire.Boundaries.Presets.for_preset("private"), :label, l("Private"))}
-        type="button"
-        {...@set_opts}
-      >
-        <div class="flex items-center text-left">
-          <div class="flex-shrink-0">
-            <Iconify.iconify
-              icon={e(Bonfire.Boundaries.Presets.for_preset("private"), :icon, "heroicons-solid:eye-off")}
-              class="w-5 h-5"
-            />
-          </div>
-          <div class="flex flex-col ml-3 text-base-content">
-            <div class="text-sm">
-              {e(Bonfire.Boundaries.Presets.for_preset("private"), :label, l("Private"))}
-            </div>
-            <p class="text-xs text-muted -mt-[2px] break-[word]">
-              {e(Bonfire.Boundaries.Presets.for_preset("private"), :description, nil)}
-            </p>
-          </div>
-        </div>
-        {#if matches?(@boundary_preset, "private")}
-          <#Icon iconify="ph:check-bold" class="w-5 h-5 text-primary flex-shrink-0" />
-        {/if}
-      </button>
-    </div>
+    <button
+      class={
+        "w-full flex items-center gap-3 px-2.5 py-2 rounded-field text-left cursor-pointer text-base-content transition-colors duration-150 hover:bg-base-200",
+        "bg-base-200": matches?(@boundary_preset, "private")
+      }
+      aria-pressed={"#{matches?(@boundary_preset, "private")}"}
+      phx-click={@set_action ||
+        JS.push("Bonfire.Boundaries:replace_boundary",
+          value: %{
+            id: "private",
+            name: e(Bonfire.Boundaries.Presets.for_preset("private"), :label, l("Private"))
+          },
+          target: "#customize_boundary_live"
+        )}
+      phx-value-id="private"
+      phx-value-name={e(Bonfire.Boundaries.Presets.for_preset("private"), :label, l("Private"))}
+      type="button"
+      {...@set_opts}
+    >
+      <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-base-content/5">
+        <Iconify.iconify
+          icon={e(Bonfire.Boundaries.Presets.for_preset("private"), :icon, "heroicons-solid:eye-off")}
+          class="size-5"
+        />
+      </span>
+      <span class="flex min-w-0 flex-1 flex-col">
+        <span class="text-sm font-medium">
+          {e(Bonfire.Boundaries.Presets.for_preset("private"), :label, l("Private"))}
+        </span>
+        <span class="text-xs text-muted break-words line-clamp-2">
+          {e(Bonfire.Boundaries.Presets.for_preset("private"), :description, nil)}
+        </span>
+      </span>
+      {#if matches?(@boundary_preset, "private")}
+        <#Icon iconify="ph:check-bold" class="w-4 h-4 text-primary flex-shrink-0" />
+      {/if}
+    </button>
   {/if}
 </Dropdown>

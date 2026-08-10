@@ -46,10 +46,13 @@ defmodule Bonfire.UI.Boundaries.DashboardCirclesWidgetTest do
     assert html =~ "Work"
   end
 
-  test "does not render the circles widget on the Jacobin dashboard", %{conn: conn} do
-    conn
-    |> visit("/dashboard")
-    |> refute_has("[data-id=widget_circles]")
+  # The dashboard comes from a flavour-installed template (`priv/templates/lib/…/dashboard_live.ex`, copied into `lib/` by the flavour installer), so which widgets it mounts is per-flavour: social's registers `WidgetCirclesLive` in its `main_widgets` and community inherits that installer, while jacobin's omits it. Only assert the omission under the flavour it applies to, as CI runs community, where the widget SHOULD render.
+  if System.get_env("FLAVOUR") == "jacobin" do
+    test "does not render the circles widget on the Jacobin dashboard", %{conn: conn} do
+      conn
+      |> visit("/dashboard")
+      |> refute_has("[data-id=widget_circles]")
+    end
   end
 
   defp render_widget(me) do

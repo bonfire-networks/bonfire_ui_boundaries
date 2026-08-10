@@ -7,10 +7,7 @@
     empty_message={l("Create a circle to organise people you follow.")}
   >
     <:empty_state>
-      <div
-        class="flex flex-col items-center gap-3 py-5 text-center"
-        data-role="widget-empty-state"
-      >
+      <div class="flex flex-col items-center gap-3 py-5 text-center" data-role="widget-empty-state">
         <div
           class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"
           aria-hidden="true"

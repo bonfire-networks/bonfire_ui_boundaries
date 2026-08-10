@@ -35,8 +35,13 @@ defmodule Bonfire.UI.Boundaries.DashboardCirclesWidgetTest do
            )
 
     assert html_has_element?(html, "#dashboard-circle-#{work.id} a[href='/circle/#{work.id}']")
-    assert html_element_text(html, "#dashboard-circle-#{friends.id} [data-role=circle-marker]") == "F"
-    assert html_element_text(html, "#dashboard-circle-#{work.id} [data-role=circle-marker]") == "W"
+
+    assert html_element_text(html, "#dashboard-circle-#{friends.id} [data-role=circle-marker]") ==
+             "F"
+
+    assert html_element_text(html, "#dashboard-circle-#{work.id} [data-role=circle-marker]") ==
+             "W"
+
     assert html =~ "Friends"
     assert html =~ "Work"
   end

@@ -18,9 +18,9 @@
             </div>
             <div class="flex flex-col">
               <div class="flex-1 text-sm font-medium capitalize">
-                {e(verb, :verb, nil) || verb}
+                {Bonfire.Boundaries.Verbs.verb_name(verb)}
               </div>
-              <div class="text-[13px] text-muted">{e(verb, :summary, nil)}</div>
+              <div class="text-[13px] text-muted">{Bonfire.Boundaries.Verbs.verb_summary(verb)}</div>
             </div>
           </div>
       {/case}
@@ -55,7 +55,7 @@
           "badge-error": !@value
         ]}
       >
-        {e(verb, :verb, nil) || verb}
+        {Bonfire.Boundaries.Verbs.verb_name(verb)}
       </li>
   {/case}
 {/if}

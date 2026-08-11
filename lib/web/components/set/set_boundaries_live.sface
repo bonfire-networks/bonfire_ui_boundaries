@@ -70,8 +70,8 @@
                               aria-hidden="true"
                             />
                             <div class="flex flex-col flex-1">
-                              <div class="text-sm font-medium text-base-content">{localise_dynamic(e(verb, :name, nil), __MODULE__)}</div>
-                              <div class="text-xs text-muted">{localise_dynamic(e(verb, :summary, nil), __MODULE__)}</div>
+                              <div class="text-sm font-medium text-base-content">{Bonfire.Boundaries.Verbs.verb_name(verb)}</div>
+                              <div class="text-xs text-muted">{Bonfire.Boundaries.Verbs.verb_summary(verb)}</div>
                             </div>
                             <#Icon iconify="ph:caret-down-bold" class="w-4 h-4 text-muted" />
                           </div>
@@ -129,8 +129,7 @@
                                 </div>
                               {#match _}
                                 <!-- Render circle -->
-                                <span class="">{e(item, :named, :name, nil) ||
-                                    e(item, :name, nil) || localise_dynamic(e(item, :stereotyped, :named, :name, nil), __MODULE__)}</span>
+                                <span class="">{Bonfire.Boundaries.Circles.circle_name(item)}</span>
                             {/case}
                           </div>
                         {/for}

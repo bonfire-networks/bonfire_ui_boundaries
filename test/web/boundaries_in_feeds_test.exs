@@ -84,6 +84,11 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
         to_circles: %{alice.id => "interact", bob.id => "participate"}
       )
 
+    # assert the precondition separately, so a failure names the cause: alice's `interact` grant
+    # must actually put the post in her feed before we can assert on which buttons render
+    assert Bonfire.Social.FeedLoader.feed_contains?(:explore, post, current_user: alice),
+           "the post is missing from alice's :explore feed, so the boundary/feed data is at fault rather than the button rendering"
+
     # alice has interact — buttons render as enabled (optimistic UI)
     conn(user: alice, account: account)
     |> visit("/feed/explore")

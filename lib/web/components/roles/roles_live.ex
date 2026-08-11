@@ -139,7 +139,7 @@ defmodule Bonfire.UI.Boundaries.RolesLive do
     case defined_count(role_verbs) do
       0 -> l("No permissions defined")
       1 -> l("1 permission defined")
-      n -> l("%{count} permissions defined", count: n)
+      n -> lp("%{count} permission defined", "%{count} permissions defined", n, count: n)
     end
   end
 

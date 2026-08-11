@@ -1,6 +1,7 @@
 <div data-id="widget_circles">
   <Bonfire.UI.Common.WidgetBlockLive
-    class="w-full px-card py-3 flex-auto mx-auto bg-base-200/50 overflow-hidden"
+    class="w-full px-card py-3 flex-auto mx-auto overflow-hidden"
+    title_class="pb-card text-xs font-semibold uppercase tracking-[0.06em] text-base-content/80"
     widget_title={@widget_title || l("Circles")}
     empty={@circles == []}
     empty_icon="ph:circles-three-duotone"

@@ -3,7 +3,9 @@
   {#match {preset_identifier, %{} = meta}}
     {!-- Any slug with a config entry (public, local, mentions, follows, private, global, members_only, on_request, etc.) --}
     <span
-      title={meta[:tooltip] || (meta[:label] && meta[:label] <> ": " <> (meta[:description] || ""))}
+      title={meta[:tooltip] ||
+        (meta[:label] &&
+           meta[:label] <> ": " <> (meta[:description] || ""))}
       class={
         @class,
         "flex items-center gap-2": @with_label && @with_icon

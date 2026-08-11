@@ -177,13 +177,13 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsLive do
   then falls back to the user-provided name.
   """
   def circle_name(circle) do
-    stereo_name = e(circle, :stereotyped, :named, :name, nil)
-
-    if is_binary(stereo_name) and stereo_name != "" do
-      localise_dynamic(stereo_name, __MODULE__)
-    else
+    # note the precedence differs from `Circles.circle_name/1`: here the built-in stereotype name
+    # wins over the circle's own name, which is what this screen has always shown
+    #
+    # localising via `Circles` rather than inline keeps the gettext domain with
+    # `bonfire_boundaries`, which declares the stereotype names
+    Bonfire.Boundaries.Circles.stereotype_name(circle) ||
       e(circle, :named, :name, nil) || e(circle, :name, nil) || l("Untitled circle")
-    end
   end
 
   # True when `verb_permissions` (the sparse-override map) has any entry for

@@ -89,9 +89,9 @@
       <div class="p-4 py-2 flex items-center justify-between border-b border-secondary">
         <span class="text-xs font-medium uppercase tracking-wider text-muted">
           {#if @total_count && @total_count > 0}
-            {l("%{count} entries", count: @total_count)}
+            {lp("%{count} entry", "%{count} entries", @total_count, count: @total_count)}
           {#else}
-            {l("%{count} entries", count: count)}
+            {lp("%{count} entry", "%{count} entries", count, count: count)}
           {/if}
         </span>
 

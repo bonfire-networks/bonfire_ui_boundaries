@@ -108,12 +108,12 @@
           to={"/circle/#{id(@circle)}/members"}
           opts={["data-role": "circle_member_count"]}
           class="text-sm font-medium text-muted hover:text-base-content transition-colors duration-150 min-h-11 inline-flex items-center"
-          label={l("View all %{count} members", count: @member_count)}
+          label={lp("View all %{count} member", "View all %{count} members", @member_count, count: @member_count)}
         >
           {#if @member_count == 1}
             {l("1 person")}
           {#else}
-            {l("%{count} people", count: @member_count)}
+            {lp("%{count} person", "%{count} people", @member_count, count: @member_count)}
           {/if}
         </LinkLive>
       </div>

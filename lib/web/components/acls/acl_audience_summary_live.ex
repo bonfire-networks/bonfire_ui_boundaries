@@ -55,14 +55,11 @@ defmodule Bonfire.UI.Boundaries.AclAudienceSummaryLive do
 
   def subject_icon(subject), do: Bonfire.Boundaries.LiveHandler.subject_icon(subject)
 
-  def verb_name(verb) do
-    localise_dynamic(
-      e(verb, :name, nil) || e(verb, :verb, "?") |> to_string() |> String.capitalize(),
-      __MODULE__
-    )
-  end
+  # delegated so the gettext domain stays with the extension that declares these strings —
+  # localising them here would search the `bonfire_ui_boundaries` domain, where they do not exist
+  def verb_name(verb), do: Bonfire.Boundaries.Verbs.verb_name(verb)
 
-  def verb_summary(verb), do: localise_dynamic(e(verb, :summary, nil), __MODULE__)
+  def verb_summary(verb), do: Bonfire.Boundaries.Verbs.verb_summary(verb)
 
   defp sort_verbs(verbs, order) do
     Enum.sort_by(verbs, fn verb -> Map.get(order, e(verb, :slug, nil), 999) end)

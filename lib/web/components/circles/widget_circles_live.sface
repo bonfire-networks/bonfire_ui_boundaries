@@ -39,7 +39,7 @@
     </:empty_state>
 
     <nav aria-label={l("Your circles")} data-role="circles-scroll">
-      <ul class="flex flex-nowrap gap-2 overflow-x-auto overscroll-x-contain touch-pan-x [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <ul class="flex flex-nowrap gap-2 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {#for circle <- @circles}
           <li id={"dashboard-circle-#{id(circle)}"} class="shrink-0">
             <LinkLive

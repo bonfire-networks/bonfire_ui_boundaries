@@ -7,6 +7,8 @@ defmodule Bonfire.UI.Boundaries.BlocklistUriTest do
   @remote_instance "mocked.local"
 
   setup do
+    Process.put(:federating, true)
+
     account = fake_account!()
     me = fake_user!(account)
     conn = conn(user: me, account: account)

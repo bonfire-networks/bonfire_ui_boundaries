@@ -1,0 +1,393 @@
+<div
+  id={"circles-manager-#{@id}"}
+  class="min-w-0 text-base-content"
+  data-role="circles-manager"
+  data-section={@section}
+>
+  <header
+    id={"#{@id}-header-#{@section}"}
+    class="sticky top-0 z-sticky border-b-hair border-secondary bg-base-100 px-5 pb-4 pt-5 pr-16 sm:px-6 sm:pb-5 sm:pt-6 sm:pr-16"
+    aria-live="polite"
+    phx-mounted={JS.focus(to: "##{@id}-heading")}
+  >
+    <p class="mb-1 text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-base-content/65">
+      {#case @section}
+        {#match :overview}{l("Your circles")}
+        {#match :create}{l("New circle")}
+        {#match :detail}{l("Circle settings")}
+        {#match :delete}{l("Confirm deletion")}
+      {/case}
+    </p>
+    <h2
+      id={"#{@id}-heading"}
+      class="text-balance text-xl font-semibold tracking-[-0.025em] focus-visible:outline-2 focus-visible:outline-offset-2 sm:text-2xl"
+      tabindex="-1"
+    >
+      {#case @section}
+        {#match :overview}{l("Manage circles")}
+        {#match :create}{l("Create a circle")}
+        {#match :detail}{Circles.circle_name(@selected_circle)}
+        {#match :delete}{l("Delete %{name}?", name: Circles.circle_name(@selected_circle))}
+      {/case}
+    </h2>
+  </header>
+
+  <p
+    :if={@notice}
+    class="mx-5 mt-4 rounded-selector border border-success/30 bg-success/10 px-3 py-2.5 text-sm text-success sm:mx-6"
+    role="status"
+  >
+    {@notice}
+  </p>
+
+  <p
+    :if={@error}
+    class="mx-5 mt-4 rounded-selector border border-error/30 bg-error/10 px-3 py-2.5 text-sm text-error sm:mx-6"
+    role="alert"
+  >
+    {@error}
+  </p>
+
+  {#case @section}
+    {#match :overview}
+      <div class="flex items-center justify-between gap-4 px-5 pb-3 pt-4 sm:px-6">
+        <p id={"#{@id}-summary"} class="grid gap-0.5 text-sm">
+          <strong class="font-medium">
+            {lp("%{count} circle", "%{count} circles", length(@circles), count: length(@circles))}
+          </strong>
+          <span class="text-xs tabular-nums text-base-content/65">
+            {lp(
+              "%{count} person organised across them",
+              "%{count} people organised across them",
+              @total_people,
+              count: @total_people
+            )}
+          </span>
+        </p>
+
+        <button
+          :if={@circles != []}
+          id={"#{@id}-new-circle"}
+          type="button"
+          :on-click="Bonfire.Boundaries.Circles:manager_show_create"
+          phx-target={@myself}
+          class="btn btn-primary shrink-0 cursor-pointer touch-manipulation px-4 normal-case transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
+        >
+          {l("New circle")}
+        </button>
+      </div>
+
+      <ul :if={@circles != []} class="border-y-hair border-secondary" aria-labelledby={"#{@id}-summary"}>
+        {#for circle <- @circles}
+          <li id={"manager-circle-#{id(circle)}"} class="border-b-hair border-secondary last:border-b-0">
+            <button
+              type="button"
+              data-role="manage-circle"
+              :on-click="Bonfire.Boundaries.Circles:manager_show_detail"
+              phx-target={@myself}
+              phx-value-circle_id={id(circle)}
+              aria-label={l("Manage %{name}", name: Circles.circle_name(circle))}
+              class="group grid min-h-[68px] w-full cursor-pointer touch-manipulation grid-cols-[2.25rem_minmax(0,1fr)_auto_4rem] items-center gap-3 px-5 py-2 text-left transition-[background-color,transform] duration-150 ease-out hover:bg-base-200/70 active:scale-[0.99] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] sm:px-6"
+            >
+              <span
+                class="grid size-9 place-items-center rounded-full bg-primary/15 text-[0.6875rem] font-bold tracking-[-0.02em] text-primary"
+                aria-hidden="true"
+              >
+                {Bonfire.UI.Boundaries.WidgetCirclesLive.circle_initials(Circles.circle_name(circle))}
+              </span>
+
+              <span class="grid min-w-0 gap-0.5">
+                <strong class="truncate text-sm font-medium">{Circles.circle_name(circle)}</strong>
+                <small class="text-xs tabular-nums text-base-content/65">
+                  {lp(
+                    "%{count} person",
+                    "%{count} people",
+                    e(circle, :encircles_count, 0) || 0,
+                    count: e(circle, :encircles_count, 0) || 0
+                  )}
+                </small>
+              </span>
+
+              <span
+                :if={Map.get(@member_previews, id(circle), []) != []}
+                class="col-start-3 flex -space-x-2 max-sm:hidden"
+                aria-hidden="true"
+              >
+                {#for member <- Map.get(@member_previews, id(circle), [])}
+                  <Bonfire.UI.Common.AvatarLive
+                    parent_id={"manager-#{id(circle)}"}
+                    wrapper_class="avatar !flex size-7 rounded-full ring-2 ring-base-100"
+                    class="size-7 rounded-full bg-base-200"
+                    src={Media.avatar_url(e(member, :subject, nil))}
+                    user_id={e(member, :subject_id, nil)}
+                    title={e(member, :subject, :profile, :name, "")}
+                    is_remote={!check_is_local?(e(member, :subject, nil), preload_if_needed: false)}
+                  />
+                {/for}
+              </span>
+
+              <span class="col-start-4 min-w-14 text-right text-xs font-medium text-base-content/60 transition-colors duration-150 ease-out group-hover:text-primary" aria-hidden="true">
+                {l("Manage")}
+              </span>
+            </button>
+          </li>
+        {/for}
+      </ul>
+
+      <div :if={@circles == []} class="grid justify-items-start gap-2 px-5 py-8 sm:px-6">
+        <strong class="text-base font-semibold">{l("No circles yet")}</strong>
+        <p class="max-w-[45ch] text-pretty text-sm leading-relaxed text-base-content/70">
+          {l("Create one to organise people around a relationship, interest, or project.")}
+        </p>
+        <button
+          id={"#{@id}-create-first-circle"}
+          type="button"
+          :on-click="Bonfire.Boundaries.Circles:manager_show_create"
+          phx-target={@myself}
+          class="btn btn-primary mt-2 min-h-11 cursor-pointer touch-manipulation px-5 normal-case transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none"
+        >
+          {l("Create a circle")}
+        </button>
+      </div>
+
+      <footer class="flex items-center justify-between gap-4 px-5 pb-safe-offset-5 pt-4 sm:px-6">
+        <p class="max-w-[42ch] text-pretty text-xs leading-relaxed text-base-content/65">
+          {l("Circle organisation is private unless you choose to share a circle.")}
+        </p>
+        <button
+          id={"#{@id}-done"}
+          type="button"
+          phx-click="close"
+          phx-target={"[id='#{@modal_id || Bonfire.UI.Common.ReusableModalLive.modal_id(assigns)}']"}
+          class="btn btn-ds-outline"
+        >
+          {l("Done")}
+        </button>
+      </footer>
+
+    {#match :create}
+      <button
+        id={"#{@id}-back-from-create"}
+        type="button"
+        :on-click="Bonfire.Boundaries.Circles:manager_show_overview"
+        phx-target={@myself}
+        class="mx-3 mt-1 cursor-pointer touch-manipulation link link-primary sm:mx-4 px-2 py-4"
+      >
+        {l("Back to all circles")}
+      </button>
+
+      <p class="mx-5 mb-5 max-w-[52ch] text-pretty text-sm leading-relaxed text-base-content/70 sm:mx-6">
+        {l("Group people around a relationship, shared interest, affiliation, or project.")}
+      </p>
+
+      <.form
+        for={@form}
+        id={"#{@id}-create-form"}
+        phx-change="Bonfire.Boundaries.Circles:manager_validate"
+        phx-submit="Bonfire.Boundaries.Circles:manager_create"
+        phx-target={@myself}
+        class="grid gap-4 px-5 pb-safe-offset-5 sm:px-6"
+      >
+        <Bonfire.UI.Boundaries.CircleSettingsFieldsLive id_prefix={@id} form={@form} />
+
+        <div class="mt-1 flex justify-end">
+          <button
+            type="submit"
+            data-role="create-circle-submit"
+            phx-disable-with={l("Creating…")}
+            class="btn btn-primary cursor-pointer touch-manipulation px-5 normal-case transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none"
+          >
+            {l("Create circle")}
+          </button>
+        </div>
+      </.form>
+
+    {#match :detail}
+      <button
+        :if={is_nil(@circle_id)}
+        id={"#{@id}-back-from-detail"}
+        type="button"
+        :on-click="Bonfire.Boundaries.Circles:manager_show_overview"
+        phx-target={@myself}
+        class="mx-3 cursor-pointer touch-manipulation link link-primary sm:mx-4 px-2 py-4"
+      >
+        {l("Back to all circles")}
+      </button>
+
+      <div class={"mx-5 mb-5 flex items-center gap-3 rounded-selector border border-secondary bg-base-200 px-3 py-3 sm:mx-6", "mt-5": !is_nil(@circle_id)}>
+        <span
+          class="grid size-9 shrink-0 place-items-center rounded-full bg-primary/15 text-[0.6875rem] font-bold tracking-[-0.02em] text-primary"
+          aria-hidden="true"
+        >
+          {Bonfire.UI.Boundaries.WidgetCirclesLive.circle_initials(Circles.circle_name(@selected_circle))}
+        </span>
+        <span class="grid min-w-0 flex-1 gap-0.5">
+          <strong class="text-sm font-medium tabular-nums">
+            {lp(
+              "%{count} person",
+              "%{count} people",
+              e(@selected_circle, :encircles_count, 0) || 0,
+              count: e(@selected_circle, :encircles_count, 0) || 0
+            )}
+          </strong>
+          <small class="text-xs text-base-content/65">
+            {#case Bonfire.UI.Boundaries.GeneralAccessListLive.selected_option(
+                @boundary_preset,
+                @to_boundaries,
+                [],
+                ["public", "local"]
+              )}
+              {#match {label, _icon}}{label}
+            {/case}
+          </small>
+        </span>
+        <span
+          :if={Map.get(@member_previews, id(@selected_circle), []) != []}
+          class="flex -space-x-2"
+          aria-hidden="true"
+        >
+          {#for member <- Map.get(@member_previews, id(@selected_circle), [])}
+            <Bonfire.UI.Common.AvatarLive
+              parent_id={"manager-detail-#{id(@selected_circle)}"}
+              wrapper_class="avatar !flex size-7 rounded-full ring-2 ring-base-200"
+              class="size-7 rounded-full bg-base-300"
+              src={Media.avatar_url(e(member, :subject, nil))}
+              user_id={e(member, :subject_id, nil)}
+              title={e(member, :subject, :profile, :name, "")}
+              is_remote={!check_is_local?(e(member, :subject, nil), preload_if_needed: false)}
+            />
+          {/for}
+        </span>
+      </div>
+
+      <.form
+        for={@form}
+        id={"#{@id}-settings-form"}
+        phx-change="Bonfire.Boundaries.Circles:manager_validate"
+        phx-submit="Bonfire.Boundaries.Circles:manager_save"
+        phx-target={@myself}
+        class="grid gap-4 px-5 sm:px-6"
+      >
+        <Bonfire.UI.Boundaries.CircleSettingsFieldsLive id_prefix={@id} form={@form} />
+
+        <div class="mt-1 flex justify-end">
+          <button
+            type="submit"
+            data-role="save-circle-submit"
+            phx-disable-with={l("Saving…")}
+            class="btn btn-primary cursor-pointer touch-manipulation px-5 normal-case transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none"
+          >
+            {l("Save changes")}
+          </button>
+        </div>
+      </.form>
+
+      <section
+        id={"#{@id}-discoverability"}
+        class="mx-5 mt-6 rounded-selector border border-info/30 bg-info/10 p-4 sm:mx-6"
+        aria-labelledby={"#{@id}-discoverability-title"}
+      >
+        <h3 id={"#{@id}-discoverability-title"} class="text-base font-semibold">
+          {l("Share this circle")}
+        </h3>
+        <p class="mt-1.5 max-w-[58ch] text-pretty text-sm leading-relaxed text-base-content/70">
+          {l(
+            "Share a circle when you want others to discover its member list—for example, people posting about a topic or teammates on a project. Choose who can see the circle and its current and future members."
+          )}
+        </p>
+        <div class="mt-3">
+          <Bonfire.UI.Boundaries.GeneralAccessListLive
+            id={"#{@id}-circle-access-#{id(@selected_circle)}"}
+            set_action="Bonfire.Boundaries.Circles:manager_set_discoverability"
+            set_opts={%{"phx-target" => @myself}}
+            presets={["public", "local"]}
+            hide_private={false}
+            hide_custom
+            to_boundaries={@to_boundaries}
+            boundary_preset={@boundary_preset}
+          />
+        </div>
+      </section>
+
+      <section class="mx-5 mt-6 flex flex-col gap-3 border-t-hair border-secondary py-5 sm:mx-6 sm:flex-row sm:items-center sm:justify-between" aria-labelledby={"#{@id}-people-title"}>
+        <div>
+          <h3 id={"#{@id}-people-title"} class="text-sm font-medium">{l("People")}</h3>
+          <p class="mt-1 text-xs tabular-nums text-base-content/65">
+            {lp(
+              "%{count} person in this circle",
+              "%{count} people in this circle",
+              e(@selected_circle, :encircles_count, 0) || 0,
+              count: e(@selected_circle, :encircles_count, 0) || 0
+            )}
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-1">
+          <LinkLive
+            class="inline-flex min-h-11 cursor-pointer touch-manipulation items-center rounded-selector px-3 text-sm font-medium text-base-content/70 transition-[background-color,color,transform] duration-150 ease-out hover:bg-base-200 hover:text-primary active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
+            to={~p"/circle/#{id(@selected_circle)}"}
+          >
+            {l("View posts")}
+          </LinkLive>
+          <LinkLive
+            class="inline-flex min-h-11 cursor-pointer touch-manipulation items-center rounded-selector px-3 text-sm font-medium text-base-content/70 transition-[background-color,color,transform] duration-150 ease-out hover:bg-base-200 hover:text-primary active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
+            to={~p"/circle/#{id(@selected_circle)}/members"}
+          >
+            {l("Manage people")}
+          </LinkLive>
+        </div>
+      </section>
+
+      <section class="mx-5 flex flex-col gap-3 border-t-hair border-secondary pb-safe-offset-6 pt-5 sm:mx-6 sm:flex-row sm:items-start sm:justify-between" aria-labelledby={"#{@id}-delete-title"}>
+        <div>
+          <h3 id={"#{@id}-delete-title"} class="text-sm font-medium">{l("Delete this circle")}</h3>
+          <p class="mt-1 max-w-[42ch] text-pretty text-xs leading-relaxed text-base-content/65">
+            {l("People stay in your network, but this grouping and its sharing settings will be removed.")}
+          </p>
+        </div>
+        <button
+          id={"#{@id}-delete-circle"}
+          type="button"
+          :on-click="Bonfire.Boundaries.Circles:manager_show_delete"
+          phx-target={@myself}
+          class="min-h-11 shrink-0 cursor-pointer touch-manipulation rounded-selector px-3 text-sm font-medium text-error transition-[background-color,color,transform] duration-150 ease-out hover:bg-error/10 active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
+        >
+          {l("Delete circle")}
+        </button>
+      </section>
+
+    {#match :delete}
+      <div class="mx-5 mt-5 rounded-selector border border-error/30 bg-error/10 px-4 py-4 sm:mx-6">
+        <strong class="text-sm font-semibold text-error">{l("This cannot be undone.")}</strong>
+        <p class="mt-1.5 max-w-[48ch] text-pretty text-sm leading-relaxed text-base-content/70">
+          {lp(
+            "The circle and its sharing settings will be permanently deleted. %{count} person will stay in your network.",
+            "The circle and its sharing settings will be permanently deleted. %{count} people will stay in your network.",
+            e(@selected_circle, :encircles_count, 0) || 0,
+            count: e(@selected_circle, :encircles_count, 0) || 0
+          )}
+        </p>
+      </div>
+
+      <div class="flex justify-end gap-2 px-5 pb-safe-offset-6 pt-5 sm:px-6">
+        <button
+          type="button"
+          :on-click="Bonfire.Boundaries.Circles:manager_show_detail"
+          phx-target={@myself}
+          phx-value-circle_id={id(@selected_circle)}
+          class="btn btn-ghost min-h-11 cursor-pointer touch-manipulation px-4 normal-case transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none"
+        >
+          {l("Keep circle")}
+        </button>
+        <button
+          type="button"
+          data-role="confirm-delete-circle"
+          :on-click="Bonfire.Boundaries.Circles:manager_delete"
+          phx-target={@myself}
+          phx-disable-with={l("Deleting…")}
+          class="btn btn-error min-h-11 cursor-pointer touch-manipulation px-5 normal-case transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none"
+        >
+          {l("Delete circle")}
+        </button>
+      </div>
+  {/case}
+</div>

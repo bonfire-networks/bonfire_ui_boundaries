@@ -1,63 +1,81 @@
-<div data-id="widget_circles">
-  <Bonfire.UI.Common.WidgetBlockLive
-    class="w-full px-card py-3 flex-auto mx-auto overflow-hidden"
-    title_class="pb-card text-xs font-semibold uppercase tracking-[0.06em] text-base-content/80"
-    widget_title={@widget_title || l("Circles")}
-    empty={@circles == []}
-    empty_icon="ph:circles-three-duotone"
-    empty_message={l("Create a circle to organise people you follow.")}
-  >
-    <:empty_state>
-      <div class="flex flex-col items-center gap-3 py-5 text-center" data-role="widget-empty-state">
-        <div
-          class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"
-          aria-hidden="true"
-        >
-          <Iconify.iconify icon="ph:circles-three-duotone" class="h-5 w-5 text-primary" />
-        </div>
+<section
+  id={"widget-circles-#{@id}"}
+  data-id="widget_circles"
+  class={"w-full min-w-0 px-card py-3", "grid min-h-24 content-center": @circles == []}
+  aria-labelledby={"#{@id}-circles-title"}
+>
+  <div class={"flex min-h-11 min-w-0 items-center font-normal", "flex-wrap": @circles == []}>
+    <h2
+      id={"#{@id}-circles-title"}
+      class="m-0 shrink-0 select-none text-lg font-bold leading-none tracking-[-0.02em] text-base-content text-balance"
+    >
+      {@widget_title || l("Circles")}
+    </h2>
 
-        <span class="max-w-[36ch] text-sm text-base-content/70">
-          {l("Create a circle to organise people you follow.")}
-        </span>
+    <span class="mx-[1.0625rem] shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">
+      /
+    </span>
 
-        <Bonfire.UI.Common.OpenModalLive
-          id="dashboard_new_circle"
-          title_text={l("Create a new circle")}
-          open_modal_wrapper_class="w-auto h-auto"
-          open_btn_wrapper_class="!w-auto min-h-11 rounded-selector btn btn-primary px-5 touch-manipulation"
-          no_actions
-        >
-          <form id="dashboard_new_circle_form" phx-submit="Bonfire.Boundaries.Circles:create">
-            <Bonfire.UI.Boundaries.NewCircleLive scope={current_user_id(@__context__)} />
-          </form>
-
-          <:open_btn>
-            <span>{l("Create a circle")}</span>
-          </:open_btn>
-        </Bonfire.UI.Common.OpenModalLive>
-      </div>
-    </:empty_state>
-
-    <nav aria-label={l("Your circles")} data-role="circles-scroll">
-      <ul class="flex flex-nowrap gap-2 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <nav :if={@circles != []} class="min-w-0 flex-1 overflow-hidden" aria-label={l("Your circles")} data-role="circles-scroll">
+      <ul class="flex snap-x snap-proximity items-center overflow-x-auto overscroll-x-contain scroll-px-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {#for circle <- @circles}
-          <li id={"dashboard-circle-#{id(circle)}"} class="shrink-0">
+          <li id={"dashboard-circle-#{id(circle)}"} class="flex shrink-0 snap-start items-center">
+            <span :if={circle != List.first(@circles)} class="mx-[0.8125rem] shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">
+              /
+            </span>
             <LinkLive
               to={~p"/circle/#{id(circle)}"}
-              class="inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary/10 py-1 pl-1 pr-3 text-sm font-semibold text-base-content whitespace-nowrap touch-manipulation transition-[background-color,color,transform] duration-150 ease-out hover:-translate-y-px hover:bg-primary/20 hover:text-primary motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-[0.98] active:bg-primary/20"
+              class="inline-flex min-h-11 touch-manipulation items-center whitespace-nowrap text-[0.9375rem] font-normal leading-snug text-base-content/75 underline decoration-transparent underline-offset-[5px] transition-[color,text-decoration-color,transform] duration-150 ease-out hover:text-primary hover:decoration-current active:scale-[0.97] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
             >
-              <span
-                class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary text-[0.6875rem] font-extrabold tracking-tight text-primary-content"
-                aria-hidden="true"
-                data-role="circle-marker"
-              >
-                {circle_initials(LiveHandler.subject_name(circle))}
-              </span>
-              {LiveHandler.subject_name(circle)}
+              {Circles.circle_name(circle)}
             </LinkLive>
           </li>
         {/for}
       </ul>
     </nav>
-  </Bonfire.UI.Common.WidgetBlockLive>
-</div>
+
+    <p :if={@circles == []} class="m-0 shrink-0 whitespace-nowrap text-sm leading-snug text-base-content/65">
+      {l("No circles yet")}
+    </p>
+
+    <span :if={@circles != []} class="mx-2 ml-3 h-5 w-px shrink-0 bg-secondary" aria-hidden="true"></span>
+    <span :if={@circles == []} class="mx-[0.8125rem] shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">/</span>
+
+    <Bonfire.UI.Common.OpenModalLive
+      id={"#{@id}-manage-circles"}
+      title_text={if @circles == [], do: l("Create a circle"), else: l("Manage circles")}
+      open_btn_aria_label={if @circles == [],
+        do: l("Create a circle"),
+        else: lp(
+          "View all %{count} circle",
+          "View all %{count} circles",
+          length(@circles),
+          count: length(@circles)
+        )}
+      open_modal_wrapper_class="contents"
+      open_btn_wrapper_class="group !w-auto inline-flex min-h-11 min-w-11 shrink-0 touch-manipulation items-center justify-center gap-1 rounded-selector px-1.5 text-sm font-medium text-base-content/55 underline decoration-transparent underline-offset-[5px] transition-[color,text-decoration-color,transform] duration-150 ease-out hover:text-base-content hover:decoration-current active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
+      wrapper_class="!p-0"
+      opts={["aria-labelledby": "#{@id}-circles-manager-heading"]}
+      no_header
+      no_actions
+    >
+      <Bonfire.UI.Boundaries.CirclesManagerLive
+        id={"#{@id}-circles-manager"}
+        widget_id={@id}
+        scope={current_user_id(@__context__)}
+        start_in_create={@circles == []}
+      />
+
+      <:open_btn>
+        {#if @circles == []}
+          <span class="font-normal text-primary transition-[color,text-decoration-color] duration-150 ease-out group-hover:text-base-content">
+            {l("Create one")}
+          </span>
+        {#else}
+          <span>{l("All")}</span>
+          <span class="tabular-nums">{length(@circles)}</span>
+        {/if}
+      </:open_btn>
+    </Bonfire.UI.Common.OpenModalLive>
+  </div>
+</section>

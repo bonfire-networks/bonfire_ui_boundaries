@@ -3,7 +3,6 @@ defmodule Bonfire.UI.Boundaries.WidgetCirclesLive do
   use Bonfire.UI.Common.Web, :stateful_component
 
   alias Bonfire.Boundaries.Circles
-  alias Bonfire.Boundaries.LiveHandler
 
   prop widget_title, :string, default: nil
 

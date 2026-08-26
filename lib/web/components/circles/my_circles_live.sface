@@ -22,14 +22,16 @@
             <Bonfire.UI.Common.OpenModalLive
               id={"edit_name#{id}"}
               title_text={l("Edit circle")}
+              no_header
               no_actions
               open_btn_wrapper_class="flex flex-1 w-full"
+              wrapper_class="!p-0"
+              opts={["aria-labelledby": "circles-list-manager-#{id}-heading"]}
             >
-              <Bonfire.UI.Boundaries.ManageCircleLive
-                id={"members_#{id}"}
+              <Bonfire.UI.Boundaries.CirclesManagerLive
+                id={"circles-list-manager-#{id}"}
                 circle_id={id}
-                circle={circle}
-                read_only={false}
+                scope={@scope}
               />
 
               <:open_btn>

@@ -71,6 +71,11 @@ defmodule Bonfire.UI.Boundaries.FeedsCirclesFilterTest do
       |> assert_has("[data-role=circle_tabs] [role=tab][aria-selected=true]", text: "Posts")
       |> assert_has("[data-role=circle_tabs] [role=tab][aria-selected=false]", text: "People")
       |> refute_has("#circle_view", text: "Showing activities from people in this circle")
+      |> click_button("[data-role=edit_circle_name] button[data-role=open_modal]", "Manage")
+      |> assert_has("[data-role=circles-manager][data-section=detail]", text: "friends")
+      |> refute_has("#circle-page-manager-#{circle.id}-back-from-detail")
+      |> click_button("button[data-role=close-modal]", "Close")
+      |> assert_has("#modal[aria-hidden=true][inert]")
     end
   end
 

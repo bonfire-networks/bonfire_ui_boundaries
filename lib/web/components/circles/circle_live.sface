@@ -32,22 +32,25 @@
           <h2 class="text-2xl sm:text-3xl font-bold tracking-tight flex-1 min-w-0 text-balance break-words">
             {e(@circle, :named, :name, nil)}
           </h2>
-          {#if @is_caretaker}
+          {#if @is_caretaker and !@read_only and !e(@circle, :stereotyped, :stereotype_id, nil) and
+              !Circles.is_built_in?(@circle)}
             <div data-role="edit_circle_name" class="shrink-0">
               <Bonfire.UI.Common.OpenModalLive
                 id="edit_name"
                 title_text={l("Edit circle")}
+                no_header
                 no_actions
                 open_modal_wrapper_class="w-auto open_modal_wrapper flex"
                 open_btn_wrapper_class="btn btn-sm btn-soft min-h-11 px-3 gap-2"
+                wrapper_class="!p-0"
+                opts={[
+                  "aria-labelledby": "circle-page-manager-#{@circle_id || id(@circle)}-heading"
+                ]}
               >
-                <Bonfire.UI.Boundaries.ManageCircleLive
-                  id={"members_#{@circle_id || id(@circle)}"}
+                <Bonfire.UI.Boundaries.CirclesManagerLive
+                  id={"circle-page-manager-#{@circle_id || id(@circle)}"}
                   circle_id={@circle_id || id(@circle)}
-                  circle={@circle}
-                  read_only={@read_only}
-                  to_boundaries={@to_boundaries}
-                  boundary_preset={@boundary_preset}
+                  host_circle={@circle}
                 />
 
                 <:open_btn>

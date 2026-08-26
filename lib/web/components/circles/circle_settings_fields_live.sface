@@ -1,0 +1,51 @@
+<div class="contents">
+  <div class="grid gap-1.5">
+    <label for={"#{@id_prefix}-circle-name"} class="text-sm font-medium">{l("Circle name")}</label>
+    <input
+      id={"#{@id_prefix}-circle-name"}
+      name={@form[:name].name}
+      value={@form[:name].value}
+      type="text"
+      maxlength="64"
+      autocomplete="off"
+      spellcheck="false"
+      aria-invalid={if @form[:name].errors != [], do: "true"}
+      aria-describedby={if @form[:name].errors != [], do: "#{@id_prefix}-circle-name-error"}
+      class="input min-h-11 w-full cursor-text text-base"
+      placeholder={l("e.g. Community organisers")}
+    />
+    <p
+      :if={@form[:name].errors != []}
+      id={"#{@id_prefix}-circle-name-error"}
+      class="text-xs text-error"
+      role="alert"
+    >
+      {translate_error(List.first(@form[:name].errors))}
+    </p>
+  </div>
+
+  <div class="grid gap-1.5">
+    <label for={"#{@id_prefix}-circle-description"} class="text-sm font-medium">
+      {l("Description")} <span class="ml-1 align-baseline text-xs font-normal text-base-content/65">{l("Optional")}</span>
+    </label>
+    <textarea
+      id={"#{@id_prefix}-circle-description"}
+      name={@form[:description].name}
+      maxlength="240"
+      rows="3"
+      aria-invalid={if @form[:description].errors != [], do: "true"}
+      aria-describedby={if @form[:description].errors != [], do: "#{@id_prefix}-circle-description-error"}
+      class="textarea min-h-[5.5rem] w-full cursor-text resize-y text-base leading-relaxed"
+      placeholder={l("What brings this circle together?")}
+    >{@form[:description].value}</textarea>
+    <p
+      :if={@form[:description].errors != []}
+      id={"#{@id_prefix}-circle-description-error"}
+      class="text-xs text-error"
+      role="alert"
+    >
+      {translate_error(List.first(@form[:description].errors))}
+    </p>
+  </div>
+
+</div>

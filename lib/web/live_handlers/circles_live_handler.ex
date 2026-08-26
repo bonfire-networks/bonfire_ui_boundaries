@@ -1,6 +1,8 @@
 defmodule Bonfire.Boundaries.Circles.LiveHandler do
   use Bonfire.UI.Common.Web, :live_handler
   alias Bonfire.Boundaries.{Circles, Blocks}
+  alias Bonfire.UI.Boundaries.WidgetCirclesLive
+  alias Bonfire.UI.Common.OpenModalLive
 
   def handle_params(%{"after" => _cursor} = params, _uri, socket) do
     load_more_members(params, socket)
@@ -11,49 +13,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     load_more_members(params, socket)
   end
 
-  defp load_more_members(params, socket) do
-    current_user = current_user(socket)
-    circle_id = e(assigns(socket), :circle_id, nil) || Enums.id(e(assigns(socket), :circle, nil))
-    blocked_circle_ids = e(assigns(socket), :blocked_circle_ids, nil)
-
-    result =
-      cond do
-        match?([_, _ | _], blocked_circle_ids) ->
-          Circles.list_members_in_all_circles(blocked_circle_ids,
-            current_user: current_user,
-            pagination: input_to_atoms(params)
-          )
-
-        circle_id ->
-          Circles.list_members(circle_id,
-            current_user: current_user,
-            pagination: input_to_atoms(params)
-          )
-
-        true ->
-          nil
-      end
-
-    case result do
-      %{edges: members, page_info: page_info} ->
-        {:noreply,
-         socket
-         |> assign(
-           members:
-             Map.merge(
-               e(assigns(socket), :members, %{}),
-               Enum.map(members, &{&1.subject_id, &1}) |> Map.new()
-             ),
-           page_info: page_info
-         )}
-
-      _ ->
-        debug(assigns(socket), "Dunno what circle to paginate for")
-        {:noreply, socket}
-    end
-  end
-
-  def handle_event("multi_select", %{"data" => data, "text" => text}, socket) do
+  def handle_event("multi_select", %{"data" => data, "text" => _text}, socket) do
     debug(data, "multi_select_circle_live")
     add_member(input_to_atoms(data), socket)
   end
@@ -65,14 +25,13 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
 
   def handle_event(
         "multi_select",
-        %{"_target" => ["multi_select", module_name], "multi_select" => multi_select_data} =
-          params,
+        %{"_target" => ["multi_select", _module_name], "multi_select" => _multi_select_data} =
+          _params,
         socket
       ) do
     {:noreply, socket}
   end
 
-  @impl true
   def handle_event(
         "live_select_change",
         %{"field" => _field, "id" => live_select_id, "text" => search},
@@ -154,6 +113,132 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     end
   end
 
+  def handle_event("manager_show_overview", _params, socket) do
+    {:noreply, load_manager(socket)}
+  end
+
+  def handle_event("manager_show_create", _params, socket) do
+    {:noreply, show_manager_create(socket)}
+  end
+
+  @doc "Shows the circle creation form from any manager entry point."
+  def show_manager_create(socket) do
+    assign(socket,
+      section: :create,
+      selected_circle: nil,
+      notice: nil,
+      error: nil,
+      form: manager_details_form(%{})
+    )
+  end
+
+  def handle_event("manager_show_detail", %{"circle_id" => circle_id}, socket) do
+    {:noreply, assign_manager_detail(socket, circle_id)}
+  end
+
+  def handle_event("manager_show_delete", _params, socket) do
+    {:noreply, assign(socket, section: :delete, notice: nil, error: nil)}
+  end
+
+  def handle_event("manager_validate", %{"circle" => params}, socket) do
+    {:noreply,
+     assign(socket,
+       form: manager_details_form(params, :validate),
+       notice: nil,
+       error: nil
+     )}
+  end
+
+  def handle_event("manager_create", %{"circle" => params}, socket) do
+    case manager_detail_settings(params) do
+      {:ok, settings} ->
+        create_from_manager(settings, socket)
+
+      {:error, form} ->
+        {:noreply, assign(socket, form: form, notice: nil, error: nil)}
+    end
+  end
+
+  def handle_event("manager_save", %{"circle" => params}, socket) do
+    case manager_detail_settings(params) do
+      {:ok, settings} ->
+        save_from_manager(settings, socket)
+
+      {:error, form} ->
+        {:noreply, assign(socket, form: form, notice: nil, error: nil)}
+    end
+  end
+
+  def handle_event("manager_set_discoverability", %{"id" => visibility}, socket)
+      when visibility in ["private", "local", "public"] do
+    current_user = current_user_required!(socket)
+    circle = e(assigns(socket), :selected_circle, nil)
+    previous_preset = e(assigns(socket), :boundary_preset, nil)
+
+    case set_circle_visibility(current_user, circle, previous_preset, visibility) do
+      {:ok, _} ->
+        socket =
+          socket
+          |> assign_circle_discoverability(circle)
+          |> assign(notice: l("Circle visibility updated."), error: nil)
+
+        if e(assigns(socket), :host_circle, nil) do
+          send_self(
+            boundary_preset: e(assigns(socket), :boundary_preset, nil),
+            to_boundaries: e(assigns(socket), :to_boundaries, [])
+          )
+        end
+
+        {:noreply, socket}
+
+      other ->
+        error(other)
+        {:noreply, assign(socket, notice: nil, error: l("Could not update who can see this circle."))}
+    end
+  end
+
+  def handle_event("manager_delete", _params, %{assigns: %{section: :delete}} = socket) do
+    current_user = current_user_required!(socket)
+    circle = e(assigns(socket), :selected_circle, nil)
+
+    with true <- is_binary(uid(circle)),
+         {:ok, _circle} <- Circles.delete(circle, current_user: current_user) do
+      deleted_name = Circles.circle_name(circle)
+
+      socket =
+        if direct_circle?(socket) do
+          socket
+          |> sync_manager_widget()
+          |> redirect_to("/settings/boundaries/circles")
+        else
+          OpenModalLive.close()
+
+          socket
+          |> sync_manager_widget()
+          |> load_manager()
+          |> assign(notice: l("Deleted %{name}.", name: deleted_name))
+        end
+
+      {:noreply, socket}
+    else
+      other ->
+        error(other)
+        {:noreply,
+         assign(socket,
+           notice: nil,
+           error: l("Could not delete this circle.")
+         )}
+    end
+  end
+
+  def handle_event("manager_delete", _params, socket) do
+    {:noreply,
+     assign(socket,
+       notice: nil,
+       error: l("Confirm deletion before deleting this circle.")
+     )}
+  end
+
   def handle_event("create", %{"name" => name} = attrs, socket) do
     circle_create(Map.merge(attrs, %{named: %{name: name}}), socket)
   end
@@ -162,36 +247,8 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     circle_create(attrs, socket)
   end
 
-  def handle_event("validate_for_create", attrs, socket) do
+  def handle_event("validate_for_create", _attrs, socket) do
     {:noreply, socket}
-  end
-
-  def handle_event("edit", attrs, socket) do
-    debug(e(attrs, "circle_id", nil), "edit circlee")
-    id = uid!(e(attrs, "circle_id", nil))
-
-    with {:ok, circle} <-
-           Circles.edit(
-             id,
-             current_user_required!(socket),
-             attrs
-           ) do
-      send_self(page_title: e(circle, :named, :name, nil))
-      # maybe_send_update(Bonfire.UI.Boundaries.ManageCircleLive, "view_circle", circle: circle)
-      maybe_send_update(Bonfire.UI.Common.ReusableModalLive, "edit_boundary", show: false)
-
-      {:noreply,
-       socket
-       |> assign_flash(:info, l("Edited!"))
-       # Close the modal by setting show to false
-       |> assign(show: false)
-       |> assign(circle: circle)}
-    else
-      other ->
-        error(other)
-
-        {:noreply, assign_flash(socket, :error, l("Could not edit circle"))}
-    end
   end
 
   def handle_event("circle_edit", %{"circle" => circle_params}, socket) do
@@ -233,6 +290,118 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
      )}
   end
 
+  @doc "Loads the circles manager, optionally opening a specific editable circle."
+  def load_manager(socket, circle_id \\ nil)
+
+  def load_manager(socket, circle_id) when is_binary(circle_id) and circle_id != "" do
+    current_user = current_user_required!(socket)
+
+    case Circles.get_for_manager(circle_id, current_user,
+           current_account: current_account(socket)
+         ) do
+      {:ok, circle} ->
+        circle = Map.put(circle, :encircles_count, Circles.count_members(circle_id))
+
+        socket
+        |> assign(
+          loaded: true,
+          circles: [],
+          member_previews: Circles.list_member_previews([circle_id], limit: 3),
+          total_people: 0,
+          selected_circle: nil,
+          boundary_preset: {"private", l("Private")},
+          to_boundaries: [],
+          notice: nil,
+          error: nil,
+          form: manager_details_form(%{})
+        )
+        |> assign_manager_detail(circle)
+
+      other ->
+        error(other)
+
+        socket
+        # clear the requested circle so later events don't behave as if a direct editor is open
+        |> assign(circle_id: nil)
+        |> load_manager()
+        |> assign(error: l("Could not find this circle."))
+    end
+  end
+
+  def load_manager(socket, _circle_id) do
+    scope = e(assigns(socket), :scope, nil) || current_user_required!(socket)
+
+    circles =
+      Circles.list_my_for_manager(scope,
+        exclude_stereotypes: true,
+        exclude_built_ins: true
+      )
+
+    member_previews = Circles.list_member_previews(Enum.map(circles, &uid/1), limit: 3)
+
+    socket =
+      assign(socket,
+        loaded: true,
+        section: :overview,
+        circles: circles,
+        member_previews: member_previews,
+        total_people:
+          Enum.reduce(circles, 0, fn circle, total ->
+            total + (e(circle, :encircles_count, 0) || 0)
+          end),
+        selected_circle: nil,
+        boundary_preset: {"private", l("Private")},
+        to_boundaries: [],
+        notice: nil,
+        error: nil,
+        form: manager_details_form(%{})
+      )
+
+    socket
+  end
+
+  defp load_more_members(params, socket) do
+    current_user = current_user(socket)
+    circle_id = e(assigns(socket), :circle_id, nil) || Enums.id(e(assigns(socket), :circle, nil))
+    blocked_circle_ids = e(assigns(socket), :blocked_circle_ids, nil)
+
+    result =
+      cond do
+        match?([_, _ | _], blocked_circle_ids) ->
+          Circles.list_members_in_all_circles(blocked_circle_ids,
+            current_user: current_user,
+            pagination: input_to_atoms(params)
+          )
+
+        circle_id ->
+          Circles.list_members(circle_id,
+            current_user: current_user,
+            pagination: input_to_atoms(params)
+          )
+
+        true ->
+          nil
+      end
+
+    case result do
+      %{edges: members, page_info: page_info} ->
+        {:noreply,
+         socket
+         |> assign(
+           members:
+             Map.merge(
+               e(assigns(socket), :members, %{}),
+               Enum.map(members, &{&1.subject_id, &1}) |> Map.new()
+             ),
+           page_info: page_info
+         )}
+
+      _ ->
+        debug(assigns(socket), "Dunno what circle to paginate for")
+        {:noreply, socket}
+    end
+  end
+
   def my_circles_paginated(scope, attrs \\ nil) do
     Bonfire.Boundaries.Circles.list_my_with_counts(scope,
       exclude_stereotypes: true,
@@ -264,6 +433,204 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
       )
       |> maybe_add_to_acl(circle)
     end
+  end
+
+  defp create_from_manager(settings, socket) do
+    current_user = current_user_required!(socket)
+
+    with {:ok, _circle} <-
+           Circles.create(current_user, %{
+             named: %{name: settings.name},
+             extra_info: %{summary: settings.description}
+           }) do
+      # new circles always start private; sharing is a separate step in the detail editor
+      socket =
+        socket
+        |> sync_manager_widget()
+        |> load_manager()
+        |> assign(notice: l("Created %{name}.", name: settings.name), error: nil)
+
+      {:noreply, socket}
+    else
+      other ->
+        error(other)
+        {:noreply, assign(socket, error: l("Could not create this circle."))}
+    end
+  end
+
+  defp save_from_manager(settings, socket) do
+    current_user = current_user_required!(socket)
+    # selected_circle was loaded through get_for_manager or the owned-circles list, so it is already authorized and editable
+    selected_circle = e(assigns(socket), :selected_circle, nil)
+
+    with circle_id when is_binary(circle_id) <- uid(selected_circle),
+         {:ok, circle} <-
+           Circles.edit(selected_circle, current_user, %{
+             named: %{name: settings.name},
+             extra_info: %{summary: settings.description}
+           }) do
+      notice = l("Changes saved.")
+      circle = Map.put(circle, :encircles_count, e(selected_circle, :encircles_count, nil) || 0)
+
+      maybe_sync_host_circle(socket, circle)
+
+      socket = sync_manager_widget(socket)
+
+      socket =
+        if direct_circle?(socket) do
+          assign_manager_detail(socket, circle, notice)
+        else
+          socket
+          |> load_manager()
+          |> assign_manager_detail(circle, notice)
+        end
+
+      {:noreply, socket}
+    else
+      other ->
+        error(other)
+        {:noreply,
+         assign(socket,
+           notice: nil,
+           error: l("Could not save changes to this circle.")
+         )}
+    end
+  end
+
+  defp direct_circle?(socket) do
+    circle_id = e(assigns(socket), :circle_id, nil)
+    is_binary(circle_id) and circle_id != ""
+  end
+
+  defp maybe_sync_host_circle(socket, circle) do
+    with %{} = host_circle <- e(assigns(socket), :host_circle, nil) do
+      # merge only the edited mixins so the host page keeps its own enriched circle (creator info, etc.)
+      send_self(
+        circle: Map.merge(host_circle, Map.take(circle, [:named, :extra_info])),
+        page_title: Circles.circle_name(circle)
+      )
+    end
+  end
+
+  defp assign_manager_detail(socket, circle_or_id, notice \\ nil, error_message \\ nil)
+
+  defp assign_manager_detail(socket, circle_id, notice, error_message)
+       when is_binary(circle_id) do
+    selected_circle = e(assigns(socket), :selected_circle, nil)
+
+    # fall back to the already-loaded selected circle: in direct-editor mode the overview list is empty
+    case Enum.find(e(assigns(socket), :circles, []), &(uid(&1) == circle_id)) ||
+           (uid(selected_circle) == circle_id && selected_circle) do
+      %{} = circle ->
+        assign_manager_detail(socket, circle, notice, error_message)
+
+      _ ->
+        assign(socket, notice: nil, error: l("Could not find this circle."))
+    end
+  end
+
+  defp assign_manager_detail(socket, %{} = circle, notice, error_message) do
+    circle = repo().maybe_preload(circle, :extra_info)
+
+    socket
+    |> assign(
+      section: :detail,
+      selected_circle: circle,
+      notice: notice,
+      error: error_message,
+      form:
+        manager_details_form(%{
+          "name" => Circles.circle_name(circle),
+          "description" => e(circle, :extra_info, :summary, "") || ""
+        })
+    )
+    |> assign_circle_discoverability(circle)
+  end
+
+  defp manager_detail_settings(params) do
+    changeset = Circles.details_changeset(params)
+
+    apply_manager_settings(changeset)
+  end
+
+  defp apply_manager_settings(changeset) do
+    if changeset.valid? do
+      {:ok, Ecto.Changeset.apply_changes(changeset)}
+    else
+      {:error, Phoenix.Component.to_form(%{changeset | action: :validate}, as: :circle)}
+    end
+  end
+
+  defp manager_details_form(params, action \\ nil) do
+    changeset = Circles.details_changeset(params)
+    changeset = if action, do: %{changeset | action: action}, else: changeset
+    Phoenix.Component.to_form(changeset, as: :circle)
+  end
+
+  defp assign_circle_discoverability(socket, circle) do
+    object_acls = Bonfire.Boundaries.list_object_boundaries(circle)
+
+    boundary_preset =
+      if object_acls == [] do
+        {"private", l("Private")}
+      else
+        Bonfire.Boundaries.Presets.preset_boundary_tuple_from_acl(
+          object_acls,
+          Bonfire.Data.AccessControl.Circle
+        )
+      end
+
+    assign(socket,
+      boundary_preset: boundary_preset,
+      to_boundaries: object_acls
+    )
+  end
+
+  defp set_circle_visibility(_current_user, _circle, previous_visibility, visibility)
+       when previous_visibility == visibility,
+       do: {:ok, :unchanged}
+
+  defp set_circle_visibility(_current_user, _circle, {visibility, _label}, visibility),
+    do: {:ok, :unchanged}
+
+  defp set_circle_visibility(_current_user, _circle, nil, "private"),
+    do: {:ok, :private}
+
+  defp set_circle_visibility(current_user, circle, {"mentions", _label}, visibility) do
+    # a "mentions" preset means unrecognised custom/legacy ACLs, which reset_preset_boundary would silently skip removing — clear them all so the old grants can't survive alongside the new preset
+    Bonfire.Boundaries.Controlleds.remove_all_acls(circle)
+
+    set_circle_visibility(current_user, circle, nil, visibility)
+  end
+
+  defp set_circle_visibility(current_user, circle, previous_visibility, visibility) do
+    maybe_apply(
+      Bonfire.Social.Objects,
+      :reset_preset_boundary,
+      [
+        current_user,
+        circle,
+        previous_visibility,
+        [to_boundaries: visibility]
+      ],
+      fallback_return: {:error, :boundaries_unavailable}
+    )
+  end
+
+  defp sync_manager_widget(socket) do
+    widget_id = e(assigns(socket), :widget_id, nil)
+
+    if is_binary(widget_id) and widget_id != "" do
+      circles =
+        Circles.list_my_for_sidebar(current_user_required!(socket),
+          exclude_stereotypes: true,
+          exclude_built_ins: true
+        )
+
+      maybe_send_update(WidgetCirclesLive, widget_id, circles: circles)
+    end
+
+    socket
   end
 
   defp maybe_add_to_acl(socket, subject) do

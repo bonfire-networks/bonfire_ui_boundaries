@@ -17,15 +17,10 @@ defmodule Bonfire.UI.Boundaries.AllowlistLive do
       scope == :instance_wide and
         Bonfire.Boundaries.can?(context, :configure, :instance) != true
 
-    circles =
-      if scope == :instance_wide do
-        Bonfire.Boundaries.Allowlist.list(:instance_wide)
-      else
-        Bonfire.Boundaries.Allowlist.list(current_user: current_user)
-      end
-
     circle =
-      case List.first(List.wrap(circles)) do
+      case Bonfire.Boundaries.Allowlist.circle(
+             if(scope == :instance_wide, do: :instance_wide, else: [current_user: current_user])
+           ) do
         nil when not is_nil(current_user) and scope != :instance_wide ->
           case Bonfire.Boundaries.Circles.get_or_create_stereotype_circle(
                  current_user,

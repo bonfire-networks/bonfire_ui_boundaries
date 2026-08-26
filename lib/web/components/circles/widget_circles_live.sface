@@ -12,7 +12,7 @@
       {@widget_title || l("Circles")}
     </h2>
 
-    <span class="mx-[1.0625rem] shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">
+    <span class="mx-4 shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">
       /
     </span>
 
@@ -20,12 +20,12 @@
       <ul class="flex snap-x snap-proximity items-center overflow-x-auto overscroll-x-contain scroll-px-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {#for circle <- @circles}
           <li id={"dashboard-circle-#{id(circle)}"} class="flex shrink-0 snap-start items-center">
-            <span :if={circle != List.first(@circles)} class="mx-[0.8125rem] shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">
+            <span :if={circle != List.first(@circles)} class="mx-3 shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">
               /
             </span>
             <LinkLive
               to={~p"/circle/#{id(circle)}"}
-              class="inline-flex min-h-11 touch-manipulation items-center whitespace-nowrap text-[0.9375rem] font-normal leading-snug text-base-content/75 underline decoration-transparent underline-offset-[5px] transition-[color,text-decoration-color,transform] duration-150 ease-out hover:text-primary hover:decoration-current active:scale-[0.97] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
+              class="inline-flex min-h-11 touch-manipulation items-center whitespace-nowrap text-[0.9375rem] font-normal leading-snug text-base-content/75 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color,transform] duration-150 ease-out hover:text-primary hover:decoration-current active:scale-[0.97] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               {Circles.circle_name(circle)}
             </LinkLive>
@@ -39,7 +39,7 @@
     </p>
 
     <span :if={@circles != []} class="mx-2 ml-3 h-5 w-px shrink-0 bg-secondary" aria-hidden="true"></span>
-    <span :if={@circles == []} class="mx-[0.8125rem] shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">/</span>
+    <span :if={@circles == []} class="mx-3 shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">/</span>
 
     <Bonfire.UI.Common.OpenModalLive
       id={"#{@id}-manage-circles"}
@@ -53,7 +53,7 @@
           count: length(@circles)
         )}
       open_modal_wrapper_class="contents"
-      open_btn_wrapper_class="group !w-auto inline-flex min-h-11 min-w-11 shrink-0 touch-manipulation items-center justify-center gap-1 rounded-selector px-1.5 text-sm font-medium text-base-content/55 underline decoration-transparent underline-offset-[5px] transition-[color,text-decoration-color,transform] duration-150 ease-out hover:text-base-content hover:decoration-current active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
+      open_btn_wrapper_class="group !w-auto inline-flex min-h-11 min-w-11 shrink-0 touch-manipulation items-center justify-center gap-1 rounded-selector px-1.5 text-sm font-medium text-base-content/55 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color,transform] duration-150 ease-out hover:text-base-content hover:decoration-current active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
       wrapper_class="!p-0"
       opts={["aria-labelledby": "#{@id}-circles-manager-heading"]}
       no_header

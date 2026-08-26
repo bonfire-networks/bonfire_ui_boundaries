@@ -35,7 +35,7 @@
       rows="3"
       aria-invalid={if @form[:description].errors != [], do: "true"}
       aria-describedby={if @form[:description].errors != [], do: "#{@id_prefix}-circle-description-error"}
-      class="textarea min-h-[5.5rem] w-full cursor-text resize-y text-base leading-relaxed"
+      class="textarea min-h-22 w-full cursor-text resize-y text-base leading-relaxed"
       placeholder={l("What brings this circle together?")}
     >{@form[:description].value}</textarea>
     <p

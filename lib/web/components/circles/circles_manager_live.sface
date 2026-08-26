@@ -87,7 +87,7 @@
               phx-target={@myself}
               phx-value-circle_id={id(circle)}
               aria-label={l("Manage %{name}", name: Circles.circle_name(circle))}
-              class="group grid min-h-[68px] w-full cursor-pointer touch-manipulation grid-cols-[2.25rem_minmax(0,1fr)_auto_4rem] items-center gap-3 px-5 py-2 text-left transition-[background-color,transform] duration-150 ease-out hover:bg-base-200/70 active:scale-[0.99] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] sm:px-6"
+              class="group grid min-h-17 w-full cursor-pointer touch-manipulation grid-cols-[2.25rem_minmax(0,1fr)_auto_4rem] items-center gap-3 px-5 py-2 text-left transition-[background-color,transform] duration-150 ease-out hover:bg-base-200/70 active:scale-[0.99] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:-outline-offset-2 sm:px-6"
             >
               <span
                 class="grid size-9 place-items-center rounded-full bg-primary/15 text-[0.6875rem] font-bold tracking-[-0.02em] text-primary"

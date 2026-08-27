@@ -78,7 +78,8 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       conn
       |> visit("/circle/#{circle.id}")
       |> click_button("[data-role=open_modal]", "Edit circle")
-      |> click_button("[data-role=confirm_delete_circle]", "Delete")
+      |> click_button("[data-role=delete-circle]", "Delete circle")
+      |> click_button("[data-role=confirm-delete-circle]", "Delete circle")
       # |> PhoenixTest.open_browser()
       |> assert_path("/settings/boundaries/circles")
 

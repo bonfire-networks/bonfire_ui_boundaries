@@ -347,6 +347,7 @@
         <button
           id={"#{@id}-delete-circle"}
           type="button"
+          data-role="delete-circle"
           :on-click="Bonfire.Boundaries.Circles:manager_show_delete"
           phx-target={@myself}
           class="min-h-11 shrink-0 cursor-pointer touch-manipulation rounded-selector px-3 text-sm font-medium text-error transition-[background-color,color,transform] duration-150 ease-out hover:bg-error/10 active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"

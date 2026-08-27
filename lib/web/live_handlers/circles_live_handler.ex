@@ -193,7 +193,9 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
 
       other ->
         error(other)
-        {:noreply, assign(socket, notice: nil, error: l("Could not update who can see this circle."))}
+
+        {:noreply,
+         assign(socket, notice: nil, error: l("Could not update who can see this circle."))}
     end
   end
 
@@ -223,6 +225,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     else
       other ->
         error(other)
+
         {:noreply,
          assign(socket,
            notice: nil,
@@ -460,6 +463,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
 
   defp save_from_manager(settings, socket) do
     current_user = current_user_required!(socket)
+
     # selected_circle was loaded through get_for_manager or the owned-circles list, so it is already authorized and editable
     selected_circle = e(assigns(socket), :selected_circle, nil)
 
@@ -489,6 +493,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     else
       other ->
         error(other)
+
         {:noreply,
          assign(socket,
            notice: nil,

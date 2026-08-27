@@ -47,5 +47,4 @@
       {translate_error(List.first(@form[:description].errors))}
     </p>
   </div>
-
 </div>

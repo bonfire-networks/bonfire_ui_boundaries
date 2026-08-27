@@ -16,11 +16,24 @@
       /
     </span>
 
-    <nav :if={@circles != []} class="min-w-0 flex-1 overflow-hidden" aria-label={l("Your circles")} data-role="circles-scroll">
+    <nav
+      :if={@circles != []}
+      class="min-w-0 flex-1 overflow-hidden"
+      aria-label={l("Your circles")}
+      data-role="circles-scroll"
+    >
       <ul class="flex snap-x snap-proximity items-center overflow-x-auto overscroll-x-contain scroll-px-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {#for circle <- @circles}
           <li id={"dashboard-circle-#{id(circle)}"} class="flex shrink-0 snap-start items-center">
+<<<<<<< HEAD
             <span :if={circle != List.first(@circles)} class="mx-3 shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">
+=======
+            <span
+              :if={circle != List.first(@circles)}
+              class="mx-[0.8125rem] shrink-0 select-none text-lg text-base-content/45"
+              aria-hidden="true"
+            >
+>>>>>>> fd758d4 (up)
               /
             </span>
             <LinkLive
@@ -34,24 +47,37 @@
       </ul>
     </nav>
 
-    <p :if={@circles == []} class="m-0 shrink-0 whitespace-nowrap text-sm leading-snug text-base-content/65">
+    <p
+      :if={@circles == []}
+      class="m-0 shrink-0 whitespace-nowrap text-sm leading-snug text-base-content/65"
+    >
       {l("No circles yet")}
     </p>
 
+<<<<<<< HEAD
     <span :if={@circles != []} class="mx-2 ml-3 h-5 w-px shrink-0 bg-secondary" aria-hidden="true"></span>
     <span :if={@circles == []} class="mx-3 shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">/</span>
+=======
+    <span :if={@circles != []} class="mx-2 ml-3 h-5 w-px shrink-0 bg-secondary" aria-hidden="true" />
+    <span
+      :if={@circles == []}
+      class="mx-[0.8125rem] shrink-0 select-none text-lg text-base-content/45"
+      aria-hidden="true"
+    >/</span>
+>>>>>>> fd758d4 (up)
 
     <Bonfire.UI.Common.OpenModalLive
       id={"#{@id}-manage-circles"}
       title_text={if @circles == [], do: l("Create a circle"), else: l("Manage circles")}
       open_btn_aria_label={if @circles == [],
         do: l("Create a circle"),
-        else: lp(
-          "View all %{count} circle",
-          "View all %{count} circles",
-          length(@circles),
-          count: length(@circles)
-        )}
+        else:
+          lp(
+            "View all %{count} circle",
+            "View all %{count} circles",
+            length(@circles),
+            count: length(@circles)
+          )}
       open_modal_wrapper_class="contents"
       open_btn_wrapper_class="group !w-auto inline-flex min-h-11 min-w-11 shrink-0 touch-manipulation items-center justify-center gap-1 rounded-selector px-1.5 text-sm font-medium text-base-content/55 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color,transform] duration-150 ease-out hover:text-base-content hover:decoration-current active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
       wrapper_class="!p-0"

@@ -132,10 +132,7 @@ defmodule Bonfire.UI.Boundaries.DashboardCirclesWidgetTest do
     html =
       render_surface do
         ~F"""
-        <Bonfire.UI.Boundaries.CircleSettingsFieldsLive
-          id_prefix={@id_prefix}
-          form={@form}
-        />
+        <Bonfire.UI.Boundaries.CircleSettingsFieldsLive id_prefix={@id_prefix} form={@form} />
         """
       end
 

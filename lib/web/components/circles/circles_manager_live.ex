@@ -6,10 +6,12 @@ defmodule Bonfire.UI.Boundaries.CirclesManagerLive do
   alias Bonfire.Boundaries.Circles.LiveHandler
 
   prop widget_id, :string, default: nil
+
   # DOM id of the reusable modal hosting this manager; when nil, resolved via ReusableModalLive.modal_id/1 (which picks the sticky-context singleton when applicable)
   prop modal_id, :string, default: nil
   prop scope, :any, default: nil
   prop circle_id, :string, default: nil
+
   # the host page's own (enriched) circle assign: when set, saved changes are merged into it and sent back to the host LiveView
   prop host_circle, :map, default: nil
   prop start_in_create, :boolean, default: false

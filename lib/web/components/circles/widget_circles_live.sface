@@ -25,7 +25,11 @@
       <ul class="flex snap-x snap-proximity items-center overflow-x-auto overscroll-x-contain scroll-px-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {#for circle <- @circles}
           <li id={"dashboard-circle-#{id(circle)}"} class="flex shrink-0 snap-start items-center">
-            <span :if={circle != List.first(@circles)} class="mx-3 shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">
+            <span
+              :if={circle != List.first(@circles)}
+              class="mx-3 shrink-0 select-none text-lg text-base-content/45"
+              aria-hidden="true"
+            >
               /
             </span>
             <LinkLive
@@ -46,8 +50,12 @@
       {l("No circles yet")}
     </p>
 
-    <span :if={@circles != []} class="mx-2 ml-3 h-5 w-px shrink-0 bg-secondary" aria-hidden="true"></span>
-    <span :if={@circles == []} class="mx-3 shrink-0 select-none text-lg text-base-content/45" aria-hidden="true">/</span>
+    <span :if={@circles != []} class="mx-2 ml-3 h-5 w-px shrink-0 bg-secondary" aria-hidden="true" />
+    <span
+      :if={@circles == []}
+      class="mx-3 shrink-0 select-none text-lg text-base-content/45"
+      aria-hidden="true"
+    >/</span>
 
     <Bonfire.UI.Common.OpenModalLive
       id={"#{@id}-manage-circles"}

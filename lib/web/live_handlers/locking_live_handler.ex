@@ -5,7 +5,7 @@ defmodule Bonfire.Boundaries.Locking.LiveHandler do
 
   def handle_event("lock", %{"id" => id} = _params, socket) do
     with {:ok, _} <-
-           Bonfire.Boundaries.Blocks.block(id, :lock,
+           Bonfire.Boundaries.Blocks.lock(id,
              current_user: current_user_required!(assigns(socket))
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
@@ -28,7 +28,7 @@ defmodule Bonfire.Boundaries.Locking.LiveHandler do
 
   def handle_event("unlock", %{"id" => id} = _params, socket) do
     with {:ok, _} <-
-           Bonfire.Boundaries.Blocks.unblock(id, :lock,
+           Bonfire.Boundaries.Blocks.unlock(id,
              current_user: current_user_required!(assigns(socket))
            ) do
       Bonfire.UI.Common.OpenModalLive.close()

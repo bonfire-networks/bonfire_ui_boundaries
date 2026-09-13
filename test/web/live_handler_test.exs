@@ -96,7 +96,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
       conn
       |> visit("/@#{alice.character.username}")
       |> click_button("[data-id=profile_main_actions] [data-role=open_modal]", "Add to circles")
-      |> click_button("[data-role=add_to_circle]", "family")
+      |> click_button("button[data-role=add_to_circle]", "Add")
       |> assert_has("[role=alert]", text: "Added to circle!")
     end
   end

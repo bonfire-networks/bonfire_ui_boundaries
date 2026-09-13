@@ -3,7 +3,8 @@
     id={deterministic_dom_id(__MODULE__, @user_id, "add_to_circle_modal", @parent_id)}
     no_actions
     title_text={l("Add to circles")}
-    modal_class="add_to_circle"
+    modal_class="add_to_circle [&_.modal-box]:max-w-lg"
+    title_class="text-xl font-semibold tracking-tight"
   >
     <AddToCircleWidgetLive
       id={deterministic_dom_id(__MODULE__, @user_id, "add-to-circle-widget", @parent_id)}

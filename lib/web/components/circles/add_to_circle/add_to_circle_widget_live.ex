@@ -13,6 +13,7 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
 
     circles_passed_down =
       Circles.list_subject_in_circles(e(assigns, :user_id, nil), circles_passed_down)
+      |> repo().maybe_preload(:extra_info, follow_pointers: false)
 
     {:ok,
      socket
@@ -27,6 +28,7 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
 
     circles_already_loaded =
       Circles.list_subject_in_circles(e(assigns, :user_id, nil), circles_already_loaded)
+      |> repo().maybe_preload(:extra_info, follow_pointers: false)
 
     {:ok,
      socket
@@ -44,6 +46,7 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
 
     circles =
       Circles.list_subject_in_circles(e(assigns, :user_id, nil), circles)
+      |> repo().maybe_preload(:extra_info, follow_pointers: false)
 
     {:ok,
      socket

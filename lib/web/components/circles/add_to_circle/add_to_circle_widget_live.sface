@@ -1,100 +1,147 @@
-<div>
-  <div id="circles_list" class="">
-    <!-- <div class="font-medium text-base">{l("Select the circle(s) you want %{name} to be in", name: @name || l("this user"))}</div> -->
-    <button
-      phx-click={JS.toggle(to: "#circles_list")
-      |> JS.toggle(to: "#new_circle_from_modal")}
-      class="btn btn-sm btn-primary"
-    >
-      <#Icon solid="Plus" class="w-4 h-4" />
-      <span>{l("Create a new circle")}</span>
-    </button>
-
-    <ul class="menu p-0 w-full gap-1 mt-3">
+<div id={@id} data-role="add-to-circles-widget">
+  <div id={"#{@id}-circles-list"}>
+    <p class="text-sm text-base-content/70 mb-3">
+      {l("Choose circles for %{name}.", name: @name || l("this person"))}
+    </p>
+    <div class="flex items-center justify-between gap-3 text-xs text-base-content/65 mb-2">
+      <span>{l("Your circles")}</span>
+      <span class="tabular-nums" data-role="circle-selection-count" aria-live="polite">
+        {l("%{selected} of %{total} selected",
+          selected: Enum.count(@circles, &e(&1, :encircle_subjects, false)),
+          total: length(@circles)
+        )}
+      </span>
+    </div>
+    <ul class="divide-y divide-base-content/10">
       {#if Enum.empty?(@circles)}
-        <Bonfire.UI.Common.EmptyFeed feedback_title={l("You need to create at list one circle")} />
+        <li class="py-6 text-sm text-base-content/70">
+          {l("No circles yet. Create one to get started.")}
+        </li>
       {#else}
-        {#for circle <- e(@circles, [])}
-          {#if e(circle, :encircle_subjects, nil)}
-            <li class="bg-base-content/5 rounded-xl">
-              <button
-                class="flex !px-2 items-center justify-between"
-                data-role="remove_from_circle"
-                phx-value-id={@user_id}
-                phx-value-circle={id(circle)}
-                :on-click="remove"
-                type="button"
+        {#for circle <- @circles}
+          <li id={"#{@id}-circle-#{id(circle)}"} class="flex items-center gap-3 py-2" data-role="circle-choice">
+            <div class={
+              "w-10 h-10 shrink-0 rounded-xl flex items-center justify-center",
+              "bg-primary/10 text-primary": e(circle, :encircle_subjects, nil),
+              "bg-base-content/5 text-base-content/60": !e(circle, :encircle_subjects, nil)
+            } aria-hidden="true">
+              <#Icon iconify="ph:circle-duotone" class="w-5 h-5" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center flex-wrap gap-x-2 gap-y-1">
+                <p class="text-sm font-medium break-words">{e(circle, :named, :name, nil)}</p>
+                <span
+                  :if={e(circle, :encircle_subjects, nil)}
+                  class="flex items-center gap-1 text-xs text-success"
+                  data-role="circle-membership"
+                >
+                  <#Icon iconify="ph:check" class="w-3 h-3" aria-hidden="true" />
+                  {l("Added")}
+                </span>
+              </div>
+              <p
+                :if={e(circle, :extra_info, :summary, nil) not in [nil, ""]}
+                id={"#{@id}-circle-#{id(circle)}-description"}
+                data-role="circle-description"
+                class="text-sm leading-relaxed text-base-content/65 mt-1 break-words"
               >
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 flex place-content-center items-center rounded bg-info/10">
-                    <#Icon iconify="ph:circle-duotone" class="w-5 h-5 text-base-content" />
-                  </div>
-                  <div class="">
-                    <div class="flex flex-col">
-                      <p class="text-sm font-bold capitalize truncate">{e(circle, :named, :name, nil)}</p>
-                      {#case e(circle, :encircles_count, 0)}
-                        {#match 0}
-                        {#match encircles_count}
-                          <span class="text-xs font-normal text-muted">{encircles_count} {l("members")}</span>
-                      {/case}
-                    </div>
-                  </div>
-                </div>
-                <#Icon iconify="fluent:checkmark-16-filled" class="w-4 h-4 text-success mr-2" />
-              </button>
-            </li>
-          {#else}
-            <li class="">
-              <button
-                data-role="add_to_circle"
-                phx-value-id={@user_id}
-                phx-value-circle={id(circle)}
-                :on-click="add"
-                type="button"
-                class="flex !px-2 items-center justify-between"
+                {e(circle, :extra_info, :summary, nil)}
+              </p>
+              <span
+                :if={is_integer(e(circle, :encircles_count, nil))}
+                data-role="circle-member-count"
+                class="block text-xs text-base-content/65 tabular-nums mt-1"
               >
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 flex place-content-center items-center rounded bg-info/10">
-                    <#Icon iconify="ph:circle-duotone" class="w-5 h-5 text-base-content" />
-                  </div>
-                  <div class="">
-                    <div class="flex flex-col">
-                      <p class="text-sm font-bold capitalize truncate">{e(circle, :named, :name, nil)}</p>
-                      {#case e(circle, :encircles_count, 0)}
-                        {#match 0}
-                        {#match encircles_count}
-                          <span class="text-xs font-normal text-muted">{encircles_count} {l("members")}</span>
-                      {/case}
-                    </div>
-                  </div>
-                </div>
-              </button>
-            </li>
-          {/if}
+                {l("%{count} members", count: e(circle, :encircles_count, nil))}
+              </span>
+            </div>
+            <div class="shrink-0">
+              {#if e(circle, :encircle_subjects, nil)}
+                <button
+                  id={"#{@id}-circle-#{id(circle)}-action"}
+                  data-role="remove_from_circle"
+                  phx-value-id={@user_id}
+                  phx-value-circle={id(circle)}
+                  :on-click="remove"
+                  phx-disable-with={l("Removing…")}
+                  aria-label={l("Remove from %{circle}", circle: e(circle, :named, :name, nil))}
+                  type="button"
+                  class="btn btn-sm btn-ghost border-base-content/15 min-h-11 min-w-20 rounded-full font-medium normal-case focus-ring"
+                >
+                  {l("Remove")}
+                </button>
+              {#else}
+                <button
+                  id={"#{@id}-circle-#{id(circle)}-action"}
+                  data-role="add_to_circle"
+                  phx-value-id={@user_id}
+                  phx-value-circle={id(circle)}
+                  :on-click="add"
+                  phx-disable-with={l("Adding…")}
+                  aria-label={l("Add to %{circle}", circle: e(circle, :named, :name, nil))}
+                  type="button"
+                  class="btn btn-sm btn-ghost bg-primary/10 text-primary hover:bg-primary/20 min-h-11 min-w-20 rounded-full font-medium normal-case focus-ring"
+                >
+                  <#Icon iconify="ph:plus" class="w-4 h-4" aria-hidden="true" />
+                  {l("Add")}
+                </button>
+              {/if}
+            </div>
+          </li>
         {/for}
       {/if}
     </ul>
-  </div>
-  <div id="new_circle_from_modal" class="hidden">
-    <div class="gap-2 px-3 flex items-center">
+    <button
+      id={"#{@id}-create-circle"}
+      phx-click={JS.hide(to: "##{@id}-circles-list")
+      |> JS.show(to: "##{@id}-new-circle")
+      |> JS.focus_first(to: "##{@id}-create-form")}
+      type="button"
+      class="flex items-center gap-3 w-full min-h-11 mt-1 text-sm text-base-content/70 hover:text-primary focus-ring rounded-lg"
+    >
+      <span class="w-10 h-8 shrink-0 flex items-center justify-center" aria-hidden="true">
+        <#Icon iconify="ph:plus" class="w-5 h-5" />
+      </span>
+      <span>{l("Create a new circle")}</span>
+    </button>
+    <footer class="flex items-center justify-between gap-4 mt-3 pt-3 border-t border-base-content/10">
+      <p class="text-xs text-base-content/65">{l("Changes save automatically")}</p>
       <button
-        phx-click={JS.toggle(to: "#new_circle_from_modal")
-        |> JS.toggle(to: "#circles_list")}
+        id={"#{@id}-done"}
         type="button"
-        class="btn btn-sm btn-ghost btn-circle"
+        phx-click="close"
+        phx-target={"[id='#{Bonfire.UI.Common.ReusableModalLive.modal_id(assigns)}']"}
+        class="btn btn-primary btn-sm min-h-11 px-5 normal-case focus-ring"
       >
-        <#Icon iconify="ion:chevron-back" class="w-5 h-5 text-muted" />
+        {l("Done")}
       </button>
-      <div class="font-bold text-base">{l("Create a new circle")}</div>
+    </footer>
+  </div>
+  <div id={"#{@id}-new-circle"} class="hidden">
+    <div class="flex items-center gap-2">
+      <button
+        id={"#{@id}-back-to-circles"}
+        phx-click={JS.hide(to: "##{@id}-new-circle")
+        |> JS.show(to: "##{@id}-circles-list")
+        |> JS.focus(to: "##{@id}-create-circle")}
+        type="button"
+        aria-label={l("Back to circles")}
+        class="btn btn-sm btn-ghost btn-circle min-h-11 min-w-11 focus-ring"
+      >
+        <#Icon iconify="ph:arrow-left" class="w-5 h-5" aria-hidden="true" />
+      </button>
+      <div class="font-medium text-base">{l("Create a new circle")}</div>
     </div>
-    <form
+    <Phoenix.Component.form
+      for={to_form(%{})}
+      id={"#{@id}-create-form"}
       phx-target={@myself}
       phx-submit={JS.push("circle_create_from_modal")
-      |> JS.toggle(to: "#new_circle_from_modal")
-      |> JS.toggle(to: "#circles_list")}
-      class="px-3"
+      |> JS.hide(to: "##{@id}-new-circle")
+      |> JS.show(to: "##{@id}-circles-list")
+      |> JS.focus(to: "##{@id}-create-circle")}
     >
       <Bonfire.UI.Boundaries.NewCircleLive setting_boundaries={false} />
-    </form>
+    </Phoenix.Component.form>
   </div>
 </div>

@@ -99,7 +99,8 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetTest do
     |> visit("/@#{person.character.username}")
     |> click_button("[data-id=profile_main_actions] [data-role=open_modal]", "Add to circles")
     |> assert_has("li", text: "No circles yet. Create one to get started.")
-    |> assert_has("button", text: "Create a new circle") # PhoenixTest cannot execute visibility-only JS; submit the mounted form directly.
+    # PhoenixTest cannot execute visibility-only JS; submit the mounted form directly.
+    |> assert_has("button", text: "Create a new circle")
     |> fill_in("Enter a name for the circle", with: "Astronomy", exact: false)
     |> fill_in("Enter a description for the circle", with: description, exact: false)
     |> click_button("[data-role=new_circle_submit]", "Create")

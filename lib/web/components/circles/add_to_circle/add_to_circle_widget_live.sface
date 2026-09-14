@@ -19,12 +19,19 @@
         </li>
       {#else}
         {#for circle <- @circles}
-          <li id={"#{@id}-circle-#{id(circle)}"} class="flex items-center gap-3 py-2" data-role="circle-choice">
-            <div class={
-              "w-10 h-10 shrink-0 rounded-xl flex items-center justify-center",
-              "bg-primary/10 text-primary": e(circle, :encircle_subjects, nil),
-              "bg-base-content/5 text-base-content/60": !e(circle, :encircle_subjects, nil)
-            } aria-hidden="true">
+          <li
+            id={"#{@id}-circle-#{id(circle)}"}
+            class="flex items-center gap-3 py-2"
+            data-role="circle-choice"
+          >
+            <div
+              class={
+                "w-10 h-10 shrink-0 rounded-xl flex items-center justify-center",
+                "bg-primary/10 text-primary": e(circle, :encircle_subjects, nil),
+                "bg-base-content/5 text-base-content/60": !e(circle, :encircle_subjects, nil)
+              }
+              aria-hidden="true"
+            >
               <#Icon iconify="ph:circle-duotone" class="w-5 h-5" />
             </div>
             <div class="flex-1 min-w-0">

@@ -150,11 +150,19 @@ defmodule Bonfire.UI.Boundaries.SetBoundariesLive do
           []
       end
     end)
-    # Convert to map for easy lookup
-    |> Map.new()
+    # A circle usually appears in SEVERAL of a preset's ACLs, each answering about a different verb, so the pairs are merged rather than collected: `:cannot` anywhere is authoritative, then any `:can`, and `nil` only when no ACL mentioned the verb. `Map.new/1` keeps whichever pair came last, so a preset carrying a narrow ACL alongside a broad one (`local` → `locals_may_reply` + `everyone_may_request`) would report the broad grant as absent.
+    |> Enum.reduce(%{}, fn {circle_id, value}, acc ->
+      Map.update(acc, circle_id, value, &merge_verb_permission(&1, value))
+    end)
   end
 
   def get_preset_verb_permissions(_, _), do: %{}
+
+  defp merge_verb_permission(:cannot, _), do: :cannot
+  defp merge_verb_permission(_, :cannot), do: :cannot
+  defp merge_verb_permission(:can, _), do: :can
+  defp merge_verb_permission(_, :can), do: :can
+  defp merge_verb_permission(existing, _), do: existing
 
   # Helper function to parse verbs into a list of atoms consistently
   defp parse_verbs(verbs) do

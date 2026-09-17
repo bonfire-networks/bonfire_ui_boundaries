@@ -76,14 +76,16 @@
             </div>
           {/if}
         </div>
-        <button
-          data-role="silence"
-          :on-click={"Bonfire.Boundaries.Blocks:#{@type}"}
-          phx-value-id={e(@object, :id, @object)}
-          type="button"
-          class="btn w-full btn-warning normal-case"
-        >{@type_display}
-        </button>
+        {!-- a form rather than a bare button, so the checkbox travels with the submit. This branch also renders `:hide`, which is about an object rather than a person and so has no follow in either direction, hence the `:silence` test below --}
+        <form :on-submit={"Bonfire.Boundaries.Blocks:#{@type}"}>
+          <input type="hidden" name="id" value={e(@object, :id, @object)}>
+          <Bonfire.UI.Boundaries.BlockUnfollowNotifyLive
+            :if={@type == :silence and @offer_unfollow_and_notify?}
+            type={:silence}
+          />
+          <button data-role="silence" type="submit" class="btn w-full btn-warning normal-case">{@type_display}
+          </button>
+        </form>
       {/if}
     {/if}
     {#if !@only_user}
@@ -183,14 +185,13 @@
             </div>
           </div>
         </div>
-        <button
-          data-role="ghost"
-          :on-click="Bonfire.Boundaries.Blocks:ghost"
-          phx-value-id={e(@object, :id, @object)}
-          type="button"
-          class="btn  w-full btn-warning normal-case"
-        >{l("Ghost")}
-        </button>
+        {!-- a form rather than a bare button, so the checkbox below travels with the submit. `also_unfollow_and_notify` reaches `Blocks.block/3`, which severs THEIR follow of me for a ghost and emits a `Block` --}
+        <form :on-submit="Bonfire.Boundaries.Blocks:ghost">
+          <input type="hidden" name="id" value={e(@object, :id, @object)}>
+          <Bonfire.UI.Boundaries.BlockUnfollowNotifyLive :if={@offer_unfollow_and_notify?} type={:ghost} />
+          <button data-role="ghost" type="submit" class="btn  w-full btn-warning normal-case">{l("Ghost")}
+          </button>
+        </form>
       {/if}
     {/if}
     {#if !@only_user}
@@ -249,14 +250,12 @@
             "When you feel unsafe, or you tried discussing or flagging problematic people or content and it went nowhere, or you simply came across spam or trolls, you can always resort to blocking."
           )}</div>
       </div>
-      <button
-        data-role="block"
-        :on-click="Bonfire.Boundaries.Blocks:block"
-        phx-value-id={e(@object, :id, @object)}
-        type="button"
-        class="btn  w-full btn-warning normal-case"
-      >{l("Block")}
-      </button>
+      <form :on-submit="Bonfire.Boundaries.Blocks:block">
+        <input type="hidden" name="id" value={e(@object, :id, @object)}>
+        <Bonfire.UI.Boundaries.BlockUnfollowNotifyLive :if={@offer_unfollow_and_notify?} type={:block} />
+        <button data-role="block" type="submit" class="btn  w-full btn-warning normal-case">{l("Block")}
+        </button>
+      </form>
     {/if}
 
     {#if !@only_user}

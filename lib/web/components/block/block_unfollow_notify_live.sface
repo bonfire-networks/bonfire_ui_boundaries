@@ -1,0 +1,18 @@
+<label class="flex gap-3 items-start p-3 mb-3 rounded cursor-pointer bg-base-content/5">
+  <input
+    data-role="also_unfollow_and_notify"
+    type="checkbox"
+    name="also_unfollow_and_notify"
+    value="true"
+    class="mt-1 checkbox checkbox-sm"
+  />
+  <span class="block">
+    <span class="block text-sm font-medium">{offer(@type)}</span>
+    <span class="block mt-1 text-sm text-base-content/70">{what(@type)}</span>
+    {!-- set apart from the description above deliberately: this is what the choice COSTS, and half of it cannot be undone, so it must not read as more explanation --}
+    <span class="flex gap-1.5 items-start mt-2 text-sm text-warning">
+      <#Icon iconify="ph:warning-duotone" class="mt-0.5 shrink-0 size-4" />
+      <span>{risk(@type)}</span>
+    </span>
+  </span>
+</label>

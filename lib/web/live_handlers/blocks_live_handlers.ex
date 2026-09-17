@@ -29,13 +29,17 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
     end
   end
 
-  def handle_event("block", %{"id" => id} = _params, socket) do
+  def handle_event("block", %{"id" => id} = params, socket) do
     current_user = current_user_required!(assigns(socket))
 
-    with {:ok, _} <-
-           Bonfire.Boundaries.Blocks.block(id, :ghost, current_user: current_user),
-         {:ok, _} <-
-           Bonfire.Boundaries.Blocks.block(id, :silence, current_user: current_user) do
+    # both halves, so blocking severs the follow in BOTH directions when asked: ghosting stops my posts reaching them, silencing stops theirs reaching me
+    opts = [
+      current_user: current_user,
+      also_unfollow_and_notify: Types.maybe_to_boolean(params["also_unfollow_and_notify"])
+    ]
+
+    with {:ok, _} <- Bonfire.Boundaries.Blocks.block(id, :ghost, opts),
+         {:ok, _} <- Bonfire.Boundaries.Blocks.block(id, :silence, opts) do
       Bonfire.UI.Common.OpenModalLive.close()
 
       # ComponentID.send_assigns(
@@ -158,10 +162,12 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
     end
   end
 
-  def handle_event("ghost", %{"id" => id} = _params, socket) do
+  def handle_event("ghost", %{"id" => id} = params, socket) do
     with {:ok, _} <-
            Bonfire.Boundaries.Blocks.block(id, :ghost,
-             current_user: current_user_required!(assigns(socket))
+             current_user: current_user_required!(assigns(socket)),
+             # an unticked checkbox sends nothing at all, which `maybe_to_boolean/1` reads as `nil`, and `Blocks.block/3` defaults it to false
+             also_unfollow_and_notify: Types.maybe_to_boolean(params["also_unfollow_and_notify"])
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
 
@@ -228,10 +234,12 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
     end
   end
 
-  def handle_event("silence", %{"id" => id} = _params, socket) do
+  def handle_event("silence", %{"id" => id} = params, socket) do
     with {:ok, _} <-
            Bonfire.Boundaries.Blocks.block(id, :silence,
-             current_user: current_user_required!(assigns(socket))
+             current_user: current_user_required!(assigns(socket)),
+             # an unticked checkbox sends nothing at all, which `maybe_to_boolean/1` reads as `nil`, and `Blocks.block/3` defaults it to false
+             also_unfollow_and_notify: Types.maybe_to_boolean(params["also_unfollow_and_notify"])
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
 

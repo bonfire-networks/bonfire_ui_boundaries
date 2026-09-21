@@ -1,6 +1,7 @@
 <div id="circle_view" class="w-full max-w-full flex flex-col feed">
   <header class="flex flex-col px-4 pt-5 !pb-0 bonfire-wrapper !border-b border-hair border-secondary">
     <div data-role="circle_identity" class="flex items-start gap-4">
+      {!--
       {#if Enum.count(@preview_members) >= 4}
         <div
           class="w-16 h-16 rounded-2xl overflow-hidden grid grid-cols-2 grid-rows-2 shrink-0 ring-1 ring-base-content/10 bg-base-200"
@@ -26,6 +27,7 @@
           <#Icon iconify="ph:circle-duotone" class="w-8 h-8 text-secondary" />
         </div>
       {/if}
+      --}
 
       <div class="flex-1 min-w-0">
         <div class="flex items-start gap-3">

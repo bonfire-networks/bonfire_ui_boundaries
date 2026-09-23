@@ -20,10 +20,10 @@
             <span class="badge badge-sm badge-neutral badge-ghost">{@builtin_roles_count}</span>
           </div>
           <span x-cloak x-show="showBuiltIn">
-            <#Icon iconify="ph:caret-down-bold" class="w-5 h-5" />
+            <#Icon iconify="carbon:chevron-down-bold" class="w-5 h-5" />
           </span>
           <span x-cloak x-show="!showBuiltIn">
-            <#Icon iconify="ph:caret-up" class="w-5 h-5" />
+            <#Icon iconify="carbon:chevron-up" class="w-5 h-5" />
           </span>
         </button>
 

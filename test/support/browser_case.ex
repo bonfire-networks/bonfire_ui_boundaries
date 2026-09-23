@@ -84,7 +84,7 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
             with: username
           )
           |> fill_in(Query.fillable_field("login_fields[password]"), with: pw)
-          |> click(Query.button("Log in"))
+          |> click(Query.button("Sign in"))
           # Wait for login to complete and redirect
           |> Browser.assert_has(Query.css("body"))
           # Ensure we're redirected away from login page
@@ -112,7 +112,7 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         |> visit("/login")
         |> fill_in(Query.fillable_field("login_fields[email_or_username]"), with: username)
         |> fill_in(Query.fillable_field("login_fields[password]"), with: pw)
-        |> click(Query.button("Log in"))
+        |> click(Query.button("Sign in"))
         |> Browser.assert_has(Query.css("body"))
         |> Browser.refute_has(Query.css("input[name='login_fields[email_or_username]']"))
         |> visit("/")

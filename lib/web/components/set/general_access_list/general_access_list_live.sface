@@ -16,7 +16,7 @@
           <span class="truncate">{label}</span>
         </span>
     {/case}
-    <#Icon iconify="carbon:chevron-down-bold" class="w-4 h-4 flex-shrink-0" />
+    <#Icon iconify="carbon:chevron-down" class="w-4 h-4 flex-shrink-0" />
   </:trigger>
 
   {#if !@hide_presets}

@@ -137,7 +137,7 @@
       >
         <:trigger>
           <span class="truncate max-w-[10rem]">{boundary_name}</span>
-          <#Icon iconify="carbon:chevron-down-bold" class="size-4" />
+          <#Icon iconify="carbon:chevron-down" class="size-4" />
         </:trigger>
         <li>
           <button

@@ -16,7 +16,7 @@
             </div>
           </div>
           <#Icon
-            iconify="carbon:chevron-down-bold"
+            iconify="carbon:chevron-down"
             class="w-4 h-4 text-muted transition-transform duration-150"
             x-bind:class="open && 'rotate-180'"
           />
@@ -73,7 +73,7 @@
                               <div class="text-sm font-medium text-base-content">{Bonfire.Boundaries.Verbs.verb_name(verb)}</div>
                               <div class="text-xs text-muted">{Bonfire.Boundaries.Verbs.verb_summary(verb)}</div>
                             </div>
-                            <#Icon iconify="carbon:chevron-down-bold" class="w-4 h-4 text-muted" />
+                            <#Icon iconify="carbon:chevron-down" class="w-4 h-4 text-muted" />
                           </div>
 
                           <!-- Above the fold: items with a defined value -->

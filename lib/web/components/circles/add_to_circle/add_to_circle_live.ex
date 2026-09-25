@@ -9,4 +9,7 @@ defmodule Bonfire.UI.Boundaries.AddToCircleLive do
   prop as_icon, :boolean, default: false
   prop label, :any, default: nil
   prop hide_icon, :boolean, default: false
+
+  @doc "Optional button classes for the icon-only trigger."
+  prop button_class, :css_class, default: nil
 end

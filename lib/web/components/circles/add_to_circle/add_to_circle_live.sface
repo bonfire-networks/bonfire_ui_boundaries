@@ -16,7 +16,10 @@
       {#if @as_icon}
         <div
           data-tip={l("Add to circles")}
-          class="tooltip btn btn-outline btn-sm btn-primary btn-circle touch-target-expanded"
+          class={e(
+            @button_class,
+            "tooltip btn btn-outline btn-sm btn-primary btn-circle touch-target-expanded"
+          )}
         >
           <span class="touch-target-hit-area" aria-hidden="true" />
           <span class="sr-only">{@label || l("Add to circles")}</span>

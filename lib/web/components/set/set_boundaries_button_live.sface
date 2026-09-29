@@ -1,130 +1,23 @@
 {#case clone_context(@to_boundaries)}
   {#match false}
-    <div class="flex items-center">
-      <div class="flex relative z-50 items-center flex-1 gap-2">
-        <div class="flex w-full flex-1 p-0">
-          <Bonfire.UI.Common.OpenModalLive
-            reusable_modal_id="persistent_modal"
-            id="define_boundary"
-            no_actions
-            title_text={l("Define the activity boundary")}
-            without_form
-            open_btn_wrapper_class="flex flex-1 w-full"
-          >
-            <Bonfire.UI.Boundaries.CustomizeBoundaryLive
-              id="customize_boundary_live"
-              boundary_preset={@boundary_preset}
-              is_customizable
-              to_circles={@to_circles}
-              exclude_circles={@exclude_circles}
-              to_boundaries={@to_boundaries}
-              verb_permissions={@verb_permissions}
-              setting_boundaries={@setting_boundaries}
-              hide_custom={!module_enabled?(Bonfire.UI.Boundaries.SetBoundariesLive, @__context__)}
-            />
-            <!-- my_acls={@my_acls} -->
-            <:open_btn>
-              <label class="tooltip-button border-secondary flex items-center gap-2 btn-sm h-[30px] btn btn-primary btn-outline font-normal">
-                <Bonfire.UI.Boundaries.BoundariesPresetNameLive
-                  icon_class="w-5 h-5"
-                  to_circles={@to_circles}
-                  exclude_circles={@exclude_circles}
-                  to_boundaries={@to_boundaries}
-                />
-              </label>
-            </:open_btn>
-          </Bonfire.UI.Common.OpenModalLive>
-        </div>
-      </div>
-
-      {!-- <div class="" phx-hook="Tooltip" id="popup_boundaries">
-          <label class="tooltip-button border-secondary flex items-center gap-2 btn-sm h-[30px] btn btn-primary btn-outline font-normal">
-            <Bonfire.UI.Boundaries.BoundariesPresetNameLive
-              icon_class="w-5 h-5"
-              to_circles={@to_circles}
-              exclude_circles={@exclude_circles}
-              to_boundaries={@to_boundaries}
-            />
-          </label>
-          <ul
-            tabindex="0"
-            class="tooltip z-popover menu shadow bg-base-100 border border-secondary rounded-xl p-0 w-[18rem] lg:w-[24rem] absolute top-0 left-0 hidden"
-          >
-            <Bonfire.UI.Boundaries.BoundariesGeneralAccessLive
-              to_boundaries={@to_boundaries}
-              is_customizable
-              to_circles={@to_circles}
-              exclude_circles={@exclude_circles}
-              boundary_preset={@boundary_preset}
-              hide_custom={!module_enabled?(Bonfire.UI.Boundaries.SetBoundariesLive, @__context__)}
-            />
-
-            <!-- <li class="flex items-center flex-row gap-2 mx-4 mb-2">
-            <div class="flex flex-1 p-0">
-              <Bonfire.UI.Common.OpenModalLive
-                reusable_modal_id="persistent_modal"
-                id="define_boundary"
-                no_actions
-                no_header
-                without_form
-                open_btn_wrapper_class="flex-1"
-              >
-                <Bonfire.UI.Boundaries.CustomizeBoundaryLive
-                  id="customize_boundary_live"
-                  boundary_preset={@boundary_preset}
-                  my_acls={@my_acls}
-                  is_customizable
-                  to_circles={@to_circles}
-                  exclude_circles={@exclude_circles}
-                  to_boundaries={@to_boundaries}
-                  verb_permissions={@verb_permissions}
-                  hide_custom={true}
-                />
-                <:open_btn>
-                  <div class="btn btn-primary w-full btn-soft btn-sm">
-                    {l("Advanced boundary")}
-                  </div>
-                </:open_btn>
-              </Bonfire.UI.Common.OpenModalLive>
-            </div>
-            <div 
-              :if={module_enabled?(Bonfire.UI.Boundaries.PreviewBoundariesLive, @__context__)}
-              class="flex flex-1 p-0">
-              <Bonfire.UI.Common.OpenModalLive
-                id="preview_boundaries"
-                reusable_modal_id="persistent_modal"
-                title_text={l("Preview boundaries for any user")}
-                no_actions
-                without_form
-                open_btn_wrapper_class="flex flex-1 w-full items-center gap-2"
-                >
-                <StatefulComponent
-                  :if={maybe_apply(Bonfire.UI.Boundaries.SetBoundariesButtonLive, :clone_context, @to_boundaries) ==
-                    false && module_enabled?(Bonfire.UI.Boundaries.PreviewBoundariesLive, @__context__)}
-                  module={maybe_component(Bonfire.UI.Boundaries.PreviewBoundariesLive, @__context__)}
-                  id="boundaries_preview"
-                  boundary_preset={@boundary_preset}
-                  to_boundaries={@to_boundaries}
-                  to_circles={@to_circles}
-                  exclude_circles={@exclude_circles}
-                />
-
-                <:open_btn>
-                  <div
-                    class="w-full btn btn-sm flex"
-                    title={l("Preview boundary")}
-                  >
-                    <span>
-                      {l("Preview boundary")}
-                    </span>
-                  </div>
-                </:open_btn>
-              </Bonfire.UI.Common.OpenModalLive>
-              </div>
-            </li> -->
-          </ul>
-        </div> --}
-    </div>
+    <Bonfire.UI.Boundaries.AudiencePickerLive
+      id="composer_visibility_picker"
+      mode={:visibility}
+      to_boundaries={@to_boundaries}
+      to_circles={@to_circles}
+      exclude_circles={@exclude_circles}
+      verb_permissions={@verb_permissions}
+      event_target={@event_target}
+    >
+      <Bonfire.UI.Boundaries.CustomBoundaryButtonLive
+        boundary_preset={@boundary_preset}
+        to_circles={@to_circles}
+        exclude_circles={@exclude_circles}
+        to_boundaries={@to_boundaries}
+        verb_permissions={@verb_permissions}
+        setting_boundaries={@setting_boundaries}
+      />
+    </Bonfire.UI.Boundaries.AudiencePickerLive>
   {#match boundary_name}
     {#if e(@context_group, :topics, []) != [] and @context_group}
       <Dropdown

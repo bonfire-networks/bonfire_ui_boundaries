@@ -26,6 +26,8 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   prop acl_subject_verb_grants, :any, default: nil
 
   # Display control
+  # composer "Custom boundaries" panel: skips the general audience (chosen in the visibility picker) and saves as "Done"
+  prop permissions_only, :boolean, default: false
   prop show_general_boundary, :boolean, default: false
   prop hide_save_button, :boolean, default: false
 

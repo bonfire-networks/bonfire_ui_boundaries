@@ -36,7 +36,7 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIManagementTest do
       |> assert_has("button", text: "New preset")
       |> click_button("New preset")
       |> fill_in("Enter a name for the boundary preset", with: "close friends")
-      |> click_button("Create")
+      |> click_button("[data-role=new_acl_submit]", "Create")
       |> assert_has("[data-role=acl_name]", text: "close friends")
 
       # Configure Read permission for friends circle (enable it)
@@ -87,7 +87,7 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIManagementTest do
       |> assert_has("button", text: "New preset")
       |> click_button("New preset")
       |> fill_in("Enter a name for the boundary preset", with: "custom perms")
-      |> click_button("Create")
+      |> click_button("[data-role=new_acl_submit]", "Create")
       |> assert_has("div", text: "custom perms")
 
       # Test different verb permission states
@@ -147,7 +147,7 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIManagementTest do
       |> assert_has("button", text: "New preset")
       |> click_button("New preset")
       # Try to create without name
-      |> click_button("Create")
+      |> click_button("[data-role=new_acl_submit]", "Create")
       |> assert_has("[data-role='error']", text: "Name is required")
     end
   end

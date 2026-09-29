@@ -38,13 +38,7 @@ defmodule Bonfire.UI.Boundaries.GeneralAccessListLive do
   Mirrors the option sections in the template, using `matches?/2,3` to find the active one.
   """
   def selected_option(boundary_preset, to_boundaries, my_acls, presets) do
-    presets =
-      presets ||
-        Bonfire.Common.Config.get(
-          :preset_order,
-          ["public", "local", "mentions"],
-          :bonfire_boundaries
-        )
+    presets = presets || Bonfire.Boundaries.Presets.preset_order()
 
     cond do
       matches?(boundary_preset, "custom") ->

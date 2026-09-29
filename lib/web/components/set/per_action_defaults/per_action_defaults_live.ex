@@ -57,6 +57,16 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsLive do
     end
   end
 
+  @doc "Groups the action states into the panel's sections: replies and quotes, then reading (which changes who can access the post)."
+  def sections(action_states) do
+    {reading, interactions} = Enum.split_with(action_states, &(&1.key == "read"))
+
+    [
+      {"interactions", l("Replies and quotes"), interactions},
+      {"reading", l("Reading restrictions"), reading}
+    ]
+  end
+
   def action_label("read"), do: l("Allow reading?")
   def action_label("reply"), do: l("Allow replies?")
   def action_label("quote"), do: l("Allow quote posts?")

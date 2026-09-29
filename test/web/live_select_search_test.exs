@@ -90,7 +90,7 @@ defmodule Bonfire.UI.Boundaries.LiveSelectSearchTest do
 
       {:ok, view, _html} = live(conn, "/settings/boundaries/acl/#{acl.id}")
 
-      ls_id = live_select_simulate_search(view, "#boundaries_acl", "findable")
+      ls_id = live_select_simulate_search(view, "[data-role=boundaries_acl]", "findable")
 
       assert has_element?(view, "##{ls_id} li", findable.profile.name)
     end

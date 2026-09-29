@@ -1,0 +1,28 @@
+<Bonfire.UI.Common.OpenModalLive
+  reusable_modal_id="persistent_modal"
+  id="define_permissions"
+  no_actions
+  title_text={l("Custom boundaries")}
+  without_form
+  open_modal_wrapper_class="flex w-full min-w-0"
+  open_btn_wrapper_class="flex min-h-11 sm:min-h-10 items-center px-2 py-1 text-left hover:bg-base-content/5 focus-ring"
+>
+  <Bonfire.UI.Boundaries.CustomizeBoundaryLive
+    id="customize_boundary_live"
+    permissions_only
+    boundary_preset={@boundary_preset}
+    is_customizable
+    to_circles={@to_circles}
+    exclude_circles={@exclude_circles}
+    to_boundaries={@to_boundaries}
+    verb_permissions={@verb_permissions}
+    setting_boundaries={@setting_boundaries}
+    hide_custom={!module_enabled?(Bonfire.UI.Boundaries.SetBoundariesLive, @__context__)}
+  />
+  <:open_btn>
+    <span class="flex items-center gap-2 text-sm text-primary underline underline-offset-4">
+      <#Icon iconify="ph:sliders-horizontal-duotone" class="size-4" />
+      {l("Custom boundaries")}
+    </span>
+  </:open_btn>
+</Bonfire.UI.Common.OpenModalLive>

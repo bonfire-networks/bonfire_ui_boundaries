@@ -1,4 +1,4 @@
-<div id="boundaries_acl">
+<div id={"boundaries_acl_#{@id}"} data-role="boundaries_acl">
   <h1
     :if={!@setting_boundaries && e(@acl, :named, :name, nil)}
     data-role="acl_name"

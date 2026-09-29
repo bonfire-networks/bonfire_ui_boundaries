@@ -77,6 +77,18 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
       |> assert_has("[data-role=action_toggle_read]")
       |> assert_has("[data-role=action_toggle_reply]")
       |> assert_has("[data-role=action_toggle_quote]")
+      |> PhoenixTest.unwrap(fn view ->
+        html = render(view)
+        ids =
+          html
+          |> Floki.parse_fragment!()
+          |> Floki.find("[data-role=boundaries_acl]")
+          |> Floki.attribute("id")
+
+        assert length(ids) > 1
+        assert length(ids) == length(Enum.uniq(ids))
+        html
+      end)
     end
   end
 

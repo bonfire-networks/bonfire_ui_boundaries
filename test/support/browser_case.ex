@@ -148,9 +148,11 @@ defmodule Bonfire.UI.Boundaries.BrowserCase do
         |> assert_has(Query.css("#smart_input_container.translate-y-0"))
       end
 
+      # the composer's per-action editor lives under "Custom boundaries" in its visibility menu
       def open_boundary_modal(session) do
         session
-        |> click(Query.css("#define_boundary button[data-role='open_modal']"))
+        |> click(Query.css("#composer_visibility_picker_trigger"))
+        |> click(Query.css("#define_permissions button[data-role='open_modal']"))
         |> assert_has(Query.css("#persistent_modal_box"))
       end
 

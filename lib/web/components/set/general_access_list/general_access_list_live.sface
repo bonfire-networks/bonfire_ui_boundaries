@@ -20,9 +20,7 @@
   </:trigger>
 
   {#if !@hide_presets}
-    {#for slug <-
-        @presets ||
-          Bonfire.Common.Config.get(:preset_order, ["public", "local", "mentions"], :bonfire_boundaries)}
+    {#for slug <- @presets || Bonfire.Boundaries.Presets.preset_order()}
       <button
         data-scope={"#{slug}_boundary"}
         class={

@@ -1,0 +1,154 @@
+<div id={@id <> "_component"} class="min-w-0 w-full">
+  <Dropdown
+    id={@id}
+    menu={false}
+    close_on_select={@mode != :visibility}
+    focus_on_open={"#" <> @id <> "_search"}
+    position="bottom-start"
+    wrapper_class="w-full min-w-0"
+    wrapper_opts={["data-boundary": "#composer_container"]}
+    trigger_class="flex w-full min-h-12 items-center justify-between gap-3 px-4 py-2 text-left hover:bg-base-content/5 focus-ring"
+    panel_class="!w-72 max-w-[calc(100vw-2rem)] !p-0"
+    trigger_opts={["phx-click": JS.push("load", target: "#" <> @id <> "_component")]}
+    label={if @mode == :destination, do: l("Post in"), else: l("Visible to")}
+  >
+    <:trigger>
+      <span class="flex min-w-0 flex-col gap-1">
+        <span class="sr-only">{if @mode == :destination, do: l("Post in"), else: l("Visible to")}</span>
+        {#if @context_group}
+          <span class="flex min-w-0 items-center gap-2">
+            <#Icon iconify="ph:users-three-duotone" class="size-5 shrink-0 text-muted" />
+            <span class="break-words font-medium">{e(@context_group, :group_name, nil) || @context_group.name}</span>
+          </span>
+        {#elseif @mode == :destination}
+          <span class="flex items-center gap-2 font-medium">
+            <#Icon iconify="ph:user-circle-fill" class="size-5 shrink-0 text-muted" />
+            {l("Your profile")}
+          </span>
+        {#elseif Bonfire.UI.Common.SmartInputLive.custom_audience?(@exclude_circles, @verb_permissions)}
+          <span class="flex items-center gap-2">
+            <Iconify.iconify
+              icon={Bonfire.UI.Common.SmartInputLive.group_audience_icon(@to_boundaries, @exclude_circles, @verb_permissions)}
+              class="size-5 shrink-0 text-muted"
+            />
+            {Bonfire.UI.Common.SmartInputLive.group_audience_label(@to_boundaries, @exclude_circles, @verb_permissions)}
+          </span>
+        {#elseif @to_circles != []}
+          <span class="flex items-center gap-2 font-medium">
+            <#Icon iconify="ph:circles-three" class="size-5 shrink-0 text-muted" />
+            {l("Specific circles")}
+          </span>
+        {#else}
+          <Bonfire.UI.Boundaries.BoundariesPresetNameLive
+            to_boundaries={@to_boundaries}
+            icon_class="size-5 shrink-0 text-muted"
+          />
+        {/if}
+      </span>
+      <#Icon iconify="ph:caret-down" class="size-4 shrink-0 text-muted" />
+    </:trigger>
+
+    <div
+      class="flex min-h-0 flex-col p-1.5"
+      style="max-height: calc(var(--dropdown-available-height, 24rem) - 2px)"
+    >
+      <.form
+        class="shrink-0"
+        for={to_form(%{"search" => @search_term})}
+        id={@id <> "_search_form"}
+        phx-change="search"
+        phx-submit="search"
+        phx-target={@myself}
+      >
+        <label for={@id <> "_search"} class="sr-only">
+          {if @mode == :destination, do: l("Search joined groups"), else: l("Search audiences")}
+        </label>
+        <input
+          id={@id <> "_search"}
+          type="search"
+          name="search"
+          value={@search_term}
+          placeholder={if @mode == :destination, do: l("Search joined groups…"), else: l("Search audiences…")}
+          phx-debounce="200"
+          class="input input-bordered h-10 w-full text-base focus-ring"
+          autocomplete="off"
+        />
+      </.form>
+
+      <div class="mt-1 min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        <button
+          :if={@mode == :destination}
+          type="button"
+          data-role="post_in_profile"
+          phx-click="Bonfire.UI.Common.SmartInput:select_personal_destination"
+          phx-target={@event_target || "#smart_input"}
+          aria-pressed={"#{is_nil(@context_group)}"}
+          class="flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 focus-ring"
+        >
+          <#Icon iconify="ph:user-circle-fill" class="size-4 text-primary" />
+          {l("Your profile")}
+        </button>
+        <p :if={@mode == :destination} class="px-2 py-1 text-xs text-muted">{l("Who can see the post depends on its visibility.")}</p>
+
+        <p :if={@options != []} class="px-2 py-1 text-xs text-muted">{l("Audiences")}</p>
+        <button
+          :for={{audience_id, meta} <- @options}
+          type="button"
+          data-audience-preset={audience_id}
+          aria-pressed={"#{Bonfire.UI.Boundaries.GeneralAccessListLive.matches?(@to_boundaries, audience_id)}"}
+          phx-click="Bonfire.UI.Common.SmartInput:select_audience"
+          phx-value-id={audience_id}
+          phx-target={@event_target || "#smart_input"}
+          class="flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 aria-pressed:text-primary focus-ring"
+        >
+          <Iconify.iconify icon={e(meta, :icon, nil) || "ph:users-duotone"} class="size-4 shrink-0 text-primary" />
+          <span class="min-w-0 break-words">{e(meta, :label, nil) || e(meta, :name, nil)}</span>
+        </button>
+
+        <p :if={@circles != []} class="px-2 pt-2 pb-1 text-xs text-muted">{l("Your circles · can see and participate")}</p>
+        <button
+          :for={circle <- @circles}
+          type="button"
+          data-audience-circle={circle.id}
+          aria-pressed={"#{circle_selected?(@to_circles, circle.id)}"}
+          phx-click="Bonfire.UI.Common.SmartInput:toggle_audience_circle"
+          phx-value-id={circle.id}
+          phx-target={@event_target || "#smart_input"}
+          class="group flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 aria-pressed:text-primary focus-ring"
+        >
+          <#Icon iconify="ph:circles-three" class="size-4 shrink-0 text-primary" />
+          <span class="min-w-0 grow break-words">{e(circle, :named, :name, "")}</span>
+          <#Icon iconify="ph:check" class="size-4 invisible group-aria-pressed:visible" />
+        </button>
+
+        <p :if={@groups != []} class="px-2 pt-2 pb-1 text-xs text-muted">{l("Joined groups")}</p>
+        <button
+          :for={group <- @groups}
+          type="button"
+          data-audience-group={group.id}
+          aria-pressed={"#{e(@context_group, :group_id, nil) == group.id}"}
+          phx-click="Bonfire.UI.Common.SmartInput:select_audience_group"
+          phx-value-id={group.id}
+          phx-target={@event_target || "#smart_input"}
+          class="flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 aria-pressed:text-primary focus-ring"
+        >
+          <#Icon iconify="ph:users-three-duotone" class="size-4 shrink-0 text-primary" />
+          <span class="min-w-0 break-words">{group.name}</span>
+        </button>
+
+        <p
+          :if={@audiences != nil and @options == [] and @groups == [] and @circles == []}
+          role="status"
+          class="p-3 text-sm text-muted"
+        >
+          {if @mode == :destination, do: l("No matching joined groups"), else: l("No matching audiences")}
+        </p>
+        <p :if={@more_groups?} class="p-2 text-xs text-muted">{l("Keep typing to narrow the group results.")}</p>
+      </div>
+
+      <div :if={slot_assigned?(:default)} class="mt-1 shrink-0 border-t border-base-content/10 pt-1">
+        <#slot />
+      </div>
+    </div>
+  </Dropdown>
+</div>

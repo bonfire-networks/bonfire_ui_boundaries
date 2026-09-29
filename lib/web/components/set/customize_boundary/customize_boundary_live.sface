@@ -1,22 +1,37 @@
 <div id={@id} class="flex flex-col">
-  {#if @setting_boundaries in [:edit_object, :create_object]}
-    <div class="text-sm text-base-content">{l("General audience")}</div>
-    <div class="text-xs text-muted">{l("Who can see and interact with this activity?")}</div>
-    <div class="mt-2 flex flex-col gap-1">
-      <Bonfire.UI.Boundaries.GeneralAccessListLive
-        id={"#{@id}_general_access_list"}
-        hide_presets={@hide_presets}
-        boundary_preset={@preset_boundary}
-        set_action={@set_action}
-        set_opts={@set_opts}
-        scope={@scope}
-        is_customizable
+  {#if @permissions_only}
+    <p class="text-sm text-muted mb-3">{l("Changes apply immediately to this draft.")}</p>
+    <section
+      data-role="permissions_audience_summary"
+      class="mb-4 rounded-xl border border-primary/15 bg-primary/5 p-4"
+    >
+      <p class="mb-2 text-xs font-medium text-muted">{l("Base audience")}</p>
+      <Bonfire.UI.Boundaries.BoundariesPresetNameLive
         to_boundaries={@to_boundaries}
-        hide_custom={@hide_custom}
-        my_acls={e(@my_acls, nil)}
+        icon_class="size-5 shrink-0 text-primary"
       />
-    </div>
-
+      <p class="mt-2 text-sm text-muted">{l("Individual rules below can restrict or extend access for specific people or circles.")}</p>
+    </section>
+  {/if}
+  {#if @setting_boundaries in [:edit_object, :create_object]}
+    {#if !@permissions_only}
+      <div class="text-sm text-base-content">{l("General audience")}</div>
+      <div class="text-xs text-muted">{l("Who can see and interact with this activity?")}</div>
+      <div class="mt-2 flex flex-col gap-1">
+        <Bonfire.UI.Boundaries.GeneralAccessListLive
+          id={"#{@id}_general_access_list"}
+          hide_presets={@hide_presets}
+          boundary_preset={@preset_boundary}
+          set_action={@set_action}
+          set_opts={@set_opts}
+          scope={@scope}
+          is_customizable
+          to_boundaries={@to_boundaries}
+          hide_custom={@hide_custom}
+          my_acls={e(@my_acls, nil)}
+        />
+      </div>
+    {/if}
     <Bonfire.UI.Boundaries.PerActionDefaultsLive
       state={@per_action_state}
       parent_id={@id}
@@ -48,7 +63,7 @@
       phx-target={"##{@id}"}
       class="btn btn-primary w-full"
     >
-      {l("Save")}
+      {if @permissions_only, do: l("Done"), else: l("Save")}
     </button>
   </div>
 </div>

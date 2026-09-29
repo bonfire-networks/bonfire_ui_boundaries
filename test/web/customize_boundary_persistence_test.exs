@@ -42,7 +42,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryPersistenceTest do
       |> visit("/settings/boundaries/acls")
       |> click_button("New preset")
       |> fill_in("Enter a name for the boundary preset", with: "close friends")
-      |> click_button("Create")
+      |> click_button("[data-role=new_acl_submit]", "Create")
       |> assert_has("[data-role=acl_name]", text: "close friends")
       |> click_button(
         "button[phx-value-role='#{friends.id}'][phx-value-verb='read'][phx-value-status='1']",
@@ -68,7 +68,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryPersistenceTest do
       |> visit("/settings/boundaries/acls")
       |> click_button("New preset")
       |> fill_in("Enter a name for the boundary preset", with: "mixed perms")
-      |> click_button("Create")
+      |> click_button("[data-role=new_acl_submit]", "Create")
       |> assert_has("[data-role=acl_name]", text: "mixed perms")
       # allow reading
       |> click_button(
@@ -105,7 +105,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryPersistenceTest do
       |> visit("/settings/boundaries/acls")
       |> click_button("New preset")
       |> fill_in("Enter a name for the boundary preset", with: "durable preset")
-      |> click_button("Create")
+      |> click_button("[data-role=new_acl_submit]", "Create")
       |> assert_has("[data-role=acl_name]", text: "durable preset")
       |> click_button(
         "button[phx-value-role='#{friends.id}'][phx-value-verb='reply'][phx-value-status='1']",

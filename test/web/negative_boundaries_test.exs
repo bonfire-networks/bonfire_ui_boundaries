@@ -56,7 +56,7 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
         current_user: me,
         post_attrs: attrs,
         boundary: "local",
-        to_circles: %{alice.id => "cannot_interact"}
+        to_circles: %{alice.id => "cannot_interact_or_more"}
       )
 
     # login as alice - buttons render as enabled (optimistic UI) but clicking should fail
@@ -78,7 +78,7 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
   end
 
   # Test adding a user with a 'cannot participate' role and verify that the user can see and interact with the post but not reply to it but another local user can.
-  test "Assign 'cannot_participate' to Alice, She can see, like and boost but not reply to the post, Bob can see and reply to it",
+  test "Assign 'cannot_participate_or_more' to Alice, She can see, like and boost but not reply to the post, Bob can see and reply to it",
        %{me: me, alice: alice, bob: bob, account: account} do
     Process.put([:bonfire, :feed_live_update_many_preload_mode], :inline)
 
@@ -90,7 +90,7 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
         current_user: me,
         post_attrs: attrs,
         boundary: "public",
-        to_circles: %{alice.id => "cannot_participate"}
+        to_circles: %{alice.id => "cannot_participate_or_more"}
       )
 
     # login as alice - she can see, like and boost but reply should fail (optimistic UI)

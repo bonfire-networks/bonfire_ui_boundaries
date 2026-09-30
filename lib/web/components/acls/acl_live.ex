@@ -277,7 +277,14 @@ defmodule Bonfire.UI.Boundaries.AclLive do
   def handle_event("edit_verb_value", %{"subject" => subjects} = _attrs, socket) do
     # debug(attrs)
     current_user = current_user_required!(socket)
-    acl = e(assigns(socket), :acl, nil)
+    # acl = e(assigns(socket), :acl, nil)
+    acl =
+      Acls.acl_to_grant_on(
+        e(assigns(socket), :acl, nil),
+        e(assigns(socket), :object_id, nil),
+        current_user
+      )
+
     # verb_value = List.first(Map.values(subjects))
     grant =
       Enum.flat_map(subjects, fn {subject_id, verb_value} ->

@@ -79,17 +79,40 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
       |> assert_has("[data-role=action_toggle_quote]")
       |> PhoenixTest.unwrap(fn view ->
         html = render(view)
+
         ids =
           html
           |> Floki.parse_fragment!()
           |> Floki.find("[data-role=boundaries_acl]")
           |> Floki.attribute("id")
 
-        assert length(ids) > 1
+        # a public post has no custom ACL of its own now, so it renders one editor; what matters is that editor ids are unique
+        # assert length(ids) > 1
+        assert length(ids) >= 1
         assert length(ids) == length(Enum.uniq(ids))
         html
       end)
     end
+  end
+
+  # viewing must not write: a post gets its own custom ACL only when one of its grants is changed
+  test "opening a post's Advanced modal adds no ACL to it", %{account: account, me: me} do
+    post = publish_post(me, "public")
+
+    acl_ids_before =
+      Bonfire.Boundaries.Controlleds.list_on_object(post.id)
+      |> Enum.map(& &1.acl_id)
+      |> Enum.sort()
+
+    conn(user: me, account: account)
+    |> visit("/post/#{post.id}")
+    |> click_button("Advanced")
+    |> assert_has("[data-role=action_toggle_reply]", [])
+
+    assert Bonfire.Boundaries.Controlleds.list_on_object(post.id)
+           |> Enum.map(& &1.acl_id)
+           |> Enum.sort() ==
+             acl_ids_before
   end
 
   defp publish_post(user, boundary, opts \\ []) do

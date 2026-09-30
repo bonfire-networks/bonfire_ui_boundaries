@@ -28,10 +28,18 @@
         {#elseif Bonfire.UI.Common.SmartInputLive.custom_audience?(@exclude_circles, @verb_permissions)}
           <span class="flex items-center gap-2">
             <Iconify.iconify
-              icon={Bonfire.UI.Common.SmartInputLive.group_audience_icon(@to_boundaries, @exclude_circles, @verb_permissions)}
+              icon={Bonfire.UI.Common.SmartInputLive.group_audience_icon(
+                @to_boundaries,
+                @exclude_circles,
+                @verb_permissions
+              )}
               class="size-5 shrink-0 text-muted"
             />
-            {Bonfire.UI.Common.SmartInputLive.group_audience_label(@to_boundaries, @exclude_circles, @verb_permissions)}
+            {Bonfire.UI.Common.SmartInputLive.group_audience_label(
+              @to_boundaries,
+              @exclude_circles,
+              @verb_permissions
+            )}
           </span>
         {#elseif @to_circles != []}
           <span class="flex items-center gap-2 font-medium">
@@ -101,7 +109,10 @@
           phx-target={@event_target || "#smart_input"}
           class="flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 aria-pressed:text-primary focus-ring"
         >
-          <Iconify.iconify icon={e(meta, :icon, nil) || "ph:users-duotone"} class="size-4 shrink-0 text-primary" />
+          <Iconify.iconify
+            icon={e(meta, :icon, nil) || "ph:users-duotone"}
+            class="size-4 shrink-0 text-primary"
+          />
           <span class="min-w-0 break-words">{e(meta, :label, nil) || e(meta, :name, nil)}</span>
         </button>
 

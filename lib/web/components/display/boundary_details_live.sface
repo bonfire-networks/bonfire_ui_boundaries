@@ -35,6 +35,18 @@
           />
           <!-- read_only={@read_only} -->
         </div>
+      {#else}
+        {!-- no custom ACL yet: the editor creates it when a grant is first changed --}
+        <Bonfire.UI.Boundaries.AclLive
+          id={"set_acl_#{@object_id}"}
+          acl_id={nil}
+          object_id={@object_id}
+          setting_boundaries={:edit_object}
+          show_general_boundary={@show_general_boundary}
+          to_boundaries={@boundary_preset || @to_boundaries}
+          to_circles={@to_circles}
+          exclude_circles={@exclude_circles}
+        />
       {/if}
 
       <!-- <details class="dropdown">

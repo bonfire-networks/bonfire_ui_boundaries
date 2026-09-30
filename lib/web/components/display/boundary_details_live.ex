@@ -103,22 +103,25 @@ defmodule Bonfire.UI.Boundaries.BoundaryDetailsLive do
       object_acls
       |> Enum.split_with(&e(&1, :named, nil))
 
-    # if there's no custom ACL yet, we create one
+    # # if there's no custom ACL yet, we create one
+    # (replaced: this runs on every render of the Advanced modal, so it wrote on view, and two renders racing left a post with two custom ACLs. The editor  should instead create the post's custom ACL when a grant is first changed, see `AclLive` and `CustomizeBoundaryLive`)
+    # custom_acls: e(custom_acls, nil) || init_object_custom_acl(object, current_user)
     %{
       preset_acls: preset_acls,
-      custom_acls: e(custom_acls, nil) || init_object_custom_acl(object, current_user)
+      custom_acls: custom_acls
     }
     |> debug()
   end
 
-  defp init_object_custom_acl(object_id, current_user) do
-    case Acls.get_or_create_object_custom_acl(object_id, current_user) do
-      {:ok, acl} ->
-        [acl]
-
-      e ->
-        error(e)
-        []
-    end
-  end
+  # unused since the modal no longer creates a custom ACL on view
+  # defp init_object_custom_acl(object_id, current_user) do
+  #   case Acls.get_or_create_object_custom_acl(object_id, current_user) do
+  #     {:ok, acl} ->
+  #       [acl]
+  #
+  #     e ->
+  #       error(e)
+  #       []
+  #   end
+  # end
 end

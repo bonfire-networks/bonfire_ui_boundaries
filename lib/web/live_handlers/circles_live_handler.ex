@@ -674,7 +674,14 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     with id when is_binary(id) <- uid(subject),
          current_user_id when not is_nil(current_user_id) <- current_user_id(socket),
          false <- id == current_user_id,
-         {:ok, _} <- Blocks.block(id, circle_type, scope || current_user(socket)) do
+         # the subject itself when it's already loaded (eg. the instance circle a domain resolved to), so blocking needs no lookup of what it was just handed
+         # {:ok, _} <- Blocks.block(id, circle_type, scope || current_user(socket)) do
+         {:ok, _} <-
+           Blocks.block(
+             if(is_struct(subject), do: subject, else: id),
+             circle_type,
+             scope || current_user(socket)
+           ) do
       {:noreply,
        socket
        |> assign_flash(:info, l("Blocked!"))

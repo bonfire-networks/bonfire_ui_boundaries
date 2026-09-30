@@ -23,6 +23,8 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   # ACL mode props
   prop setting_boundaries, :atom, default: nil
   prop acl, :any, default: nil
+  # the object whose custom ACL to create when a grant is first changed, if `acl` is nil
+  prop object_id, :string, default: nil
   prop acl_subject_verb_grants, :any, default: nil
 
   # Display control
@@ -649,8 +651,14 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
 
   # Handle ACL mode permission updates
   defp update_acl_mode_permissions(socket, circle_id, verb, verb_value, updated_verbs) do
-    acl = e(assigns(socket), :acl, nil)
     current_user = current_user(socket)
+    # acl = e(assigns(socket), :acl, nil)
+    acl =
+      Bonfire.Boundaries.Acls.acl_to_grant_on(
+        e(assigns(socket), :acl, nil),
+        e(assigns(socket), :object_id, nil),
+        current_user
+      )
 
     case maybe_to_atom(String.downcase(verb)) do
       nil ->

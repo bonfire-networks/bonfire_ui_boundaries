@@ -72,6 +72,7 @@
                 show_general_boundary={@show_general_boundary}
                 hide_save_button
                 acl={@acl}
+                object_id={@object_id}
                 scope={@scope}
                 acl_subject_verb_grants={@acl_subject_verb_grants}
                 read_only={debug(@read_only, "read_only")}

@@ -8,6 +8,7 @@ defmodule Bonfire.UI.Boundaries.AudiencePickerLive do
 
   slot default
   prop to_circles, :list, default: []
+
   # `:destination` picks where to post (profile or a joined group), `:visibility` who can see a personal post
   prop mode, :atom, required: true, values: [:destination, :visibility]
   prop to_boundaries, :any, default: []
@@ -34,7 +35,10 @@ defmodule Bonfire.UI.Boundaries.AudiencePickerLive do
 
         {presets ++ Bonfire.Boundaries.LiveHandler.my_acls(current_user_id(socket)),
          if(current_user_id(socket),
-           do: Bonfire.Boundaries.Circles.list_my_for_sidebar(current_user(socket), exclude_stereotypes: true),
+           do:
+             Bonfire.Boundaries.Circles.list_my_for_sidebar(current_user(socket),
+               exclude_stereotypes: true
+             ),
            else: []
          )}
       else
@@ -73,7 +77,8 @@ defmodule Bonfire.UI.Boundaries.AudiencePickerLive do
     circles = Enum.filter(socket.assigns.my_circles || [], &matches?.(e(&1, :named, :name, "")))
 
     groups =
-      if socket.assigns.mode == :destination and module_enabled?(Bonfire.Classify.Categories, socket) and
+      if socket.assigns.mode == :destination and
+           module_enabled?(Bonfire.Classify.Categories, socket) and
            not is_nil(current_user_id(socket)) do
         Bonfire.Classify.Categories.list_joined_groups(
           current_user(socket),

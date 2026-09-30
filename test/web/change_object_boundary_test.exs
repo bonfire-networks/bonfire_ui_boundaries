@@ -31,7 +31,11 @@ defmodule Bonfire.UI.Boundaries.ChangeObjectBoundaryTest do
       # Open the Advanced modal (contains boundary details + edit section)
       |> click_button("Advanced")
       # Click the "Local" preset button (rendered in DOM, visually gated by Alpine)
-      |> within_first_acl_editor(post, me, &click_button(&1, "[data-scope=local_boundary]", "Local"))
+      |> within_first_acl_editor(
+        post,
+        me,
+        &click_button(&1, "[data-scope=local_boundary]", "Local")
+      )
       |> assert_has("[role=alert]", text: "Boundary updated")
 
       # Verify the DB state changed
@@ -61,7 +65,11 @@ defmodule Bonfire.UI.Boundaries.ChangeObjectBoundaryTest do
       conn(user: me, account: account)
       |> visit("/post/#{post.id}")
       |> click_button("Advanced")
-      |> within_first_acl_editor(post, me, &click_button(&1, "button[phx-value-id=mentions]", "Mentions"))
+      |> within_first_acl_editor(
+        post,
+        me,
+        &click_button(&1, "button[phx-value-id=mentions]", "Mentions")
+      )
       |> assert_has("[role=alert]", text: "Boundary updated")
 
       # Verify no preset ACLs remain
@@ -102,11 +110,20 @@ defmodule Bonfire.UI.Boundaries.ChangeObjectBoundaryTest do
 
   # The Advanced modal renders one ACL editor per unnamed ACL on the post (in this order), and each
   # editor's presets change the whole post's boundary, so drive the first one.
+  # A post with no custom ACL of its own gets one editor keyed by the post, which creates that ACL on the first grant change
   defp within_first_acl_editor(session, post, me, fun) do
-    %{custom_acls: [acl | _]} =
-      Bonfire.UI.Boundaries.BoundaryDetailsLive.list_object_boundaries_for_editing(post.id, me)
+    # %{custom_acls: [acl | _]} =
+    #   Bonfire.UI.Boundaries.BoundaryDetailsLive.list_object_boundaries_for_editing(post.id, me)
+    editor_id =
+      case Bonfire.UI.Boundaries.BoundaryDetailsLive.list_object_boundaries_for_editing(
+             post.id,
+             me
+           ) do
+        %{custom_acls: [acl | _]} -> acl.id
+        _ -> post.id
+      end
 
-    within(session, "#boundaries_acl_set_acl_#{acl.id}", fun)
+    within(session, "#boundaries_acl_set_acl_#{editor_id}", fun)
   end
 
   defp publish_post(user, boundary, opts \\ []) do

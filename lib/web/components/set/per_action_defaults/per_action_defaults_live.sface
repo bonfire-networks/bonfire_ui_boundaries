@@ -23,7 +23,7 @@
       </p>
       <div class="flex flex-col divide-y divide-base-content/10 rounded-xl border border-base-content/10 overflow-hidden">
         <div :for={action_state <- actions} class="flex flex-col">
-          <label class="flex min-h-14 items-center gap-3 p-3 cursor-pointer has-disabled:cursor-default">
+          <label class="flex items-center gap-3 p-2 cursor-pointer has-disabled:cursor-default">
             <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <Iconify.iconify icon={action_state.icon} class="size-5" />
             </span>
@@ -33,7 +33,7 @@
 
             <input
               type="checkbox"
-              class="toggle toggle-primary shrink-0 focus-ring"
+              class="toggle toggle-primary toggle-sm shrink-0 focus-ring"
               id={@parent_id <> "_action_" <> action_state.key}
               aria-describedby={if @state.locked?, do: @parent_id <> "_permissions_locked_notice"}
               data-role={"action_toggle_#{action_state.key}"}

@@ -119,7 +119,8 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
     verb_permissions = e(assigns(socket), :verb_permissions, %{})
     preset_boundary = e(assigns(socket), :preset_boundary, nil)
     my_circles = e(assigns(socket), :my_circles, [])
-    sig = :erlang.phash2({verb_permissions, preset_boundary, my_circles})
+    revealed_exceptions = e(assigns(socket), :revealed_exceptions, [])
+    sig = :erlang.phash2({verb_permissions, preset_boundary, my_circles, revealed_exceptions})
 
     if sig == e(assigns(socket), :per_action_state_sig, nil) do
       socket
@@ -128,7 +129,8 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
         Bonfire.UI.Boundaries.PerActionDefaultsLive.build_states(
           verb_permissions,
           preset_boundary,
-          my_circles
+          my_circles,
+          revealed_exceptions
         )
 
       socket
@@ -523,6 +525,17 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
   defp toggle_targets(false, preset_boundary, verbs) do
     {"nobody",
      Bonfire.UI.Boundaries.PerActionDefaultsLive.preset_block_circle_ids(preset_boundary, verbs)}
+  end
+
+  # "Allow for some people" on an action that's off: shows its exception circles without touching its toggle
+  def handle_event("reveal_action_exceptions", %{"action" => action_key}, socket) do
+    {:noreply,
+     socket
+     |> assign(
+       :revealed_exceptions,
+       Enum.uniq([action_key | e(assigns(socket), :revealed_exceptions, [])])
+     )
+     |> assign_per_action_state()}
   end
 
   def handle_event(

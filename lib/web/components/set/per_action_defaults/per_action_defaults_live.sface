@@ -49,6 +49,20 @@
             />
           </label>
 
+          {!-- reveals the exceptions without touching the toggle (eg. quotes, off by default with nothing changed) --}
+          <button
+            :if={action_state.offers_exceptions? and not action_state.show_exceptions?}
+            type="button"
+            data-role={"action_exceptions_toggle_#{action_state.key}"}
+            class="p-2 text-right text-sm text-primary border-t border-secondary hover:bg-base-content/5"
+            phx-click={JS.push("reveal_action_exceptions",
+              value: %{"action" => action_state.key},
+              target: "##{@parent_id}"
+            )}
+          >
+            {l("Allow for some people")}
+          </button>
+
           <div
             :if={action_state.show_exceptions?}
             data-role={"action_exceptions_#{action_state.key}"}

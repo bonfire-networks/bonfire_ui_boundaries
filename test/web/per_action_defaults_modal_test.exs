@@ -39,6 +39,22 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
       |> refute_has("[data-role=action_toggle_quote][checked]")
     end
 
+    # an action that is off offers its exceptions behind a row that reveals them, without toggling the action on and off first (quotes are off under public with nothing changed)
+    test "public post → quote, off by default, offers its exceptions without toggling",
+         %{account: account, me: me} do
+      post = publish_post(me, "public")
+
+      conn(user: me, account: account)
+      |> visit("/post/#{post.id}")
+      |> click_button("Advanced")
+      |> refute_has("[data-role=action_toggle_quote][checked]")
+      |> refute_has("[data-role=action_exceptions_quote]")
+      |> click_button("[data-role=action_exceptions_toggle_quote]", "Allow for some people")
+      |> assert_has("[data-role=action_exceptions_quote]")
+      # the toggle itself is untouched
+      |> refute_has("[data-role=action_toggle_quote][checked]")
+    end
+
     test "mentions post → read/reply/quote toggles all render unchecked and disabled (locked)",
          %{account: account, me: me} do
       post = publish_post(me, "mentions")

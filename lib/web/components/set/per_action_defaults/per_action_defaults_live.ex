@@ -18,7 +18,7 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsLive do
   Builds the full render-ready per-action state in one pass so the template
   can do pure map lookups.
   """
-  def build_states(verb_permissions, preset_boundary, my_circles) do
+  def build_states(verb_permissions, preset_boundary, my_circles, revealed_exceptions \\ []) do
     circles = exception_circles(my_circles)
     locked? = preset_locks_action?(preset_boundary)
 
@@ -39,9 +39,12 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsLive do
           label: action_label(action.key),
           allowed?: allowed?,
           locked?: locked?,
+          # off, so exceptions can be added (revealed by a button when not shown already)
+          offers_exceptions?: not allowed? and not locked? and circles != [],
           show_exceptions?:
             not allowed? and not locked? and circles != [] and
-              (user_overrode_any_verb?(verb_permissions, action.verbs) or
+              (action.key in revealed_exceptions or
+                 user_overrode_any_verb?(verb_permissions, action.verbs) or
                  Enum.any?(exception_checks, fn {_cid, checked?} -> checked? end)),
           exception_checks: exception_checks
         }

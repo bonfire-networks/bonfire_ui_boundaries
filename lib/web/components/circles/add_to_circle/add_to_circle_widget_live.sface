@@ -133,7 +133,7 @@
         |> JS.focus(to: "##{@id}-create-circle")}
         type="button"
         aria-label={l("Back to circles")}
-        class="btn btn-sm btn-ghost btn-circle min-h-11 min-w-11 focus-ring"
+        class="btn btn-sm btn-ghost btn-circle  focus-ring"
       >
         <#Icon iconify="ph:arrow-left" class="w-5 h-5" aria-hidden="true" />
       </button>

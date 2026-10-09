@@ -6,11 +6,11 @@
 >
   <header
     id={"#{@id}-header-#{@section}"}
-    class="sticky top-0 z-sticky border-b-hair border-secondary bg-base-100 px-5 pb-4 pt-5 pr-16 sm:px-6 sm:pb-5 sm:pt-6 sm:pr-16"
+    class="sticky top-0 z-sticky border-b-hair border-divider bg-base-100 px-5 pb-4 pt-5 pr-16 sm:px-6 sm:pb-5 sm:pt-6 sm:pr-16"
     aria-live="polite"
     phx-mounted={JS.focus(to: "##{@id}-heading")}
   >
-    <p class="mb-1 text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-base-content/65">
+    <p class="mb-1 text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-muted">
       {#case @section}
         {#match :overview}{l("Your circles")}
         {#match :create}{l("New circle")}
@@ -55,7 +55,7 @@
           <strong class="font-medium">
             {lp("%{count} circle", "%{count} circles", length(@circles), count: length(@circles))}
           </strong>
-          <span class="text-xs tabular-nums text-base-content/65">
+          <span class="text-xs tabular-nums text-muted">
             {lp(
               "%{count} person organised across them",
               "%{count} people organised across them",
@@ -79,11 +79,11 @@
 
       <ul
         :if={@circles != []}
-        class="border-y-hair border-secondary"
+        class="border-y-hair border-divider"
         aria-labelledby={"#{@id}-summary"}
       >
         {#for circle <- @circles}
-          <li id={"manager-circle-#{id(circle)}"} class="border-b-hair border-secondary last:border-b-0">
+          <li id={"manager-circle-#{id(circle)}"} class="border-b-hair border-divider last:border-b-0">
             <button
               type="button"
               data-role="manage-circle"
@@ -102,7 +102,7 @@
 
               <span class="grid min-w-0 gap-0.5">
                 <strong class="truncate text-sm font-medium">{Circles.circle_name(circle)}</strong>
-                <small class="text-xs tabular-nums text-base-content/65">
+                <small class="text-xs tabular-nums text-muted">
                   {lp(
                     "%{count} person",
                     "%{count} people",
@@ -131,7 +131,7 @@
               </span>
 
               <span
-                class="col-start-4 min-w-14 text-right text-xs font-medium text-base-content/60 transition-colors duration-150 ease-out group-hover:text-primary"
+                class="col-start-4 min-w-14 text-right text-xs font-medium text-muted transition-colors duration-150 ease-out group-hover:text-primary"
                 aria-hidden="true"
               >
                 {l("Manage")}
@@ -143,7 +143,7 @@
 
       <div :if={@circles == []} class="grid justify-items-start gap-2 px-5 py-8 sm:px-6">
         <strong class="text-base font-semibold">{l("No circles yet")}</strong>
-        <p class="max-w-[45ch] text-pretty text-sm leading-relaxed text-base-content/70">
+        <p class="max-w-[45ch] text-pretty text-sm leading-relaxed text-muted">
           {l("Create one to organise people around a relationship, interest, or project.")}
         </p>
         <button
@@ -158,7 +158,7 @@
       </div>
 
       <footer class="flex items-center justify-between gap-4 px-5 pb-safe-offset-5 pt-4 sm:px-6">
-        <p class="max-w-[42ch] text-pretty text-xs leading-relaxed text-base-content/65">
+        <p class="max-w-[42ch] text-pretty text-xs leading-relaxed text-muted">
           {l("Circle organisation is private unless you choose to share a circle.")}
         </p>
         <button
@@ -182,7 +182,7 @@
         {l("Back to all circles")}
       </button>
 
-      <p class="mx-5 mb-5 max-w-[52ch] text-pretty text-sm leading-relaxed text-base-content/70 sm:mx-6">
+      <p class="mx-5 mb-5 max-w-[52ch] text-pretty text-sm leading-relaxed text-muted sm:mx-6">
         {l("Group people around a relationship, shared interest, affiliation, or project.")}
       </p>
 
@@ -220,7 +220,7 @@
       </button>
 
       <div class={
-        "mx-5 mb-5 flex items-center gap-3 rounded-selector border border-secondary bg-base-200 px-3 py-3 sm:mx-6",
+        "mx-5 mb-5 flex items-center gap-3 rounded-selector border border-divider bg-base-200 px-3 py-3 sm:mx-6",
         "mt-5": !is_nil(@circle_id)
       }>
         <span
@@ -238,7 +238,7 @@
               count: e(@selected_circle, :encircles_count, 0) || 0
             )}
           </strong>
-          <small class="text-xs text-base-content/65">
+          <small class="text-xs text-muted">
             {#case Bonfire.UI.Boundaries.GeneralAccessListLive.selected_option(
                 @boundary_preset,
                 @to_boundaries,
@@ -298,7 +298,7 @@
         <h3 id={"#{@id}-discoverability-title"} class="text-base font-semibold">
           {l("Share this circle")}
         </h3>
-        <p class="mt-1.5 max-w-[58ch] text-pretty text-sm leading-relaxed text-base-content/70">
+        <p class="mt-1.5 max-w-[58ch] text-pretty text-sm leading-relaxed text-muted">
           {l(
             "Share a circle when you want others to discover its member list—for example, people posting about a topic or teammates on a project. Choose who can see the circle and its current and future members."
           )}
@@ -318,12 +318,12 @@
       </section>
 
       <section
-        class="mx-5 mt-6 flex flex-col gap-3 border-t-hair border-secondary py-5 sm:mx-6 sm:flex-row sm:items-center sm:justify-between"
+        class="mx-5 mt-6 flex flex-col gap-3 border-t-hair border-divider py-5 sm:mx-6 sm:flex-row sm:items-center sm:justify-between"
         aria-labelledby={"#{@id}-people-title"}
       >
         <div>
           <h3 id={"#{@id}-people-title"} class="text-sm font-medium">{l("People")}</h3>
-          <p class="mt-1 text-xs tabular-nums text-base-content/65">
+          <p class="mt-1 text-xs tabular-nums text-muted">
             {lp(
               "%{count} person in this circle",
               "%{count} people in this circle",
@@ -334,13 +334,13 @@
         </div>
         <div class="flex flex-wrap gap-1">
           <LinkLive
-            class="inline-flex min-h-11 cursor-pointer touch-manipulation items-center rounded-selector px-3 text-sm font-medium text-base-content/70 transition-[background-color,color,transform] duration-150 ease-out hover:bg-base-200 hover:text-primary active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
+            class="inline-flex min-h-11 cursor-pointer touch-manipulation items-center rounded-selector px-3 text-sm font-medium text-muted transition-[background-color,color,transform] duration-150 ease-out hover:bg-base-200 hover:text-primary active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
             to={~p"/circle/#{id(@selected_circle)}"}
           >
             {l("View posts")}
           </LinkLive>
           <LinkLive
-            class="inline-flex min-h-11 cursor-pointer touch-manipulation items-center rounded-selector px-3 text-sm font-medium text-base-content/70 transition-[background-color,color,transform] duration-150 ease-out hover:bg-base-200 hover:text-primary active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
+            class="inline-flex min-h-11 cursor-pointer touch-manipulation items-center rounded-selector px-3 text-sm font-medium text-muted transition-[background-color,color,transform] duration-150 ease-out hover:bg-base-200 hover:text-primary active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2"
             to={~p"/circle/#{id(@selected_circle)}/members"}
           >
             {l("Manage people")}
@@ -349,12 +349,12 @@
       </section>
 
       <section
-        class="mx-5 flex flex-col gap-3 border-t-hair border-secondary pb-safe-offset-6 pt-5 sm:mx-6 sm:flex-row sm:items-start sm:justify-between"
+        class="mx-5 flex flex-col gap-3 border-t-hair border-divider pb-safe-offset-6 pt-5 sm:mx-6 sm:flex-row sm:items-start sm:justify-between"
         aria-labelledby={"#{@id}-delete-title"}
       >
         <div>
           <h3 id={"#{@id}-delete-title"} class="text-sm font-medium">{l("Delete this circle")}</h3>
-          <p class="mt-1 max-w-[42ch] text-pretty text-xs leading-relaxed text-base-content/65">
+          <p class="mt-1 max-w-[42ch] text-pretty text-xs leading-relaxed text-muted">
             {l("People stay in your network, but this grouping and its sharing settings will be removed.")}
           </p>
         </div>
@@ -372,7 +372,7 @@
     {#match :delete}
       <div class="mx-5 mt-5 rounded-selector border border-error/30 bg-error/10 px-4 py-4 sm:mx-6">
         <strong class="text-sm font-semibold text-error">{l("This cannot be undone.")}</strong>
-        <p class="mt-1.5 max-w-[48ch] text-pretty text-sm leading-relaxed text-base-content/70">
+        <p class="mt-1.5 max-w-[48ch] text-pretty text-sm leading-relaxed text-muted">
           {lp(
             "The circle and its sharing settings will be permanently deleted. %{count} person will stay in your network.",
             "The circle and its sharing settings will be permanently deleted. %{count} people will stay in your network.",

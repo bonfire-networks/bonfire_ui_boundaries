@@ -1,9 +1,9 @@
 <div id={@id} data-role="add-to-circles-widget">
   <div id={"#{@id}-circles-list"}>
-    <p class="text-sm text-base-content/70 mb-3">
+    <p class="text-sm text-muted mb-3">
       {l("Choose circles for %{name}.", name: @name || l("this person"))}
     </p>
-    <div class="flex items-center justify-between gap-3 text-xs text-base-content/65 mb-2">
+    <div class="flex items-center justify-between gap-3 text-xs text-muted mb-2">
       <span>{l("Your circles")}</span>
       <span class="tabular-nums" data-role="circle-selection-count" aria-live="polite">
         {l("%{selected} of %{total} selected",
@@ -12,9 +12,9 @@
         )}
       </span>
     </div>
-    <ul class="divide-y divide-base-content/10">
+    <ul class="divide-y divide-divider">
       {#if Enum.empty?(@circles)}
-        <li class="py-6 text-sm text-base-content/70">
+        <li class="py-6 text-sm text-muted">
           {l("No circles yet. Create one to get started.")}
         </li>
       {#else}
@@ -28,7 +28,7 @@
               class={
                 "w-10 h-10 shrink-0 rounded-xl flex items-center justify-center",
                 "bg-primary/10 text-primary": e(circle, :encircle_subjects, nil),
-                "bg-base-content/5 text-base-content/60": !e(circle, :encircle_subjects, nil)
+                "bg-fill text-muted": !e(circle, :encircle_subjects, nil)
               }
               aria-hidden="true"
             >
@@ -50,14 +50,14 @@
                 :if={e(circle, :extra_info, :summary, nil) not in [nil, ""]}
                 id={"#{@id}-circle-#{id(circle)}-description"}
                 data-role="circle-description"
-                class="text-sm leading-relaxed text-base-content/65 mt-1 break-words"
+                class="text-sm leading-relaxed text-muted mt-1 break-words"
               >
                 {e(circle, :extra_info, :summary, nil)}
               </p>
               <span
                 :if={is_integer(e(circle, :encircles_count, nil))}
                 data-role="circle-member-count"
-                class="block text-xs text-base-content/65 tabular-nums mt-1"
+                class="block text-xs text-muted tabular-nums mt-1"
               >
                 {l("%{count} members", count: e(circle, :encircles_count, nil))}
               </span>
@@ -73,7 +73,7 @@
                   phx-disable-with={l("Removing…")}
                   aria-label={l("Remove from %{circle}", circle: e(circle, :named, :name, nil))}
                   type="button"
-                  class="btn btn-sm btn-ghost border-base-content/15 min-h-11 min-w-20 rounded-full font-medium normal-case focus-ring"
+                  class="btn btn-sm btn-ghost border-divider min-h-11 min-w-20 rounded-full font-medium normal-case focus-ring"
                 >
                   {l("Remove")}
                 </button>
@@ -104,15 +104,15 @@
       |> JS.show(to: "##{@id}-new-circle")
       |> JS.focus_first(to: "##{@id}-create-form")}
       type="button"
-      class="flex items-center gap-3 w-full min-h-11 mt-1 text-sm text-base-content/70 hover:text-primary focus-ring rounded-lg"
+      class="flex items-center gap-3 w-full min-h-11 mt-1 text-sm text-muted hover:text-primary focus-ring rounded-lg"
     >
       <span class="w-10 h-8 shrink-0 flex items-center justify-center" aria-hidden="true">
         <#Icon iconify="ph:plus" class="w-5 h-5" />
       </span>
       <span>{l("Create a new circle")}</span>
     </button>
-    <footer class="flex items-center justify-between gap-4 mt-3 pt-3 border-t border-base-content/10">
-      <p class="text-xs text-base-content/65">{l("Changes save automatically")}</p>
+    <footer class="flex items-center justify-between gap-4 mt-3 pt-3 border-t border-divider">
+      <p class="text-xs text-muted">{l("Changes save automatically")}</p>
       <button
         id={"#{@id}-done"}
         type="button"

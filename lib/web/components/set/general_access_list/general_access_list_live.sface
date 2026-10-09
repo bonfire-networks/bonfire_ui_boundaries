@@ -4,7 +4,7 @@
   close_on_select
   wrapper_class="w-full"
   position="bottom-start"
-  trigger_class="btn btn-outline border-hair border-secondary w-full justify-between font-normal"
+  trigger_class="btn btn-outline border-hair border-divider w-full justify-between font-normal"
   panel_class="!w-full max-h-[50vh] overflow-y-auto flex flex-col gap-0.5 p-1.5"
   label={l("Choose who can see and interact with this")}
 >
@@ -38,7 +38,7 @@
         type="button"
         {...@set_opts}
       >
-        <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-base-content/5">
+        <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-fill">
           <Iconify.iconify
             icon={e(Bonfire.Boundaries.Presets.for_preset(slug), :icon, "ph:gear-six-duotone")}
             class="size-5"
@@ -78,7 +78,7 @@
       type="button"
       {...@set_opts}
     >
-      <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-base-content/5">
+      <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-fill">
         {#case e(acl, :icon, nil)}
           {#match nil}
             <#Icon iconify="fluent:door-tag-20-filled" class="size-5" />
@@ -111,7 +111,7 @@
         )}
       type="button"
     >
-      <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-base-content/5">
+      <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-fill">
         <#Icon iconify="ri:settings-4-line" class="size-5" />
       </span>
       <span class="flex min-w-0 flex-1 flex-col">
@@ -144,7 +144,7 @@
       type="button"
       {...@set_opts}
     >
-      <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-base-content/5">
+      <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-fill">
         <Iconify.iconify
           icon={e(Bonfire.Boundaries.Presets.for_preset("private"), :icon, "heroicons-solid:eye-off")}
           class="size-5"

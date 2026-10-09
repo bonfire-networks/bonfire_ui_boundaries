@@ -1,4 +1,4 @@
-<div class="bg-base-content/5 rounded-box w-full">
+<div class="bg-fill rounded-box w-full">
   {#if @is_caretaker}
     <div class="flex items-center gap-3 p-4">
       <#Icon iconify="ph:shield-check-duotone" class="w-5 h-5 shrink-0 text-success" />
@@ -23,7 +23,7 @@
             {permission_or_verb}
           </span>
         </div>
-        <div class="text-xs text-base-content/40 mt-2">{l("Set by the author.")}</div>
+        <div class="text-xs text-subtle mt-2">{l("Set by the author.")}</div>
       {#else}
         <div class="text-sm text-muted">{l("No specific permissions found.")}</div>
       {/if}

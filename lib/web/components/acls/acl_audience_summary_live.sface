@@ -1,7 +1,7 @@
 {#case audiences(@acl_subject_verb_grants)}
   {#match []}
     <div class="text-center py-8 px-4 text-muted">
-      <#Icon iconify="ph:users-three-duotone" class="w-8 h-8 mx-auto mb-2 text-base-content/40" />
+      <#Icon iconify="ph:users-three-duotone" class="w-8 h-8 mx-auto mb-2 text-subtle" />
       <p class="text-sm">{l("This preset doesn't grant any permissions.")}</p>
     </div>
   {#match audiences}
@@ -11,7 +11,7 @@
       </h2>
       <ul
         role="list"
-        class="flex flex-col rounded-lg border border-secondary   divide-hair divide-secondary"
+        class="flex flex-col rounded-lg border border-divider   divide-hair divide-divider"
       >
         {#for %{subject: subject, is_user: is_user, name: name, icon: icon, allowed: allowed, blocked: blocked} <-
             audiences}

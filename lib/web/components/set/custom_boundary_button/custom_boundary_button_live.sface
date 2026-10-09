@@ -5,7 +5,7 @@
   title_text={l("Custom boundaries")}
   without_form
   open_modal_wrapper_class="flex w-full min-w-0"
-  open_btn_wrapper_class="flex min-h-11 sm:min-h-10 items-center px-2 py-1 text-left hover:bg-base-content/5 focus-ring"
+  open_btn_wrapper_class="flex min-h-11 sm:min-h-10 items-center px-2 py-1 text-left hover:bg-fill focus-ring"
 >
   <Bonfire.UI.Boundaries.CustomizeBoundaryLive
     id="customize_boundary_live"

@@ -1,5 +1,5 @@
 <div class="flex items-center boundaries-switches">
-  <div class="border p-1 flex items-center gap-1 border-secondary rounded-xl">
+  <div class="border p-1 flex items-center gap-1 border-divider rounded-xl">
     <button
       data-id={"#{@role}_#{@verb}_can"}
       data-value={"#{@role}_#{@verb}_#{@value}"}
@@ -8,7 +8,7 @@
         "bg-success hover:bg-success text-success-content":
           (@value == :can or @value == true) and not @read_only,
         "bg-success/50 text-success-content/50": (@value == :can or @value == true) and @read_only,
-        "hover:bg-base-content/10": not @read_only,
+        "hover:bg-fill-strong": not @read_only,
         "cursor-not-allowed opacity-50": @read_only,
         "cursor-pointer": not @read_only
       }
@@ -29,7 +29,7 @@
         "text-muted p-1 rounded-lg transition-colors duration-100",
         "bg-neutral hover:bg-neutral text-neutral-content": @value == nil and not @read_only,
         "bg-neutral/50 text-neutral-content/50": @value == nil and @read_only,
-        "hover:bg-base-content/10": not @read_only,
+        "hover:bg-fill-strong": not @read_only,
         "cursor-not-allowed opacity-50": @read_only,
         "cursor-pointer": not @read_only
       }
@@ -51,7 +51,7 @@
         "bg-error hover:bg-error text-error-content":
           (@value == :cannot or @value == false) and not @read_only,
         "bg-error/50 text-error-content/50": (@value == :cannot or @value == false) and @read_only,
-        "hover:bg-base-content/10": not @read_only,
+        "hover:bg-fill-strong": not @read_only,
         "cursor-not-allowed opacity-50": @read_only,
         "cursor-pointer": not @read_only
       }

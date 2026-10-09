@@ -8,7 +8,7 @@
   </h1>
   {#case e(@type, nil)}
     {#match :group}
-      <section class="bg-base-content/5 rounded-lg p-4">
+      <section class="bg-fill rounded-lg p-4">
         <Bonfire.UI.Boundaries.EditAclLive
           acl_subject_verb_grants={@acl_subject_verb_grants}
           setting_boundaries={@setting_boundaries}
@@ -41,7 +41,7 @@
       <div :if={@usage != :ops && (!@read_only || @setting_boundaries == :edit_object)}>
         <div
           :if={!@setting_boundaries && (e(@description, nil) || e(@acl, :extra_info, :summary, nil))}
-          class="p-4 border-b border-secondary"
+          class="p-4 border-b border-divider"
         >
           <span class="text-muted">
             {e(@description, nil) ||

@@ -21,8 +21,8 @@
 {!-- <div x-data="{show_boundary_list: true}">
   <ul :if={@open_boundaries != false} class="pt-2" x-show="show_boundary_list">
     <li class={
-      "flex items-center justify-between flex-1 p-2 mb-2 rounded hover:bg-base-content/10",
-      "bg-base-content/10": @to_boundaries_ids |> Enum.member?("public")
+      "flex items-center justify-between flex-1 p-2 mb-2 rounded hover:bg-fill-strong",
+      "bg-fill-strong": @to_boundaries_ids |> Enum.member?("public")
       }>
       <label
         class="flex items-center w-full"
@@ -68,8 +68,8 @@
     </li>
     
     <li class={
-      "flex items-center justify-between flex-1 p-2 mb-2 rounded hover:bg-base-content/10",
-      "bg-base-content/10": @to_boundaries_ids |> Enum.member?("local")
+      "flex items-center justify-between flex-1 p-2 mb-2 rounded hover:bg-fill-strong",
+      "bg-fill-strong": @to_boundaries_ids |> Enum.member?("local")
     }>
       <label
         class="flex items-center w-full"
@@ -108,8 +108,8 @@
       </label>
     </li>
     <li class={
-      "flex items-center justify-between flex-1 p-2 rounded hover:bg-base-content/10",
-      "bg-base-content/10": @to_boundaries_ids |> Enum.member?("mentions")
+      "flex items-center justify-between flex-1 p-2 rounded hover:bg-fill-strong",
+      "bg-fill-strong": @to_boundaries_ids |> Enum.member?("mentions")
     }>
       <label
         class="flex items-center w-full"

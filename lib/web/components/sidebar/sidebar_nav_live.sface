@@ -4,7 +4,7 @@
       to={~p"/settings/boundaries/circles"}
       class={
         " ",
-        "bg-base-content/10 ": @selected_tab == "circles"
+        "bg-fill-strong ": @selected_tab == "circles"
       }
     >
       <span class="">{l("Circles")}</span>
@@ -16,7 +16,7 @@
       to={~p"/settings/boundaries/roles"}
       class={
         " ",
-        "bg-base-content/10 ": @selected_tab == "roles"
+        "bg-fill-strong ": @selected_tab == "roles"
       }
     >
       <span class="">{l("Roles")}</span>
@@ -28,7 +28,7 @@
       to={~p"/settings/instance/boundaries/roles"}
       class={
         " ",
-        "bg-base-content/10 ": @selected_tab == "roles"
+        "bg-fill-strong ": @selected_tab == "roles"
       }
     >
       {!-- <#Icon
@@ -53,7 +53,7 @@
       to={~p"/settings/boundaries/acls"}
       class={
         " ",
-        "bg-base-content/10 ": @selected_tab == "acls"
+        "bg-fill-strong ": @selected_tab == "acls"
       }
     >
       <span class="">{l("Boundary Presets")}</span>

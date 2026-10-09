@@ -3,7 +3,7 @@
     :if={@state.locked?}
     data-role="permissions_locked_notice"
     id={@parent_id <> "_permissions_locked_notice"}
-    class="flex items-start gap-2 rounded-lg bg-base-content/5 p-3 text-sm text-muted"
+    class="flex items-start gap-2 rounded-lg bg-fill p-3 text-sm text-muted"
   >
     <#Icon iconify="ph:lock-simple-duotone" class="size-5 shrink-0 text-primary" />
     <p>{l(
@@ -21,7 +21,7 @@
       <p :if={section_key == "reading"} class="mb-2 text-sm text-muted">
         {l("Changing reading permissions changes who can access this post.")}
       </p>
-      <div class="flex flex-col divide-y divide-base-content/10 rounded-xl border border-base-content/10 overflow-hidden">
+      <div class="flex flex-col divide-y divide-divider rounded-xl border border-divider overflow-hidden">
         <div :for={action_state <- actions} class="flex flex-col">
           <label class="flex items-center gap-3 p-2 cursor-pointer has-disabled:cursor-default">
             <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -54,7 +54,7 @@
             :if={action_state.offers_exceptions? and not action_state.show_exceptions?}
             type="button"
             data-role={"action_exceptions_toggle_#{action_state.key}"}
-            class="p-2 text-right text-sm text-primary border-t border-secondary hover:bg-base-content/5"
+            class="p-2 text-right text-sm text-primary border-t border-divider hover:bg-fill"
             phx-click={JS.push("reveal_action_exceptions",
               value: %{"action" => action_state.key},
               target: "##{@parent_id}"
@@ -66,7 +66,7 @@
           <div
             :if={action_state.show_exceptions?}
             data-role={"action_exceptions_#{action_state.key}"}
-            class="flex flex-col gap-2 p-3 border-t border-secondary bg-base-content/5"
+            class="flex flex-col gap-2 p-3 border-t border-divider bg-fill"
           >
             <p class="text-sm font-medium">{l("Allow exceptions")}</p>
             <p class="text-xs text-muted">

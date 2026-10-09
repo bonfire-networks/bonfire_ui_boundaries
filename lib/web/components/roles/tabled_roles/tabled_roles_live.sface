@@ -1,4 +1,4 @@
-<div class="w-full bg-base-content/5 relative overflow-y-visible overflow-x-auto">
+<div class="w-full bg-fill relative overflow-y-visible overflow-x-auto">
   {#if Enum.count(@roles_with_verbs || []) > 0}
     <table class="table table-zebra">
       <thead class="text-xs uppercase sticky top-0 z-10 bg-base-100">
@@ -55,7 +55,7 @@
                   </div>
                 {#match _}
                   <div data-value={"#{role}_#{verb}_undefined"}>
-                    <#Icon iconify="heroicons-solid:minus" class="text-base-content/30 w-5 h-5 text-center mx-auto" />
+                    <#Icon iconify="heroicons-solid:minus" class="text-subtle w-5 h-5 text-center mx-auto" />
                     <span class="sr-only">{l("Undefined")}</span>
                   </div>
               {/case}

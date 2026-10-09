@@ -1,5 +1,5 @@
 <div id="circle_view" class="w-full max-w-full flex flex-col feed">
-  <header class="flex flex-col px-4 pt-5 !pb-0 bonfire-wrapper !border-b border-hair border-secondary">
+  <header class="flex flex-col px-4 pt-5 !pb-0 bonfire-wrapper !border-b border-hair border-divider">
     <div data-role="circle_identity" class="flex items-start gap-4">
       {!--
       {#if Enum.count(@preview_members) >= 4}
@@ -74,7 +74,7 @@
             >{e(@circle, :creator_name, "")}</LinkLive>
           </span>
           {#if @boundary_preset}
-            <span :if={e(@circle, :creator_username, nil)} class="text-base-content/30" aria-hidden="true">·</span>
+            <span :if={e(@circle, :creator_username, nil)} class="text-subtle" aria-hidden="true">·</span>
             <StatelessComponent
               module={maybe_component(Bonfire.UI.Boundaries.BoundariesPresetNameLive, @__context__)}
               boundary_preset={@boundary_preset}

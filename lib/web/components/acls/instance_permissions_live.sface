@@ -29,10 +29,10 @@
     class="flex items-start gap-3 rounded-lg bg-warning/10 border border-warning/30 p-3 text-sm"
   >
     <#Icon iconify="ph:warning-duotone" class="w-5 h-5 text-warning shrink-0 mt-0.5" />
-    <span class="text-base-content/80">{l("You're editing instance-wide permissions. Changes take effect immediately.")}</span>
+    <span class="text-muted">{l("You're editing instance-wide permissions. Changes take effect immediately.")}</span>
   </div>
 
-  <ul role="list" class="flex -mx-card flex-col divide-hair divide-secondary">
+  <ul role="list" class="flex -mx-card flex-col divide-hair divide-divider">
     {#for capability <- @capabilities_with_ids}
       <li class="p-4 flex flex-col gap-3">
         <div class="flex items-start gap-3">
@@ -67,7 +67,7 @@
                       "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors cursor-pointer",
                       "bg-success/15 border-success/40 text-base-content": state == :on,
                       "bg-warning/10 border-warning/40 text-base-content": state == :partial,
-                      "border-secondary text-base-content/80 hover:bg-base-content/5": state == :off
+                      "border-divider text-muted hover:bg-fill": state == :off
                     }
                   >
                     {#if state == :on}
@@ -75,7 +75,7 @@
                     {#elseif state == :partial}
                       <#Icon iconify="ph:minus-square-fill" class="w-4 h-4 text-warning" />
                     {#else}
-                      <#Icon iconify="ph:square" class="w-4 h-4 text-base-content/40" />
+                      <#Icon iconify="ph:square" class="w-4 h-4 text-subtle" />
                     {/if}
                     <span>{audience.name}</span>
                   </button>

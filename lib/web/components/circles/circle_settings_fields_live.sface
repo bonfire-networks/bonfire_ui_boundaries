@@ -26,7 +26,7 @@
 
   <div class="grid gap-1.5">
     <label for={"#{@id_prefix}-circle-description"} class="text-sm font-medium">
-      {l("Description")} <span class="ml-1 align-baseline text-xs font-normal text-base-content/65">{l("Optional")}</span>
+      {l("Description")} <span class="ml-1 align-baseline text-xs font-normal text-muted">{l("Optional")}</span>
     </label>
     <textarea
       id={"#{@id_prefix}-circle-description"}

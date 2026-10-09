@@ -7,7 +7,7 @@
     position="bottom-start"
     wrapper_class="w-full min-w-0"
     wrapper_opts={["data-boundary": "#composer_container"]}
-    trigger_class="flex w-full min-h-12 items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-4 text-left hover:bg-base-content/5 focus-ring"
+    trigger_class="flex w-full min-h-12 items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-4 text-left hover:bg-fill focus-ring"
     panel_class="!w-72 max-w-[calc(100vw-2rem)] !p-0"
     trigger_opts={["phx-click": JS.push("load", target: "#" <> @id <> "_component")]}
     label={if @mode == :destination, do: l("Post in"), else: l("Visible to")}
@@ -157,7 +157,7 @@
         <p :if={@more_groups?} class="p-2 text-xs text-muted">{l("Keep typing to narrow the group results.")}</p>
       </div>
 
-      <div :if={slot_assigned?(:default)} class="mt-1 shrink-0 border-t border-base-content/10 pt-1">
+      <div :if={slot_assigned?(:default)} class="mt-1 shrink-0 border-t border-divider pt-1">
         <#slot />
       </div>
     </div>

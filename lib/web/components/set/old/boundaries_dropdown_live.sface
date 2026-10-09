@@ -20,28 +20,28 @@
         style="display: none"
         class="font-normal normal-case btn btn-ghost btn-sm"
       >
-        <#Icon solid="Globe" class="w-4 h-4 text-base-content text-opacity-70" />
+        <#Icon solid="Globe" class="w-4 h-4 text-muted" />
       </div>
       <div
         x-show="to_boundaries.length==1 && to_boundaries[0] == 'local'"
         style="display: none"
         class="font-normal normal-case btn btn-ghost btn-sm"
       >
-        <#Icon solid="LocationMarker" class="w-4 h-4 text-base-content text-opacity-70" />
+        <#Icon solid="LocationMarker" class="w-4 h-4 text-muted" />
       </div>
       <div
         x-show="to_boundaries.length==1 && to_boundaries[0] == 'mentions'"
         style="display: none"
         class="font-normal normal-case btn btn-ghost btn-sm"
       >
-        <#Icon solid="AtSymbol" class="w-4 h-4 text-base-content text-opacity-70" />
+        <#Icon solid="AtSymbol" class="w-4 h-4 text-muted" />
       </div>
       <div
         x-show="to_boundaries.length==1 && to_boundaries[0] == 'message'"
         style="display: none"
         class="font-normal normal-case btn btn-ghost btn-sm"
       >
-        <#Icon solid="Chat-alt-2" class="w-4 h-4 text-base-content text-opacity-70" />
+        <#Icon solid="Chat-alt-2" class="w-4 h-4 text-muted" />
       </div>
     </div>
 
@@ -73,8 +73,8 @@
       >
         <#Icon solid="Globe" />
         <div class="flex-1">
-          <div class="text-sm font-medium text-base-content text-opacity-80">{l("Public")}</div>
-          <p class="text-xs text-base-content text-opacity-80">{l("Publicly visible to everyone on the fediverse and in search engines")}</p>
+          <div class="text-sm font-medium text-muted">{l("Public")}</div>
+          <p class="text-xs text-muted">{l("Publicly visible to everyone on the fediverse and in search engines")}</p>
         </div>
       </div>
       <div
@@ -83,8 +83,8 @@
       >
         <#Icon solid="LocationMarker" />
         <div class="flex-1">
-          <div class="text-sm font-medium text-base-content text-opacity-80">{l("Local Instance")}</div>
-          <p class="text-xs text-base-content text-opacity-80">{l("Visible to all members of this instance")}</p>
+          <div class="text-sm font-medium text-muted">{l("Local Instance")}</div>
+          <p class="text-xs text-muted">{l("Visible to all members of this instance")}</p>
         </div>
       </div>
       <div
@@ -93,8 +93,8 @@
       >
         <#Icon solid="AtSymbol" />
         <div class="flex-1">
-          <div class="text-sm font-medium text-base-content text-opacity-80">{l("Mentions")}</div>
-          <p class="text-xs text-base-content text-opacity-80">{l("Visible only to those mentioned, across the fediverse")}</p>
+          <div class="text-sm font-medium text-muted">{l("Mentions")}</div>
+          <p class="text-xs text-muted">{l("Visible only to those mentioned, across the fediverse")}</p>
         </div>
       </div>
     </div>
@@ -104,8 +104,8 @@
     >
       <#Icon solid="Chat-alt-2" />
       <div class="flex-1">
-        <div class="text-sm font-medium text-base-content text-opacity-80">{l("Message")}</div>
-        <p class="text-xs text-base-content text-opacity-80">{l("Visible only to people included in this message thread:")}
+        <div class="text-sm font-medium text-muted">{l("Message")}</div>
+        <p class="text-xs text-muted">{l("Visible only to people included in this message thread:")}
           {#for {name, _id} <- @to_circles}
             <span class="text-xs badge">{name}</span>
           {/for}

@@ -28,7 +28,7 @@
             </div>
           </summary>
           <ul> -->
-      <li class="m-1 border-t border-secondary" />
+      <li class="m-1 border-t border-divider" />
       {#if @hide_object}
         <li data-role="hide_modal" class="">
           {!-- WIP - TODO: add the boundary to the extra object's custom object ACL --}

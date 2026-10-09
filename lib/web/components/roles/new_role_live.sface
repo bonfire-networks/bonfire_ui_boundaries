@@ -4,7 +4,7 @@
       <div class="w-16 h-16 rounded-full flex place-content-center items-center bg-info/30">
         <#Icon iconify="mingcute:hat-fill" class="w-8 h-8 text-info" />
       </div>
-      <div class="text-center font-bold text-lg mt-3">{l("Create a new %{user_or_group_or_instance} role",
+      <div class="text-center type-heading mt-3">{l("Create a new %{user_or_group_or_instance} role",
           user_or_group_or_instance: Types.object_type_display(@scope_type)
         )}</div>
       <p class="text-sm text-center mt-1">{l("Use roles to organize how users can interact with you and with your contents")}</p>

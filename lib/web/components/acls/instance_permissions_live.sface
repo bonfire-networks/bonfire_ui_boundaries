@@ -26,7 +26,7 @@
   <div
     :if={@edit_mode}
     role="note"
-    class="flex items-start gap-3 rounded-lg bg-warning/10 border border-warning/30 p-3 text-sm"
+    class="flex items-start gap-3 rounded-box bg-warning/10 border border-warning/30 p-3 text-sm"
   >
     <#Icon iconify="ph:warning-duotone" class="w-5 h-5 text-warning shrink-0 mt-0.5" />
     <span class="text-muted">{l("You're editing instance-wide permissions. Changes take effect immediately.")}</span>

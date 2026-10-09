@@ -364,7 +364,7 @@
   {/if}
 
   {!-- <:action_btns>
-      <button data-id="block" type="submit" class="normal-case rounded btn btn-error btn-sm">
+      <button data-id="block" type="submit" class="normal-case btn btn-error btn-sm">
         <span class="text-left truncate ellipsis">{l("Block %{user_or_instance_name}", user_or_instance_name: @label)}</span>
       </button>
     </:action_btns> --}

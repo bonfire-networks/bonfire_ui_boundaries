@@ -53,7 +53,7 @@
         <summary class="btn btn-active btn-outline btn-sm">
           {l("Add a boundary preset")}
         </summary>
-        <ul class="z-[1] menu shadow bg-base-200 rounded-lg p-0">
+        <ul class="z-[1] menu shadow bg-base-200 rounded-box p-0">
           <Bonfire.UI.Boundaries.BoundariesGeneralAccessLive
             set_action="Bonfire.Boundaries:add_object_acl"
             set_opts={%{"phx-value-object_id" => @object_id}}
@@ -80,7 +80,7 @@
 
             <div class="flex items-center gap-2">
               <div class="dropdown dropdown-end">
-                <label tabindex="0" class="rounded btn btn-square btn-ghost btn-sm">
+                <label tabindex="0" class="btn btn-square btn-ghost btn-sm">
                   <#Icon iconify="ph:dots-three-outline-vertical-fill" class="w-4 h-4" />
                 </label>
                 <ul tabindex="0" class="w-48 p-1 rounded shadow dropdown-content menu bg-base-200">

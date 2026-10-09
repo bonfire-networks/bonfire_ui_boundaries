@@ -14,7 +14,7 @@
         {#for circle <- e(@circles, [])}
           <li class="rounded-md bg-fill">
             <LinkLive
-              class="block rounded-md hover:bg-fill"
+              class="block rounded-selector hover:bg-fill"
               to={~p"/boundaries/circle/" <> id(circle)}
             >
               <div class="flex items-center gap-3 p-3">

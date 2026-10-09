@@ -11,7 +11,7 @@
       </h2>
       <ul
         role="list"
-        class="flex flex-col rounded-lg border border-divider   divide-hair divide-divider"
+        class="flex flex-col rounded-box border border-divider divide-hair divide-divider"
       >
         {#for %{subject: subject, is_user: is_user, name: name, icon: icon, allowed: allowed, blocked: blocked} <-
             audiences}

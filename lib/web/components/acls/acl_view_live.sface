@@ -2,7 +2,7 @@
   <h2
     :if={e(@acl, :named, :name, nil) || e(@acl, :stereotyped, :named, :name, nil)}
     data-role="acl_view_name"
-    class="text-lg font-medium text-base-content"
+    class="type-heading text-base-content"
   >
     {e(@acl, :named, :name, nil) || e(@acl, :stereotyped, :named, :name, nil)}
   </h2>
@@ -10,7 +10,7 @@
   <div
     role="note"
     data-role="read_only_notice"
-    class="flex items-start gap-3 rounded-lg bg-fill border border-divider p-3"
+    class="flex items-start gap-3 rounded-box bg-fill border border-divider p-3"
   >
     <#Icon iconify="ph:lock-simple-duotone" class="w-5 h-5 text-muted shrink-0 mt-0.5" />
     <div class="text-sm">

@@ -6,7 +6,7 @@
             GA
         </div> --}
         <div class="flex flex-col ml-4">
-          <h3 class="text-2xl font-bold text-base-content opacity-80">{e(@circle, :named, :name, nil) || e(@circle, :stereotyped, :named, :name, nil) ||
+          <h3 class="type-title text-base-content opacity-80">{e(@circle, :named, :name, nil) || e(@circle, :stereotyped, :named, :name, nil) ||
               l("Untitled circle")}</h3>
           {!-- <p class="mt-1 text-base font-regular text-base-content opacity-80">This is a sample description to help remember what this circle is about.</p> --}
           <div :if={!e(@circle, :stereotyped, nil)} class="flex items-center mt-3 space-x-3">
@@ -22,7 +22,7 @@
   <div class="mt-8">
     <div class="block" x-cloak x-data="{ adding: false, removing: false }">
       <h3 class="mb-2 font-sm text-medium text-base-content opacity-80">Circle Members</h3>
-      <div class="relative overflow-hidden border rounded-lg drag_drop__container__to">
+      <div class="relative overflow-hidden border rounded-box drag_drop__container__to">
         <form :on-change={if !@read_only, do: "Bonfire.Boundaries.Circles:circle_edit"}>
           <input type="hidden" name="circle[id]" value={e(@circle, :id, "")}>
           <input type="hidden" id="circle_changed" name="circle_changed" value="0">
@@ -93,7 +93,7 @@
 
       <div :if={!@read_only}>
         <h3 class="mt-4 mb-2 font-sm text-medium text-base-content opacity-80">Suggestions</h3>
-        <div class="relative overflow-hidden border rounded-lg drag_drop__container__from">
+        <div class="relative overflow-hidden border rounded-box drag_drop__container__from">
           <ul
             id="circle_suggestions"
             class="flex flex-col  -2"

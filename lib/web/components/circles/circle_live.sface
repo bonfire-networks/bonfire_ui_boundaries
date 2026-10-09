@@ -4,7 +4,7 @@
       {!--
       {#if Enum.count(@preview_members) >= 4}
         <div
-          class="w-16 h-16 rounded-2xl overflow-hidden grid grid-cols-2 grid-rows-2 shrink-0 ring-1 ring-base-content/10 bg-base-200"
+          class="w-16 h-16 rounded-box overflow-hidden grid grid-cols-2 grid-rows-2 shrink-0 ring-1 ring-base-content/10 bg-base-200"
           aria-label={l("Circle member preview")}
         >
           {#for member <- Enum.take(@preview_members, 4)}
@@ -21,7 +21,7 @@
         </div>
       {#else}
         <div
-          class="w-16 h-16 rounded-2xl bg-secondary/15 flex items-center justify-center shrink-0 ring-1 ring-base-content/5"
+          class="w-16 h-16 rounded-box bg-secondary/15 flex items-center justify-center shrink-0 ring-1 ring-base-content/5"
           aria-hidden="true"
         >
           <#Icon iconify="ph:circle-duotone" class="w-8 h-8 text-secondary" />

@@ -58,7 +58,7 @@
           <Dropdown
             id={"edit_acl_menu_#{subject_id}"}
             position="bottom-end"
-            trigger_class="rounded btn btn-square btn-ghost btn-sm"
+            trigger_class="btn btn-square btn-ghost btn-sm"
             label={l("Options")}
           >
             <:trigger>

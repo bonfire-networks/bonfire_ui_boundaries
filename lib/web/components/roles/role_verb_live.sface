@@ -20,7 +20,7 @@
               <div class="flex-1 text-sm font-medium capitalize">
                 {Bonfire.Boundaries.Verbs.verb_name(verb)}
               </div>
-              <div class="text-[13px] text-muted">{Bonfire.Boundaries.Verbs.verb_summary(verb)}</div>
+              <div class="text-sm text-muted">{Bonfire.Boundaries.Verbs.verb_summary(verb)}</div>
             </div>
           </div>
       {/case}

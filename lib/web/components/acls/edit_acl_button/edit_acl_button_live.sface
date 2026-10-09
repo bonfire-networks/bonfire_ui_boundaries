@@ -41,7 +41,7 @@
       </form>
       <div
         :if={!e(@acl, :stereotyped, nil)}
-        class="p-4 mt-6 border rounded-lg bg-error/5 border-error/30"
+        class="p-4 mt-6 border rounded-box bg-error/5 border-error/30"
       >
         <div class="flex items-center justify-between space-x-8">
           <div class="flex flex-col">

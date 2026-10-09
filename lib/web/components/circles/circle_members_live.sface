@@ -48,7 +48,7 @@
                 )
                 |> JS.toggle_class("rotate-180", to: "#add_url_caret")
                 |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: "#add_url_toggle")}
-                class="inline-flex items-center gap-2 self-start rounded-lg px-2 py-1.5 -ms-2 text-sm font-medium text-muted transition-colors hover:bg-fill hover:text-base-content"
+                class="inline-flex items-center gap-2 self-start rounded-selector px-2 py-1.5 -ms-2 text-sm font-medium text-muted transition-colors hover:bg-fill hover:text-base-content"
               >
                 <#Icon iconify="ph:globe-hemisphere-west-duotone" class="w-4 h-4 shrink-0 text-muted" />
                 <span>{l("Add by URL or domain")}</span>

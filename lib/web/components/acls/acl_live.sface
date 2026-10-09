@@ -8,7 +8,7 @@
   </h1>
   {#case e(@type, nil)}
     {#match :group}
-      <section class="bg-fill rounded-lg p-4">
+      <section class="bg-fill rounded-box p-4">
         <Bonfire.UI.Boundaries.EditAclLive
           acl_subject_verb_grants={@acl_subject_verb_grants}
           setting_boundaries={@setting_boundaries}

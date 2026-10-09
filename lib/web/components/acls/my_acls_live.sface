@@ -22,7 +22,7 @@
         {#match {custom_acls, system_acls}}
           <ul role="list" class="list">
             {#if custom_acls != []}
-              <li class="p-4 pb-2 text-xs text-meta break-[word] tracking-wide">{l("Your custom presets")}</li>
+              <li class="p-4 pb-2 text-xs text-sm break-[word] tracking-wide">{l("Your custom presets")}</li>
               {#for acl <- custom_acls}
                 <li class="list-row">
                   <#Icon iconify="ph:intersection-duotone" class="w-7 h-7 text-primary" />
@@ -44,7 +44,7 @@
             {/if}
 
             {#if system_acls != []}
-              <li class="p-4 pb-2 flex items-center gap-2 text-xs text-meta break-[word] tracking-wide">
+              <li class="p-4 pb-2 flex items-center gap-2 text-xs text-sm break-[word] tracking-wide">
                 <#Icon iconify="ph:lock-simple-duotone" class="w-4 h-4" />
                 <span>{l("System presets")}</span>
                 <span class="font-normal normal-case">· {l("read-only")}</span>

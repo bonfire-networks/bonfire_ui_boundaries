@@ -91,7 +91,7 @@
           phx-click="Bonfire.UI.Common.SmartInput:select_personal_destination"
           phx-target={@event_target || "#smart_input"}
           aria-pressed={"#{is_nil(@context_group)}"}
-          class="flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 focus-ring"
+          class="flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded-selector px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 focus-ring"
         >
           <#Icon iconify="ph:user-circle-fill" class="size-4 text-primary" />
           {l("Your profile")}
@@ -107,7 +107,7 @@
           phx-click="Bonfire.UI.Common.SmartInput:select_audience"
           phx-value-id={audience_id}
           phx-target={@event_target || "#smart_input"}
-          class="flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 aria-pressed:text-primary focus-ring"
+          class="flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded-selector px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 aria-pressed:text-primary focus-ring"
         >
           <Iconify.iconify
             icon={e(meta, :icon, nil) || "ph:users-duotone"}
@@ -125,7 +125,7 @@
           phx-click="Bonfire.UI.Common.SmartInput:toggle_audience_circle"
           phx-value-id={circle.id}
           phx-target={@event_target || "#smart_input"}
-          class="group flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 aria-pressed:text-primary focus-ring"
+          class="group flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded-selector px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 aria-pressed:text-primary focus-ring"
         >
           <#Icon iconify="ph:circles-three" class="size-4 shrink-0 text-primary" />
           <span class="min-w-0 grow break-words">{e(circle, :named, :name, "")}</span>
@@ -141,7 +141,7 @@
           phx-click="Bonfire.UI.Common.SmartInput:select_audience_group"
           phx-value-id={group.id}
           phx-target={@event_target || "#smart_input"}
-          class="flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 aria-pressed:text-primary focus-ring"
+          class="flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded-selector px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 aria-pressed:text-primary focus-ring"
         >
           <#Icon iconify="ph:users-three-duotone" class="size-4 shrink-0 text-primary" />
           <span class="min-w-0 break-words">{group.name}</span>

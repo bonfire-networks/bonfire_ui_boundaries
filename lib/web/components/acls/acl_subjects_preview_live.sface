@@ -15,7 +15,7 @@
                 e(subject, :character, :username, nil) || id(subject)}
               class="w-5 h-5 rounded-full"
               is_remote={!check_is_local?(subject, preload_if_needed: false)}
-              bg_class="rounded-xl"
+              bg_class="rounded-box"
             />
           {#else}
             <span

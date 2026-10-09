@@ -3,7 +3,7 @@
     :if={@state.locked?}
     data-role="permissions_locked_notice"
     id={@parent_id <> "_permissions_locked_notice"}
-    class="flex items-start gap-2 rounded-lg bg-fill p-3 text-sm text-muted"
+    class="flex items-start gap-2 rounded-box bg-fill p-3 text-sm text-muted"
   >
     <#Icon iconify="ph:lock-simple-duotone" class="size-5 shrink-0 text-primary" />
     <p>{l(
@@ -17,14 +17,14 @@
       data-role={"permission_#{section_key}"}
       aria-labelledby={@parent_id <> "_" <> section_key}
     >
-      <h3 id={@parent_id <> "_" <> section_key} class="mb-2 text-sm font-semibold">{title}</h3>
+      <h3 id={@parent_id <> "_" <> section_key} class="mb-2 text-sm font-bold">{title}</h3>
       <p :if={section_key == "reading"} class="mb-2 text-sm text-muted">
         {l("Changing reading permissions changes who can access this post.")}
       </p>
-      <div class="flex flex-col divide-y divide-divider rounded-xl border border-divider overflow-hidden">
+      <div class="flex flex-col divide-y divide-divider rounded-box border border-divider overflow-hidden">
         <div :for={action_state <- actions} class="flex flex-col">
           <label class="flex items-center gap-3 p-2 cursor-pointer has-disabled:cursor-default">
-            <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-box bg-primary/10 text-primary">
               <Iconify.iconify icon={action_state.icon} class="size-5" />
             </span>
             <span class="flex-1 min-w-0 text-sm font-medium text-base-content">

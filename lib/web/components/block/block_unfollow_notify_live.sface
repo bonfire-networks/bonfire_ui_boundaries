@@ -1,4 +1,4 @@
-<label class="flex gap-3 items-start p-3 mb-3 rounded cursor-pointer bg-fill">
+<label class="flex gap-3 items-start p-3 mb-3 rounded-selector cursor-pointer bg-fill">
   <input
     data-role="also_unfollow_and_notify"
     type="checkbox"

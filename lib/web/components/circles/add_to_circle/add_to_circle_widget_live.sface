@@ -26,7 +26,7 @@
           >
             <div
               class={
-                "w-10 h-10 shrink-0 rounded-xl flex items-center justify-center",
+                "w-10 h-10 shrink-0 rounded-box flex items-center justify-center",
                 "bg-primary/10 text-primary": e(circle, :encircle_subjects, nil),
                 "bg-fill text-muted": !e(circle, :encircle_subjects, nil)
               }
@@ -104,7 +104,7 @@
       |> JS.show(to: "##{@id}-new-circle")
       |> JS.focus_first(to: "##{@id}-create-form")}
       type="button"
-      class="flex items-center gap-3 w-full min-h-11 mt-1 text-sm text-muted hover:text-primary focus-ring rounded-lg"
+      class="flex items-center gap-3 w-full min-h-11 mt-1 text-sm text-muted hover:text-primary focus-ring rounded-box"
     >
       <span class="w-10 h-8 shrink-0 flex items-center justify-center" aria-hidden="true">
         <#Icon iconify="ph:plus" class="w-5 h-5" />

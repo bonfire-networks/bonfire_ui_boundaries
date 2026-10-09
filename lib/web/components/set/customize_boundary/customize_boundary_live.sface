@@ -3,7 +3,7 @@
     <p class="text-sm text-muted mb-3">{l("Changes apply immediately to this draft.")}</p>
     <section
       data-role="permissions_audience_summary"
-      class="mb-4 rounded-xl border border-primary/15 bg-primary/5 p-4"
+      class="mb-4 rounded-box border border-primary/15 bg-primary/5 p-4"
     >
       <p class="mb-2 text-xs font-medium text-muted">{l("Base audience")}</p>
       <Bonfire.UI.Boundaries.BoundariesPresetNameLive

@@ -10,7 +10,7 @@
     aria-live="polite"
     phx-mounted={JS.focus(to: "##{@id}-heading")}
   >
-    <p class="mb-1 text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-muted">
+    <p class="mb-1 type-overline text-muted">
       {#case @section}
         {#match :overview}{l("Your circles")}
         {#match :create}{l("New circle")}
@@ -20,7 +20,7 @@
     </p>
     <h2
       id={"#{@id}-heading"}
-      class="text-balance text-xl font-semibold tracking-[-0.025em] focus-visible:outline-2 focus-visible:outline-offset-2 sm:text-2xl"
+      class="text-balance text-xl font-bold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-2 sm:text-2xl"
       tabindex="-1"
     >
       {#case @section}
@@ -94,7 +94,7 @@
               class="group grid min-h-17 w-full cursor-pointer touch-manipulation grid-cols-[2.25rem_minmax(0,1fr)_auto_4rem] items-center gap-3 px-5 py-2 text-left transition-[background-color,transform] duration-150 ease-out hover:bg-base-200/70 active:scale-[0.99] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-2 focus-visible:-outline-offset-2 sm:px-6"
             >
               <span
-                class="grid size-9 place-items-center rounded-full bg-primary/15 text-[0.6875rem] font-bold tracking-[-0.02em] text-primary"
+                class="grid size-9 place-items-center rounded-full bg-primary/15 text-sm font-bold tracking-tight text-primary"
                 aria-hidden="true"
               >
                 {Bonfire.UI.Boundaries.WidgetCirclesLive.circle_initials(Circles.circle_name(circle))}
@@ -142,7 +142,7 @@
       </ul>
 
       <div :if={@circles == []} class="grid justify-items-start gap-2 px-5 py-8 sm:px-6">
-        <strong class="text-base font-semibold">{l("No circles yet")}</strong>
+        <strong class="text-base font-bold">{l("No circles yet")}</strong>
         <p class="max-w-[45ch] text-pretty text-sm leading-relaxed text-muted">
           {l("Create one to organise people around a relationship, interest, or project.")}
         </p>
@@ -224,7 +224,7 @@
         "mt-5": !is_nil(@circle_id)
       }>
         <span
-          class="grid size-9 shrink-0 place-items-center rounded-full bg-primary/15 text-[0.6875rem] font-bold tracking-[-0.02em] text-primary"
+          class="grid size-9 shrink-0 place-items-center rounded-full bg-primary/15 text-sm font-bold tracking-tight text-primary"
           aria-hidden="true"
         >
           {Bonfire.UI.Boundaries.WidgetCirclesLive.circle_initials(Circles.circle_name(@selected_circle))}
@@ -295,7 +295,7 @@
         class="mx-5 mt-6 rounded-selector border border-info/30 bg-info/10 p-4 sm:mx-6"
         aria-labelledby={"#{@id}-discoverability-title"}
       >
-        <h3 id={"#{@id}-discoverability-title"} class="text-base font-semibold">
+        <h3 id={"#{@id}-discoverability-title"} class="text-base font-bold">
           {l("Share this circle")}
         </h3>
         <p class="mt-1.5 max-w-[58ch] text-pretty text-sm leading-relaxed text-muted">
@@ -371,7 +371,7 @@
       </section>
     {#match :delete}
       <div class="mx-5 mt-5 rounded-selector border border-error/30 bg-error/10 px-4 py-4 sm:mx-6">
-        <strong class="text-sm font-semibold text-error">{l("This cannot be undone.")}</strong>
+        <strong class="text-sm font-bold text-error">{l("This cannot be undone.")}</strong>
         <p class="mt-1.5 max-w-[48ch] text-pretty text-sm leading-relaxed text-muted">
           {lp(
             "The circle and its sharing settings will be permanently deleted. %{count} person will stay in your network.",

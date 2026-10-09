@@ -546,7 +546,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
       {:noreply,
        socket
        |> assign_flash(:info, "Role created!")
-       |> redirect_to(current_url(socket))}
+       # TODO: assign the changed roles instead of reloading the page
+       |> redirect_to(current_url(socket), reload: true)}
     end
   end
 
@@ -580,7 +581,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
         {:noreply,
          socket
          |> assign_flash(:info, l("Role edited!"))
-         |> redirect_to(current_url(socket))}
+         # TODO: assign the changed roles instead of reloading the page
+         |> redirect_to(current_url(socket), reload: true)}
       else
         error ->
           error(error, l("Could not edit role"))
@@ -623,7 +625,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
         {:noreply,
          socket
          |> assign_flash(:info, l("Role deleted."))
-         |> redirect_to(current_url(socket))}
+         # TODO: assign the changed roles instead of reloading the page
+         |> redirect_to(current_url(socket), reload: true)}
       else
         error ->
           error(error, l("Could not delete role"))

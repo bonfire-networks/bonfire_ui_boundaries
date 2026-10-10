@@ -4,7 +4,7 @@
       {!--
       {#if Enum.count(@preview_members) >= 4}
         <div
-          class="w-16 h-16 rounded-box overflow-hidden grid grid-cols-2 grid-rows-2 shrink-0 ring-1 ring-base-content/10 bg-base-200"
+          class="size-16 rounded-box overflow-hidden grid grid-cols-2 grid-rows-2 shrink-0 ring-1 ring-base-content/10 bg-base-200"
           aria-label={l("Circle member preview")}
         >
           {#for member <- Enum.take(@preview_members, 4)}
@@ -21,10 +21,10 @@
         </div>
       {#else}
         <div
-          class="w-16 h-16 rounded-box bg-secondary/15 flex items-center justify-center shrink-0 ring-1 ring-base-content/5"
+          class="size-16 rounded-box bg-secondary/15 flex items-center justify-center shrink-0 ring-1 ring-base-content/5"
           aria-hidden="true"
         >
-          <#Icon iconify="ph:circle-duotone" class="w-8 h-8 text-secondary" />
+          <#Icon iconify="ph:circle-duotone" class="size-8 text-secondary" />
         </div>
       {/if}
       --}
@@ -56,7 +56,7 @@
                 />
 
                 <:open_btn>
-                  <#Icon iconify="ph:sliders-horizontal-duotone" class="w-5 h-5" aria-hidden="true" />
+                  <#Icon iconify="ph:sliders-horizontal-duotone" class="size-5" aria-hidden="true" />
                   <span class="hidden sm:inline" aria-hidden="true">{l("Manage")}</span>
                   <span class="sr-only">{l("Edit circle")}</span>
                 </:open_btn>
@@ -80,7 +80,7 @@
               boundary_preset={@boundary_preset}
               with_icon
               with_label
-              icon_class="w-4 h-4 text-muted"
+              icon_class="size-4 text-muted"
               class="text-muted"
             />
           {/if}
@@ -101,7 +101,7 @@
           {#for member <- @preview_members}
             <Bonfire.UI.Common.AvatarLive
               parent_id={deterministic_dom_id(__MODULE__, e(member, :subject_id, nil), "circle_preview", @parent_id)}
-              class="w-8 h-8 rounded-full ring-2 ring-base-100"
+              class="size-8 rounded-full ring-2 ring-base-100"
               src={Media.avatar_url(e(member, :subject, nil))}
               user_id={e(member, :subject_id, nil)}
               title={e(member, :subject, :profile, :name, "")}
@@ -124,7 +124,7 @@
       </div>
 
       <div :if={@is_member} class="flex items-center gap-1.5 min-h-11">
-        <#Icon iconify="ph:check-circle-duotone" class="w-4 h-4 text-success" aria-hidden="true" />
+        <#Icon iconify="ph:check-circle-duotone" class="size-4 text-success" aria-hidden="true" />
         <span class="text-sm font-medium text-success">{l("You're in this circle")}</span>
       </div>
     </div>

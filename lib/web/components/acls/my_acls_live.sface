@@ -25,7 +25,7 @@
               <li class="p-4 pb-2 text-xs text-sm break-[word] tracking-wide">{l("Your custom presets")}</li>
               {#for acl <- custom_acls}
                 <li class="list-row">
-                  <#Icon iconify="ph:intersection-duotone" class="w-7 h-7 text-primary" />
+                  <#Icon iconify="ph:intersection-duotone" class="size-7 text-primary" />
                   <div>
                     <div class="text-sm font-medium">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
                     <Bonfire.UI.Boundaries.AclSubjectsPreviewLive grants={e(acl, :grants, [])} />
@@ -45,7 +45,7 @@
 
             {#if system_acls != []}
               <li class="p-4 pb-2 flex items-center gap-2 text-xs text-sm break-[word] tracking-wide">
-                <#Icon iconify="ph:lock-simple-duotone" class="w-4 h-4" />
+                <#Icon iconify="ph:lock-simple-duotone" class="size-4" />
                 <span>{l("System presets")}</span>
                 <span class="font-normal normal-case">· {l("read-only")}</span>
               </li>
@@ -58,7 +58,7 @@
                     x-bind:aria-expanded="open.toString()"
                     class="w-full flex items-center gap-3 p-4 text-left cursor-pointer hover:bg-fill transition-colors"
                   >
-                    <#Icon iconify="ph:intersection-duotone" class="w-7 h-7 text-muted shrink-0" />
+                    <#Icon iconify="ph:intersection-duotone" class="size-7 text-muted shrink-0" />
                     <div class="flex-1 min-w-0">
                       <div class="text-sm font-medium">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil) || l("Untitled")}</div>
                       <Bonfire.UI.Boundaries.AclSubjectsPreviewLive
@@ -69,7 +69,7 @@
                     </div>
                     <#Icon
                       iconify="carbon:chevron-down"
-                      class="w-4 h-4 text-muted shrink-0 transition-transform duration-150"
+                      class="size-4 text-muted shrink-0 transition-transform duration-150"
                       x-bind:class="open && 'rotate-180'"
                     />
                   </button>
@@ -99,13 +99,13 @@
         class="flex items-center p-2 space-x-4 cursor-pointer hover:bg-fill-strong"
       >
         <div class="btn btn-outline btn-sm btn-circle opacity-80">
-          <#Icon solid="Plus" class="w-5 h-5" />
+          <#Icon solid="Plus" class="size-5" />
         </div>
         <div class="flex-1">
           <div class="text-base font-normal">{l("Define a new boundary")}</div>
         </div>
         <div class="btn btn-ghost btn-sm btn-circle opacity-80">
-          <#Icon solid="ChevronRight" class="w-5 h-5" />
+          <#Icon solid="ChevronRight" class="size-5" />
         </div>
       </div>
     </div>

@@ -9,8 +9,8 @@
     x-on:click="expanded = !expanded"
   >
     <div class="flex items-center gap-2">
-      <div class="w-7 h-7 rounded-full flex items-center justify-center bg-info/20">
-        <#Icon iconify="mingcute:hat-fill" class="w-5 h-5 text-info" />
+      <div class="size-7 rounded-full flex items-center justify-center bg-info/20">
+        <#Icon iconify="mingcute:hat-fill" class="size-5 text-info" />
       </div>
       <div>
         <h3 class="font-medium">{Recase.to_title(to_string(@role_name))}</h3>
@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="flex items-center">
-      <#Icon iconify="ph:list-duotone" class="w-5 h-5" />
+      <#Icon iconify="ph:list-duotone" class="size-5" />
     </div>
   </div>
 
@@ -32,7 +32,7 @@
         {!-- Read-only: Flat list of only defined permissions --}
         {#if Enum.empty?(@defined_verbs)}
           <div class="text-center py-3 text-muted">
-            <Iconify.iconify icon="ph:empty-duotone" class="w-6 h-6 mx-auto mb-2" />
+            <Iconify.iconify icon="ph:empty-duotone" class="size-6 mx-auto mb-2" />
             <p class="text-sm">{l("No permissions defined for this role")}</p>
           </div>
         {#else}
@@ -41,12 +41,12 @@
               {#case e(verb_data, :status, nil)}
                 {#match :can}
                   <span class="badge badge-sm badge-success gap-1 py-1.5">
-                    <Iconify.iconify icon={e(verb_data, :icon, "ph:circle-duotone")} class="w-3 h-3" />
+                    <Iconify.iconify icon={e(verb_data, :icon, "ph:circle-duotone")} class="size-3" />
                     {e(verb_data, :display_name, nil)}
                   </span>
                 {#match :cannot}
                   <span class="badge badge-sm badge-error gap-1 py-1.5">
-                    <Iconify.iconify icon={e(verb_data, :icon, "ph:circle-duotone")} class="w-3 h-3" />
+                    <Iconify.iconify icon={e(verb_data, :icon, "ph:circle-duotone")} class="size-3" />
                     {e(verb_data, :display_name, nil)}
                   </span>
                 {#match _}
@@ -59,7 +59,7 @@
         <div class="divide-hair divide-divider">
           {#if Enum.empty?(@grouped_verbs)}
             <div class="text-center py-3 text-muted">
-              <#Icon iconify="ph:empty-duotone" class="w-6 h-6 mx-auto mb-1.5 opacity-50" />
+              <#Icon iconify="ph:empty-duotone" class="size-6 mx-auto mb-1.5 opacity-50" />
               <p class="text-xs">{l("No permissions defined for this role")}</p>
             </div>
           {#else}
@@ -100,7 +100,7 @@
           </form>
           <:open_btn>
             <span class="btn btn-sm btn-ghost">
-              <!-- <#Icon iconify="ph:pencil-simple-duotone" class="w-5 h-5" /> -->
+              <!-- <#Icon iconify="ph:pencil-simple-duotone" class="size-5" /> -->
               {l("Edit role")}
             </span>
           </:open_btn>
@@ -117,7 +117,7 @@
           </form>
           <:open_btn>
             <span class="btn btn-sm btn-error">
-              <#Icon iconify="ph:trash-duotone" class="w-5 h-5" />
+              <#Icon iconify="ph:trash-duotone" class="size-5" />
               {l("Delete")}
             </span>
           </:open_btn>

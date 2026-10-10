@@ -72,8 +72,8 @@
         <ul class="flex flex-col   divide-hair divide-divider px-4 mt-2">
           <li :for={acl <- @preset_acls} class="flex items-center justify-between py-4">
             <div class="flex items-center gap-3">
-              <span class="flex items-center w-10 h-10 rounded-full place-content-center bg-info/10">
-                <#Icon iconify="ph:hand-fill" class="inline-block w-5 h-5 text-base-content" />
+              <span class="flex items-center size-10 rounded-full place-content-center bg-info/10">
+                <#Icon iconify="ph:hand-fill" class="inline-block size-5 text-base-content" />
               </span>
               <div class="text-sm truncate max-w-full font-medium text-base-content">{e(acl, :named, :name, nil) || e(acl, :stereotyped, :named, :name, nil)}</div>
             </div>
@@ -81,7 +81,7 @@
             <div class="flex items-center gap-2">
               <div class="dropdown dropdown-end">
                 <label tabindex="0" class="btn btn-square btn-ghost btn-sm">
-                  <#Icon iconify="ph:dots-three-outline-vertical-fill" class="w-4 h-4" />
+                  <#Icon iconify="ph:dots-three-outline-vertical-fill" class="size-4" />
                 </label>
                 <ul tabindex="0" class="w-48 p-1 rounded shadow dropdown-content menu bg-base-200">
                   <li data-role="remove_from_boundary">

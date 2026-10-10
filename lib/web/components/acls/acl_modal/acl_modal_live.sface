@@ -5,7 +5,7 @@
 >
   <div class="mt-4 overflow-x-hidden">
     <div class="alert mb-4 alert-info" role="alert">
-      <#Icon solid="InformationCircle" class="w-5 h-5 shrink-0" />
+      <#Icon solid="InformationCircle" class="size-5 shrink-0" />
       <span class="">
         {l(
           "You can explicitly enable or disable a verb from this role to grant or forbid a specific permission. 
@@ -22,7 +22,7 @@
         }>
           {#case Bonfire.Boundaries.Verbs.get(verb_id)}
             {#match nil}
-              <#Icon iconify="mingcute:hat-fill" class="w-4 h-4 text-secondary-content/70" />
+              <#Icon iconify="mingcute:hat-fill" class="size-4 text-secondary-content/70" />
 
               <div class="flex-1">
                 <div class="flex flex-col">
@@ -32,7 +32,7 @@
                 </div>
               </div>
             {#match verb}
-              <Iconify.iconify icon={e(verb, :icon, "")} class="w-4 h-4 text-muted" fill="currentColor" />
+              <Iconify.iconify icon={e(verb, :icon, "")} class="size-4 text-muted" fill="currentColor" />
 
               <div class="flex-1">
                 <div class="flex flex-col">

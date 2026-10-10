@@ -374,21 +374,21 @@
       <span :if={!@hide_text} class="text-left truncate ellipsis max-w-[210px] text-sm">
         {@open_btn_label || @action_label}
       </span>
-      <#Icon :if={@with_icon && @type == :ghost} iconify="ph:ghost-duotone" class="w-5 h-5 stroke-1" />
+      <#Icon :if={@with_icon && @type == :ghost} iconify="ph:ghost-duotone" class="size-5 stroke-1" />
       <#Icon
         :if={@with_icon && @type == :silence}
         iconify="ph:speaker-simple-x-duotone"
-        class="w-5 h-5 stroke-1"
+        class="size-5 stroke-1"
       />
       <#Icon
         :if={@with_icon && @type == :block}
         iconify="ph:prohibit-duotone"
-        class="w-5 h-5 stroke-1"
+        class="size-5 stroke-1"
       />
       <#Icon
         :if={@with_icon && @type == :hide}
         iconify="ph:eye-slash-duotone"
-        class="w-5 h-5 stroke-1"
+        class="size-5 stroke-1"
       />
     </div>
   </:open_btn>

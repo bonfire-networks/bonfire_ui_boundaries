@@ -10,8 +10,8 @@
       <li class="p-4 pb-2 text-sm opacity-60 tracking-wide">{l("Your circles")}</li>
       {#for %{id: id} = circle <- e(@circles, [])}
         <li class="list-row">
-          <div class="w-10 h-10 flex place-content-center items-center">
-            <#Icon iconify="ph:circle-duotone" class="w-7 h-7 text-primary" />
+          <div class="size-10 flex place-content-center items-center">
+            <#Icon iconify="ph:circle-duotone" class="size-7 text-primary" />
           </div>
           <div>
             <div class="text-base font-medium">{LiveHandler.subject_name(circle)}</div>
@@ -36,7 +36,7 @@
 
               <:open_btn>
                 <div class="btn btn-sm btn-square">
-                  <#Icon iconify="ph:sliders-horizontal-duotone" class="w-5 h-5" />
+                  <#Icon iconify="ph:sliders-horizontal-duotone" class="size-5" />
                   <span class="sr-only">{l("Edit circle")}</span>
                 </div>
               </:open_btn>
@@ -44,7 +44,7 @@
           </div>
 
           <LinkLive class="btn btn-sm btn-square" to={"/circle/#{id}/members"}>
-            <#Icon iconify="ph:users-duotone" class="w-5 h-5" />
+            <#Icon iconify="ph:users-duotone" class="size-5" />
             <span class="sr-only">{l("Manage members")}</span>
           </LinkLive>
 

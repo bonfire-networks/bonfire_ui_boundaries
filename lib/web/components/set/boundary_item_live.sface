@@ -3,8 +3,8 @@
     {#case e(@item, :user_type, nil)}
       {#match "permission_entry"}
         <!-- Render user -->
-        <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
-          <#Icon iconify="ph:user-duotone" class="w-4 h-4 text-primary" />
+        <div class="size-6 rounded-full bg-primary/10 flex items-center justify-center">
+          <#Icon iconify="ph:user-duotone" class="size-4 text-primary" />
         </div>
         <div class="flex flex-col">
           <span class="text-sm text-base-content">{e(@item, :name, "Unnamed User")}</span>
@@ -16,7 +16,7 @@
         <!-- Render circle -->
         <Iconify.iconify
           icon={Bonfire.Boundaries.LiveHandler.subject_icon(@item)}
-          class="w-6 h-6 text-primary"
+          class="size-6 text-primary"
         />
 
         <span class="text-sm text-base-content">{Bonfire.Boundaries.Circles.circle_name(@item)}</span>

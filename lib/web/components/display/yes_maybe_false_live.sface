@@ -19,7 +19,7 @@
       phx-target={@event_target}
       title={if @read_only, do: l("This permission is defined by the preset boundary"), else: nil}
     >
-      <#Icon solid="Check" class="w-4 h-4" />
+      <#Icon solid="Check" class="size-4" />
       <span class="sr-only">{l("Can")}</span>
     </button>
     <button
@@ -40,7 +40,7 @@
       phx-target={@event_target}
       title={if @read_only, do: l("This permission is defined by the preset boundary"), else: nil}
     >
-      <#Icon solid="Minus" class="w-4 h-4" />
+      <#Icon solid="Minus" class="size-4" />
       <span class="sr-only">{l("Undefined")}</span>
     </button>
     <button
@@ -62,7 +62,7 @@
       phx-target={@event_target}
       title={if @read_only, do: l("This permission is defined by the preset boundary"), else: nil}
     >
-      <#Icon iconify="ph:x-duotone" class="w-4 h-4" />
+      <#Icon iconify="ph:x-duotone" class="size-4" />
       <span class="sr-only">{l("Cannot")}</span>
     </button>
   </div>

@@ -48,7 +48,7 @@
             })}
             phx-target={@event_target || "#smart_input"}
           >
-            <#Icon iconify="ph:users-three-duotone" class="w-4 h-4 text-muted" />
+            <#Icon iconify="ph:users-three-duotone" class="size-4 text-muted" />
             <span class="truncate">{l("Whole group")}</span>
           </button>
         </li>
@@ -70,7 +70,7 @@
               })}
               phx-target={@event_target || "#smart_input"}
             >
-              <#Icon iconify="ph:hash-duotone" class="w-4 h-4 text-muted" />
+              <#Icon iconify="ph:hash-duotone" class="size-4 text-muted" />
               <span class="truncate">{topic_name(topic)}</span>
             </button>
           </li>

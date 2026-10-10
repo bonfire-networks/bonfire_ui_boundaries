@@ -1,7 +1,7 @@
 {#case audiences(@acl_subject_verb_grants)}
   {#match []}
     <div class="text-center py-8 px-4 text-muted">
-      <#Icon iconify="ph:users-three-duotone" class="w-8 h-8 mx-auto mb-2 text-subtle" />
+      <#Icon iconify="ph:users-three-duotone" class="size-8 mx-auto mb-2 text-subtle" />
       <p class="text-sm">{l("This preset doesn't grant any permissions.")}</p>
     </div>
   {#match audiences}
@@ -23,11 +23,11 @@
                   src={Media.avatar_url(subject)}
                   user_id={id(subject)}
                   title={name}
-                  class="w-7 h-7 rounded-full"
+                  class="size-7 rounded-full"
                 />
               {#else}
-                <span class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Iconify.iconify icon={icon} class="w-4 h-4 text-primary" aria-hidden="true" />
+                <span class="size-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Iconify.iconify icon={icon} class="size-4 text-primary" aria-hidden="true" />
                 </span>
               {/if}
               <span class="font-medium text-base-content">{name}</span>
@@ -39,7 +39,7 @@
                   class="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-xs"
                   title={verb_summary(verb)}
                 >
-                  <#Icon iconify="ph:check-bold" class="w-3.5 h-3.5 text-success" />
+                  <#Icon iconify="ph:check-bold" class="size-3.5 text-success" />
                   <span class="text-base-content">{verb_name(verb)}</span>
                 </span>
               {/for}
@@ -51,7 +51,7 @@
                   class="inline-flex items-center gap-1.5 rounded-full bg-error/10 px-2.5 py-1 text-xs"
                   title={verb_summary(verb)}
                 >
-                  <#Icon iconify="ph:x-bold" class="w-3.5 h-3.5 text-error" />
+                  <#Icon iconify="ph:x-bold" class="size-3.5 text-error" />
                   <span class="text-base-content line-through">{verb_name(verb)}</span>
                 </span>
               {/for}

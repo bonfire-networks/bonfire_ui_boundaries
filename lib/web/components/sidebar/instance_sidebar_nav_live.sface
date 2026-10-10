@@ -11,8 +11,8 @@
             to={~p"/settings/instance/boundaries/circles"}
             class={["gap-3 py-1", "bg-primary/10": @selected_tab == "circles"]}
           >
-            <div class="w-8 h-8 flex items-center place-content-center">
-              <#Icon iconify="ph:circle-duotone" class="w-5 h-5 text-primary" />
+            <div class="size-8 flex items-center place-content-center">
+              <#Icon iconify="ph:circle-duotone" class="size-5 text-primary" />
             </div>
             <span class="font-normal text-base">{l("Instance Circles")}</span>
           </LinkLive>
@@ -22,8 +22,8 @@
             to={~p"/settings/instance/boundaries/roles"}
             class={["gap-3 py-1", "bg-primary/10": @selected_tab == "roles"]}
           >
-            <div class="w-8 h-8 flex items-center place-content-center">
-              <#Icon iconify="ph:users-three-duotone" class="w-5 h-5 text-primary" />
+            <div class="size-8 flex items-center place-content-center">
+              <#Icon iconify="ph:users-three-duotone" class="size-5 text-primary" />
             </div>
             <span class="font-normal text-base">{l("Instance Roles")}</span>
           </LinkLive>
@@ -34,8 +34,8 @@
               to={~p"/settings/instance/boundaries/acls"}
               class={["gap-3 py-1", "bg-primary/10": @selected_tab == "acls"]}
             >
-              <div class="w-8 h-8 flex items-center place-content-center">
-                <#Icon iconify="ph:shield-check-duotone" class="w-5 h-5 text-primary" />
+              <div class="size-8 flex items-center place-content-center">
+                <#Icon iconify="ph:shield-check-duotone" class="size-5 text-primary" />
               </div>
               <span class="font-normal text-base">{l("Boundary Presets")}</span>
             </LinkLive>
@@ -45,8 +45,8 @@
               to={~p"/settings/instance/boundaries/acl"}
               class={["gap-3 py-1", "bg-primary/10": @selected_tab == "acl"]}
             >
-              <div class="w-8 h-8 flex items-center place-content-center">
-                <#Icon iconify="ph:lock-duotone" class="w-5 h-5 text-primary" />
+              <div class="size-8 flex items-center place-content-center">
+                <#Icon iconify="ph:lock-duotone" class="size-5 text-primary" />
               </div>
               <span class="font-normal text-base">{l("Instance Permissions")}</span>
             </LinkLive>
@@ -57,8 +57,8 @@
             to={~p"/settings/instance/boundaries/ghosted"}
             class={["gap-3 py-1", "bg-primary/10": @selected_tab == "ghosted"]}
           >
-            <div class="w-8 h-8 flex items-center place-content-center">
-              <#Icon iconify="ph:ghost-duotone" class="w-5 h-5 text-primary" />
+            <div class="size-8 flex items-center place-content-center">
+              <#Icon iconify="ph:ghost-duotone" class="size-5 text-primary" />
             </div>
             <span class="font-normal text-base">{l("Ghosted instance-wide")}</span>
           </LinkLive>
@@ -68,8 +68,8 @@
             to={~p"/settings/instance/boundaries/silenced"}
             class={["gap-3 py-1", "bg-primary/10": @selected_tab == "silenced"]}
           >
-            <div class="w-8 h-8 flex items-center place-content-center">
-              <#Icon iconify="ph:speaker-simple-slash-duotone" class="w-5 h-5 text-primary" />
+            <div class="size-8 flex items-center place-content-center">
+              <#Icon iconify="ph:speaker-simple-slash-duotone" class="size-5 text-primary" />
             </div>
             <span class="font-normal text-base">{l("Silenced instance-wide")}</span>
           </LinkLive>
@@ -79,8 +79,8 @@
             to={~p"/settings/instance/boundaries/blocked"}
             class={["gap-3 py-1", "bg-primary/10": @selected_tab == "blocked"]}
           >
-            <div class="w-8 h-8 flex items-center place-content-center">
-              <#Icon iconify="ph:prohibit-duotone" class="w-5 h-5 text-primary" />
+            <div class="size-8 flex items-center place-content-center">
+              <#Icon iconify="ph:prohibit-duotone" class="size-5 text-primary" />
             </div>
             <span class="font-normal text-base">{l("Blocked instance-wide")}</span>
           </LinkLive>

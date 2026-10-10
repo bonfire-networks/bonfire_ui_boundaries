@@ -2,7 +2,7 @@
   <div class="sticky top-0">
     <div class="mt-6">
       <div class="flex items-center pb-10 border-b-4">
-        {!-- <div class="flex items-center justify-center flex-shrink-0 w-24 h-24 text-sm font-medium text-white bg-pink-600 rounded-full shadow-2xl ring-4 ring-white">
+        {!-- <div class="flex items-center justify-center flex-shrink-0 size-24 text-sm font-medium text-white bg-pink-600 rounded-full shadow-2xl ring-4 ring-white">
             GA
         </div> --}
         <div class="flex flex-col ml-4">
@@ -70,7 +70,7 @@
                   <StatelessComponent
                     module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
                     show_controls={[:follows_me, :follow]}
-                    avatar_class="w-10 h-10 rounded"
+                    avatar_class="size-10 rounded"
                     profile={e(member, :subject, :profile, nil)}
                     character={e(member, :subject, :character, nil)}
                   />
@@ -136,7 +136,7 @@
                 <div class="flex-1">
                   <StatelessComponent
                     module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
-                    avatar_class="w-10 h-10 rounded"
+                    avatar_class="size-10 rounded"
                     show_controls={[:follows_me, :follow]}
                     profile={e(suggested, :edge, :object, :profile, nil)}
                     character={e(suggested, :edge, :object, :character, nil)}
@@ -183,7 +183,7 @@
                   <StatelessComponent
                     module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
                     show_controls={[:follows_me, :follow]}
-                    avatar_class="w-10 h-10 rounded"
+                    avatar_class="size-10 rounded"
                     profile={e(suggested, :edge, :subject, :profile, nil)}
                     character={e(suggested, :edge, :subject, :character, nil)}
                   />

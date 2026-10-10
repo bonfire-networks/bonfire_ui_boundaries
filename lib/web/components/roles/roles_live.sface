@@ -20,10 +20,10 @@
             <span class="badge badge-sm badge-neutral badge-ghost">{@builtin_roles_count}</span>
           </div>
           <span x-cloak x-show="showBuiltIn">
-            <#Icon iconify="carbon:chevron-down" class="w-5 h-5" />
+            <#Icon iconify="carbon:chevron-down" class="size-5" />
           </span>
           <span x-cloak x-show="!showBuiltIn">
-            <#Icon iconify="carbon:chevron-up" class="w-5 h-5" />
+            <#Icon iconify="carbon:chevron-up" class="size-5" />
           </span>
         </button>
 
@@ -53,7 +53,7 @@
 
         {#if Enum.empty?(@custom_roles)}
           <div class="text-center py-6 text-muted border border-dashed border-divider rounded-box">
-            <Iconify.iconify icon="ph:plus-circle-duotone" class="w-8 h-8 mx-auto mb-1.5 opacity-50" />
+            <Iconify.iconify icon="ph:plus-circle-duotone" class="size-8 mx-auto mb-1.5 opacity-50" />
             <p class="text-sm">{l("No custom roles yet")}</p>
             <p class="text-xs">{l("Create a role to customize permissions")}</p>
           </div>

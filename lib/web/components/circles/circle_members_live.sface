@@ -50,13 +50,13 @@
                 |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: "#add_url_toggle")}
                 class="inline-flex items-center gap-2 self-start rounded-selector px-2 py-1.5 -ms-2 text-sm font-medium text-muted transition-colors hover:bg-fill hover:text-base-content"
               >
-                <#Icon iconify="ph:globe-hemisphere-west-duotone" class="w-4 h-4 shrink-0 text-muted" />
+                <#Icon iconify="ph:globe-hemisphere-west-duotone" class="size-4 shrink-0 text-muted" />
                 <span>{l("Add by URL or domain")}</span>
                 <span
                   id="add_url_caret"
                   class="inline-flex shrink-0 transition-transform duration-150 motion-reduce:transition-none"
                 >
-                  <#Icon iconify="carbon:chevron-down" class="w-4 h-4 text-muted" />
+                  <#Icon iconify="carbon:chevron-down" class="size-4 text-muted" />
                 </span>
               </button>
             {/if}
@@ -104,7 +104,7 @@
             class="btn btn-sm btn-primary"
           >
             <div class="flex items-center gap-2">
-              <div iconify="heroicons-solid:user-add" class="w-4 h-4 shrink-0" aria-hidden="true" />
+              <div iconify="heroicons-solid:user-add" class="size-4 shrink-0" aria-hidden="true" />
               <span>{l("Follow all members")}</span>
             </div>
           </a>
@@ -122,7 +122,7 @@
                   module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
                   profile={profile}
                   wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-row justify-between"
-                  avatar_class="w-10 h-10 rounded-box"
+                  avatar_class="size-10 rounded-box"
                   character={e(member, :subject, :character, nil)}
                   class="btn btn-sm"
                   show_controls={[:follows_me, :follow]}
@@ -142,7 +142,7 @@
                 <StatelessComponent
                   module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
                   profile={%{name: name, icon: icon}}
-                  avatar_class="w-10 h-10 rounded-box"
+                  avatar_class="size-10 rounded-box"
                   character={%{username: username}}
                   wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-row justify-between"
                   show_summary
@@ -164,8 +164,8 @@
                 {!-- Instance or unknown entity --}
                 <div class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-row justify-between">
                   <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-box bg-fill-strong flex items-center justify-center shrink-0">
-                      <div iconify="ph:globe-duotone" class="w-5 h-5 text-muted" aria-hidden="true" />
+                    <div class="size-10 rounded-box bg-fill-strong flex items-center justify-center shrink-0">
+                      <div iconify="ph:globe-duotone" class="size-5 text-muted" aria-hidden="true" />
                     </div>
                     <div>
                       <span class="font-medium text-base-content text-sm">
@@ -174,7 +174,7 @@
                       </span>
                       <div class="flex items-center gap-1 mt-0.5">
                         <span class="badge badge-sm badge-soft badge-info">
-                          <!-- <div iconify="ph:database-duotone" class="w-4 h-4" aria-hidden="true" /> -->
+                          <!-- <div iconify="ph:database-duotone" class="size-4" aria-hidden="true" /> -->
                           {l("Instance")}
                         </span>
                       </div>

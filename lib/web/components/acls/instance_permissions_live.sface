@@ -14,10 +14,10 @@
       class={"btn btn-sm shrink-0", "btn-primary": @edit_mode, "btn-outline": !@edit_mode}
     >
       {#if @edit_mode}
-        <#Icon iconify="ph:check-bold" class="w-4 h-4" />
+        <#Icon iconify="ph:check-bold" class="size-4" />
         {l("Done")}
       {#else}
-        <#Icon iconify="ph:pencil-simple-duotone" class="w-4 h-4" />
+        <#Icon iconify="ph:pencil-simple-duotone" class="size-4" />
         {l("Edit")}
       {/if}
     </button>
@@ -28,7 +28,7 @@
     role="note"
     class="flex items-start gap-3 rounded-box bg-warning/10 border border-warning/30 p-3 text-sm"
   >
-    <#Icon iconify="ph:warning-duotone" class="w-5 h-5 text-warning shrink-0 mt-0.5" />
+    <#Icon iconify="ph:warning-duotone" class="size-5 text-warning shrink-0 mt-0.5" />
     <span class="text-muted">{l("You're editing instance-wide permissions. Changes take effect immediately.")}</span>
   </div>
 
@@ -36,8 +36,8 @@
     {#for capability <- @capabilities_with_ids}
       <li class="p-4 flex flex-col gap-3">
         <div class="flex items-start gap-3">
-          <span class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-            <Iconify.iconify icon={capability.icon} class="w-4 h-4 text-primary" aria-hidden="true" />
+          <span class="size-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+            <Iconify.iconify icon={capability.icon} class="size-4 text-primary" aria-hidden="true" />
           </span>
           <div class="flex flex-col min-w-0">
             <span class="text-sm font-medium text-base-content">{capability_label(capability.key)}</span>
@@ -71,11 +71,11 @@
                     }
                   >
                     {#if state == :on}
-                      <#Icon iconify="ph:check-square-fill" class="w-4 h-4 text-success" />
+                      <#Icon iconify="ph:check-square-fill" class="size-4 text-success" />
                     {#elseif state == :partial}
-                      <#Icon iconify="ph:minus-square-fill" class="w-4 h-4 text-warning" />
+                      <#Icon iconify="ph:minus-square-fill" class="size-4 text-warning" />
                     {#else}
-                      <#Icon iconify="ph:square" class="w-4 h-4 text-subtle" />
+                      <#Icon iconify="ph:square" class="size-4 text-subtle" />
                     {/if}
                     <span>{audience.name}</span>
                   </button>
@@ -91,9 +91,9 @@
                 {#for audience <- granted}
                   <span class="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-xs">
                     {#if e(audience.states, capability.key, :off) == :partial}
-                      <#Icon iconify="ph:minus-bold" class="w-3.5 h-3.5 text-warning" />
+                      <#Icon iconify="ph:minus-bold" class="size-3.5 text-warning" />
                     {#else}
-                      <#Icon iconify="ph:check-bold" class="w-3.5 h-3.5 text-success" />
+                      <#Icon iconify="ph:check-bold" class="size-3.5 text-success" />
                     {/if}
                     <span class="text-base-content">{audience.name}</span>
                   </span>

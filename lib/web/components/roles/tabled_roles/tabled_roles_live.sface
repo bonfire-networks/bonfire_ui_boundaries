@@ -10,7 +10,7 @@
       </thead>
       <tbody>
         <tr :for={{role, verbs} <- @roles_with_verbs || []}>
-          <td class="sticky left-0 z-10 text-sm font-bold bg-base-100/70 backdrop-blur-sm min-w-[180px] h-full gap-2 max-w-[180px] truncate ellipsis">
+          <td class="sticky left-0 z-10 text-sm font-bold bg-base-100/70 backdrop-blur-sm min-w-45 h-full gap-2 max-w-45 truncate ellipsis">
             {#if @selectable}
               <div class="flex w-full items-center gap-2">
                 <input
@@ -45,17 +45,17 @@
               {#case status}
                 {#match :can}
                   <div data-value={"#{role}_#{verb}_can"}>
-                    <#Icon iconify="carbon:checkmark-filled" class="text-success text-center mx-auto w-5 h-5" />
+                    <#Icon iconify="carbon:checkmark-filled" class="text-success text-center mx-auto size-5" />
                     <span class="sr-only">{l("Can")}</span>
                   </div>
                 {#match :cannot}
                   <div data-value={"#{role}_#{verb}_cannot"}>
-                    <#Icon iconify="bx:block" class="text-error text-center mx-auto w-5 h-5" />
+                    <#Icon iconify="bx:block" class="text-error text-center mx-auto size-5" />
                     <span class="sr-only">{l("Cannot")}</span>
                   </div>
                 {#match _}
                   <div data-value={"#{role}_#{verb}_undefined"}>
-                    <#Icon iconify="heroicons-solid:minus" class="text-subtle w-5 h-5 text-center mx-auto" />
+                    <#Icon iconify="heroicons-solid:minus" class="text-subtle size-5 text-center mx-auto" />
                     <span class="sr-only">{l("Undefined")}</span>
                   </div>
               {/case}
@@ -91,7 +91,7 @@
 
               <div class="w-full mt-4 rounded-box p-4 bg-error/10">
                 <div class="flex items-center gap-2">
-                  <#Icon iconify="heroicons-solid:exclamation-circle" class="text-error w-6 h-6" />
+                  <#Icon iconify="heroicons-solid:exclamation-circle" class="text-error size-6" />
                   <h4 class="text-error font-medium">{l("Delete the '%{role}' role", role: role)}</h4>
                 </div>
                 <p class="text-error mt-2 text-sm">
@@ -107,7 +107,7 @@
 
               <:open_btn>
                 <div class="btn btn-sm btn-circle btn-ghost">
-                  <#Icon iconify="ph:gear-six-duotone" class="w-4 h-4" />
+                  <#Icon iconify="ph:gear-six-duotone" class="size-4" />
                   <span class="sr-only">{l("Edit role")}</span>
                 </div>
               </:open_btn>

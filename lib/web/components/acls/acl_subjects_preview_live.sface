@@ -13,7 +13,7 @@
               user_id={id(subject)}
               title={e(subject, :profile, :name, nil) ||
                 e(subject, :character, :username, nil) || id(subject)}
-              class="w-5 h-5 rounded-full"
+              class="size-5 rounded-full"
               is_remote={!check_is_local?(subject, preload_if_needed: false)}
               bg_class="rounded-box"
             />
@@ -21,9 +21,9 @@
             <span
               title={e(subject, :named, :name, nil) || e(subject, :stereotyped, :named, :name, nil) ||
                 e(subject, :name, nil) || id(subject)}
-              class="flex items-center w-5 h-5 rounded-full place-content-center"
+              class="flex items-center size-5 rounded-full place-content-center"
             >
-              <#Icon iconify="ph:circle-duotone" class={"inline-block w-5 h-5 #{@accent_class}"} />
+              <#Icon iconify="ph:circle-duotone" class={"inline-block size-5 #{@accent_class}"} />
             </span>
           {/if}
         {/for}

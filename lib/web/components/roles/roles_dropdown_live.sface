@@ -1,6 +1,6 @@
 <select
   name={"#{@field}[#{@circle_id}][]"}
-  class="select select-sm min-w-[120px]"
+  class="select select-sm min-w-30"
   disabled={@read_only}
 >
   <option value="">{l("Select role")}</option>

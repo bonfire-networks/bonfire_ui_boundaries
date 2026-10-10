@@ -17,7 +17,7 @@
           </div>
           <#Icon
             iconify="carbon:chevron-down"
-            class="w-4 h-4 text-muted transition-transform duration-150"
+            class="size-4 text-muted transition-transform duration-150"
             x-bind:class="open && 'rotate-180'"
           />
         </button>
@@ -66,14 +66,14 @@
                           >
                             <Iconify.iconify
                               icon={e(verb, :icon, "ph:circle-duotone")}
-                              class="w-6 h-6 text-primary"
+                              class="size-6 text-primary"
                               aria-hidden="true"
                             />
                             <div class="flex flex-col flex-1">
                               <div class="text-sm font-medium text-base-content">{Bonfire.Boundaries.Verbs.verb_name(verb)}</div>
                               <div class="text-xs text-muted">{Bonfire.Boundaries.Verbs.verb_summary(verb)}</div>
                             </div>
-                            <#Icon iconify="carbon:chevron-down" class="w-4 h-4 text-muted" />
+                            <#Icon iconify="carbon:chevron-down" class="size-4 text-muted" />
                           </div>
 
                           <!-- Above the fold: items with a defined value -->
@@ -112,11 +112,11 @@
                         {#for {item, value} <- with_value}
                           <div class="badge badge-soft">
                             {#if value == :can}
-                              <#Icon iconify="ph:check-duotone" class="w-5 h-5 text-green-500" />
+                              <#Icon iconify="ph:check-duotone" class="size-5 text-green-500" />
                             {#elseif value == :cannot}
-                              <#Icon iconify="ph:x-duotone" class="w-5 h-5 text-red-500" />
+                              <#Icon iconify="ph:x-duotone" class="size-5 text-red-500" />
                             {#else}
-                              <#Icon iconify="ph:minus-duotone" class="w-5 h-5 text-yellow-500" />
+                              <#Icon iconify="ph:minus-duotone" class="size-5 text-yellow-500" />
                             {/if}
                             {#case e(item, :user_type, nil)}
                               {#match "permission_entry"}

@@ -11,6 +11,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
          {:ok, _} <-
            Bonfire.Boundaries.Blocks.unblock(id, :silence, current_user: current_user) do
       Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
 
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
@@ -41,6 +42,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
     with {:ok, _} <- Bonfire.Boundaries.Blocks.block(id, :ghost, opts),
          {:ok, _} <- Bonfire.Boundaries.Blocks.block(id, :silence, opts) do
       Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
 
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
@@ -66,6 +68,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
          {:ok, _} <-
            Bonfire.Boundaries.Blocks.block(id, :silence, scoped_id) do
       Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
 
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
@@ -96,6 +99,8 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
 
       Bonfire.UI.Common.OpenModalLive.close()
 
+      refresh_block_status(id)
+
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
       #   id,
@@ -119,6 +124,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
          {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :ghost, :instance_wide),
          {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :silence, :instance_wide) do
       Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
 
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
@@ -144,6 +150,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
              current_user: current_user_required!(assigns(socket))
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
 
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
@@ -170,6 +177,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
              also_unfollow_and_notify: Types.maybe_to_boolean(params["also_unfollow_and_notify"])
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
 
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
@@ -192,6 +200,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
     with true <- Bonfire.Boundaries.can?(assigns(socket)[:__context__], :block, :instance_wide),
          {:ok, _} <- Bonfire.Boundaries.Blocks.block(id, :ghost, :instance_wide) do
       Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
 
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
@@ -215,6 +224,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
     with true <- Bonfire.Boundaries.can?(assigns(socket)[:__context__], :block, :instance_wide),
          {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :ghost, :instance_wide) do
       Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
 
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
@@ -242,6 +252,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
              also_unfollow_and_notify: Types.maybe_to_boolean(params["also_unfollow_and_notify"])
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
 
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
@@ -265,6 +276,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
              current_user: current_user_required!(assigns(socket))
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
 
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
@@ -286,6 +298,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
     with true <- Bonfire.Boundaries.can?(assigns(socket)[:__context__], :block, :instance_wide),
          {:ok, _} <- Bonfire.Boundaries.Blocks.block(id, :silence, :instance_wide) do
       Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
 
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
@@ -308,6 +321,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
     with true <- Bonfire.Boundaries.can?(assigns(socket)[:__context__], :block, :instance_wide),
          {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :silence, :instance_wide) do
       Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
 
       # ComponentID.send_assigns(
       #   Bonfire.UI.Common.BlockButtonLive,
@@ -413,6 +427,28 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
       # You can handle errors here
       error ->
         {:noreply, assign_flash(socket, :error, l("Could not unhide this instance-wide"))}
+    end
+  end
+
+  # the event may land in a component socket (eg. the modal), so ask the view process to re-check, see `handle_info/2`
+  defp refresh_block_status(id) do
+    send(self(), {{Bonfire.Boundaries.Blocks, :block_status_changed}, id})
+  end
+
+  # only refresh when the view is the profile of the (un)blocked user, so blocking someone from a feed doesn't flag the profile being viewed
+  def handle_info({:block_status_changed, id}, socket) do
+    user = e(assigns(socket), :user, nil)
+
+    if id && uid(user) == id do
+      block_status = preload_one(user, current_user(socket))
+
+      # the stateful hero used on character pages caches its own block status
+      if socket.view == Bonfire.UI.Me.CharacterLive,
+        do: maybe_send_update(Bonfire.UI.Me.ProfileHeroFullLive, "profile_character", block_status)
+
+      {:noreply, assign(socket, block_status)}
+    else
+      {:noreply, socket}
     end
   end
 

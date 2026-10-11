@@ -165,6 +165,65 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
     |> assert_has("[data-id=hero_background]", text: "ghosted")
   end
 
+  test "unsilencing a user from their profile page removes the indicator without a reload", %{
+    conn: conn,
+    me: me,
+    alice: alice
+  } do
+    assert {:ok, _} = Bonfire.Boundaries.Blocks.block(alice, :silence, current_user: me)
+
+    conn
+    |> visit("/@#{alice.character.username}")
+    |> assert_has("[data-id=hero_background]", text: "silenced")
+    |> within(
+      "[data-id='hero_more_actions-profile_hero'] [data-role='silence_modal']",
+      fn session ->
+        click_button(session, "Silence #{alice.profile.name}")
+      end
+    )
+    |> click_button("[data-role=unsilence]", "Unsilence")
+    |> assert_has("[role=alert]", text: "unsilenced")
+    |> refute_has("[data-id=hero_background]", text: "silenced")
+  end
+
+  test "unghosting a user from their profile page removes the indicator without a reload", %{
+    conn: conn,
+    me: me,
+    alice: alice
+  } do
+    assert {:ok, _} = Bonfire.Boundaries.Blocks.block(alice, :ghost, current_user: me)
+
+    conn
+    |> visit("/@#{alice.character.username}")
+    |> assert_has("[data-id=hero_background]", text: "ghosted")
+    |> within(
+      "[data-id='hero_more_actions-profile_hero'] [data-role='ghost_modal']",
+      fn session ->
+        click_button(session, "Ghost #{alice.profile.name}")
+      end
+    )
+    |> click_button("[data-role=unghost]", "Unghost")
+    |> assert_has("[role=alert]", text: "unghosted")
+    |> refute_has("[data-id=hero_background]", text: "ghosted")
+  end
+
+  test "silencing a user from their profile page shows the indicator without a reload", %{
+    conn: conn,
+    alice: alice
+  } do
+    conn
+    |> visit("/@#{alice.character.username}")
+    |> refute_has("[data-id=hero_background]", text: "silenced")
+    |> within(
+      "[data-id='hero_more_actions-profile_hero'] [data-role='silence_modal']",
+      fn session ->
+        click_button(session, "Silence #{alice.profile.name}")
+      end
+    )
+    |> click_button("[data-role=silence]", "Silence")
+    |> assert_has("[data-id=hero_background]", text: "silenced")
+  end
+
   describe "if I silenced a user i will not receive any update from it" do
     test "i'll not see anything they publish in feeds", %{conn: conn, alice: alice, me: me} do
       assert {:ok, _silenced} = Bonfire.Boundaries.Blocks.block(alice, :silence, current_user: me)

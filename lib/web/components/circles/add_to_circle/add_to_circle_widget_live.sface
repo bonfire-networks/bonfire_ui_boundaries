@@ -73,7 +73,7 @@
                   phx-disable-with={l("Removing…")}
                   aria-label={l("Remove from %{circle}", circle: e(circle, :named, :name, nil))}
                   type="button"
-                  class="btn btn-sm btn-ghost border-divider min-h-11 min-w-20 rounded-full font-medium normal-case focus-ring"
+                  class="btn btn-sm btn-ghost border-divider min-w-20 rounded-full font-medium normal-case focus-ring"
                 >
                   {l("Remove")}
                 </button>
@@ -87,7 +87,7 @@
                   phx-disable-with={l("Adding…")}
                   aria-label={l("Add to %{circle}", circle: e(circle, :named, :name, nil))}
                   type="button"
-                  class="btn btn-sm btn-ghost bg-primary/10 text-primary hover:bg-primary/20 min-h-11 min-w-20 rounded-full font-medium normal-case focus-ring"
+                  class="btn btn-sm btn-ghost bg-primary/10 text-primary hover:bg-primary/20 min-w-20 rounded-full font-medium normal-case focus-ring"
                 >
                   <#Icon iconify="ph:plus" class="size-4" aria-hidden="true" />
                   {l("Add")}
@@ -118,7 +118,7 @@
         type="button"
         phx-click="close"
         phx-target={"[id='#{Bonfire.UI.Common.ReusableModalLive.modal_id(assigns)}']"}
-        class="btn btn-primary btn-sm min-h-11 px-5 normal-case focus-ring"
+        class="btn btn-primary btn-sm px-5 normal-case focus-ring"
       >
         {l("Done")}
       </button>

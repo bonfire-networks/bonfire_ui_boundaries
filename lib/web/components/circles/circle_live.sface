@@ -43,7 +43,7 @@
                 no_header
                 no_actions
                 open_modal_wrapper_class="w-auto open_modal_wrapper flex"
-                open_btn_wrapper_class="btn btn-sm btn-soft min-h-11 px-3 gap-2"
+                open_btn_wrapper_class="btn btn-sm btn-soft px-3 gap-2"
                 wrapper_class="!p-0"
                 opts={[
                   "aria-labelledby": "circle-page-manager-#{@circle_id || id(@circle)}-heading"

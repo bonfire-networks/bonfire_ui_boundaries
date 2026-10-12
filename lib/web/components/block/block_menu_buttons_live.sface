@@ -7,10 +7,10 @@
         @object,
         @__context__
       )}
-      class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+      class="flex items-center w-full gap-3 text-sm text-error"
     >
-      {!-- <#Icon :if={@with_icon} iconify="heroicons-solid:ban" class="size-4 shrink-0" /> --}
-      <span class="truncate ellipsis">{l("Block")}</span>
+      <#Icon :if={@with_icon} iconify="ph:prohibit-duotone" class="size-4 shrink-0" />
+      <span class="flex-1 truncate">{l("Block")}</span>
     </LinkLive>
   </li>
 {#else}
@@ -22,13 +22,13 @@
       <!-- <li>
         <details>
           <summary class="text-muted">
-            <div class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error">
+            <div class="flex items-center w-full gap-3 text-sm text-error">
               <#Icon :if={@with_icon} iconify="heroicons-solid:ban" class="size-4 shrink-0" />
               <span class="truncate ellipsis">{l("Block")}</span>
             </div>
           </summary>
           <ul> -->
-      <li class="m-1 border-t border-divider" />
+      <li role="separator" class="-mx-2 my-1 border-t border-divider" />
       {#if @hide_object}
         <li data-role="hide_modal" class="">
           {!-- WIP - TODO: add the boundary to the extra object's custom object ACL --}
@@ -41,7 +41,7 @@
             parent_id={deterministic_dom_id(__MODULE__, nil, "hide", @parent_id)}
             with_icon={@with_icon}
             label={@extra_object_label}
-            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-warning"
+            class="flex items-center w-full gap-3 text-sm text-warning"
           />
         </li>
       {/if}
@@ -58,7 +58,7 @@
             parent_id={deterministic_dom_id(__MODULE__, nil, "user-ghost", @parent_id)}
             with_icon={@with_icon}
             label={e(@object, :profile, :name, l("this user"))}
-            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+            class="flex items-center w-full gap-3 text-sm text-error"
           />
         </li>
 
@@ -72,7 +72,7 @@
             parent_id={deterministic_dom_id(__MODULE__, nil, "user-silence", @parent_id)}
             with_icon={@with_icon}
             label={e(@object, :profile, :name, l("this user"))}
-            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+            class="flex items-center w-full gap-3 text-sm text-error"
           />
         </li>
 
@@ -86,7 +86,7 @@
             parent_id={deterministic_dom_id(__MODULE__, nil, "user-block", @parent_id)}
             with_icon={@with_icon}
             label={e(@object, :profile, :name, l("this user"))}
-            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+            class="flex items-center w-full gap-3 text-sm text-error"
           />
         </li>
       {/if}
@@ -102,7 +102,7 @@
             scope={@scope}
             parent_id={deterministic_dom_id(__MODULE__, nil, "instance-ghost", @parent_id)}
             label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
-            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+            class="flex items-center w-full gap-3 text-sm text-error"
           />
         </li>
         <li class="">
@@ -114,7 +114,7 @@
             scope={@scope}
             parent_id={deterministic_dom_id(__MODULE__, nil, "instance-silence", @parent_id)}
             label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
-            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+            class="flex items-center w-full gap-3 text-sm text-error"
           />
         </li>
         <li class="">
@@ -126,7 +126,7 @@
             scope={@scope}
             parent_id={deterministic_dom_id(__MODULE__, nil, "instance-block", @parent_id)}
             label={URI.parse(e(block_peer, :canonical_uri, "#")).host || l("this user's instance")}
-            class="flex items-center w-full gap-2 text-sm text-base-content justify-between text-error"
+            class="flex items-center w-full gap-3 text-sm text-error"
           />
         </li>
       {/if}

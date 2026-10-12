@@ -371,25 +371,25 @@
 
   <:open_btn>
     <div class={e(@class, "btn btn-sm flex items-center gap-2 btn-outline ")}>
-      <span :if={!@hide_text} class="text-left truncate ellipsis max-w-[210px] text-sm">
-        {@open_btn_label || @action_label}
-      </span>
-      <#Icon :if={@with_icon && @type == :ghost} iconify="ph:ghost-duotone" class="size-5 stroke-1" />
+      <#Icon :if={@with_icon && @type == :ghost} iconify="ph:ghost-duotone" class="size-4 shrink-0" />
       <#Icon
         :if={@with_icon && @type == :silence}
         iconify="ph:speaker-simple-x-duotone"
-        class="size-5 stroke-1"
+        class="size-4 shrink-0"
       />
       <#Icon
         :if={@with_icon && @type == :block}
         iconify="ph:prohibit-duotone"
-        class="size-5 stroke-1"
+        class="size-4 shrink-0"
       />
       <#Icon
         :if={@with_icon && @type == :hide}
         iconify="ph:eye-slash-duotone"
-        class="size-5 stroke-1"
+        class="size-4 shrink-0"
       />
+      <span :if={!@hide_text} class="flex-1 text-left truncate ellipsis max-w-[210px] text-sm">
+        {@open_btn_label || @action_label}
+      </span>
     </div>
   </:open_btn>
 </Bonfire.UI.Common.OpenModalLive>

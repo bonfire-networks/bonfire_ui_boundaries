@@ -151,7 +151,7 @@
           type="button"
           :on-click="Bonfire.Boundaries.Circles:manager_show_create"
           phx-target={@myself}
-          class="btn btn-primary mt-2 min-h-11 cursor-pointer touch-manipulation px-5 normal-case transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none"
+          class="btn btn-primary mt-2 cursor-pointer touch-manipulation px-5 normal-case transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none"
         >
           {l("Create a circle")}
         </button>
@@ -388,7 +388,7 @@
           :on-click="Bonfire.Boundaries.Circles:manager_show_detail"
           phx-target={@myself}
           phx-value-circle_id={id(@selected_circle)}
-          class="btn btn-ghost min-h-11 cursor-pointer touch-manipulation px-4 normal-case transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none"
+          class="btn btn-ghost cursor-pointer touch-manipulation px-4 normal-case transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none"
         >
           {l("Keep circle")}
         </button>
@@ -398,7 +398,7 @@
           :on-click="Bonfire.Boundaries.Circles:manager_delete"
           phx-target={@myself}
           phx-disable-with={l("Deleting…")}
-          class="btn btn-error min-h-11 cursor-pointer touch-manipulation px-5 normal-case transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none"
+          class="btn btn-error cursor-pointer touch-manipulation px-5 normal-case transition-[background-color,color,transform] duration-150 ease-out active:scale-[0.96] motion-reduce:transform-none motion-reduce:transition-none"
         >
           {l("Delete circle")}
         </button>

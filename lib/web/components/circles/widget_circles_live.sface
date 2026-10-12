@@ -43,10 +43,7 @@
       </ul>
     </nav>
 
-    <p
-      :if={@circles == []}
-      class="m-0 shrink-0 whitespace-nowrap text-sm leading-snug text-muted"
-    >
+    <p :if={@circles == []} class="m-0 shrink-0 whitespace-nowrap text-sm leading-snug text-muted">
       {l("No circles yet")}
     </p>
 

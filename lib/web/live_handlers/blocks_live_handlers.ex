@@ -444,7 +444,8 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
 
       # the stateful hero used on character pages caches its own block status
       if socket.view == Bonfire.UI.Me.CharacterLive,
-        do: maybe_send_update(Bonfire.UI.Me.ProfileHeroFullLive, "profile_character", block_status)
+        do:
+          maybe_send_update(Bonfire.UI.Me.ProfileHeroFullLive, "profile_character", block_status)
 
       {:noreply, assign(socket, block_status)}
     else

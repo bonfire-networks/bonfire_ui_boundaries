@@ -250,7 +250,7 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       |> assert_has("[data-id=hero_data]", text: alice.profile.name)
     end
 
-    # FIXME? is this intended behaviour?
+    # silence denies :see (feeds, listings) but not :read, so a direct link still works, as the silence description in the UI promises
     test "I can still read their post via direct link", %{conn: conn, alice: alice, me: me} do
       assert {:ok, _silenced} = Bonfire.Boundaries.Blocks.block(alice, :silence, current_user: me)
       html_body = "epic html message"

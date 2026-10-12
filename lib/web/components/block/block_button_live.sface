@@ -259,44 +259,6 @@
     {/if}
 
     {#if !@only_user}
-      <div
-        :if={@scope not in [nil, :instance] and
-          (Bonfire.Boundaries.can?(@__context__, :block, @scope) ||
-             @can_instance_wide?)}
-        class=""
-      >
-        {!-- {#if Bonfire.Boundaries.Blocks.is_blocked?(@object, :silence, @scope) && Bonfire.Boundaries.Blocks.is_blocked?(@object, :ghost, @scope)}
-          <div class="">
-            <p class="mt-0 text-sm text-muted">
-              {l("Do you want to unblock %{user_or_instance_name} instance-wide?",
-                user_or_instance_name: @label
-              )}
-            </p>
-          </div>
-          <button
-            :on-click="Bonfire.Boundaries.Blocks:unblock_scope"
-            phx-value-id={e(@object, :id, @object)}
-            class="btn btn-error mt-3 w-full  normal-case"
-          >{l("Unblock instance-wide")}</button>
-        {#else} --}
-        <div class="flex flex-col p-2 mt-5 space-y-3 border rounded border-error/30 bg-error/5">
-          <div class="text-base font-medium">{l("Super powers")}</div>
-          <p class="mt-0 text-sm">
-            {l(
-              "You can enforce the block for your group: %{user_or_instance_name} will no longer be able to see or interact with the group or future group activities.",
-              user_or_instance_name: @label
-            )}
-          </p>
-          <button
-            :on-click="Bonfire.Boundaries.Blocks:block_scoped"
-            phx-value-id={e(@object, :id, @object)}
-            phx-value-scope={id(@scope) || @scope}
-            class="btn btn-error  btn-outline normal-case"
-          >{l("Block from the group")}</button>
-        </div>
-        {!-- {/if} --}
-      </div>
-
       <div :if={@can_instance_wide?} class="">
         {#if Bonfire.Boundaries.Blocks.is_blocked?(@object, :silence, :instance_wide) &&
             Bonfire.Boundaries.Blocks.is_blocked?(@object, :ghost, :instance_wide)}
@@ -362,6 +324,66 @@
       </div>
     {/if}
   {/if}
+
+  {!-- the same action, on behalf of the group the object is in, for those who may moderate it (`Blocks.block/3` with `on_behalf_of:`, which checks the same). After the type branches above, so it is offered whatever the type, which as everywhere in this component decides what it does (`:block` both halves); where a choice is offered, one of these per type is rendered (eg. `BlockMenuButtonsLive`). Looked up only when the modal opens, since it renders this then --}
+  <div
+    :if={!@only_user and @type in [:silence, :ghost, :block] and @scope not in [nil, :instance] and
+      Bonfire.Boundaries.can?(@__context__, :mediate, @scope)}
+    data-role="group_block"
+    class="flex flex-col p-2 mt-5 space-y-3 border rounded border-error/30 bg-error/5"
+  >
+    <div class="text-base font-medium">{l("In the group")}</div>
+    {!-- `||` rather than `or`: `is_blocked?/3` doesn't always return a boolean --}
+    {#if (@type in [:silence, :block] and
+         Bonfire.Boundaries.Blocks.is_blocked?(@object, :silence, current_user: @scope)) ||
+        (@type in [:ghost, :block] and
+           Bonfire.Boundaries.Blocks.is_blocked?(@object, :ghost, current_user: @scope))}
+      <button
+        data-role="unblock_from_group"
+        type="button"
+        :on-click="Bonfire.Boundaries.Blocks:unblock_scoped"
+        phx-value-id={e(@object, :id, @object)}
+        phx-value-scope={id(@scope) || @scope}
+        phx-value-type={@type}
+        class="btn btn-error btn-outline normal-case"
+      >{case @type do
+          :silence -> l("Unsilence in the group")
+          :ghost -> l("Unghost from the group")
+          _ -> l("Unblock from the group")
+        end}</button>
+    {#else}
+      <p class="mt-0 text-sm">{case @type do
+          :silence ->
+            l(
+              "As a moderator, you can silence %{user_or_instance_name} in the group: they won't be able to post, reply or react in it, but can still read it.",
+              user_or_instance_name: @label
+            )
+
+          :ghost ->
+            l(
+              "As a moderator, you can ghost %{user_or_instance_name} from the group: they won't be able to see it, or take part in it.",
+              user_or_instance_name: @label
+            )
+
+          _ ->
+            l(
+              "As a moderator, you can block %{user_or_instance_name} from the group: they won't be able to see it, or take part in it.",
+              user_or_instance_name: @label
+            )
+        end}</p>
+      <form :on-submit="Bonfire.Boundaries.Blocks:block_scoped" class="flex flex-col gap-2">
+        <input type="hidden" name="id" value={e(@object, :id, @object)}>
+        <input type="hidden" name="scope" value={id(@scope) || @scope}>
+        <input type="hidden" name="type" value={@type}>
+        <Bonfire.UI.Boundaries.BlockUnfollowNotifyLive type={:group} />
+        <button data-role="block_from_group" type="submit" class="btn btn-error normal-case">{case @type do
+            :silence -> l("Silence in the group")
+            :ghost -> l("Ghost from the group")
+            _ -> l("Block from the group")
+          end}</button>
+      </form>
+    {/if}
+  </div>
 
   {!-- <:action_btns>
       <button data-id="block" type="submit" class="normal-case btn btn-error btn-sm">

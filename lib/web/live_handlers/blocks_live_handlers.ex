@@ -61,29 +61,42 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
     end
   end
 
-  def handle_event("block_scoped", %{"id" => id, "scope" => scoped_id} = _params, socket) do
-    with true <- Bonfire.Boundaries.can?(assigns(socket)[:__context__], :block, scoped_id),
-         {:ok, _} <-
-           Bonfire.Boundaries.Blocks.block(id, :ghost, scoped_id),
-         {:ok, _} <-
-           Bonfire.Boundaries.Blocks.block(id, :silence, scoped_id) do
+  # Blocking someone on behalf of the group the object is in (its moderators only, which `Blocks.block/3` checks with `on_behalf_of:`), of the type the button was for, as for one's own blocks: a silence keeps them from taking part, a ghost from seeing it too, a block both
+  def handle_event("block_scoped", %{"id" => id, "scope" => scoped_id} = params, socket) do
+    type = scoped_block_type(params["type"])
+
+    with {:ok, _} <-
+           Bonfire.Boundaries.Blocks.block(id, type,
+             current_user: current_user_required!(assigns(socket)),
+             on_behalf_of: scoped_id,
+             also_unfollow_and_notify: Types.maybe_to_boolean(params["also_unfollow_and_notify"])
+           ) do
       Bonfire.UI.Common.OpenModalLive.close()
       refresh_block_status(id)
 
-      # ComponentID.send_assigns(
-      #   Bonfire.UI.Common.BlockButtonLive,
-      #   id,
-      #   [ghosted?: true, silenced?: true, skip_preload: true],
-      #   socket
-      # )
-
-      {:noreply, assign_flash(socket, :info, l("You have successfully blocked this user"))}
+      {:noreply, assign_flash(socket, :info, l("Blocked from the group"))}
     else
-      # This block will be executed if either of the unblock operations fails
-      # You can handle errors here
       error ->
-        error(error, "Error")
-        {:noreply, assign_flash(socket, :error, l("Could not block"))}
+        error(error, "Could not block from the group")
+        {:noreply, assign_flash(socket, :error, l("Could not block from the group"))}
+    end
+  end
+
+  # Lifting the type of block the button was for, made on behalf of the group (a block: both, succeeding if either was there)
+  def handle_event("unblock_scoped", %{"id" => id, "scope" => scoped_id} = params, socket) do
+    with {:ok, _} <-
+           Bonfire.Boundaries.Blocks.unblock(id, scoped_block_type(params["type"]),
+             current_user: current_user_required!(assigns(socket)),
+             on_behalf_of: scoped_id
+           ) do
+      Bonfire.UI.Common.OpenModalLive.close()
+      refresh_block_status(id)
+
+      {:noreply, assign_flash(socket, :info, l("Unblocked from the group"))}
+    else
+      error ->
+        error(error, "Could not unblock from the group")
+        {:noreply, assign_flash(socket, :error, l("Could not unblock from the group"))}
     end
   end
 
@@ -431,6 +444,11 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
   end
 
   # the event may land in a component socket (eg. the modal), so ask the view process to re-check, see `handle_info/2`
+  # the type a group block button was for; a block (or none) is both halves
+  defp scoped_block_type("silence"), do: :silence
+  defp scoped_block_type("ghost"), do: :ghost
+  defp scoped_block_type(_), do: nil
+
   defp refresh_block_status(id) do
     send(self(), {{Bonfire.Boundaries.Blocks, :block_status_changed}, id})
   end

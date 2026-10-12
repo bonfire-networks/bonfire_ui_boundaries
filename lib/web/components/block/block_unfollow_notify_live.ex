@@ -14,6 +14,7 @@ defmodule Bonfire.UI.Boundaries.BlockUnfollowNotifyLive do
   @doc "Why someone would want this, as the checkbox label. Answers the question the checkbox raises rather than naming the mechanism."
   def offer(:ghost), do: l("Do more to stop them seeing your posts")
   def offer(:silence), do: l("Do more to keep their posts away from you")
+  def offer(:group), do: l("Tell other instances too")
   def offer(_), do: l("Do more to enforce the block")
 
   @doc "What it actually does, including the part that only their server can carry out."
@@ -26,6 +27,12 @@ defmodule Bonfire.UI.Boundaries.BlockUnfollowNotifyLive do
   # No mention of their server, because silencing tells it nothing: it is a MUTE, which does not federate anywhere, and their server cannot help with what I see in my own feed. Only the ghost half asks anything of anyone else.
   def what(:silence),
     do: l("Unfollows them, so their posts stop being sent to your feed.")
+
+  def what(:group),
+    do:
+      l(
+        "Sends the block to instances that follow the group (including the instance of the person you are blocking), so their copies of the group keep them out too. Ghosting also removes them from the group's followers."
+      )
 
   def what(_),
     do:
@@ -48,6 +55,12 @@ defmodule Bonfire.UI.Boundaries.BlockUnfollowNotifyLive do
     do:
       l(
         "They may notice that they lost you as a follower. Unsilencing does not undo it, you would have to follow them again."
+      )
+
+  def risk(:group),
+    do:
+      l(
+        "They and the group's followers on other instances will see that they were blocked from the group. Unblocking sends that too, but doesn't restore a follow the ghost removed."
       )
 
   def risk(_),

@@ -90,12 +90,20 @@ defmodule Bonfire.Boundaries.LiveHandler do
            ),
          {:ok, c} <-
            if(can_instance_wide && attrs["instance_wide"]["silence"],
-             do: Bonfire.Boundaries.Blocks.block(id, :silence, :instance_wide),
+             do:
+               Bonfire.Boundaries.Blocks.block(id, :silence,
+                 current_user: current_user,
+                 scope: :instance_wide
+               ),
              else: {:ok, nil}
            ),
          {:ok, d} <-
            if(can_instance_wide && attrs["instance_wide"]["ghost"],
-             do: Bonfire.Boundaries.Blocks.block(id, :ghost, :instance_wide),
+             do:
+               Bonfire.Boundaries.Blocks.block(id, :ghost,
+                 current_user: current_user,
+                 scope: :instance_wide
+               ),
              else: {:ok, nil}
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
@@ -115,7 +123,14 @@ defmodule Bonfire.Boundaries.LiveHandler do
               Bonfire.Boundaries.Blocks.block(
                 id,
                 maybe_to_atom(attrs["block_type"]),
-                maybe_to_atom(scope) || socket
+                # an instance-wide one names the admin who made it, for its record
+                case maybe_to_atom(scope) do
+                  scope when scope in [:instance_wide, :instance] ->
+                    [current_user: current_user(assigns(socket)), scope: :instance_wide]
+
+                  scope ->
+                    scope || socket
+                end
               )
             else
               debug("not admin, fallback to user-level block")

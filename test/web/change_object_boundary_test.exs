@@ -27,9 +27,7 @@ defmodule Bonfire.UI.Boundaries.ChangeObjectBoundaryTest do
       conn(user: me, account: account)
       |> visit("/post/#{post.id}")
       |> assert_has("article", text: body)
-      # Open the advanced/boundary details modal
-      # Open the Advanced modal (contains boundary details + edit section)
-      |> click_button("Advanced")
+      |> open_boundary_details()
       # Click the "Local" preset button (rendered in DOM, visually gated by Alpine)
       |> within_first_acl_editor(
         post,
@@ -64,7 +62,7 @@ defmodule Bonfire.UI.Boundaries.ChangeObjectBoundaryTest do
       # Author changes boundary to mentions
       conn(user: me, account: account)
       |> visit("/post/#{post.id}")
-      |> click_button("Advanced")
+      |> open_boundary_details()
       |> within_first_acl_editor(
         post,
         me,
@@ -108,7 +106,7 @@ defmodule Bonfire.UI.Boundaries.ChangeObjectBoundaryTest do
     end
   end
 
-  # The Advanced modal renders one ACL editor per unnamed ACL on the post (in this order), and each
+  # The boundary details modal renders one ACL editor per unnamed ACL on the post (in this order), and each
   # editor's presets change the whole post's boundary, so drive the first one.
   # A post with no custom ACL of its own gets one editor keyed by the post, which creates that ACL on the first grant change
   defp within_first_acl_editor(session, post, me, fun) do
@@ -124,6 +122,12 @@ defmodule Bonfire.UI.Boundaries.ChangeObjectBoundaryTest do
       end
 
     within(session, "#boundaries_acl_set_acl_#{editor_id}", fun)
+  end
+
+  defp open_boundary_details(session) do
+    session
+    |> open_more_menu()
+    |> click_button("[data-id=boundary_details] [data-role=open_modal]", "Boundary details")
   end
 
   defp publish_post(user, boundary, opts \\ []) do

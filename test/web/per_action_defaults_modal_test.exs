@@ -4,7 +4,7 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
   "Define the activity boundary" modal. Verifies that the reply/quote/read
   toggles react to the post's general preset as intended.
 
-  Note: the "Advanced" flow on an existing post renders the toggles in a
+  Note: the boundary details on an existing post (its "More actions" menu) render the toggles in a
   read-only viewer, so every toggle has `disabled`. The check we care about
   here is `checked` vs not-checked — that's the preset-reactivity behaviour.
   """
@@ -30,7 +30,7 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
       session =
         conn(user: me, account: account)
         |> visit("/post/#{post.id}")
-        |> click_button("Advanced")
+        |> open_boundary_details()
 
       session
       |> assert_has("[data-role=action_toggle_read][checked]")
@@ -46,7 +46,7 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
 
       conn(user: me, account: account)
       |> visit("/post/#{post.id}")
-      |> click_button("Advanced")
+      |> open_boundary_details()
       |> refute_has("[data-role=action_toggle_quote][checked]")
       |> refute_has("[data-role=action_exceptions_quote]")
       |> click_button("[data-role=action_exceptions_toggle_quote]", "Allow for some people")
@@ -62,7 +62,7 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
       session =
         conn(user: me, account: account)
         |> visit("/post/#{post.id}")
-        |> click_button("Advanced")
+        |> open_boundary_details()
 
       # Under mentions, preset_locks_action? → true (disabled) and preset grants
       # none of these verbs to the anyone/public audience (unchecked).
@@ -79,7 +79,7 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
 
       conn(user: me, account: account)
       |> visit("/post/#{post.id}")
-      |> click_button("Advanced")
+      |> open_boundary_details()
       |> assert_has("[data-role=action_toggle_reply][checked]")
     end
 
@@ -89,7 +89,7 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
 
       conn(user: me, account: account)
       |> visit("/post/#{post.id}")
-      |> click_button("Advanced")
+      |> open_boundary_details()
       |> assert_has("[data-role=action_toggle_read]")
       |> assert_has("[data-role=action_toggle_reply]")
       |> assert_has("[data-role=action_toggle_quote]")
@@ -112,7 +112,7 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
   end
 
   # viewing must not write: a post gets its own custom ACL only when one of its grants is changed
-  test "opening a post's Advanced modal adds no ACL to it", %{account: account, me: me} do
+  test "opening a post's boundary details adds no ACL to it", %{account: account, me: me} do
     post = publish_post(me, "public")
 
     acl_ids_before =
@@ -122,13 +122,19 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
 
     conn(user: me, account: account)
     |> visit("/post/#{post.id}")
-    |> click_button("Advanced")
+    |> open_boundary_details()
     |> assert_has("[data-role=action_toggle_reply]", [])
 
     assert Bonfire.Boundaries.Controlleds.list_on_object(post.id)
            |> Enum.map(& &1.acl_id)
            |> Enum.sort() ==
              acl_ids_before
+  end
+
+  defp open_boundary_details(session) do
+    session
+    |> open_more_menu()
+    |> click_button("[data-id=boundary_details] [data-role=open_modal]", "Boundary details")
   end
 
   defp publish_post(user, boundary, opts \\ []) do

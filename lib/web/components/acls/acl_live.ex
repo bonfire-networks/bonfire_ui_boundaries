@@ -455,10 +455,6 @@ defmodule Bonfire.UI.Boundaries.AclLive do
     nil
   end
 
-  # def columns(context) do
-  #  if context[:ui_compact], do: 3, else: 2
-  # end
-
   def predefined_subjects(subjects) do
     Enum.map(subjects, fn s ->
       %{"value" => uid(s), "text" => LiveHandler.subject_name(s) || uid(s)}

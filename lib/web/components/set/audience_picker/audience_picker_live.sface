@@ -1,39 +1,44 @@
-<div id={@id <> "_component"} class="min-w-0 w-full">
+<div id={@id <> "_component"} class="min-w-0 max-w-full">
   <Dropdown
     id={@id}
     menu={false}
     close_on_select={@mode != :visibility}
     focus_on_open={"#" <> @id <> "_search"}
     position="bottom-start"
-    wrapper_class="w-full min-w-0"
+    wrapper_class="min-w-0 max-w-full"
     wrapper_opts={["data-boundary": "#composer_container"]}
-    trigger_class="flex w-full min-h-12 items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-4 text-left hover:bg-fill focus-ring"
+    trigger_class={"flex h-8 min-w-0 max-w-full items-center gap-1.5 rounded-full border px-3 text-left text-sm font-medium focus-ring " <>
+      if @mode == :visibility and
+           (not Bonfire.UI.Common.SmartInputLive.public_audience?(@to_boundaries) or @to_circles != [] or
+              Bonfire.UI.Common.SmartInputLive.custom_audience?(@exclude_circles, @verb_permissions)),
+         do: "border-primary/30 bg-primary/10 text-primary hover:bg-primary/15",
+         else: "border-divider bg-base-100 hover:bg-base-200"}
     panel_class="!w-72 max-w-[calc(100vw-2rem)] !p-0"
     trigger_opts={["phx-click": JS.push("load", target: "#" <> @id <> "_component")]}
     label={if @mode == :destination, do: l("Post in"), else: l("Visible to")}
   >
     <:trigger>
-      <span class="flex min-w-0 flex-col gap-1">
+      <span class="flex min-w-0 items-center">
         <span class="sr-only">{if @mode == :destination, do: l("Post in"), else: l("Visible to")}</span>
         {#if @context_group}
-          <span class="flex min-w-0 items-center gap-2">
-            <#Icon iconify="ph:users-three-duotone" class="size-5 shrink-0 text-muted" />
-            <span class="break-words font-medium">{e(@context_group, :group_name, nil) || @context_group.name}</span>
+          <span class="flex min-w-0 items-center gap-1.5">
+            <#Icon iconify="ph:users-three-duotone" class="size-4 shrink-0 opacity-70" />
+            <span class="min-w-0 truncate">{e(@context_group, :group_name, nil) || @context_group.name}</span>
           </span>
         {#elseif @mode == :destination}
-          <span class="flex items-center gap-2 font-medium">
-            <#Icon iconify="ph:user-circle-fill" class="size-5 shrink-0 text-muted" />
+          <span class="flex items-center gap-1.5">
+            <#Icon iconify="ph:user-circle-fill" class="size-4 shrink-0 opacity-70" />
             {l("Your profile")}
           </span>
         {#elseif Bonfire.UI.Common.SmartInputLive.custom_audience?(@exclude_circles, @verb_permissions)}
-          <span class="flex items-center gap-2">
+          <span class="flex min-w-0 items-center gap-1.5">
             <Iconify.iconify
               icon={Bonfire.UI.Common.SmartInputLive.group_audience_icon(
                 @to_boundaries,
                 @exclude_circles,
                 @verb_permissions
               )}
-              class="size-5 shrink-0 text-muted"
+              class="size-4 shrink-0 opacity-70"
             />
             {Bonfire.UI.Common.SmartInputLive.group_audience_label(
               @to_boundaries,
@@ -42,18 +47,17 @@
             )}
           </span>
         {#elseif @to_circles != []}
-          <span class="flex items-center gap-2 font-medium">
-            <#Icon iconify="ph:circles-three" class="size-5 shrink-0 text-muted" />
+          <span class="flex items-center gap-1.5">
+            <#Icon iconify="ph:circles-three" class="size-4 shrink-0 opacity-70" />
             {l("Specific circles")}
           </span>
         {#else}
           <Bonfire.UI.Boundaries.BoundariesPresetNameLive
             to_boundaries={@to_boundaries}
-            icon_class="size-5 shrink-0 text-muted"
+            icon_class="size-4 shrink-0 opacity-70"
           />
         {/if}
       </span>
-      <#Icon iconify="ph:caret-down" class="size-4 shrink-0 text-muted" />
     </:trigger>
 
     <div

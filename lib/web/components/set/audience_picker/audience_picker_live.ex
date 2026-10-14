@@ -63,6 +63,23 @@ defmodule Bonfire.UI.Boundaries.AudiencePickerLive do
     end)
   end
 
+  @doc "Whether the composer's group context is narrowed to one of the group's topics."
+  def topic_selected?(%{id: id, group_id: group_id}) when is_binary(group_id), do: id != group_id
+  def topic_selected?(_), do: false
+
+  @doc "The current group's topics offered in the `:destination` menu, filtered by the search term. Empty outside a group."
+  def visible_topics(%{group_id: group_id, topics: [_ | _] = topics}, term)
+      when is_binary(group_id) do
+    case String.downcase(term || "") do
+      "" -> topics
+      needle -> Enum.filter(topics, &(&1 |> topic_name() |> String.downcase() |> String.contains?(needle)))
+    end
+  end
+
+  def visible_topics(_, _), do: []
+
+  def topic_name(topic), do: Bonfire.Classify.Web.Preview.CategoryLive.name(topic, l("Topic"))
+
   # Filters the loaded audience metadata and circles, and searches joined groups the user may post in.
   defp search(socket, term) do
     term = String.trim(term)

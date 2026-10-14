@@ -20,7 +20,23 @@
     <:trigger>
       <span class="flex min-w-0 items-center">
         <span class="sr-only">{if @mode == :destination, do: l("Post in"), else: l("Visible to")}</span>
-        {#if @context_group}
+        {#if @context_group && topic_selected?(@context_group)}
+          {!-- Group › topic path. When space runs out the group name truncates first (it shrinks 4x faster),
+              and on phones only its icon stays, so the topic — the part worth checking — stays readable.
+              The full path is in the tooltip and in the menu's section heading. --}
+          <span
+            class="flex min-w-0 items-center gap-1.5"
+            title={"#{@context_group.group_name} › #{@context_group.name}"}
+          >
+            <#Icon iconify="ph:users-three-duotone" class="size-4 shrink-0 opacity-70" />
+            <span
+              data-role="destination_group"
+              class="min-w-[3ch] max-w-48 shrink-[4] truncate font-normal text-muted max-sm:sr-only"
+            >{@context_group.group_name}</span>
+            <span aria-hidden="true" class="shrink-0 text-muted max-sm:hidden">›</span>
+            <span data-role="destination_topic" class="min-w-[6ch] truncate">{@context_group.name}</span>
+          </span>
+        {#elseif @context_group}
           <span class="flex min-w-0 items-center gap-1.5">
             <#Icon iconify="ph:users-three-duotone" class="size-4 shrink-0 opacity-70" />
             <span class="min-w-0 truncate">{e(@context_group, :group_name, nil) || @context_group.name}</span>
@@ -88,6 +104,39 @@
       </.form>
 
       <div class="mt-1 min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        {#case if @mode == :destination, do: visible_topics(@context_group, @search_term), else: []}
+          {#match []}
+          {#match topics}
+            <div id={@id <> "_topics"} data-role="destination_topics" class="mb-1 border-b border-divider pb-1">
+              <p class="px-2 pt-1 pb-1 text-xs text-muted break-words">{l("In %{group}", group: @context_group.group_name)}</p>
+              <button
+                :if={@search_term == ""}
+                type="button"
+                data-role="post_in_whole_group"
+                phx-click="Bonfire.UI.Common.SmartInput:pick_context"
+                phx-value-id={@context_group.group_id}
+                phx-target={@event_target || "#smart_input"}
+                aria-pressed={"#{not topic_selected?(@context_group)}"}
+                class="flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded-selector px-2 py-1.5 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 aria-pressed:text-primary focus-ring"
+              >
+                <#Icon iconify="ph:users-three-duotone" class="size-4 shrink-0 text-primary" />
+                {l("Whole group")}
+              </button>
+              <button
+                :for={topic <- topics}
+                type="button"
+                data-audience-topic={id(topic)}
+                phx-click="Bonfire.UI.Common.SmartInput:pick_context"
+                phx-value-id={id(topic)}
+                phx-target={@event_target || "#smart_input"}
+                aria-pressed={"#{@context_group.id == id(topic)}"}
+                class="flex w-full min-h-11 sm:min-h-10 items-center gap-2 rounded-selector py-1.5 pl-6 pr-2 text-sm text-left hover:bg-base-200 aria-pressed:bg-primary/10 aria-pressed:text-primary focus-ring"
+              >
+                <#Icon iconify="ph:chats-circle-duotone" class="size-4 shrink-0 text-primary" />
+                <span class="min-w-0 break-words">{topic_name(topic)}</span>
+              </button>
+            </div>
+        {/case}
         <button
           :if={@mode == :destination}
           type="button"

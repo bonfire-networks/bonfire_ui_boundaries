@@ -69,7 +69,9 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
            Bonfire.Boundaries.Blocks.block(id, type,
              current_user: current_user_required!(assigns(socket)),
              on_behalf_of: scoped_id,
-             also_unfollow_and_notify: Types.maybe_to_boolean(params["also_unfollow_and_notify"])
+             also_unfollow_and_notify: Types.maybe_to_boolean(params["also_unfollow_and_notify"]),
+             # only offered for a group hosted elsewhere, and `nil` where it wasn't, for which `Moderations.apply_now?/1` reads config
+             apply_now: Types.maybe_to_boolean(params["apply_now"])
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
       refresh_block_status(id)

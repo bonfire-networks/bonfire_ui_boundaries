@@ -376,6 +376,10 @@
         <input type="hidden" name="scope" value={id(@scope) || @scope}>
         <input type="hidden" name="type" value={@type}>
         <Bonfire.UI.Boundaries.BlockUnfollowNotifyLive type={:group} />
+        <StatelessComponent
+          module={maybe_component(Bonfire.UI.Social.ApplyNowOptInLive, @__context__)}
+          group={@scope}
+        />
         <button data-role="block_from_group" type="submit" class="btn btn-error normal-case">{case @type do
             :silence -> l("Silence in the group")
             :ghost -> l("Ghost from the group")

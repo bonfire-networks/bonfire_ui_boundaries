@@ -3,10 +3,11 @@ defmodule Bonfire.Boundaries.Locking.LiveHandler do
   # import Untangle
   # import Bonfire.UI.Common
 
-  def handle_event("lock", %{"id" => id} = _params, socket) do
+  def handle_event("lock", %{"id" => id} = params, socket) do
     with {:ok, _} <-
            Bonfire.Boundaries.Blocks.lock(id,
-             current_user: current_user_required!(assigns(socket))
+             current_user: current_user_required!(assigns(socket)),
+             apply_now: Types.maybe_to_boolean(params["apply_now"])
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
 

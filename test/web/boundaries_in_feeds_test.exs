@@ -15,10 +15,9 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
     {:ok, account: account, me: me, alice: alice, bob: bob}
   end
 
-  # With optimistic UI, action buttons render as enabled by default.
-  # Boundaries are enforced server-side on click.
+  # Each card's boundary is loaded with the page (`Bonfire.Boundaries.LiveHandler.preload_boundaries/2`), so its action buttons say what the viewer may do: enabled for what their role allows, disabled for the rest (which the server refuses on its own as well).
 
-  test "read role allows seeing a post but liking fails", %{
+  test "read role allows seeing a post but not liking it", %{
     me: me,
     alice: alice,
     bob: bob,
@@ -35,17 +34,18 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
         to_circles: %{alice.id => "read", bob.id => "interact"}
       )
 
-    # alice has read role — button renders but clicking fails
+    # alice has the read role: she may read it, not like it
     conn(user: alice, account: account)
     |> visit("/post/#{post.id}")
-    |> assert_has("article button[data-role=like_enabled]")
-    |> click_button("[data-role=like_enabled]", "Like")
-    |> assert_has("[role=alert]")
+    |> assert_has("[data-id=object_body]", text: html_body)
+    |> assert_has("article [data-role=like_disabled]")
+    |> refute_has("article button[data-role=like_enabled]")
 
-    # bob has interact role — can like
+    # bob has the interact role: he may like it
     conn(user: bob, account: account)
     |> visit("/post/#{post.id}")
     |> assert_has_or_open_browser("article button[data-role=like_enabled]")
+    |> refute_has("article [data-role=like_disabled]")
   end
 
   test "public boundary grants all reaction and reply permissions", %{
@@ -67,7 +67,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
     |> assert_has("article button[data-role=reply_enabled]")
   end
 
-  test "interact role allows like and boost, reply button renders but server enforces", %{
+  test "interact role allows like and boost, not reply; participate allows all three", %{
     me: me,
     alice: alice,
     bob: bob,
@@ -89,7 +89,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
     assert Bonfire.Social.FeedLoader.feed_contains?(:explore, post, current_user: alice),
            "the post is missing from alice's :explore feed, so the boundary/feed data is at fault rather than the button rendering"
 
-    # alice has interact — buttons render as enabled (optimistic UI)
+    # alice has interact: like and boost, not reply
     conn(user: alice, account: account)
     |> visit("/feed/explore")
     |> within("[data-object_id='#{post.id}']", fn session ->
@@ -97,7 +97,8 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
       |> assert_has("[data-id=object_body]", text: html_body)
       |> assert_has("button[data-role=like_enabled]")
       |> assert_has("button[data-role=boost_enabled]")
-      |> assert_has("button[data-role=reply_enabled]")
+      |> assert_has("[data-role=reply_disabled]")
+      |> refute_has("button[data-role=reply_enabled]")
     end)
 
     # bob has participate — can like, boost, and reply
@@ -112,7 +113,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
     end)
   end
 
-  test "custom ACL preset with circle grants shows buttons but server enforces on click", %{
+  test "custom ACL preset with circle grants enables what the circle's role allows", %{
     me: me,
     alice: alice,
     bob: bob,
@@ -131,13 +132,14 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
     attrs = %{post_content: %{html_body: html_body}}
     {:ok, post} = Posts.publish(current_user: me, post_attrs: attrs, boundary: acl.id)
 
-    # alice (in circle) can see and interact — buttons render as enabled (optimistic UI)
+    # alice (in the circle, which may interact): like and boost, not reply
     conn(user: alice, account: account)
     |> visit("/post/#{post.id}")
     |> assert_has("[data-id=object_body]", text: html_body)
     |> assert_has("article button[data-role=like_enabled]")
     |> assert_has("article button[data-role=boost_enabled]")
-    |> assert_has("article button[data-role=reply_enabled]")
+    |> assert_has("article [data-role=reply_disabled]")
+    |> refute_has("article button[data-role=reply_enabled]")
 
     # bob (not in circle) cannot see the post
     conn(user: bob, account: account)

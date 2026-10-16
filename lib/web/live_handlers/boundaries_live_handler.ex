@@ -780,6 +780,41 @@ defmodule Bonfire.Boundaries.LiveHandler do
     end
   end
 
+  @doc """
+  Loads the boundary of every listed object the viewer is shown, in one query (`Boundaries.boundaries_on_objects/2`), into each one's `object_boundary`, so a card can tell whether its body may be shown, its action buttons can ask `can?/3` in memory rather than optimistically, and its menu needs no query to open. Leaves alone any that already has one.
+
+  Takes and returns `{assigns, socket}` pairs, as `maybe_check_boundaries/2` does.
+  """
+  def preload_boundaries(assigns_sockets, opts \\ []) do
+    unloaded = fn assigns -> e(assigns, :object_boundary, nil) in [nil, :skip_boundary_preload] end
+
+    object_ids =
+      assigns_sockets
+      |> Enum.filter(fn {assigns, _socket} -> unloaded.(assigns) end)
+      |> Enum.map(fn {assigns, _socket} -> uid(the_object(assigns)) end)
+      |> Enum.reject(&is_nil/1)
+      |> Enum.uniq()
+
+    if object_ids == [] do
+      assigns_sockets
+    else
+      {first_assigns, first_socket} = List.first(assigns_sockets)
+
+      loaded =
+        Boundaries.boundaries_on_objects(
+          object_ids,
+          opts[:current_user] || current_user(first_assigns) || current_user(first_socket)
+        )
+
+      Enum.map(assigns_sockets, fn {assigns, socket} ->
+        case unloaded.(assigns) && Map.get(loaded, uid(the_object(assigns))) do
+          %{} = boundary -> {Map.put(assigns, :object_boundary, boundary), socket}
+          _ -> {assigns, socket}
+        end
+      end)
+    end
+  end
+
   # @decorate time()
   def maybe_check_boundaries(assigns_sockets, opts \\ []) do
     current_user =

@@ -57,7 +57,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
 
     circle =
       e(assigns(socket), :circle, nil) ||
-        Bonfire.Boundaries.Circles.get(circle_id, current_user)
+        from_ok(Bonfire.Boundaries.Circles.get(circle_id, current_user: current_user))
 
     with circle when not is_nil(circle) <- circle,
          {:ok, subject} <-

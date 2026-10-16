@@ -59,13 +59,12 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
         to_circles: %{alice.id => "cannot_interact_or_more"}
       )
 
-    # login as alice - buttons render as enabled (optimistic UI) but clicking should fail
+    # login as alice - she may read it, and her Like is disabled, as she may not interact (the card's boundary is loaded with the page)
     conn(user: alice, account: account)
     |> visit("/post/#{post.id}")
     |> assert_has("[data-id=object_body]", text: html_body)
-    |> assert_has("button[data-role=like_enabled]")
-    |> click_button("[data-role=like_enabled]", "Like")
-    |> assert_has("[role=alert]")
+    |> assert_has("[data-role=like_disabled]")
+    |> refute_has("button[data-role=like_enabled]")
 
     # login as bob and verify that he can like the post
     conn(user: bob, account: account)
@@ -93,7 +92,7 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
         to_circles: %{alice.id => "cannot_participate_or_more"}
       )
 
-    # login as alice - she can see, like and boost but reply should fail (optimistic UI)
+    # login as alice - she can see, like and boost, and her Reply is disabled
     conn(user: alice, account: account)
     |> visit("/feed/local")
     |> within("[data-object_id='#{post.id}']", fn session ->
@@ -101,7 +100,8 @@ defmodule Bonfire.UI.Boundaries.NegativeBoundariesTest do
       |> assert_has("[data-id=object_body]", text: html_body)
       |> assert_has("button[data-role=like_enabled]")
       |> assert_has("button[data-role=boost_enabled]")
-      |> assert_has("button[data-role=reply_enabled]")
+      |> assert_has("[data-role=reply_disabled]")
+      |> refute_has("button[data-role=reply_enabled]")
     end)
 
     conn(user: bob, account: account)

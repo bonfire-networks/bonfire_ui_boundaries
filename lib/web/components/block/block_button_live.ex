@@ -14,6 +14,9 @@ defmodule Bonfire.UI.Boundaries.BlockButtonLive do
   prop only_admin, :boolean, default: false
   prop only_user, :boolean, default: false
 
+  # for a `:lock`, the group the thread is in, so locking it in a group hosted elsewhere offers to apply it here at once
+  prop group, :any, default: nil
+
   # visual
   prop parent_id, :any, default: nil
   prop with_icon, :boolean, default: false
@@ -45,6 +48,7 @@ defmodule Bonfire.UI.Boundaries.BlockButtonLive do
         :silence -> l("Silence")
         :ghost -> l("Ghost")
         :hide -> l("Hide")
+        :lock -> l("Lock or unlock")
         type -> type
       end
     end)
@@ -59,6 +63,7 @@ defmodule Bonfire.UI.Boundaries.BlockButtonLive do
         :silence -> l("Silence %{user_or_instance_name}", user_or_instance_name: name)
         :ghost -> l("Ghost %{user_or_instance_name}", user_or_instance_name: name)
         :hide -> l("Hide %{user_or_instance_name}", user_or_instance_name: name)
+        :lock -> l("Lock or unlock discussion")
         _ -> name
       end
     end)

@@ -10,14 +10,13 @@
 >
   {#if @type in [:silence, :hide]}
     {#if !@only_admin}
-      {#if Bonfire.Boundaries.Blocks.is_blocked?(@object, :silence, current_user: current_user(@__context__))}
+      {#if Bonfire.Boundaries.Blocks.is_blocked?(@object, @type, current_user: current_user(@__context__))}
         <div class="text-sm mt-3">{if @type == :silence,
             do:
               l("By unsilencing %{user_or_instance_name}, you will see things they publish again.",
                 user_or_instance_name: @label
               ),
             else: l("You have previously hidden %{user_or_instance_name}.", user_or_instance_name: @label)}</div>
-        {!-- FIXME? unhide button won't appear because we're not currently adding hidden things to the silence circle --}
         <button
           data-role="unsilence"
           :on-click={"Bonfire.Boundaries.Blocks:un#{@type}"}
@@ -90,12 +89,18 @@
     {/if}
     {#if !@only_user}
       <div :if={@can_instance_wide?} class="">
-        {#if Bonfire.Boundaries.Blocks.is_blocked?(@object, :silence, :instance_wide)}
+        {#if Bonfire.Boundaries.Blocks.is_blocked?(@object, @type, :instance_wide)}
           <div class="">
             <p class="mt-0 text-sm text-base-content">
-              {l("Do you want to unsilence %{user_or_instance_name} instance-wide?",
-                user_or_instance_name: @label
-              )}
+              {if @type == :silence,
+                do:
+                  l("Do you want to unsilence %{user_or_instance_name} instance-wide?",
+                    user_or_instance_name: @label
+                  ),
+                else:
+                  l("Do you want to unhide %{user_or_instance_name} instance-wide?",
+                    user_or_instance_name: @label
+                  )}
             </p>
           </div>
           <button
@@ -127,6 +132,31 @@
           </div>
         {/if}
       </div>
+    {/if}
+  {#elseif @type == :lock}
+    {!-- one section, whoever opens it: a lock applies to everyone here, and whoever may lock it (its author, a moderator of its group, an admin) may unlock it, which the menu checks before offering this --}
+    {#if Bonfire.Boundaries.Blocks.is_blocked?(@object, :lock)}
+      <div class="text-sm mt-3">{l("This discussion is locked. You can unlock it to accept replies again.")}</div>
+      <button
+        data-role="unlock_confirm"
+        type="button"
+        phx-click="Bonfire.Boundaries.Locking:unlock"
+        phx-value-id={e(@object, :id, @object)}
+        class="btn my-3 w-full btn-primary normal-case"
+      >{l("Unlock this discussion")}</button>
+    {#else}
+      <div class="text-sm my-3">{l(
+          "You can lock this discussion to prevent any replies from users on this instance and to block any remote replies from federating back to this instance."
+        )}</div>
+      {!-- a form rather than a bare button, so the checkbox travels with the submit --}
+      <form phx-submit="Bonfire.Boundaries.Locking:lock">
+        <input type="hidden" name="id" value={e(@object, :id, @object)}>
+        <StatelessComponent
+          module={maybe_component(Bonfire.UI.Social.ApplyNowOptInLive, @__context__)}
+          group={@group}
+        />
+        <button data-role="lock_confirm" type="submit" class="btn w-full btn-warning normal-case">{l("Lock this discussion")}</button>
+      </form>
     {/if}
   {#elseif @type == :ghost}
     {#if !@only_admin}
@@ -413,6 +443,7 @@
         iconify="ph:eye-slash-duotone"
         class="size-4 shrink-0"
       />
+      <#Icon :if={@with_icon && @type == :lock} iconify="ph:lock-fill" class="size-4 shrink-0" />
       <span :if={!@hide_text} class="flex-1 text-left truncate ellipsis max-w-[210px] text-sm">
         {@open_btn_label || @action_label}
       </span>

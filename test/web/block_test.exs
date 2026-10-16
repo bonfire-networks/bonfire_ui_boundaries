@@ -111,6 +111,26 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
     |> refute_has("#circle_members", text: alice.profile.name)
   end
 
+  # the modal asked whether its author was silenced rather than whether the post was hidden, so Unhide never showed
+  test "I can unhide a post I hid, from its menu", %{conn: conn, me: me, alice: alice} do
+    {:ok, post} =
+      Posts.publish(
+        current_user: alice,
+        post_attrs: %{post_content: %{html_body: "a post I'd rather not see"}},
+        boundary: "public"
+      )
+
+    {:ok, _} = Bonfire.Boundaries.Blocks.block(post, :hide, current_user: me)
+
+    conn
+    |> visit("/post/#{post.id}")
+    |> open_more_menu()
+    |> click_button("[data-role=hide_modal] [data-role=open_modal]", "Hide")
+    |> click_button("[data-role=unsilence]", "Unhide")
+
+    refute Bonfire.Boundaries.Blocks.is_blocked?(post, :hide, current_user: me)
+  end
+
   test "I can see a list of blocked users", %{
     conn: conn,
     me: me,

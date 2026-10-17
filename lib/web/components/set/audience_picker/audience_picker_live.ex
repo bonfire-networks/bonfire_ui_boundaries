@@ -71,8 +71,14 @@ defmodule Bonfire.UI.Boundaries.AudiencePickerLive do
   def visible_topics(%{group_id: group_id, topics: [_ | _] = topics}, term)
       when is_binary(group_id) do
     case String.downcase(term || "") do
-      "" -> topics
-      needle -> Enum.filter(topics, &(&1 |> topic_name() |> String.downcase() |> String.contains?(needle)))
+      "" ->
+        topics
+
+      needle ->
+        Enum.filter(
+          topics,
+          &(&1 |> topic_name() |> String.downcase() |> String.contains?(needle))
+        )
     end
   end
 

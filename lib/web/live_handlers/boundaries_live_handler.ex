@@ -786,7 +786,9 @@ defmodule Bonfire.Boundaries.LiveHandler do
   Takes and returns `{assigns, socket}` pairs, as `maybe_check_boundaries/2` does.
   """
   def preload_boundaries(assigns_sockets, opts \\ []) do
-    unloaded = fn assigns -> e(assigns, :object_boundary, nil) in [nil, :skip_boundary_preload] end
+    unloaded = fn assigns ->
+      e(assigns, :object_boundary, nil) in [nil, :skip_boundary_preload]
+    end
 
     object_ids =
       assigns_sockets

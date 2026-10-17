@@ -107,7 +107,11 @@
         {#case if @mode == :destination, do: visible_topics(@context_group, @search_term), else: []}
           {#match []}
           {#match topics}
-            <div id={@id <> "_topics"} data-role="destination_topics" class="mb-1 border-b border-divider pb-1">
+            <div
+              id={@id <> "_topics"}
+              data-role="destination_topics"
+              class="mb-1 border-b border-divider pb-1"
+            >
               <p class="px-2 pt-1 pb-1 text-xs text-muted break-words">{l("In %{group}", group: @context_group.group_name)}</p>
               <button
                 :if={@search_term == ""}

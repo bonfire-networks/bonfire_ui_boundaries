@@ -407,10 +407,10 @@
         <input type="hidden" name="type" value={@type}>
         {!-- a group's ghost alone sends nothing to other instances (they can't act on it), so its box is only the follower removal and says so --}
         <Bonfire.UI.Boundaries.BlockUnfollowNotifyLive type={case @type do
-            :ghost -> :group_ghost
-            :silence -> :group_silence
-            _ -> :group
-          end} />
+          :ghost -> :group_ghost
+          :silence -> :group_silence
+          _ -> :group
+        end} />
         <StatelessComponent
           module={maybe_component(Bonfire.UI.Social.ApplyNowOptInLive, @__context__)}
           group={@scope}

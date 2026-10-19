@@ -16,6 +16,7 @@ defmodule Bonfire.UI.Boundaries.BlockUnfollowNotifyLive do
   def offer(:silence), do: l("Do more to keep their posts away from you")
   def offer(:group), do: l("Tell other instances too")
   def offer(:group_silence), do: l("Tell other instances too")
+
   # a group's ghost alone: the box is only the follower removal, since a peer can't act on a ghost (see `what(:group_ghost)`)
   def offer(:group_ghost), do: l("Also remove them from the group's followers")
   def offer(_), do: l("Do more to enforce the block")

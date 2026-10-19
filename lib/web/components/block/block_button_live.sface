@@ -357,8 +357,8 @@
 
   {!-- the same action, on behalf of the group the object is in, for those who may moderate it (`Blocks.block/3` with `on_behalf_of:`, which checks the same). After the type branches above, so it is offered whatever the type, which as everywhere in this component decides what it does (`:block` both halves); where a choice is offered, one of these per type is rendered (eg. `BlockMenuButtonsLive`). Looked up only when the modal opens, since it renders this then --}
   <div
-    :if={!@only_user and @type in [:silence, :ghost, :block] and @scope not in [nil, :instance] and
-      Bonfire.Boundaries.can?(@__context__, :mediate, @scope)}
+    :if={!@only_user and @type in [:silence, :ghost, :block] and
+      group_block_offered?(@scope, @__context__, @type)}
     data-role="group_block"
     class="flex flex-col p-2 mt-5 space-y-3 border rounded border-error/30 bg-error/5"
   >
@@ -405,7 +405,12 @@
         <input type="hidden" name="id" value={e(@object, :id, @object)}>
         <input type="hidden" name="scope" value={id(@scope) || @scope}>
         <input type="hidden" name="type" value={@type}>
-        <Bonfire.UI.Boundaries.BlockUnfollowNotifyLive type={:group} />
+        {!-- a group's ghost alone sends nothing to other instances (they can't act on it), so its box is only the follower removal and says so --}
+        <Bonfire.UI.Boundaries.BlockUnfollowNotifyLive type={case @type do
+            :ghost -> :group_ghost
+            :silence -> :group_silence
+            _ -> :group
+          end} />
         <StatelessComponent
           module={maybe_component(Bonfire.UI.Social.ApplyNowOptInLive, @__context__)}
           group={@scope}

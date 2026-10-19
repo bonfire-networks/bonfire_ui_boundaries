@@ -27,6 +27,30 @@ defmodule Bonfire.UI.Boundaries.BlockButtonLive do
   prop open_btn_label, :string, default: nil
   prop title, :string, default: nil
 
+  @doc """
+  Whether to offer the group's own ghost, silence or block ("In the group") of this `type`: to someone who may moderate the group. A silence or block by a moderator here of a group hosted elsewhere is a request to its instance, which reads it as a ban, so it is offered. A ghost is not, for now: that instance would read it as a silence too (the group federation plan, "Group bans and removals", ⑦). The moderator's own ghost, silence and block are unaffected.
+  """
+  def group_block_offered?(scope, _context, _type) when scope in [nil, :instance], do: false
+
+  def group_block_offered?(scope, context, type) do
+    Bonfire.Boundaries.can?(context, :mediate, scope) == true and
+      not (type == :ghost and hosted_elsewhere?(scope))
+  end
+
+  defp hosted_elsewhere?(scope) do
+    group =
+      if is_binary(scope) do
+        case Bonfire.Common.Needles.get(scope, skip_boundary_check: true) do
+          {:ok, group} -> group
+          _ -> nil
+        end
+      else
+        scope
+      end
+
+    not is_nil(group) and is_local?(group, preload_if_needed: true) != true
+  end
+
   def render(assigns) do
     assigns
     # Whether to offer `also_unfollow_and_notify`. Only for a remote PERSON, matching the same two conditions `Blocks.maybe_federate_block/3` applies, so the checkbox never promises something the context will decline to do:

@@ -15,6 +15,9 @@ defmodule Bonfire.UI.Boundaries.BlockUnfollowNotifyLive do
   def offer(:ghost), do: l("Do more to stop them seeing your posts")
   def offer(:silence), do: l("Do more to keep their posts away from you")
   def offer(:group), do: l("Tell other instances too")
+  def offer(:group_silence), do: l("Tell other instances too")
+  # a group's ghost alone: the box is only the follower removal, since a peer can't act on a ghost (see `what(:group_ghost)`)
+  def offer(:group_ghost), do: l("Also remove them from the group's followers")
   def offer(_), do: l("Do more to enforce the block")
 
   @doc "What it actually does, including the part that only their server can carry out."
@@ -32,6 +35,20 @@ defmodule Bonfire.UI.Boundaries.BlockUnfollowNotifyLive do
     do:
       l(
         "Sends the block to instances that follow the group (including the instance of the person you are blocking), so their copies of the group keep them out too. Ghosting also removes them from the group's followers."
+      )
+
+  # a group's silence keeps the person's follow, so it has nothing to say about followers
+  def what(:group_silence),
+    do:
+      l(
+        "Sends the block to instances that follow the group (including the instance of the person you are blocking), so their copies of the group keep them out too."
+      )
+
+  # A ghost keeps someone from SEEING the group, which another instance holding a public copy of its posts can't enforce, and which it would apply as a silence (the half that wasn't chosen), so a group's ghost alone sends nothing. The follow is removed here; their own server isn't told, and so keeps thinking they follow, while the group stops sending it posts
+  def what(:group_ghost),
+    do:
+      l(
+        "Removes them from the group's followers, so the group stops sending them its posts. Nothing is sent to other instances: their own server isn't told, and can't hide a group's posts from someone."
       )
 
   def what(_),
@@ -61,6 +78,18 @@ defmodule Bonfire.UI.Boundaries.BlockUnfollowNotifyLive do
     do:
       l(
         "They and the group's followers on other instances will see that they were blocked from the group. Unblocking sends that too, but doesn't restore a follow the ghost removed."
+      )
+
+  def risk(:group_silence),
+    do:
+      l(
+        "They and the group's followers on other instances will see that they were blocked from the group. Unblocking sends that too."
+      )
+
+  def risk(:group_ghost),
+    do:
+      l(
+        "They may notice they no longer follow the group. Unghosting does not undo it, they would have to follow it again themselves."
       )
 
   def risk(_),

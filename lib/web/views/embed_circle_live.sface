@@ -1,0 +1,19 @@
+<div class={
+  "grid",
+  "gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]": @variant == :quiet,
+  "gap-x-5 gap-y-8 grid-cols-[repeat(auto-fill,minmax(180px,1fr))]": @variant == :portrait
+}>
+  {#for user <- @members}
+    <StatelessComponent
+      module={maybe_component(Bonfire.UI.Me.UserPreviewLive, @__context__)}
+      user={user}
+      variant={if @variant == :portrait, do: :portrait, else: :card}
+      href={path(user)}
+      target="_blank"
+      with_banner
+      with_summary
+      show_badges={false}
+      parent_id="circle_embed"
+    />
+  {/for}
+</div>

@@ -3,6 +3,13 @@ defmodule Bonfire.UI.Boundaries.Routes do
 
   defmacro __using__(_) do
     quote do
+      # must come before `/circle/:id/:tab`, which would otherwise match `embed` as a tab. Not cacheable (unlike the pins embed) since nothing purges the cache when a circle is made private again
+      scope "/", Bonfire.UI.Boundaries do
+        pipe_through([:browser_or_cacheable, :iframe_embeddable])
+
+        get("/circle/:id/embed", EmbedCircleController, :index)
+      end
+
       # pages anyone can view
       scope "/" do
         pipe_through(:browser)

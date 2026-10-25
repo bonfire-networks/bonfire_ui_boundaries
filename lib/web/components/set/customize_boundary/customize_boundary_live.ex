@@ -197,7 +197,12 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
         slug: verb_slug,
         icon: e(verb_config, :icon, "ph:circle-duotone"),
         name: name,
-        summary: e(verb_config, :summary, l("Who can %{verb} the post", verb: name))
+        # localised in the domain that declares the verb (see `Verbs.verb_name/1`), and lowercased since it sits mid-sentence
+        summary:
+          e(verb_config, :summary, nil) ||
+            l("Who can %{verb} this",
+              verb: verb_config |> Bonfire.Boundaries.Verbs.verb_name() |> String.downcase()
+            )
       }
     end)
   end

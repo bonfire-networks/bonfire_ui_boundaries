@@ -1,10 +1,11 @@
 <div
   data-embed-links="_blank"
   class={
-  "grid",
-  "gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]": @variant == :quiet,
-  "gap-x-5 gap-y-8 grid-cols-[repeat(auto-fill,minmax(180px,1fr))]": @variant == :portrait
-}>
+    "grid",
+    "gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]": @variant == :quiet,
+    "gap-x-5 gap-y-8 grid-cols-[repeat(auto-fill,minmax(180px,1fr))]": @variant == :portrait
+  }
+>
   {#for user <- @members}
     <StatelessComponent
       module={maybe_component(Bonfire.UI.Me.UserPreviewLive, @__context__)}

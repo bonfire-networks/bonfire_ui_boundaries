@@ -21,19 +21,14 @@
       <span class="flex min-w-0 items-center">
         <span class="sr-only">{if @mode == :destination, do: l("Post in"), else: l("Visible to")}</span>
         {#if @context_group && topic_selected?(@context_group)}
-          {!-- Group › topic path. When space runs out the group name truncates first (it shrinks 4x faster),
-              and on phones only its icon stays, so the topic — the part worth checking — stays readable.
-              The full path is in the tooltip and in the menu's section heading. --}
+          {!-- Only the topic shows — the part worth checking; the group name is screen-reader text,
+              and the full group › topic path is in the tooltip and in the menu's section heading. --}
           <span
             class="flex min-w-0 items-center gap-1.5"
             title={"#{@context_group.group_name} › #{@context_group.name}"}
           >
             <#Icon iconify="ph:users-three-duotone" class="size-4 shrink-0 opacity-70" />
-            <span
-              data-role="destination_group"
-              class="min-w-[3ch] max-w-48 shrink-[4] truncate font-normal text-muted max-sm:sr-only"
-            >{@context_group.group_name}</span>
-            <span aria-hidden="true" class="shrink-0 text-muted max-sm:hidden">›</span>
+            <span data-role="destination_group" class="sr-only">{@context_group.group_name} ›</span>
             <span data-role="destination_topic" class="min-w-[6ch] truncate">{@context_group.name}</span>
           </span>
         {#elseif @context_group}

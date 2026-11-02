@@ -153,7 +153,7 @@
         <input type="hidden" name="id" value={e(@object, :id, @object)}>
         <StatelessComponent
           module={maybe_component(Bonfire.UI.Social.ApplyNowOptInLive, @__context__)}
-          group={@group}
+          scope={@scope}
         />
         <button data-role="lock_confirm" type="submit" class="btn w-full btn-warning normal-case">{l("Lock this discussion")}</button>
       </form>
@@ -413,7 +413,7 @@
         end} />
         <StatelessComponent
           module={maybe_component(Bonfire.UI.Social.ApplyNowOptInLive, @__context__)}
-          group={@scope}
+          scope={@scope}
         />
         <button data-role="block_from_group" type="submit" class="btn btn-error normal-case">{case @type do
             :silence -> l("Silence in the group")

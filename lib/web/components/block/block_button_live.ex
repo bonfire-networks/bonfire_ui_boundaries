@@ -7,15 +7,13 @@ defmodule Bonfire.UI.Boundaries.BlockButtonLive do
   prop object, :any
   prop is_local_user, :any, default: nil
 
+  # the group to act in, as a struct loaded with its `character: [:peered]` (`:with_parent` does), for the "In the group" section
   prop scope, :any, default: nil
   prop type, :atom, default: :block
   prop my_block, :any, default: nil
 
   prop only_admin, :boolean, default: false
   prop only_user, :boolean, default: false
-
-  # for a `:lock`, the group the thread is in, so locking it in a group hosted elsewhere offers to apply it here at once
-  prop group, :any, default: nil
 
   # visual
   prop parent_id, :any, default: nil
@@ -30,26 +28,12 @@ defmodule Bonfire.UI.Boundaries.BlockButtonLive do
   @doc """
   Whether to offer the group's own ghost, silence or block ("In the group") of this `type`: to someone who may moderate the group. A silence or block by a moderator here of a group hosted elsewhere is a request to its instance, which reads it as a ban, so it is offered. A ghost is not, for now: that instance would read it as a silence too (the group federation plan, "Group bans and removals", ⑦). The moderator's own ghost, silence and block are unaffected.
   """
-  def group_block_offered?(scope, _context, _type) when scope in [nil, :instance], do: false
-
-  def group_block_offered?(scope, context, type) do
+  def group_block_offered?(%{id: _} = scope, context, type) do
     Bonfire.Boundaries.can?(context, :mediate, scope) == true and
-      not (type == :ghost and hosted_elsewhere?(scope))
+      not (type == :ghost and is_local?(scope) != true)
   end
 
-  defp hosted_elsewhere?(scope) do
-    group =
-      if is_binary(scope) do
-        case Bonfire.Common.Needles.get(scope, skip_boundary_check: true) do
-          {:ok, group} -> group
-          _ -> nil
-        end
-      else
-        scope
-      end
-
-    not is_nil(group) and is_local?(group, preload_if_needed: true) != true
-  end
+  def group_block_offered?(_scope, _context, _type), do: false
 
   def render(assigns) do
     assigns

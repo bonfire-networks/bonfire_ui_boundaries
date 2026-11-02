@@ -6,6 +6,7 @@ defmodule Bonfire.UI.Boundaries.LiveSelectSearchTest do
   """
   use Bonfire.UI.Boundaries.ConnCase, async: System.get_env("TEST_UI_ASYNC") != "no"
   @moduletag :ui
+  use Repatch.ExUnit
 
   alias Bonfire.Boundaries.Circles
 
@@ -165,6 +166,40 @@ defmodule Bonfire.UI.Boundaries.LiveSelectSearchTest do
 
       assert_received {:phoenix, :send_update, {{LiveSelect.Component, "ls_members"}, assigns}}
       refute option_ids(assigns.options) |> Enum.member?(me.id)
+    end
+
+    test "CircleMembersLive offers remote users from Meilisearch hits, in index order", %{
+      findable: findable
+    } do
+      # creating the remote actor fetches it over HTTP (in this process)
+      Tesla.Mock.mock(fn env -> ActivityPub.Test.HttpRequestMock.request(env) end)
+      remote = Bonfire.Social.Fake.fake_remote_user!()
+
+      # Meilisearch returns the indexed documents (string-keyed maps), not structs
+      Repatch.patch(Bonfire.Search, :adapter, fn -> Bonfire.Search.MeiliLib end)
+
+      Repatch.patch(Bonfire.Search.MeiliLib, :search_by_type, fn _text, _facets, _opts ->
+        [
+          Bonfire.Me.Users.indexing_object_format(remote),
+          # stale index entry, no longer in the DB
+          %{"id" => Needle.UID.generate(), "index_type" => "Bonfire.Data.Identity.User"},
+          Bonfire.Me.Users.indexing_object_format(findable)
+        ]
+      end)
+
+      # `flash` is reserved (no `assign/2`): the handler's error wrapper flashes if the search raises
+      socket = fake_socket()
+      socket = %{socket | assigns: Map.put(socket.assigns, :flash, %{})}
+
+      assert {:noreply, _} =
+               Bonfire.UI.Boundaries.CircleMembersLive.handle_event(
+                 "live_select_change",
+                 %{"id" => "ls_members", "text" => "karen"},
+                 socket
+               )
+
+      assert_received {:phoenix, :send_update, {{LiveSelect.Component, "ls_members"}, assigns}}
+      assert option_ids(assigns.options) == [remote.id, findable.id]
     end
   end
 

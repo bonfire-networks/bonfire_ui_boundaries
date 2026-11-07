@@ -1,5 +1,7 @@
-<div>
-  {#if @boundary_can}
+{!-- with no check asked for (eg. no viewer to check for) the content shows; when the check fails with nothing to say instead, the root is `hidden`, so a list or carousel can skip it --}
+<div hidden={not (@boundary_can or !@check_object_boundary) and not slot_assigned?(:if_not) and
+  is_nil(@if_not_say)}>
+  {#if @boundary_can or !@check_object_boundary}
     <#slot />
   {#else}
     <#slot {@if_not}>{@if_not_say}</#slot>

@@ -825,73 +825,86 @@ defmodule Bonfire.Boundaries.LiveHandler do
 
     # |> debug("current_user")
 
-    list_of_assigns =
+    default_verbs = e(opts, :verbs, [:read])
+
+    # only check when explicitly asked, for the verbs each card asks for (`check_object_boundary` is `true`, meaning `default_verbs`, or a list of verbs), so cards asking for different verbs can share a batch
+    ids_by_verbs =
       assigns_sockets
-      |> Enum.map(fn {assigns, _socket} -> assigns end)
-      # |> debug("list_of_assigns")
-      # only check when explicitly asked
-      |> Enum.reject(&(e(&1, :check_object_boundary, nil) != true))
+      |> Enum.flat_map(fn {assigns, _socket} ->
+        case check_verbs(e(assigns, :check_object_boundary, nil), default_verbs) do
+          nil -> []
+          verbs -> [{verbs, Acls.acl_id(the_object(assigns))}]
+        end
+      end)
+      |> Enum.reject(&is_nil(elem(&1, 1)))
+      |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
+      |> Map.new(fn {verbs, ids} -> {verbs, Enum.uniq(ids)} end)
 
-    # |> debug("list_of_assigns to (re)check boundaries for")
+    if ids_by_verbs != %{} do
+      debug(ids_by_verbs, "ids to check, by verbs (check via #{opts[:caller_module]})")
 
-    if list_of_assigns != [] do
-      if list_of_ids =
-           list_of_assigns
-           |> Enum.map(&the_object/1)
-           # |> debug("list_of_objects to (re)check boundaries for")
-           |> Enum.map(&Acls.acl_id/1)
-           |> Enum.uniq()
-           |> filter_empty(nil) do
-        debug(list_of_ids, "list_of_ids (check via #{opts[:caller_module]})")
-
-        my_visible_ids =
-          if current_user,
-            do:
-              Bonfire.Boundaries.load_pointers(list_of_ids,
-                current_user: current_user,
-                verbs: e(opts, :verbs, [:read]),
-                ids_only: true
-              )
-              |> Enums.ids(),
-            else: []
-
-        debug(my_visible_ids, "my_visible_ids")
-
-        Enum.map(assigns_sockets, fn {assigns, socket} ->
-          object_id = uid(the_object(assigns))
-
-          {if object_id in list_of_ids and object_id not in my_visible_ids do
-             # not allowed
-             assigns
-             |> Map.put(
-               :activity,
-               nil
-             )
-             |> Map.put(
-               :object,
-               nil
-             )
-             |> Map.put(
-               :object_boundary,
-               :not_visible
-             )
-           else
-             # allowed
-             assigns
-             |> Map.put(
-               :boundary_can,
-               true
-             )
-             # to avoid checking again
-             |> Map.put(
-               :check_object_boundary,
-               false
-             )
-           end, socket}
+      # one query per distinct list of verbs, so one in the usual case
+      visible_by_verbs =
+        Map.new(ids_by_verbs, fn {verbs, ids} ->
+          {verbs,
+           if(current_user,
+             do:
+               Bonfire.Boundaries.load_pointers(ids,
+                 current_user: current_user,
+                 verbs: verbs,
+                 ids_only: true
+               )
+               |> Enums.ids(),
+             else: []
+           )}
         end)
-      end
+
+      debug(visible_by_verbs, "my visible ids, by verbs")
+
+      Enum.map(assigns_sockets, fn {assigns, socket} ->
+        object_id = uid(the_object(assigns))
+
+        # a card that asked for no check of its own follows the default verbs, so it's hidden along with a card for the same object, as before cards could ask for their own verbs
+        verbs =
+          check_verbs(e(assigns, :check_object_boundary, nil), default_verbs) || default_verbs
+
+        {if object_id in Map.get(ids_by_verbs, verbs, []) and
+              object_id not in Map.get(visible_by_verbs, verbs, []) do
+           # not allowed
+           assigns
+           |> Map.put(
+             :activity,
+             nil
+           )
+           |> Map.put(
+             :object,
+             nil
+           )
+           |> Map.put(
+             :object_boundary,
+             :not_visible
+           )
+         else
+           # allowed
+           assigns
+           |> Map.put(
+             :boundary_can,
+             true
+           )
+           # to avoid checking again
+           |> Map.put(
+             :check_object_boundary,
+             false
+           )
+         end, socket}
+      end)
     end || assigns_sockets
   end
+
+  # the verbs a card's `check_object_boundary` asks for: `true` means the call's, a list its own, anything else no check
+  defp check_verbs(true, default_verbs), do: default_verbs
+  defp check_verbs([_ | _] = verbs, _default_verbs), do: verbs
+  defp check_verbs(_, _default_verbs), do: nil
 
   # @decorate time()
   def update_many(assigns_sockets, opts \\ []) do

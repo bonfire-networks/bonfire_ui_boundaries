@@ -45,7 +45,7 @@ defmodule Bonfire.UI.Boundaries.BlockButtonLive do
     |> assign_new(:offer_unfollow_and_notify?, fn ->
       remote? =
         if is_nil(assigns[:is_local_user]),
-          do: is_local?(assigns[:object], preload_if_needed: false) != true,
+          do: is_local?(assigns[:object]) != true,
           else: assigns[:is_local_user] != true
 
       remote? and Types.object_type(assigns[:object]) != Bonfire.Data.ActivityPub.Peer

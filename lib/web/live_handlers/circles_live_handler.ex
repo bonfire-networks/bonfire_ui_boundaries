@@ -61,7 +61,9 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
 
     with circle when not is_nil(circle) <- circle,
          {:ok, subject} <-
-           Bonfire.Federate.ActivityPub.AdapterUtils.resolve_uri(uri, current_user) do
+           Bonfire.Federate.ActivityPub.AdapterUtils.resolve_uri(uri, current_user,
+             circle: circle
+           ) do
       add_member(subject, socket)
     else
       nil ->

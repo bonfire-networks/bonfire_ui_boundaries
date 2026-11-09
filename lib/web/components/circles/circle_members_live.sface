@@ -195,12 +195,12 @@
         {/for}
       </ul>
 
+      {!-- Guests have no LiveView socket, so LoadMoreLive's "Next page" link is how they page through members (the Load more button only shows once a socket is connected). Replaced attribute: `hide_guest_fallback`, which hides that link. --}
       <Bonfire.UI.Common.LoadMoreLive
         live_handler="Bonfire.Boundaries.Circles"
         page_info={@page_info}
         infinite_scroll
         hide_if_no_more
-        hide_guest_fallback
         target={@myself}
       >
         <:if_no_more>

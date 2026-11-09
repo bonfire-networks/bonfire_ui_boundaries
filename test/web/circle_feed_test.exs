@@ -111,15 +111,31 @@ defmodule Bonfire.UI.Boundaries.FeedsCirclesFilterTest do
       limit: limit,
       total: total
     } do
-      # Guest (no logged-in user)
-      conn()
-      |> visit("/circle/#{circle.id}")
-      # The first page shows the newest posts
-      |> assert_has("[data-id=feed] article", count: limit)
-      |> assert_has("article", text: "circle paginated post #{total}")
-      # Follow the no-JS pagination link
-      |> click_link("a[data-id=next_page]", "Next page")
+      # Guest (no logged-in user), who has no LiveView socket, so the page they get is the static render, which `visit` does not give (it connects a LiveView)
+      # conn()
+      # |> visit("/circle/#{circle.id}")
+      # # The first page shows the newest posts
+      # |> assert_has("[data-id=feed] article", count: limit)
+      # |> assert_has("article", text: "circle paginated post #{total}")
+      # # Follow the no-JS pagination link
+      # |> click_link("a[data-id=next_page]", "Next page")
+      # # The second page must NOT repeat the newest post (this is the bug)
+      # |> refute_has("article", text: "circle paginated post #{total}")
+      # # ...and should show an older post instead
+      # |> assert_has("article", text: "circle paginated post 1")
+
+      first_page =
+        conn()
+        |> get_conn_render("/circle/#{circle.id}")
+        # The first page shows the newest posts
+        |> assert_has("[data-id=feed] article", count: limit)
+        |> assert_has("article", text: "circle paginated post #{total}")
+        # The no-JS pagination link is on the static render
+        |> assert_has("a[data-id=next_page]", text: "Next page")
+
       # The second page must NOT repeat the newest post (this is the bug)
+      conn()
+      |> get_conn_render(static_href(first_page, "a[data-id=next_page]"))
       |> refute_has("article", text: "circle paginated post #{total}")
       # ...and should show an older post instead
       |> assert_has("article", text: "circle paginated post 1")

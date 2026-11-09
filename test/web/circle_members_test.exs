@@ -6,29 +6,12 @@ defmodule Bonfire.UI.Boundaries.CircleMembersGuestPaginationTest do
   alias Bonfire.Boundaries.Circles
   import Bonfire.Social.Fake
 
-  # KNOWN ISSUE (documented, not yet fixed):
-  #
-  # Guests (no JavaScript) cannot paginate a circle's members list at
-  # `/circle/:id/members`. Unlike the users/instances directories, profile
-  # followers/following, and the circle feed — which were all fixed by
-  # rendering the guest `<a data-id=next_page>` fallback and flattening the
-  # namespaced `?Module[after]=…` cursor — the members list is rendered by the
-  # `CircleMembersLive` stateful component gated behind `CircleLive`'s
-  # `{#if @selected_tab == "members"}`.
-  #
-  # Investigation (see git history / PR notes) showed `CircleLive.handle_params`
-  # DOES run correctly on the paginated URL (selected_tab = "members", circle
-  # loaded, page-2 members fetched), but the view that actually renders is in
-  # mount-state (selected_tab = nil, circle = nil), so the feed branch renders
-  # instead of the members component and no next page is shown. The root cause
-  # is an interaction between Bonfire's loading-screen mount, the stateful
-  # component, and the tab gate in `CircleLive` — it needs a focused redesign
-  # of `CircleLive`'s param/tab handling rather than the simple pattern that
-  # fixed the other five cases.
-  #
-  # This test is kept (skipped) to document the bug and to be un-skipped once
-  # the underlying `CircleLive` handling is reworked.
-  @tag :skip
+  # A guest (no LiveView socket) pages through a circle's members at `/circle/:id/members` with the
+  # `a[data-id=next_page]` link on the static render (`get_conn_render`), whose href holds the
+  # flattened `?Bonfire.Boundaries.Circles[after]=…` cursor. `CircleMembersLive` renders
+  # `LoadMoreLive` with its guest fallback link (no `hide_guest_fallback`), and reads that cursor
+  # from the request params in the socket's context (not in the component's `assigns`).
+  # @tag :skip
   describe "guest pagination on a circle's members list (without JavaScript)" do
     setup do
       limit = Bonfire.Common.Config.get(:default_pagination_limit, 2)
@@ -56,14 +39,29 @@ defmodule Bonfire.UI.Boundaries.CircleMembersGuestPaginationTest do
       limit: limit,
       total: total
     } do
-      conn()
-      |> visit("/circle/#{circle.id}/members")
-      # The first page lists the newest members
-      |> assert_has("[data-id=profile_name]", text: "member #{total}")
-      # The no-JS guest fallback link must be present
-      |> assert_has("a[data-id=next_page]", text: "Next page")
+      # a guest has no LiveView socket, so the page they get is the static render, which `visit` does not give (it connects a LiveView)
+      # conn()
+      # |> visit("/circle/#{circle.id}/members")
+      # # The first page lists the newest members
+      # |> assert_has("[data-id=profile_name]", text: "member #{total}")
+      # # The no-JS guest fallback link must be present
+      # |> assert_has("a[data-id=next_page]", text: "Next page")
+      # # Following it must show the NEXT members, not a blank page nor the same ones
+      # |> click_link("a[data-id=next_page]", "Next page")
+      # |> refute_has("[data-id=profile_name]", text: "member #{total}")
+      # |> assert_has("[data-id=profile_name]", text: "member #{total - limit}")
+
+      first_page =
+        conn()
+        |> get_conn_render("/circle/#{circle.id}/members")
+        # The first page lists the newest members
+        |> assert_has("[data-id=profile_name]", text: "member #{total}")
+        # The no-JS guest fallback link is on the static render
+        |> assert_has("a[data-id=next_page]", text: "Next page")
+
       # Following it must show the NEXT members, not a blank page nor the same ones
-      |> click_link("a[data-id=next_page]", "Next page")
+      conn()
+      |> get_conn_render(static_href(first_page, "a[data-id=next_page]"))
       |> refute_has("[data-id=profile_name]", text: "member #{total}")
       |> assert_has("[data-id=profile_name]", text: "member #{total - limit}")
     end

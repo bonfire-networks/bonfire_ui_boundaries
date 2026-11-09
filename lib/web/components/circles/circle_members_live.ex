@@ -96,8 +96,17 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
 
             {members, page_info}
           else
+            # a guest's "Next page" link carries the cursor in the namespaced `?Bonfire.Boundaries.Circles[after]=…` param, which is read here as that guest has no LiveView socket to send the load_more event (the request params are in the socket's context, not in `assigns`)
+            pagination =
+              e(assigns(socket), :__context__, :current_params, %{})
+              |> Bonfire.UI.Common.LiveHandlers.unwrap_namespaced_params(
+                "Bonfire.Boundaries.Circles"
+              )
+              |> Map.take([:after, :before, :limit, :multiply_limit])
+
+            # Circles.list_members(id, current_user: current_user)
             %{edges: members, page_info: page_info} =
-              Circles.list_members(id, current_user: current_user)
+              Circles.list_members(id, current_user: current_user, pagination: pagination)
               |> debug("paginated_members")
 
             {members, page_info}

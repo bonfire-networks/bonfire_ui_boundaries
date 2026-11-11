@@ -9,6 +9,9 @@ defmodule Bonfire.UI.Boundaries.BlockMenuButtonsLive do
   prop permalink, :string, default: nil
   prop with_icon, :boolean, default: false
   prop open_btn_label, :string, default: nil
+
+  # Label for the `:block` item only (`open_btn_label` applies to every item); nil keeps the default label
+  prop block_btn_label, :string, default: nil
   prop extra_object_label, :string, default: nil
   prop scope, :any, default: nil
 

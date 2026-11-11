@@ -121,6 +121,69 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryPersistenceTest do
     end
   end
 
+  describe "setting a verb back to 'Undefined' in the preset editor" do
+    setup %{conn: conn, me: me, alice: alice} do
+      {:ok, circle} = Circles.create(me, %{named: %{name: "neighbours"}})
+      {:ok, _} = Circles.add_to_circles(alice, circle)
+
+      session =
+        conn
+        |> visit("/settings/boundaries/acls")
+        |> click_button("New preset")
+        |> fill_in("Enter a name for the boundary preset", with: "undefined perms")
+        |> click_button("[data-role=new_acl_submit]", "Create")
+        |> assert_has("[data-role=acl_name]", text: "undefined perms")
+
+      {:ok, session: session, circle: circle}
+    end
+
+    test "removes a stored grant", %{session: session, me: me, circle: circle} do
+      session =
+        session
+        |> click_button(
+          "button[phx-value-role='#{circle.id}'][phx-value-verb='read'][phx-value-status='1']",
+          "Can"
+        )
+
+      # the positive first: the grant is stored
+      assert grant_present?(acl_grants(me, "undefined perms"), circle.id, "Read", true)
+
+      session
+      |> click_button(
+        "button[phx-value-role='#{circle.id}'][phx-value-verb='read'][phx-value-status='']",
+        "Undefined"
+      )
+      |> assert_has(
+        "[phx-value-role='#{circle.id}'][phx-value-verb='read'][phx-value-status=''].bg-neutral"
+      )
+
+      refute Enum.any?(acl_grants(me, "undefined perms"), &(&1.subject_id == circle.id)),
+             "expected the Read grant for the circle to be removed"
+    end
+
+    test "with no grant stored, keeps the editor working", %{
+      session: session,
+      me: me,
+      circle: circle
+    } do
+      session
+      |> click_button(
+        "button[phx-value-role='#{circle.id}'][phx-value-verb='read'][phx-value-status='']",
+        "Undefined"
+      )
+      |> assert_has(
+        "[phx-value-role='#{circle.id}'][phx-value-verb='read'][phx-value-status=''].bg-neutral"
+      )
+      # the editor still saves after the empty removal
+      |> click_button(
+        "button[phx-value-role='#{circle.id}'][phx-value-verb='reply'][phx-value-status='1']",
+        "Can"
+      )
+
+      assert grant_present?(acl_grants(me, "undefined perms"), circle.id, "Reply", true)
+    end
+  end
+
   describe "creating a custom per-object boundary persists grants to the DB" do
     test "publishing with a custom boundary writes the granted verb to the object's ACL",
          %{me: me, alice: alice} do

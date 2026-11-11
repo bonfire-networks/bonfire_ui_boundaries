@@ -82,7 +82,7 @@
             is_local_user={is_local_user}
             scope={@scope}
             type={:block}
-            open_btn_label={@open_btn_label}
+            open_btn_label={@block_btn_label || @open_btn_label}
             parent_id={deterministic_dom_id(__MODULE__, nil, "user-block", @parent_id)}
             with_icon={@with_icon}
             label={e(@object, :profile, :name, l("this user"))}

@@ -6,7 +6,7 @@
     focus_on_open={"#" <> @id <> "_search"}
     position="bottom-start"
     wrapper_class="min-w-0 max-w-full"
-    wrapper_opts={["data-boundary": "#composer_container"]}
+    wrapper_opts={["data-boundary": "form, #composer_container"]}
     trigger_class={"flex h-8 min-w-0 max-w-full items-center gap-1.5 rounded-full border px-3 text-left text-sm font-medium focus-ring " <>
       if @mode == :visibility and
            (not Bonfire.UI.Common.SmartInputLive.public_audience?(@to_boundaries) or @to_circles != [] or
@@ -75,14 +75,16 @@
       class="flex min-h-0 flex-col p-1.5"
       style="max-height: calc(var(--dropdown-available-height, 24rem) - 2px)"
     >
-      <.form
-        class="shrink-0"
-        for={to_form(%{"search" => @search_term})}
-        id={@id <> "_search_form"}
-        phx-change="search"
-        phx-submit="search"
-        phx-target={@myself}
-      >
+      {!-- inside the composer's form a nested form is dropped: the search form lives in a portal, joined by form= --}
+      <.portal id={@id <> "_search_portal"} target="body">
+        <.form
+          for={to_form(%{"search" => @search_term})}
+          id={@id <> "_search_owner"}
+          phx-submit="search"
+          phx-target={@myself}
+        >{""}</.form>{!-- .form needs a body; the input keeps its own phx-change (LiveViewTest needs it) --}
+      </.portal>
+      <div class="shrink-0">
         <label for={@id <> "_search"} class="sr-only">
           {if @mode == :destination, do: l("Search joined groups"), else: l("Search audiences")}
         </label>
@@ -93,10 +95,13 @@
           value={@search_term}
           placeholder={if @mode == :destination, do: l("Search joined groups…"), else: l("Search audiences…")}
           phx-debounce="200"
+          phx-change="search"
+          phx-target={@myself}
+          form={@id <> "_search_owner"}
           class="input input-bordered h-10 w-full text-base focus-ring"
           autocomplete="off"
         />
-      </.form>
+      </div>
 
       <div class="mt-1 min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {#case if @mode == :destination, do: visible_topics(@context_group, @search_term), else: []}

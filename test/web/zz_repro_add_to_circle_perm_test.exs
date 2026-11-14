@@ -18,7 +18,9 @@ defmodule Bonfire.UI.Boundaries.ReproAddToCirclePermTest do
     {:ok, view, _html} = live(conn, "/@#{other.character.username}")
 
     view
-    |> element("[data-id=profile_main_actions] [data-role=open_modal][aria-label='Add to circles']")
+    |> element(
+      "[data-id=profile_main_actions] [data-role=open_modal][aria-label='Add to circles']"
+    )
     |> render_click()
 
     [id] =

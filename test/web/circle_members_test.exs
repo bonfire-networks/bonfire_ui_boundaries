@@ -28,7 +28,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersGuestPaginationTest do
 
       for n <- 1..total do
         member = fake_user!("member #{n}")
-        {:ok, _} = Circles.add_to_circles(member, circle)
+        {:ok, _} = Circles.add_to_circles(member, circle, skip_boundary_check: true)
       end
 
       %{circle: circle, limit: limit, total: total}

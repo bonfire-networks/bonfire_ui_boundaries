@@ -75,9 +75,9 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
   end
 
   def handle_event("add", %{"id" => user_id, "circle" => circle}, socket) do
-    # TODO: check permission
-    # current_user = current_user(socket)
-    with {:ok, _} <- Circles.add_to_circles(user_id, circle) do
+    current_user = current_user_required!(socket)
+
+    with {:ok, _} <- Circles.add_to_circles(user_id, circle, current_user: current_user) do
       {:noreply,
        socket
        |> update(
@@ -97,9 +97,9 @@ defmodule Bonfire.UI.Boundaries.AddToCircleWidgetLive do
   end
 
   def handle_event("remove", %{"id" => user_id, "circle" => circle}, socket) do
-    # TODO: check permission
-    # current_user = current_user(socket)
-    with {1, _} <- Circles.remove_from_circles(user_id, circle) do
+    current_user = current_user_required!(socket)
+
+    with {1, _} <- Circles.remove_from_circles(user_id, circle, current_user: current_user) do
       {:noreply,
        socket
        |> update(

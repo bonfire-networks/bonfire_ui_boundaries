@@ -121,7 +121,7 @@ defmodule Bonfire.UI.Boundaries.InFeedsTest do
   } do
     # create a circle and add alice to it
     {:ok, circle} = Circles.create(me, %{named: %{name: "friends"}})
-    {:ok, _} = Circles.add_to_circles(alice, circle)
+    {:ok, _} = Circles.add_to_circles(alice, circle, skip_boundary_check: true)
 
     # create a custom ACL preset and grant the circle the interact role
     {:ok, acl} = Acls.simple_create(me, "friends_boundary")

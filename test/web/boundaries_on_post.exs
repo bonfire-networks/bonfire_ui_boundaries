@@ -21,8 +21,8 @@ defmodule Bonfire.UI.Boundaries.OnPostTest do
     carl = fake_user!(account)
     # create a circle with alice and bob
     {:ok, circle} = Circles.create(me, %{named: %{name: "family"}})
-    {:ok, _} = Circles.add_to_circles(alice, circle)
-    {:ok, _} = Circles.add_to_circles(bob, circle)
+    {:ok, _} = Circles.add_to_circles(alice, circle, skip_boundary_check: true)
+    {:ok, _} = Circles.add_to_circles(bob, circle, skip_boundary_check: true)
 
     # create a post with custom boundary and add family to to_circle
     html_body = "epic html message"

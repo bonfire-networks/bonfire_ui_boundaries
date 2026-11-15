@@ -19,7 +19,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersUndiscoverableTest do
     {:ok, _} = Objects.reset_preset_boundary(owner, circle, nil, to_boundaries: "public")
 
     for member <- [discoverable, undiscoverable] do
-      {:ok, _} = Circles.add_to_circles(member, circle)
+      {:ok, _} = Circles.add_to_circles(member, circle, skip_boundary_check: true)
     end
 
     {:ok,

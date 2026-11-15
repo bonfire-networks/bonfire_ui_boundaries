@@ -51,7 +51,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
     test "I can remove a user from a circle", %{conn: conn, me: me, account: account} do
       alice = fake_user!(account)
       {:ok, circle} = Circles.create(me, %{named: %{name: "family"}})
-      {:ok, _} = Circles.add_to_circles(alice, circle)
+      {:ok, _} = Circles.add_to_circles(alice, circle, skip_boundary_check: true)
 
       conn
       |> visit("/circle/#{circle.id}/members")
@@ -65,7 +65,7 @@ defmodule Bonfire.UI.Boundaries.FeatureTest do
     test "I can edit circle name", %{conn: conn, me: me, account: account} do
       alice = fake_user!(account)
       {:ok, circle} = Circles.create(me, %{named: %{name: "family"}})
-      {:ok, _} = Circles.add_to_circles(alice, circle)
+      {:ok, _} = Circles.add_to_circles(alice, circle, skip_boundary_check: true)
 
       conn
       |> visit("/circle/#{circle.id}")

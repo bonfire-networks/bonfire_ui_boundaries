@@ -36,7 +36,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryPersistenceTest do
     test "toggling a verb to 'Can' in the preset editor writes a positive grant",
          %{conn: conn, me: me, alice: alice} do
       {:ok, friends} = Circles.create(me, %{named: %{name: "friends"}})
-      {:ok, _} = Circles.add_to_circles(alice, friends)
+      {:ok, _} = Circles.add_to_circles(alice, friends, skip_boundary_check: true)
 
       conn
       |> visit("/settings/boundaries/acls")
@@ -62,7 +62,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryPersistenceTest do
     test "toggling 'Can' and 'Cannot' on different verbs persists both states",
          %{conn: conn, me: me, alice: alice} do
       {:ok, circle} = Circles.create(me, %{named: %{name: "bestie"}})
-      {:ok, _} = Circles.add_to_circles(alice, circle)
+      {:ok, _} = Circles.add_to_circles(alice, circle, skip_boundary_check: true)
 
       conn
       |> visit("/settings/boundaries/acls")
@@ -99,7 +99,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryPersistenceTest do
     test "the saved preset survives a reload (grants are durable, not just in-memory)",
          %{conn: conn, me: me, alice: alice} do
       {:ok, friends} = Circles.create(me, %{named: %{name: "reload friends"}})
-      {:ok, _} = Circles.add_to_circles(alice, friends)
+      {:ok, _} = Circles.add_to_circles(alice, friends, skip_boundary_check: true)
 
       conn
       |> visit("/settings/boundaries/acls")
@@ -124,7 +124,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryPersistenceTest do
   describe "setting a verb back to 'Undefined' in the preset editor" do
     setup %{conn: conn, me: me, alice: alice} do
       {:ok, circle} = Circles.create(me, %{named: %{name: "neighbours"}})
-      {:ok, _} = Circles.add_to_circles(alice, circle)
+      {:ok, _} = Circles.add_to_circles(alice, circle, skip_boundary_check: true)
 
       session =
         conn
@@ -188,7 +188,7 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryPersistenceTest do
     test "publishing with a custom boundary writes the granted verb to the object's ACL",
          %{me: me, alice: alice} do
       {:ok, family} = Circles.create(me, %{named: %{name: "family"}})
-      {:ok, _} = Circles.add_to_circles(alice, family)
+      {:ok, _} = Circles.add_to_circles(alice, family, skip_boundary_check: true)
 
       {:ok, post} =
         Posts.publish(

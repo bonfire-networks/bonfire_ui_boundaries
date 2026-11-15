@@ -18,8 +18,8 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIBrowserTest do
     circles = create_circles_and_preset(me)
 
     # Add users to circles
-    {:ok, _} = Circles.add_to_circles(alice, circles.friends_circle)
-    {:ok, _} = Circles.add_to_circles(bob, circles.work_circle)
+    {:ok, _} = Circles.add_to_circles(alice, circles.friends_circle, skip_boundary_check: true)
+    {:ok, _} = Circles.add_to_circles(bob, circles.work_circle, skip_boundary_check: true)
     text = "Testing boundary assignment"
 
     user_session

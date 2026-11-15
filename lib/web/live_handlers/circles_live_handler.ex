@@ -79,15 +79,20 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
   end
 
   def handle_event("remove_from_circle", %{"subject_id" => subject}, socket) do
-    _current_user = current_user_required!(socket)
+    current_user = current_user_required!(socket)
     id = uid!(e(assigns(socket), :circle, nil))
 
-    with {:ok, _circle} <-
-           Circles.remove_from_circles(subject, id) do
+    with {n, _} when n > 0 <-
+           Circles.remove_from_circles(subject, id, current_user: current_user) do
       {:noreply,
        socket
        |> assign_flash(:info, l("Member was removed"))
        |> redirect_to("/settings/boundaries/circles")}
+    else
+      other ->
+        error(other)
+
+        {:noreply, assign_flash(socket, :error, l("Could not remove from circle"))}
     end
   end
 
@@ -265,6 +270,10 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
              encircles: e(circle_params, "encircle", [])
            }) do
       {:noreply, assign_flash(socket, :info, "OK")}
+    else
+      other ->
+        error(other)
+        {:noreply, assign_flash(socket, :error, l("Could not edit this circle."))}
     end
   end
 
@@ -466,7 +475,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
   defp save_from_manager(settings, socket) do
     current_user = current_user_required!(socket)
 
-    # selected_circle was loaded through get_for_manager or the owned-circles list, so it is already authorized and editable
+    # `Circles.edit/3` checks that the user may edit this circle
     selected_circle = e(assigns(socket), :selected_circle, nil)
 
     with circle_id when is_binary(circle_id) <- uid(selected_circle),
@@ -676,13 +685,14 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     with id when is_binary(id) <- uid(subject),
          current_user_id when not is_nil(current_user_id) <- current_user_id(socket),
          false <- id == current_user_id,
+         :ok <- check_may_block_in_scope(scope, socket),
          # the subject itself when it's already loaded (eg. the instance circle a domain resolved to), so blocking needs no lookup of what it was just handed
          # {:ok, _} <- Blocks.block(id, circle_type, scope || current_user(socket)) do
          {:ok, _} <-
            Blocks.block(
              if(is_struct(subject), do: subject, else: id),
              circle_type,
-             scope || current_user(socket)
+             block_scope(scope, socket)
            ) do
       {:noreply,
        socket
@@ -705,10 +715,43 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
     end
   end
 
+  @doc "The scope to block or unblock in: the instance's list, as the signed-in user who acts, or their own. Never a scope taken from the page."
+  def block_scope(scope, socket) do
+    current_user = current_user(socket)
+
+    if scope == :instance_wide,
+      do: [current_user: current_user, scope: :instance_wide],
+      else: current_user
+  end
+
+  @doc "Changing an instance-wide block list takes `:block` on the instance, whatever the page shows. Any other scope is the person's own."
+  def check_may_block_in_scope(scope, socket) do
+    instance_wide? =
+      scope == :instance_wide or (Keyword.keyword?(scope) and scope[:scope] == :instance_wide)
+
+    if not instance_wide? or Bonfire.Boundaries.can?(current_user(socket), :block, :instance),
+      do: :ok,
+      else: {:error, :not_permitted}
+  end
+
+  # an allowlist is a stereotype circle, which is changed through `Allowlist`: the user's own, or the instance's with `:configure` on the instance
+  defp add_to_assigned_circle(id, current_user, %{assigns: %{circle_type: :allow_them} = assigns}),
+       do: Bonfire.Boundaries.Allowlist.allow(id, allowlist_opts(current_user, assigns))
+
+  defp add_to_assigned_circle(id, current_user, socket),
+    do: Circles.add_to_circles(id, e(assigns(socket), :circle, nil), current_user: current_user)
+
+  @doc "The `Bonfire.Boundaries.Allowlist` options for the allowlist page the socket is on."
+  def allowlist_opts(current_user, assigns) do
+    if e(assigns, :scope, nil) == :instance_wide,
+      do: [current_user: current_user, scope: :instance_wide],
+      else: [current_user: current_user]
+  end
+
   def add_member(subject, socket) do
     with id when is_binary(id) <- uid(subject),
-         current_user_id when is_binary(current_user_id) <- current_user_id(socket),
-         {:ok, _} <- Circles.add_to_circles(id, e(assigns(socket), :circle, nil)) do
+         current_user when not is_nil(current_user) <- current_user(socket),
+         {:ok, _} <- add_to_assigned_circle(id, current_user, socket) do
       {:noreply,
        socket
        |> assign_flash(:info, l("Added to circle!"))

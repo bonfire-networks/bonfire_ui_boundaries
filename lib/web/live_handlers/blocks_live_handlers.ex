@@ -140,8 +140,8 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
 
   def handle_event("unblock_instance_wide", %{"id" => id} = _params, socket) do
     with true <- Bonfire.Boundaries.can?(assigns(socket)[:__context__], :block, :instance_wide),
-         {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :ghost, :instance_wide),
-         {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :silence, :instance_wide) do
+         {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :ghost, instance_wide_scope(socket)),
+         {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :silence, instance_wide_scope(socket)) do
       Bonfire.UI.Common.OpenModalLive.close()
       refresh_block_status(id)
 
@@ -245,7 +245,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
 
   def handle_event("unghost_instance_wide", %{"id" => id} = _params, socket) do
     with true <- Bonfire.Boundaries.can?(assigns(socket)[:__context__], :block, :instance_wide),
-         {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :ghost, :instance_wide) do
+         {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :ghost, instance_wide_scope(socket)) do
       Bonfire.UI.Common.OpenModalLive.close()
       refresh_block_status(id)
 
@@ -346,7 +346,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
 
   def handle_event("unsilence_instance_wide", %{"id" => id} = _params, socket) do
     with true <- Bonfire.Boundaries.can?(assigns(socket)[:__context__], :block, :instance_wide),
-         {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :silence, :instance_wide) do
+         {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :silence, instance_wide_scope(socket)) do
       Bonfire.UI.Common.OpenModalLive.close()
       refresh_block_status(id)
 
@@ -441,7 +441,7 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
 
   def handle_event("unhide_instance_wide", %{"id" => id} = _params, socket) do
     with true <- Bonfire.Boundaries.can?(assigns(socket)[:__context__], :block, :instance_wide),
-         {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :hide, :instance_wide) do
+         {:ok, _} <- Bonfire.Boundaries.Blocks.unblock(id, :hide, instance_wide_scope(socket)) do
       Bonfire.UI.Common.OpenModalLive.close()
 
       # ComponentID.send_assigns(
@@ -466,6 +466,10 @@ defmodule Bonfire.Boundaries.Blocks.LiveHandler do
   defp scoped_block_type("silence"), do: :silence
   defp scoped_block_type("ghost"), do: :ghost
   defp scoped_block_type(_), do: nil
+
+  # the instance's list, as the signed-in user who acts, who needs `:block` on the instance
+  defp instance_wide_scope(socket),
+    do: [current_user: current_user(socket), scope: :instance_wide]
 
   defp refresh_block_status(id) do
     send(self(), {{Bonfire.Boundaries.Blocks, :block_status_changed}, id})

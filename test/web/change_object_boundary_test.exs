@@ -91,18 +91,60 @@ defmodule Bonfire.UI.Boundaries.ChangeObjectBoundaryTest do
       # Swap preset at data layer (invariant hard to verify via UI alone)
       Controlleds.list_preset_acl_ids_on_object(post.id)
       |> MapSet.to_list()
-      |> then(&Controlleds.remove_acls(post.id, &1))
+      |> then(&Controlleds.remove_acls(post.id, &1, skip_boundary_check: true))
 
       new_acl_ids =
         Boundaries.Presets.acls_from_preset_boundary_names("local")
         |> Enum.map(&Acls.get_id!/1)
 
-      if new_acl_ids != [], do: Controlleds.add_acls(post.id, new_acl_ids)
+      if new_acl_ids != [],
+        do: Controlleds.add_acls(post.id, new_acl_ids, skip_boundary_check: true)
 
       all_acls_after = Boundaries.list_object_boundaries(post.id)
 
       assert length(all_acls_after) == non_preset_count + length(new_acl_ids),
              "Custom ACLs should be preserved after preset change"
+    end
+
+    # the editor stays open while the person's standing goes (here a role that let them administer the post, revoked), so the event comes from someone who may not
+    test "a refused preset change says so and changes nothing", %{me: me} do
+      body = "public post refused change #{System.unique_integer()}"
+      post = publish_post(me, "public", body: body)
+      before = Controlleds.list_preset_acl_ids_on_object(post.id)
+      assert MapSet.size(before) > 0
+
+      admin_account = fake_account!()
+      admin = fake_user!(admin_account)
+      assert [_ | _] = Controlleds.grant_role(admin.id, post, "administer", current_user: me)
+
+      editor_id =
+        case Bonfire.UI.Boundaries.BoundaryDetailsLive.list_object_boundaries_for_editing(
+               post.id,
+               admin
+             ) do
+          %{custom_acls: [acl | _]} -> acl.id
+          _ -> post.id
+        end
+
+      session =
+        conn(user: admin, account: admin_account)
+        |> visit("/post/#{post.id}")
+        |> assert_has("article", text: body)
+        |> open_boundary_details()
+
+      Controlleds.remove_role(admin.id, post, "administer", current_user: me)
+
+      refute Controlleds.may_configure?(admin, post),
+             "control: they may no longer configure the post"
+
+      session
+      |> within("#boundaries_acl_set_acl_#{editor_id}", fn session ->
+        click_button(session, "[data-scope=local_boundary]", "Local")
+      end)
+      |> refute_has("[role=alert]", text: "Boundary updated")
+      |> assert_has("[role=alert]", text: "permission")
+
+      assert Controlleds.list_preset_acl_ids_on_object(post.id) == before
     end
   end
 

@@ -20,7 +20,7 @@ defmodule Bonfire.UI.Boundaries.FeedsCirclesFilterTest do
 
       # Create a circle and add alice to it
       {:ok, circle} = Circles.create(me, %{named: %{name: "friends"}})
-      {:ok, _} = Circles.add_to_circles(alice, circle)
+      {:ok, _} = Circles.add_to_circles(alice, circle, skip_boundary_check: true)
 
       # share the circle
       Objects.publish(me, :boost, circle, to_boundaries: "local")
@@ -92,7 +92,7 @@ defmodule Bonfire.UI.Boundaries.FeedsCirclesFilterTest do
 
       # Create a publicly-visible circle with alice as a member
       {:ok, circle} = Circles.create(me, %{named: %{name: "paginated friends"}})
-      {:ok, _} = Circles.add_to_circles(alice, circle)
+      {:ok, _} = Circles.add_to_circles(alice, circle, skip_boundary_check: true)
       Objects.publish(me, :boost, circle, to_boundaries: "public")
 
       # Two full pages worth of public posts authored by a circle member,

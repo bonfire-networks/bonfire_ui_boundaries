@@ -482,8 +482,14 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       bob: bob,
       account: account
     } do
-      Bonfire.Me.Users.make_admin(me)
-      assert {:ok, _ghosted} = Bonfire.Boundaries.Blocks.block(alice.id, :ghost, :instance_wide)
+      Bonfire.Me.Users.make_admin(me, skip_boundary_check: true)
+
+      assert {:ok, _ghosted} =
+               Bonfire.Boundaries.Blocks.block(alice.id, :ghost,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
+
       html_body = "epic html message"
       attrs = %{post_content: %{html_body: html_body}}
 
@@ -508,10 +514,13 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       bob: bob,
       account: account
     } do
-      Bonfire.Me.Users.make_admin(me)
+      Bonfire.Me.Users.make_admin(me, skip_boundary_check: true)
 
       assert {:ok, _silenced} =
-               Bonfire.Boundaries.Blocks.block(alice.id, :silence, :instance_wide)
+               Bonfire.Boundaries.Blocks.block(alice.id, :silence,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
 
       # silenced user publishes a post
       html_body = "silenced user post"
@@ -539,10 +548,25 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       bob: bob,
       carl: carl
     } do
-      Bonfire.Me.Users.make_admin(me)
-      assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(alice, :ghost, :instance_wide)
-      assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(bob, :ghost, :instance_wide)
-      assert {:ok, _silenced} = Bonfire.Boundaries.Blocks.block(carl, :silence, :instance_wide)
+      Bonfire.Me.Users.make_admin(me, skip_boundary_check: true)
+
+      assert {:ok, _ghost} =
+               Bonfire.Boundaries.Blocks.block(alice, :ghost,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
+
+      assert {:ok, _ghost} =
+               Bonfire.Boundaries.Blocks.block(bob, :ghost,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
+
+      assert {:ok, _silenced} =
+               Bonfire.Boundaries.Blocks.block(carl, :silence,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
 
       conn
       |> visit("/settings/instance/boundaries/ghosted")
@@ -558,10 +582,25 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       bob: bob,
       carl: carl
     } do
-      Bonfire.Me.Users.make_admin(me)
-      assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(alice, :ghost, :instance_wide)
-      assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(bob, :ghost, :instance_wide)
-      assert {:ok, _silenced} = Bonfire.Boundaries.Blocks.block(carl, :silence, :instance_wide)
+      Bonfire.Me.Users.make_admin(me, skip_boundary_check: true)
+
+      assert {:ok, _ghost} =
+               Bonfire.Boundaries.Blocks.block(alice, :ghost,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
+
+      assert {:ok, _ghost} =
+               Bonfire.Boundaries.Blocks.block(bob, :ghost,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
+
+      assert {:ok, _silenced} =
+               Bonfire.Boundaries.Blocks.block(carl, :silence,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
 
       conn
       |> visit("/settings/instance/boundaries/silenced")
@@ -575,8 +614,13 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       me: me,
       alice: alice
     } do
-      Bonfire.Me.Users.make_admin(me)
-      assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(alice, :ghost, :instance_wide)
+      Bonfire.Me.Users.make_admin(me, skip_boundary_check: true)
+
+      assert {:ok, _ghost} =
+               Bonfire.Boundaries.Blocks.block(alice, :ghost,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
 
       conn
       |> visit("/settings/instance/boundaries/ghosted")
@@ -593,8 +637,13 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       me: me,
       alice: alice
     } do
-      assert {:ok, _ghost} = Bonfire.Boundaries.Blocks.block(alice, :silence, :instance_wide)
-      Bonfire.Me.Users.make_admin(me)
+      assert {:ok, _ghost} =
+               Bonfire.Boundaries.Blocks.block(alice, :silence,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
+
+      Bonfire.Me.Users.make_admin(me, skip_boundary_check: true)
 
       conn
       |> visit("/settings/instance/boundaries/silenced")
@@ -613,10 +662,25 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       bob: bob,
       carl: carl
     } do
-      Bonfire.Me.Users.make_admin(me)
-      assert {:ok, _blocked} = Bonfire.Boundaries.Blocks.block(alice, :block, :instance_wide)
-      assert {:ok, _blocked} = Bonfire.Boundaries.Blocks.block(bob, :block, :instance_wide)
-      assert {:ok, _silenced} = Bonfire.Boundaries.Blocks.block(carl, :silence, :instance_wide)
+      Bonfire.Me.Users.make_admin(me, skip_boundary_check: true)
+
+      assert {:ok, _blocked} =
+               Bonfire.Boundaries.Blocks.block(alice, :block,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
+
+      assert {:ok, _blocked} =
+               Bonfire.Boundaries.Blocks.block(bob, :block,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
+
+      assert {:ok, _silenced} =
+               Bonfire.Boundaries.Blocks.block(carl, :silence,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
 
       conn
       |> visit("/settings/instance/boundaries/blocked")
@@ -631,8 +695,13 @@ defmodule Bonfire.UI.Boundaries.BlockTest do
       me: me,
       alice: alice
     } do
-      assert {:ok, _blocked} = Bonfire.Boundaries.Blocks.block(alice, :block, :instance_wide)
-      Bonfire.Me.Users.make_admin(me)
+      assert {:ok, _blocked} =
+               Bonfire.Boundaries.Blocks.block(alice, :block,
+                 scope: :instance_wide,
+                 skip_boundary_check: true
+               )
+
+      Bonfire.Me.Users.make_admin(me, skip_boundary_check: true)
 
       conn
       |> visit("/settings/instance/boundaries/blocked")

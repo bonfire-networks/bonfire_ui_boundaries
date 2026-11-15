@@ -74,8 +74,8 @@ defmodule Bonfire.UI.Boundaries.DashboardCirclesWidgetTest do
     alice = fake_user!(account)
     bob = fake_user!(account)
     {:ok, friends} = Circles.create(me, %{named: %{name: "Friends"}})
-    {:ok, _} = Circles.add_to_circles(alice, friends)
-    {:ok, _} = Circles.add_to_circles(bob, friends)
+    {:ok, _} = Circles.add_to_circles(alice, friends, skip_boundary_check: true)
+    {:ok, _} = Circles.add_to_circles(bob, friends, skip_boundary_check: true)
 
     html =
       render_component(Bonfire.UI.Boundaries.CirclesManagerLive,

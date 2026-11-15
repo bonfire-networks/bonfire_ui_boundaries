@@ -128,8 +128,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
                   scope when scope in [:instance_wide, :instance] ->
                     [current_user: current_user(assigns(socket)), scope: :instance_wide]
 
-                  scope ->
-                    scope || socket
+                  _other ->
+                    socket
                 end
               )
             else
@@ -687,7 +687,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
     with {1, nil} <-
            Bonfire.Boundaries.Controlleds.remove_acls(
              object,
-             acl
+             acl,
+             current_user: current_user_required!(socket)
            )
            |> debug("removed?") do
       Bonfire.UI.Common.OpenModalLive.close()
@@ -700,6 +701,9 @@ defmodule Bonfire.Boundaries.LiveHandler do
         #  )
       }
     else
+      {:error, :not_permitted} = refused ->
+        refused
+
       e ->
         error(e)
     end
@@ -709,7 +713,8 @@ defmodule Bonfire.Boundaries.LiveHandler do
     with {:ok, _} <-
            Bonfire.Boundaries.Controlleds.add_acls(
              object,
-             acl
+             acl,
+             current_user: current_user_required!(socket)
            ) do
       Bonfire.UI.Common.OpenModalLive.close()
 
@@ -721,6 +726,9 @@ defmodule Bonfire.Boundaries.LiveHandler do
         #  )
       }
     else
+      {:error, :not_permitted} = refused ->
+        refused
+
       e ->
         error(e)
     end
@@ -737,7 +745,13 @@ defmodule Bonfire.Boundaries.LiveHandler do
               Bonfire.Boundaries.Blocks.unblock(
                 id,
                 block_type,
-                maybe_to_atom(scope) || socket
+                case maybe_to_atom(scope) do
+                  scope when scope in [:instance_wide, :instance] ->
+                    [current_user: current_user(assigns(socket)), scope: :instance_wide]
+
+                  _other ->
+                    socket
+                end
               )
             else
               debug("not admin, fallback to user-level block")

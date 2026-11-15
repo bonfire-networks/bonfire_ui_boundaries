@@ -7,7 +7,7 @@ defmodule Bonfire.UI.Boundaries.InstanceMembersBlockTest do
   setup do
     account = fake_account!()
     me = fake_user!(account)
-    Bonfire.Me.Users.make_admin(me)
+    Bonfire.Me.Users.make_admin(me, skip_boundary_check: true)
     # NOTE: alice needs her own account: disabling her force-logs-out her whole account, which
     # would otherwise kill the admin's session too
     alice = fake_user!(fake_account!())
@@ -62,7 +62,8 @@ defmodule Bonfire.UI.Boundaries.InstanceMembersBlockTest do
     conn: conn,
     alice: alice
   } do
-    assert {:ok, _blocked} = Blocks.block(alice, :block, :instance_wide)
+    assert {:ok, _blocked} =
+             Blocks.block(alice, :block, scope: :instance_wide, skip_boundary_check: true)
 
     conn
     |> visit("/settings/instance/members")

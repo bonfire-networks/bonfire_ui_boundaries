@@ -274,6 +274,10 @@ defmodule Bonfire.UI.Boundaries.AclLive do
     add_to_acl(id, socket)
   end
 
+  # the component's `read_only` is a server-side rule too, not only a hidden control
+  def handle_event("edit_verb_value", _attrs, %{assigns: %{read_only: true}}),
+    do: {:error, :not_permitted}
+
   def handle_event("edit_verb_value", %{"subject" => subjects} = _attrs, socket) do
     # debug(attrs)
     current_user = current_user_required!(socket)
@@ -309,7 +313,10 @@ defmodule Bonfire.UI.Boundaries.AclLive do
       {[], _} ->
         # All failed
         error(failures, "All permission updates failed")
-        {:noreply, assign_error(socket, l("Could not edit permission"))}
+
+        if Enum.any?(failures, &(&1 == {:error, :not_permitted})),
+          do: {:error, :not_permitted},
+          else: {:noreply, assign_error(socket, l("Could not edit permission"))}
 
       {_, []} ->
         # All succeeded
@@ -354,29 +361,59 @@ defmodule Bonfire.UI.Boundaries.AclLive do
   def handle_event("change_acl_preset", %{"id" => preset_id} = params, socket) do
     debug(preset_id, "preset_id to apply")
     object_id = e(assigns(socket), :object_id, nil)
+    current_user = current_user_required!(socket)
 
     if is_binary(object_id) do
-      Bonfire.Boundaries.Controlleds.list_preset_acl_ids_on_object(object_id)
-      |> MapSet.to_list()
-      |> then(&Bonfire.Boundaries.Controlleds.remove_acls(object_id, &1))
-
       new_acl_ids =
         Bonfire.Boundaries.Presets.acls_from_preset_boundary_names(preset_id)
         |> Enum.map(&Acls.get_id!/1)
 
-      if new_acl_ids != [] do
-        Bonfire.Boundaries.Controlleds.add_acls(object_id, new_acl_ids)
-      end
+      # a refusal at either step is the answer, not a "Boundary updated!"
+      with :ok <- remove_preset_acls(object_id, current_user),
+           :ok <- add_acls_or_nothing(object_id, new_acl_ids, current_user) do
+        {:noreply,
+         socket
+         |> assign(to_boundaries: [{preset_id, e(params, "name", preset_id)}])
+         |> assign_flash(:info, l("Boundary updated!"))
+         |> assign_updated(true)}
+      else
+        {:error, :not_permitted} = refused ->
+          refused
 
-      {:noreply,
-       socket
-       |> assign(to_boundaries: [{preset_id, e(params, "name", preset_id)}])
-       |> assign_flash(:info, l("Boundary updated!"))
-       |> assign_updated(true)}
+        other ->
+          error(other, "Could not update the boundary")
+          {:noreply, assign_error(socket, l("Could not update boundary"))}
+      end
     else
       {:noreply,
        socket
        |> assign_error(l("Could not update boundary: object not found"))}
+    end
+  end
+
+  # nothing to remove is fine, a refusal is not
+  defp remove_preset_acls(object_id, current_user) do
+    case Bonfire.Boundaries.Controlleds.list_preset_acl_ids_on_object(object_id)
+         |> MapSet.to_list() do
+      [] ->
+        :ok
+
+      acl_ids ->
+        case Bonfire.Boundaries.Controlleds.remove_acls(object_id, acl_ids,
+               current_user: current_user
+             ) do
+          {:error, _} = refused -> refused
+          _ -> :ok
+        end
+    end
+  end
+
+  defp add_acls_or_nothing(_object_id, [], _current_user), do: :ok
+
+  defp add_acls_or_nothing(object_id, acl_ids, current_user) do
+    case Bonfire.Boundaries.Controlleds.add_acls(object_id, acl_ids, current_user: current_user) do
+      {:error, _} = refused -> refused
+      _ -> :ok
     end
   end
 
@@ -406,7 +443,20 @@ defmodule Bonfire.UI.Boundaries.AclLive do
   def remove_from_acl(subject, socket) do
     acl_id = uid!(e(assigns(socket), :acl, nil))
 
-    case Grants.remove_subject_from_acl(subject, acl_id) do
+    with :ok <- check_may_edit(acl_id, socket) do
+      do_remove_from_acl(subject, acl_id, socket)
+    end
+  end
+
+  defp check_may_edit(acl, socket) do
+    if e(assigns(socket), :read_only, nil) == true,
+      do: {:error, :not_permitted},
+      else: Acls.check_edit(acl, current_user: current_user_required!(socket))
+  end
+
+  defp do_remove_from_acl(subject, acl_id, socket) do
+    # may_edit was checked by `remove_from_acl/2`
+    case Grants.do_remove_subject_from_acl(subject, [acl_id]) do
       {del, _} when is_integer(del) and del > 0 ->
         Bonfire.UI.Common.OpenModalLive.close()
 

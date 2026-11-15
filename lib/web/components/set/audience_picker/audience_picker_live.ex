@@ -33,8 +33,10 @@ defmodule Bonfire.UI.Boundaries.AudiencePickerLive do
           for slug <- Bonfire.Boundaries.Presets.preset_order(),
               do: {slug, Bonfire.Boundaries.Presets.for_preset(slug)}
 
-        {presets ++ Bonfire.Boundaries.LiveHandler.my_acls(current_user_id(socket)),
-         if(current_user_id(socket),
+        current_user_id = current_user_id(socket)
+
+        {presets ++ Bonfire.Boundaries.LiveHandler.my_acls(current_user_id),
+         if(current_user_id,
            do:
              Bonfire.Boundaries.Circles.list_my_for_sidebar(current_user(socket),
                exclude_stereotypes: true

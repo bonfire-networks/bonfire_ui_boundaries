@@ -311,8 +311,9 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
         %{assigns: %{scope: scope, circle_type: circle_type}} = socket
       )
       when is_binary(id) and circle_type in [:silence, :ghost, :block] do
-    with {:ok, _} <-
-           Blocks.unblock(id, circle_type, scope || current_user(socket)) do
+    with :ok <- LiveHandler.check_may_block_in_scope(scope, socket),
+         {:ok, _} <-
+           Blocks.unblock(id, circle_type, LiveHandler.block_scope(scope, socket)) do
       {:noreply,
        socket
        |> update(:members, &Map.drop(&1, [id]))
@@ -326,8 +327,7 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
   end
 
   def handle_event("remove", %{"subject" => id} = _attrs, socket) when is_binary(id) do
-    with {1, _} <-
-           Circles.remove_from_circles(id, e(assigns(socket), :circle, nil)) do
+    with {:ok, _} <- remove_member(id, socket) do
       {:noreply,
        socket
        |> update(:members, &Map.drop(&1, [id]))
@@ -342,6 +342,23 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
 
   def handle_event(event, params, socket) do
     Bonfire.Boundaries.Circles.LiveHandler.handle_event(event, params, socket)
+  end
+
+  # an allowlist is a stereotype circle, which is changed through `Allowlist`
+  defp remove_member(id, %{assigns: %{circle_type: :allow_them} = socket_assigns} = socket) do
+    Bonfire.Boundaries.Allowlist.unallow(
+      id,
+      LiveHandler.allowlist_opts(current_user_required!(socket), socket_assigns)
+    )
+  end
+
+  defp remove_member(id, socket) do
+    case Circles.remove_from_circles(id, e(assigns(socket), :circle, nil),
+           current_user: current_user_required!(socket)
+         ) do
+      {1, _} = removed -> {:ok, removed}
+      other -> other
+    end
   end
 
   # Handle member search for autocomplete - use provided live_select_id

@@ -612,7 +612,9 @@ defmodule Bonfire.UI.Boundaries.CustomizeBoundaryLive do
       acl_id = e(assigns(socket), :acl, :id, nil)
 
       if acl_id do
-        case Bonfire.Boundaries.Grants.remove_subject_from_acl(subject_id, acl_id) do
+        case Bonfire.Boundaries.Grants.remove_subject_from_acl(subject_id, acl_id,
+               current_user: current_user_required!(socket)
+             ) do
           {del, _} when is_integer(del) and del > 0 ->
             # Notify parent to refresh data
             if parent_component = e(assigns(socket), :parent_component, nil) do

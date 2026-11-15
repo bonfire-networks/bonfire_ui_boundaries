@@ -27,8 +27,8 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIManagementTest do
       {:ok, family_circle} = Circles.create(me, %{named: %{name: "family"}})
 
       # Add users to circles
-      {:ok, _} = Circles.add_to_circles(alice, friends_circle)
-      {:ok, _} = Circles.add_to_circles(bob, family_circle)
+      {:ok, _} = Circles.add_to_circles(alice, friends_circle, skip_boundary_check: true)
+      {:ok, _} = Circles.add_to_circles(bob, family_circle, skip_boundary_check: true)
 
       # Navigate to boundaries settings page and create new preset
       conn
@@ -80,7 +80,7 @@ defmodule Bonfire.UI.Boundaries.BoundaryUIManagementTest do
       alice: alice
     } do
       {:ok, circle} = Circles.create(me, %{named: %{name: "bestie"}})
-      {:ok, _} = Circles.add_to_circles(alice, circle)
+      {:ok, _} = Circles.add_to_circles(alice, circle, skip_boundary_check: true)
 
       conn
       |> visit("/settings/boundaries/acls")

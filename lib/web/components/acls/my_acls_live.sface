@@ -91,11 +91,10 @@
         hide_guest_fallback
         target={@myself}
       />
+      {!-- unreachable (no caller passes `setting_boundaries`), and it does nothing: a boundary is created through `NewAclButtonLive`
       <div
         :if={@setting_boundaries}
-        :on-click="assign"
         x-on:click="show_boundary_list = false"
-        phx-value-section="new"
         class="flex items-center p-2 space-x-4 cursor-pointer hover:bg-fill-strong"
       >
         <div class="btn btn-outline btn-sm btn-circle opacity-80">
@@ -107,7 +106,7 @@
         <div class="btn btn-ghost btn-sm btn-circle opacity-80">
           <#Icon solid="ChevronRight" class="size-5" />
         </div>
-      </div>
+      </div> --}
     </div>
   {/if}
 </div>

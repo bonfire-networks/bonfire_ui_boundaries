@@ -24,10 +24,10 @@ defmodule Bonfire.UI.Boundaries.ExportImportCirclesTest do
     {:ok, circle1} = Circles.create(user, "Friends")
     {:ok, circle2} = Circles.create(user, "Work")
 
-    assert {:ok, _} = Circles.add_to_circles(member1, circle1)
-    assert {:ok, _} = Circles.add_to_circles(member2, circle1)
-    assert {:ok, _} = Circles.add_to_circles(member2, circle2)
-    assert {:ok, _} = Circles.add_to_circles(member3, circle2)
+    assert {:ok, _} = Circles.add_to_circles(member1, circle1, skip_boundary_check: true)
+    assert {:ok, _} = Circles.add_to_circles(member2, circle1, skip_boundary_check: true)
+    assert {:ok, _} = Circles.add_to_circles(member2, circle2, skip_boundary_check: true)
+    assert {:ok, _} = Circles.add_to_circles(member3, circle2, skip_boundary_check: true)
 
     # Verify circles and memberships exist
     assert Circles.is_encircled_by?(member1, circle1)

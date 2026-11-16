@@ -98,36 +98,43 @@ defmodule Bonfire.UI.Boundaries.LiveSelectSearchTest do
   end
 
   describe "composer-embedded components (handler level)" do
-    test "PreviewBoundariesLive returns user options via send_update", %{findable: findable} do
+    # the handlers refuse a guest (no current_user), so the fake socket carries one
+    test "PreviewBoundariesLive returns user options via send_update", %{
+      me: me,
+      findable: findable
+    } do
       assert {:noreply, _} =
                Bonfire.UI.Boundaries.PreviewBoundariesLive.handle_event(
                  "live_select_change",
                  %{"id" => "ls_preview", "text" => "findable"},
-                 fake_socket()
+                 fake_socket(%{current_user: me})
                )
 
       assert_received {:phoenix, :send_update, {{LiveSelect.Component, "ls_preview"}, assigns}}
       assert option_ids(assigns.options) |> Enum.member?(findable.id)
     end
 
-    test "CustomizeBoundaryLive returns user options via send_update", %{findable: findable} do
+    test "CustomizeBoundaryLive returns user options via send_update", %{
+      me: me,
+      findable: findable
+    } do
       assert {:noreply, _} =
                Bonfire.UI.Boundaries.CustomizeBoundaryLive.handle_event(
                  "live_select_change",
                  %{"id" => "ls_customize", "text" => "findable"},
-                 fake_socket()
+                 fake_socket(%{current_user: me})
                )
 
       assert_received {:phoenix, :send_update, {{LiveSelect.Component, "ls_customize"}, assigns}}
       assert option_ids(assigns.options) |> Enum.member?(findable.id)
     end
 
-    test "AclLive returns user options via send_update", %{findable: findable} do
+    test "AclLive returns user options via send_update", %{me: me, findable: findable} do
       assert {:noreply, _} =
                Bonfire.UI.Boundaries.AclLive.handle_event(
                  "live_select_change",
                  %{"id" => "ls_acl", "text" => "findable"},
-                 fake_socket()
+                 fake_socket(%{current_user: me})
                )
 
       assert_received {:phoenix, :send_update, {{LiveSelect.Component, "ls_acl"}, assigns}}
@@ -169,6 +176,7 @@ defmodule Bonfire.UI.Boundaries.LiveSelectSearchTest do
     end
 
     test "CircleMembersLive offers remote users from Meilisearch hits, in index order", %{
+      me: me,
       findable: findable
     } do
       # creating the remote actor fetches it over HTTP (in this process)
@@ -188,7 +196,7 @@ defmodule Bonfire.UI.Boundaries.LiveSelectSearchTest do
       end)
 
       # `flash` is reserved (no `assign/2`): the handler's error wrapper flashes if the search raises
-      socket = fake_socket()
+      socket = fake_socket(%{current_user: me})
       socket = %{socket | assigns: Map.put(socket.assigns, :flash, %{})}
 
       assert {:noreply, _} =

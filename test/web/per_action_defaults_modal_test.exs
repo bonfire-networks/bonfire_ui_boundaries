@@ -44,13 +44,20 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
          %{account: account, me: me} do
       post = publish_post(me, "public")
 
+      # a public post holds several preset ACLs, each with its own panel in the details: this is the local people's
+      acl = Bonfire.Boundaries.Acls.get_id!(:locals_may_reply)
+      panel = "#customize_boundary_set_acl_#{acl}_#{acl}"
+
       conn(user: me, account: account)
       |> visit("/post/#{post.id}")
       |> open_boundary_details()
       |> refute_has("[data-role=action_toggle_quote][checked]")
       |> refute_has("[data-role=action_exceptions_quote]")
-      |> click_button("[data-role=action_exceptions_toggle_quote]", "Allow for some people")
-      |> assert_has("[data-role=action_exceptions_quote]")
+      |> click_button(
+        "#{panel} [data-role=action_exceptions_toggle_quote]",
+        "Allow for some people"
+      )
+      |> assert_has("#{panel} [data-role=action_exceptions_quote]")
       # the toggle itself is untouched
       |> refute_has("[data-role=action_toggle_quote][checked]")
     end

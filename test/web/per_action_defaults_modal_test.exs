@@ -44,9 +44,10 @@ defmodule Bonfire.UI.Boundaries.PerActionDefaultsModalTest do
          %{account: account, me: me} do
       post = publish_post(me, "public")
 
-      # a public post holds several preset ACLs, each with its own panel in the details: this is the local people's
-      acl = Bonfire.Boundaries.Acls.get_id!(:locals_may_reply)
-      panel = "#customize_boundary_set_acl_#{acl}_#{acl}"
+      # the details panel of this post's boundary, so a second matching element elsewhere on the page isn't clicked
+      # acl = Bonfire.Boundaries.Acls.get_id!(:locals_may_reply)
+      # panel = "#customize_boundary_set_acl_#{acl}_#{acl}"
+      panel = "#customize_boundary_set_acl_#{post.id}"
 
       conn(user: me, account: account)
       |> visit("/post/#{post.id}")

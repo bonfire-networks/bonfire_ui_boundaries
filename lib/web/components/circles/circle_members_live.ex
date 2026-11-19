@@ -27,6 +27,21 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
 
   slot default, required: false
 
+  # the search offers only users (`do_results_for_multiselect/2`)
+  def search_label(true = _is_admin_circle),
+    do: l("Search for someone on this instance to make an admin")
+
+  def search_label(_), do: l("Search for users to add")
+
+  # someone was added or removed outside this component (e.g. made or revoked an admin from the confirmation), so the list shows it without a reload
+  def update(%{added_member: subject}, %{assigns: %{loaded: true}} = socket) do
+    {:ok, LiveHandler.put_member(socket, uid(subject), subject)}
+  end
+
+  def update(%{removed_member: subject}, %{assigns: %{loaded: true}} = socket) do
+    {:ok, update(socket, :members, &Map.drop(&1, [uid(subject)]))}
+  end
+
   def update(assigns, %{assigns: %{loaded: true} = socket_assigns} = socket) do
     # When already loaded, we still need to update the page_title if a new title is provided
     title_from_assigns = e(assigns, :title, nil)

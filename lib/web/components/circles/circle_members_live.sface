@@ -6,16 +6,12 @@
       </div>
     {/if}
     <#slot />
-    {#if @is_admin_circle}
-      <div class="p-4 text-sm text-muted">
-        {l("To add or remove admins, use the \"Make admin\" option on a user's profile page.")}
-      </div>
-    {/if}
-    <div :if={!@is_admin_circle && !@read_only && @show_add} class="flex flex-col gap-3 mt-2 px-2">
+    {!-- on the admin circle, a pick opens the confirmation to make them an admin (see `LiveHandler.add_member/2`), and no one is added to the circle directly --}
+    <div :if={(@is_admin_circle || !@read_only) && @show_add} class="flex flex-col gap-3 mt-2 px-2">
       <div class="flex flex-col gap-2 w-full">
         {#if @show_add != :manual}
           <form id="add_members" phx-change="change" phx-target="#circle_members" class="w-full flex-1">
-            <label for="multi_select_circle_members_text_input" class="sr-only">{l("Search for users to add")}</label>
+            <label for="multi_select_circle_members_text_input" class="sr-only">{search_label(@is_admin_circle)}</label>
             <div class="relative">
               <Bonfire.UI.Common.MultiselectLive
                 implementation={:live_select}
@@ -25,7 +21,7 @@
                 show_search
                 debounce={300}
                 event_target="#circle_members"
-                label={l("Search for circles or users to add")}
+                label={search_label(@is_admin_circle)}
               />
             </div>
           </form>
@@ -118,26 +114,40 @@
 
             {#case member}
               {#match %{subject: %{profile: %{id: _} = profile}} = member}
-                <StatelessComponent
-                  module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
-                  profile={profile}
-                  wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-row justify-between"
-                  avatar_class="size-10 rounded-box"
-                  character={e(member, :subject, :character, nil)}
-                  class="btn btn-sm"
-                  show_controls={[:follows_me, :follow]}
-                  parent_id={deterministic_dom_id(__MODULE__, id, "circle_member", @parent_id)}
-                >
-                  <button
-                    data-role="remove_user"
-                    :if={!@is_admin_circle && (@show_remove || !@read_only)}
-                    phx-value-subject={id}
-                    :on-click="remove"
-                    class="btn btn-error btn-soft btn-sm"
-                  >
-                    {l("Remove")}
-                  </button>
-                </StatelessComponent>
+                <div class="flex items-center gap-2">
+                  <div class="flex-1 min-w-0">
+                    <StatelessComponent
+                      module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}
+                      profile={profile}
+                      wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-row justify-between"
+                      avatar_class="size-10 rounded-box"
+                      character={e(member, :subject, :character, nil)}
+                      class="btn btn-sm"
+                      show_controls={[:follows_me, :follow]}
+                      parent_id={deterministic_dom_id(__MODULE__, id, "circle_member", @parent_id)}
+                    >
+                      <button
+                        data-role="remove_user"
+                        :if={!@is_admin_circle && (@show_remove || !@read_only)}
+                        phx-value-subject={id}
+                        :on-click="remove"
+                        class="btn btn-error btn-soft btn-sm"
+                      >
+                        {l("Remove")}
+                      </button>
+                    </StatelessComponent>
+                  </div>
+                  {!-- beside the profile, not in its slot: the slot renders its content to HTML, so it can't hold the modal's stateful component --}
+                  <StatelessComponent
+                    :if={@is_admin_circle}
+                    module={maybe_component(Bonfire.UI.Me.AdminRoleLive, @__context__)}
+                    user={e(member, :subject, nil)}
+                    is_admin
+                    btn_class="btn btn-error btn-soft btn-sm"
+                    open_modal_wrapper_class="shrink-0 flex"
+                    parent_id="admin_circle"
+                  />
+                </div>
               {#match %{name: name, icon: icon, username: username} when is_binary(name)}
                 <StatelessComponent
                   module={maybe_component(Bonfire.UI.Me.ProfileItemLive)}

@@ -697,13 +697,7 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
       {:noreply,
        socket
        |> assign_flash(:info, l("Blocked!"))
-       |> assign(
-         members:
-           Map.merge(
-             %{id => %{subject_id: id, subject: load_member_subject(id, subject, socket)}},
-             e(assigns(socket), :members, %{})
-           )
-       )}
+       |> put_member(id, subject)}
     else
       true ->
         {:noreply, assign_flash(socket, :error, l("Cannot block yourself."))}
@@ -748,6 +742,20 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
       else: [current_user: current_user]
   end
 
+  # making someone an admin also sets their account's flag and checks the shared-profile and last-admin rules, so a pick on the admin circle opens that confirmation rather than adding them to the circle
+  def add_member(subject, %{assigns: %{is_admin_circle: true}} = socket) do
+    case maybe_apply(Bonfire.UI.Me.AdminRoleLive, :open_make_admin, [subject],
+           fallback_return: :error
+         ) do
+      :ok ->
+        {:noreply, socket}
+
+      other ->
+        error(other, "Could not open the confirmation to make them an admin")
+        {:noreply, assign_flash(socket, :error, l("Could not find that user."))}
+    end
+  end
+
   def add_member(subject, socket) do
     with id when is_binary(id) <- uid(subject),
          current_user when not is_nil(current_user) <- current_user(socket),
@@ -755,19 +763,24 @@ defmodule Bonfire.Boundaries.Circles.LiveHandler do
       {:noreply,
        socket
        |> assign_flash(:info, l("Added to circle!"))
-       |> assign(
-         members:
-           Map.merge(
-             %{id => %{subject_id: id, subject: load_member_subject(id, subject, socket)}},
-             e(assigns(socket), :members, %{})
-           )
-       )}
+       |> put_member(id, subject)}
     else
       other ->
         error(other)
 
         {:noreply, assign_flash(socket, :error, l("Could not add to circle"))}
     end
+  end
+
+  @doc "Shows `subject` in a circle members list (`CircleMembersLive`) that has just gained them, without reloading the list."
+  def put_member(socket, id, subject) do
+    assign(socket,
+      members:
+        Map.merge(
+          %{id => %{subject_id: id, subject: load_member_subject(id, subject, socket)}},
+          e(assigns(socket), :members, %{})
+        )
+    )
   end
 
   # Ensure the optimistically-added member renders with its name/avatar instead of

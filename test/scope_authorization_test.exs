@@ -49,6 +49,185 @@ defmodule Bonfire.UI.Boundaries.ScopeAuthorizationTest do
     end
   end
 
+  describe "an instance admin whose account's admin flag isn't loaded" do
+    alias Bonfire.Boundaries.Acls
+    alias Bonfire.Boundaries.Circles
+    alias Bonfire.Data.Identity.Account
+
+    # each acting user with their account loaded, as `current_account(opts)` finds it on them; the admin both with and without its `instance_admin` (an admin action must not silently refuse the second, it is an error in tests)
+    setup do
+      repo = Bonfire.Common.Config.repo()
+      admin_account = fake_account!()
+      admin = fake_admin!(admin_account)
+      user_account = fake_account!()
+      user = fake_user!(user_account)
+
+      unloaded = repo.get!(Account, admin_account.id)
+      assert %Ecto.Association.NotLoaded{} = unloaded.instance_admin
+
+      %{
+        loaded_admin: Map.put(admin, :account, repo.preload(unloaded, :instance_admin)),
+        unloaded_admin: Map.put(admin, :account, unloaded),
+        non_admin:
+          Map.put(
+            user,
+            :account,
+            repo.preload(repo.get!(Account, user_account.id), :instance_admin)
+          )
+      }
+    end
+
+    test "changes who is in Suggested Profiles, which the admin circle takes care of", %{
+      loaded_admin: loaded_admin,
+      unloaded_admin: unloaded_admin,
+      non_admin: non_admin,
+      target: target
+    } do
+      circle = Bonfire.Boundaries.Scaffold.Instance.suggested_profiles_circle()
+
+      assert {:ok, _} = Circles.add_to_circles(target, circle, current_user: loaded_admin)
+      assert Circles.is_encircled_by?(target, circle), "control: an admin adds to it"
+      Circles.remove_from_circles(target, circle, current_user: loaded_admin)
+      refute Circles.is_encircled_by?(target, circle), "control: an admin removes from it"
+
+      assert_raise RuntimeError, ~r/preload instance_admin/, fn ->
+        Circles.add_to_circles(target, circle, current_user: unloaded_admin)
+      end
+
+      assert_raise RuntimeError, ~r/preload instance_admin/, fn ->
+        Circles.remove_from_circles(target, circle, current_user: unloaded_admin)
+      end
+
+      assert {:error, _} =
+               Circles.add_to_circles(target, circle, current_user: non_admin)
+
+      refute Circles.is_encircled_by?(target, circle)
+    end
+
+    test "gets a circle and a preset the admin circle takes care of", %{
+      loaded_admin: loaded_admin,
+      unloaded_admin: unloaded_admin,
+      non_admin: non_admin
+    } do
+      {:ok, circle} = Circles.create(:instance, %{named: %{name: "an instance circle"}})
+      {:ok, acl} = Acls.create(%{named: %{name: "an instance preset"}}, current_user: :instance)
+
+      for {name, get} <- [
+            circle: &Circles.get_for_caretaker(circle.id, &1, current_user: &1),
+            preset: &Acls.get_for_caretaker(acl.id, &1, current_user: &1)
+          ] do
+        assert {:ok, _} = get.(loaded_admin), "control: an admin gets the #{name}"
+
+        assert_raise RuntimeError, ~r/preload instance_admin/, fn -> get.(unloaded_admin) end
+
+        assert {:error, :not_found} = get.(non_admin), "a non-admin doesn't get the #{name}"
+      end
+    end
+
+    test "can? on the instance fetches the admin flag only when asked to", %{
+      loaded_admin: loaded_admin,
+      unloaded_admin: unloaded_admin
+    } do
+      assert Bonfire.Boundaries.can?(loaded_admin.account, :assign, :instance), "control"
+
+      refute Bonfire.Boundaries.can?(unloaded_admin.account, :assign, :instance),
+             "without the option, the flag isn't fetched"
+
+      assert_raise RuntimeError, ~r/preload instance_admin/, fn ->
+        Bonfire.Boundaries.can?(unloaded_admin.account, :assign, :instance,
+          ensure_admin_check: true
+        )
+      end
+
+      refute Bonfire.Boundaries.can?(nil, :assign, :instance, ensure_admin_check: true)
+    end
+  end
+
+  describe "Built-in circles" do
+    alias Bonfire.Boundaries.Circles
+    alias Bonfire.Boundaries.Scaffold.Instance
+
+    setup do
+      {:ok, moderator} =
+        Bonfire.Me.Users.make_moderator(fake_user!(fake_account!()), skip_boundary_check: true)
+
+      %{moderator: moderator}
+    end
+
+    # what a built-in's config entry says about who may change its members, for this test process only
+    defp encircle_requires(circle_name, rule) do
+      circles =
+        Keyword.update!(Circles.circles(), circle_name, &Map.put(&1, :encircle_requires, rule))
+
+      Process.put([:bonfire_boundaries, :circles], circles)
+    end
+
+    test "nobody changes who is a guest, a local user, a remote user or an admin through a plain add, not even an admin",
+         %{admin: admin, target: target} do
+      for name <- [:guest, :local, :activity_pub, :admin] do
+        id = Circles.circles()[name][:id]
+        # a local user is already in Local users, so what matters is that the add changes nothing
+        was_member? = Circles.is_encircled_by?(target, id)
+
+        assert {:error, _} = Circles.add_to_circles(target, id, current_user: admin),
+               "an admin added someone to the #{name} circle"
+
+        assert Circles.is_encircled_by?(target, id) == was_member?
+      end
+    end
+
+    test "admins and moderators change who is in Suggested Profiles, as its config says", %{
+      admin: admin,
+      moderator: moderator,
+      me: me,
+      target: target
+    } do
+      circle = Instance.suggested_profiles_circle()
+
+      assert {:ok, _} = Circles.add_to_circles(target, circle, current_user: admin)
+      assert Circles.is_encircled_by?(target, circle)
+      Circles.remove_from_circles(target, circle, current_user: moderator)
+      refute Circles.is_encircled_by?(target, circle), "a moderator removes from it"
+      assert {:ok, _} = Circles.add_to_circles(target, circle, current_user: moderator)
+
+      assert {:error, _} = Circles.add_to_circles(me, circle, current_user: me)
+      refute Circles.is_encircled_by?(me, circle)
+    end
+
+    test "a built-in's config decides who changes its members: a verb on the instance, on the circle, or nobody",
+         %{admin: admin, moderator: moderator, target: target} do
+      circle = Instance.suggested_profiles_circle()
+
+      encircle_requires(:suggested_profiles, false)
+
+      assert {:error, _} = Circles.add_to_circles(target, circle, current_user: admin),
+             "`false` lets nobody, admins included"
+
+      # its own ACL, `mods_may_manage`, gives admins every verb and moderators no `:assign`
+      encircle_requires(:suggested_profiles, {:assign, :circle})
+
+      assert {:error, _} =
+               Circles.add_to_circles(target, circle, current_user: moderator)
+
+      assert {:ok, _} = Circles.add_to_circles(target, circle, current_user: admin)
+      assert Circles.is_encircled_by?(target, circle)
+    end
+
+    test "admins make someone a moderator through the moderators circle, and moderators don't", %{
+      admin: admin,
+      moderator: moderator,
+      target: target
+    } do
+      circle = Instance.mod_circle()
+
+      assert {:error, _} =
+               Circles.add_to_circles(target, circle, current_user: moderator)
+
+      assert {:ok, _} = Circles.add_to_circles(target, circle, current_user: admin)
+      assert Circles.is_encircled_by?(target, circle)
+    end
+  end
+
   describe "Blocks, instance-wide" do
     test "nobody acting, and no skip, is refused for a bare scope or a keyword one", %{
       target: target

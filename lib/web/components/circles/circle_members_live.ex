@@ -173,7 +173,10 @@ defmodule Bonfire.UI.Boundaries.CircleMembersLive do
 
       read_only =
         if is_nil(read_only) do
-          is_admin_circle || Circles.is_built_in?(circle) ||
+          # a built-in's members are changed by whoever its config's `encircle_requires` allows, the same check as `Circles.add_to_circles/3`
+          is_admin_circle ||
+            (Circles.is_built_in?(circle) and
+               not Circles.may_encircle_built_ins?(circle, current_user)) ||
             stereotype_id in follow_stereotypes
         else
           read_only || is_admin_circle

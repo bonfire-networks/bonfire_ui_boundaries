@@ -1,7 +1,7 @@
 defmodule Bonfire.UI.Boundaries.ExportImportBlocksTest do
   use Bonfire.UI.Boundaries.ConnCase, async: System.get_env("TEST_UI_ASYNC") != "no"
 
-  alias Bonfire.Social.Import
+  alias Bonfire.Common.Import
   alias Bonfire.Boundaries.Blocks
 
   setup do

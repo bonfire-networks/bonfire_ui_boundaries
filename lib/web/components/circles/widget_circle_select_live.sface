@@ -1,0 +1,11 @@
+<Bonfire.UI.Common.SettingsSelectLive
+  stacked
+  keys={[Bonfire.UI.Boundaries.WidgetCircleMembersLive, :circle]}
+  id={@id}
+  current_value={@circle}
+  label_name={l("Circle shown on the dashboard")}
+  name={l("Circle shown on the dashboard")}
+  description={l("The circle whose members the Circle members widget shows.")}
+  options={@options}
+  scope={@scope}
+/>

@@ -59,10 +59,9 @@ defmodule Bonfire.UI.Boundaries.CircleMembersUndiscoverableTest do
   end
 
   test "the embed of a shared circle doesn't show an undiscoverable member", %{circle: circle} do
-    session = conn() |> visit("/circle/#{circle.id}/embed")
-
-    session
-    |> assert_has("[data-role=user_preview_name]", text: "discoverable member")
-    |> refute_has("[data-role=user_preview_name]", text: "hidden member")
+    conn()
+    |> visit("/embed/widget/circle_members?circle=#{circle.id}")
+    |> assert_has("[data-role=user_name]", text: "discoverable member")
+    |> refute_has("[data-role=user_name]", text: "hidden member")
   end
 end

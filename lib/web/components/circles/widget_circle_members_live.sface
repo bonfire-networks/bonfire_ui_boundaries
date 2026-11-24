@@ -1,0 +1,26 @@
+{#case @loaded}
+  {#match nil}
+  {#match {circle, members}}
+    {#if @showing_within == :main}
+      <Bonfire.UI.Common.WidgetBlockLive
+        widget_title={e(circle, :named, :name, nil) || l("Circle members")}
+        class="w-full"
+        title_class="pb-4"
+        heading_class="text-lg font-bold leading-snug tracking-[-0.01em] normal-case"
+      >
+        <StatelessComponent
+          module={maybe_component(Bonfire.UI.Me.UsersGridLive, @__context__)}
+          users={members}
+          variant={@variant}
+          parent_id={"circle-#{id(circle)}"}
+        />
+      </Bonfire.UI.Common.WidgetBlockLive>
+    {#else}
+      <StatelessComponent
+        module={maybe_component(Bonfire.UI.Me.WidgetUsersLive, @__context__)}
+        widget_title={e(circle, :named, :name, nil) || l("Circle members")}
+        users={members}
+        parent_id={"widget_circle-#{id(circle)}"}
+      />
+    {/if}
+{/case}

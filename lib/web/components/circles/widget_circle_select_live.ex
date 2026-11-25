@@ -9,22 +9,31 @@ defmodule Bonfire.UI.Boundaries.WidgetCircleSelectLive do
   data circle, :any, default: nil
 
   def render(assigns) do
-    user = current_user(assigns)
-    scoped = Bonfire.Common.Settings.LiveHandler.scoped(assigns.scope, assigns[:__context__])
-
     assigns
-    |> assign(
-      options:
-        user
-        |> Bonfire.Boundaries.Circles.list_my()
-        |> Enum.map(&{id(&1), e(&1, :named, :name, nil) || l("Untitled circle")}),
-      circle:
-        Bonfire.Common.Settings.get(
-          [Bonfire.UI.Boundaries.WidgetCircleMembersLive, :circle],
-          nil,
-          scoped
-        )
-    )
+    |> assign(options: options(assigns), circle: chosen(assigns.scope, assigns))
     |> render_sface()
+  end
+
+  @doc "The name of the circle the widget shows (nil when none), for edit mode's tile."
+  def current_label(context) do
+    # the circles are only listed when one is chosen
+    with circle when not is_nil(circle) <- chosen(nil, context) do
+      Enum.find_value(options(context), fn {id, name} -> id == circle && name end)
+    end
+  end
+
+  defp options(context) do
+    context
+    |> current_user()
+    |> Bonfire.Boundaries.Circles.list_my()
+    |> Enum.map(&{id(&1), e(&1, :named, :name, nil) || l("Untitled circle")})
+  end
+
+  defp chosen(scope, context) do
+    Bonfire.Common.Settings.get(
+      [Bonfire.UI.Boundaries.WidgetCircleMembersLive, :circle],
+      nil,
+      Bonfire.Common.Settings.LiveHandler.scoped(scope, context[:__context__] || context)
+    )
   end
 end

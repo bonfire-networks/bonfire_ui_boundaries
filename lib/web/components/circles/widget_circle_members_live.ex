@@ -8,7 +8,12 @@ defmodule Bonfire.UI.Boundaries.WidgetCircleMembersLive do
 
   alias Bonfire.Boundaries.Circles
 
-  declare_widget(l("Circle members"), id: :circle_members)
+  declare_widget(l("Circle members"),
+    id: :circle_members,
+    # which circle it shows, chosen in edit mode and in the dashboard settings
+    settings: Bonfire.UI.Boundaries.WidgetCircleSelectLive,
+    skeleton: :people
+  )
 
   @doc "A circle or its id; the one chosen in the widget settings when not given."
   prop circle, :any, default: nil

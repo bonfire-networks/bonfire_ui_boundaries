@@ -31,9 +31,9 @@ defmodule Bonfire.UI.Boundaries.CircleMembersWidgetTest do
        %{conn: conn} do
     conn
     |> visit("/settings/user/dashboard")
-    # by its selector, not within the block: `within` hides the form the select belongs to
+    # on the widget's tile; by its selector, not within the tile: `within` hides the form the select belongs to
     |> PhoenixTest.select(
-      "[data-role=dashboard_circle_setting] #dashboard-circle-select",
+      "[data-widget-id=circle_members] [data-role=widget-edit-controls] select",
       "Circle shown on the dashboard",
       option: "Garden friends"
     )

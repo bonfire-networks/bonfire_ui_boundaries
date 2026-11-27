@@ -14,10 +14,10 @@ defmodule Bonfire.UI.Boundaries.WidgetCircleSelectLive do
     |> render_sface()
   end
 
-  @doc "The name of the circle the widget shows (nil when none), for edit mode's tile."
-  def current_label(context) do
+  @doc "The name of the circle the widget shows (nil when none), for edit mode's tile: the viewer's, or with `:instance` the instance's default."
+  def current_label(context, scope) do
     # the circles are only listed when one is chosen
-    with circle when not is_nil(circle) <- chosen(nil, context) do
+    with circle when not is_nil(circle) <- chosen(scope, context) do
       Enum.find_value(options(context), fn {id, name} -> id == circle && name end)
     end
   end

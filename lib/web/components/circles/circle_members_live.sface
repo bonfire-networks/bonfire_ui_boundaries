@@ -122,7 +122,6 @@
                       wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-row justify-between"
                       avatar_class="size-10 rounded-box"
                       character={e(member, :subject, :character, nil)}
-                      class="btn btn-sm"
                       show_controls={[:follows_me, :follow]}
                       parent_id={deterministic_dom_id(__MODULE__, id, "circle_member", @parent_id)}
                     >
@@ -156,7 +155,6 @@
                   character={%{username: username}}
                   wrapper_class="flex items-center flex-1 w-full gap-3 lg:gap-2 flex-row justify-between"
                   show_summary
-                  class="btn btn-sm"
                   show_controls={[:follows_me, :follow]}
                   parent_id={deterministic_dom_id(__MODULE__, id, "circle_member", @parent_id)}
                 >
